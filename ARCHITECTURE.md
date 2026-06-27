@@ -82,25 +82,28 @@
 > - 🧭 จัดการ exception → **Exception Triage Agent**
 > - ⏰ รันตาม schedule → **Cron Pipeline Agent**
 
-## 📋 ภาพรวม Profiles
+## 📋 ภาพรวม Profiles (Hierarchy Order)
 
-| # | Profile | หัวหน้าแผนก | สถานะ |
-|---|---------|-----------|--------|
-| 01 | CEO | [เทอโบ (Turbo)](profiles/../ceo/SOUL.md) | 🟢 Design เสร็จ |
-| 02 | CFO | TBD | ⏳ รอ |
-| 03 | CMO | TBD | ⏳ รอ |
-| 04 | **Architect** | [พี่ทรงศักดิ์ (Songsak)](profiles/architect/01-head-of-architect.md) | 🟢 Design เสร็จ — รอ Implement |
-| 05 | Design | TBD | ⏳ รอ |
-| 06 | Engineering | TBD | ⏳ รอ |
-| 07 | Legal | TBD | ⏳ รอ |
-| 08 | Product | TBD | ⏳ รอ |
-| 09 | QA | TBD | ⏳ รอ |
-| 10 | Sales | TBD | ⏳ รอ |
-| 11 | Support | TBD | ⏳ รอ |
-| 12 | UI Designer | TBD | ⏳ รอ |
+| # | Profile | ชื่อ | รับผิดชอบ | สถานะ |
+|:-:|:--------|:----|:----------|:-----:|
+| 01 | **CEO** | [เทอโบ (Turbo)](/home/drsolodev/.hermes/profiles/01-ceo/SOUL.md) | Vision / Strategy / Final Decision | 🟢 |
+| 02 | **CFO** | TBD | การเงิน / งบประมาณ / ลงทุน | ⏳ |
+| 03 | **CMO** | TBD | การตลาด / Content / Brand | ⏳ |
+| 04 | **Orchestrator** | TBD | SoloCorp System Pipeline | ⏳ |
+| 05 | **Architect** | [พี่ทรงศักดิ์ (Songsak)](profiles/05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | 🟡 |
+| 06 | **Product** | TBD | ผลิตภัณฑ์ / Feature / Roadmap | ⏳ |
+| 07 | **Engineering** | TBD | พัฒนา / โค้ด / เทคโนโลยี | ⏳ |
+| 08 | **Design** | TBD | ออกแบบ / UI / Brand Visual | ⏳ |
+| 09 | **UI Designer** | TBD | UI Design เฉพาะทาง | ⏳ |
+| 10 | **QA** | TBD | ทดสอบ / คุณภาพ / Evidence | ⏳ |
+| 11 | **Sales** | TBD | ขาย / ลูกค้า / รายได้ | ⏳ |
+| 12 | **Support** | TBD | ช่วยเหลือลูกค้า | ⏳ |
+| 13 | **Legal** | TBD | กฎหมาย / Compliance | ⏳ |
+| 14 | **Default** | — | Fallback / Base Profile | ✅ |
 
 ## 🔗 Source of Truth
 
 - **Directory Root:** `/home/drsolodev/projects/Lab-solocorp-os2.4/`
-- **Git:** TBD
+- **Git:** [`Dr-SoloDev/Lab-solocorp-os2.4`](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4) (Private)
+- **Hermes Profiles:** `/home/drsolodev/.hermes/profiles/<NN-name>/`
 - **Versioning:** SemVer ผ่าน CHANGELOG.md + Git tags

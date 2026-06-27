@@ -1,25 +1,27 @@
 # SoloCorp OS 2.4
 
-> **ระบบออกแบบ Department Architecture สำหรับ Hermes Agent**
-> Human → CEO → C-Level → Department Heads → Specialist Agents
+> **ระบบ Department Architecture สำหรับ Hermes Agent**
+> Human → CEO → C-Level → Orchestrator → Department Heads (→ Agents)
 
 ## Hierarchy
 
 ```
 Dr.solodev (Human/Owner)
   └── CEO (เทอโบ — Supreme AI Authority)
-       ├── CFO (การเงิน/งบประมาณ)
-       ├── CMO (การตลาด/Content)
+       ├── CFO (วาเลอร์ — การเงิน/งบประมาณ)
+       ├── CMO (วิวิด — การตลาด/Content)
+       ├── Orchestrator (SoloCorp System Pipeline)
        └── Department Heads
-            ├── Architect (พี่ทรงศักดิ์ — สายพานกลาง)
-            ├── Design
-            ├── Engineering
-            ├── Legal
-            ├── Product
-            ├── QA
-            ├── Sales
-            ├── Support
-            └── UI Designer
+            ├── 05-architect  — พี่ทรงศักดิ์ (สายพานกลาง)
+            ├── 06-product    — TBD
+            ├── 07-engineering — TBD
+            ├── 08-design     — TBD
+            ├── 09-ui-designer — TBD
+            ├── 10-qa         — TBD
+            ├── 11-sales      — TBD
+            ├── 12-support    — TBD
+            └── 13-legal      — TBD
+                   └── 14-default (Fallback)
 ```
 
 ## Core Principles
@@ -27,6 +29,25 @@ Dr.solodev (Human/Owner)
 1. **3 Pillars** — หัวหน้าไม่ทำงานเอง, Leadership Skills, Ownership Mindset
 2. **Two-Tier Architecture** — Control Layer (Head) vs Data Layer (Central Bus)
 3. **Head-to-Head Handoff** — 80% ส่งตรง, 5% Escalate
+
+## Profile Order (Hermes)
+
+| ลำดับ | Profile Directory | ชื่อ | สถานะ |
+|:----:|:-----------------|:----|:-----:|
+| 01 | `01-ceo` | เทอโบ CEO | 🟢 |
+| 02 | `02-cfo` | TBD | ⏳ |
+| 03 | `03-cmo` | TBD | ⏳ |
+| 04 | `04-orchestrator` | TBD | ⏳ |
+| 05 | `05-architect` | พี่ทรงศักดิ์ | 🟡 |
+| 06 | `06-product` | TBD | ⏳ |
+| 07 | `07-engineering` | TBD | ⏳ |
+| 08 | `08-design` | TBD | ⏳ |
+| 09 | `09-ui-designer` | TBD | ⏳ |
+| 10 | `10-qa` | TBD | ⏳ |
+| 11 | `11-sales` | TBD | ⏳ |
+| 12 | `12-support` | TBD | ⏳ |
+| 13 | `13-legal` | TBD | ⏳ |
+| 14 | `default` | Fallback | ✅ |
 
 ## Status
 
@@ -40,8 +61,8 @@ Dr.solodev (Human/Owner)
 
 ## Docs
 
-- [`ARCHITECTURE.md`](ARCHITECTURE.md) — ภาพรวมระบบ
-- [`profiles/INDEX.md`](profiles/INDEX.md) — ดัชนี Profiles ทั้งหมด
+- [`ARCHITECTURE.md`](ARCHITECTURE.md) — ภาพรวมระบบ + Hierarchy Order
+- [`profiles/INDEX.md`](profiles/INDEX.md) — ดัชนี Profiles ทั้งหมด (เรียงตาม Hierarchy)
 - [`CHANGELOG.md`](CHANGELOG.md) — บันทึกการเปลี่ยนแปลง
 - [`decisions/`](decisions/) — ADR (Architecture Decision Records)
 
