@@ -158,6 +158,47 @@
 
 ---
 
+---
+
+## 🧩 The Complete Loop (ภาพรวมทั้งระบบ)
+
+```
+👤 Dr.SoloDev (Human — Final Decision)
+    │
+    ▼
+👑 CEO (เทอโบ Turbo) — Vision & Direction
+    │  ส่ง Financial Proposal
+    ▼
+🛡️ CFO (วาเลอร์ Valor) — Budget Approval
+    │  ✅ อนุมัติ → Allocation Code
+    ▼
+📡 Central Bus Agent — Routing & State
+    │
+    ├──► ⚙️ CTO (เวคเตอร์ Vector) — Engineering
+    │       │  Dev/QA ทำงาน → เสร็จ → สัญญาณกลับ Central Bus
+    │       ▼
+    │   Central Bus → ส่งสัญญาณปลุก
+    │
+    └──► 📣 CMO (วิวิด Vivid) — Marketing
+            │  Sales/Content ปล่อยแคมเปญ → รายได้
+            ▼
+        Central Bus → สรุปผล → CFO (Update Ledger) + CEO (Dashboard)
+```
+
+### ลำดับ Flow
+1. **CEO** คิดไอเดีย/เป้าหมาย → ส่งงบให้ **CFO** อนุมัติ
+2. **CFO** วิเคราะห์งบผ่าน → **Central Bus** ส่ง Spec ให้ **CTO**
+3. **CTO** แตกงาน Dev/QA → เสร็จ → สัญญาณกลับ Central Bus
+4. **Central Bus** → ยิงสัญญาณปลุก **CMO**
+5. **CMO** สั่ง Sales/Content ปล่อยแคมเปญ → สรุปผล → CFO (Ledger) + CEO (Dashboard)
+
+### Benefit
+- หัวหน้าแผนกทุกตัวทำงานในขอบเขตของตัวเอง
+- Context Window สั้น + แม่นยำ — คุยเฉพาะระดับบัญชาการ
+- ข้อมูลดิบไม่ผ่านหัวหน้า → ส่งตรง Workers via Central Bus
+
+---
+
 ## Key Design Patterns (Across All Profiles)
 
 1. **นามสกุล ไชยศรีรัมย์** — ทุก C-Level เป็นสมาชิกตระกูลเดียวกัน
