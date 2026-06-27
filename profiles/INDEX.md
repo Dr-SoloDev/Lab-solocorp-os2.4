@@ -35,15 +35,15 @@
 
 | # | Profile | หัวหน้าแผนก | รับผิดชอบ | สถานะ |
 |:-:|:--------|:-----------|:----------|:-----:|
-| `05-architect` | **Architect** | [พี่ทรงศักดิ์ (Songsak)](05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | 🟡 |
-| `06-product` | **Product** | TBD | ผลิตภัณฑ์ / Feature / Roadmap | ⏳ |
-| `07-engineering` | **Engineering** | TBD | พัฒนา / โค้ด / เทคโนโลยี | ⏳ |
-| `08-design` | **Design** | TBD | ออกแบบ / UI / Brand Visual | ⏳ |
-| `09-ui-designer` | **UI Designer** | TBD | UI Design เฉพาะทาง | ⏳ |
-| `10-qa` | **QA** | TBD | ทดสอบ / คุณภาพ / Evidence | ⏳ |
-| `11-sales` | **Sales** | TBD | ขาย / ลูกค้า / รายได้ | ⏳ |
-| `12-support` | **Support** | TBD | ช่วยเหลือลูกค้า | ⏳ |
-| `13-legal` | **Legal** | TBD | กฎหมาย / Compliance | ⏳ |
+| `05-architect` | **Architect** | [พี่ทรงศักดิ์ (Songsak)](05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | ✅ |
+|| `06-product` | **Product** | TBD | ผลิตภัณฑ์ / Feature / Roadmap | ⏳ |
+|| `07-engineering` | **Engineering** | TBD | พัฒนา / โค้ด / เทคโนโลยี | ⏳ |
+|| `08-design` | **Design** | TBD | ออกแบบ / UI / Brand Visual | ⏳ |
+|| `09-ui-designer` | **UI Designer** | TBD | UI Design เฉพาะทาง | ⏳ |
+|| `10-qa` | **QA** | TBD | ทดสอบ / คุณภาพ / Evidence | ⏳ |
+|| `11-sales` | **Sales** | TBD | ขาย / ลูกค้า / รายได้ | ⏳ |
+|| `12-support` | **Support** | TBD | ช่วยเหลือลูกค้า | ⏳ |
+|| `13-legal` | **Legal** | TBD | กฎหมาย / Compliance | ⏳ |
 
 ## Base Profile
 

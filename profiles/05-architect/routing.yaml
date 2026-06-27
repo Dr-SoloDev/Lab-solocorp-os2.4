@@ -1,0 +1,73 @@
+# SoloCorp OS Routing Manifest — Head of Architect
+# version: 2.0.0 — Pipeline-Based Routing
+
+always_read:
+  - skills/solocorp/routing.yaml
+  - rules/
+
+tasks:
+  - id: pipeline-design
+    label: ออกแบบ Pipeline Layout
+    route: Architect — แตก Goal เป็น Pipeline Sequence
+    trigger_examples:
+      - pipeline
+      - workflow
+      - sequence
+      - ขั้นตอน
+    route_to: architect
+    skills_hint: plan, handoff-templates
+
+  - id: routing-config
+    label: กำหนดเส้นทาง Pipeline
+    route: Routing Config Agent — ตั้ง GNAP routing rules
+    trigger_examples:
+      - ตั้ง route
+      - routing
+      - เส้นทาง
+      - ส่งต่อ
+    route_to: architect
+    skills_hint: team-routing-config
+
+  - id: pipeline-audit
+    label: ตรวจสอบ Integrity
+    route: Pipeline Auditor — ตรวจสอบความถูกต้องหลัง handoff
+    trigger_examples:
+      - audit
+      - ตรวจสอบ
+      - verify
+      - compliance
+    route_to: architect
+    skills_hint: team-pipeline-auditor
+
+  - id: monitor-setup
+    label: ตั้งค่าเฝ้าระวัง
+    route: Monitor Watchdog — สร้าง health probe
+    trigger_examples:
+      - เฝ้า
+      - monitor
+      - ดูตลอด
+      - watch
+    route_to: architect
+    skills_hint: team-monitor-watchdog
+
+  - id: exception-triage
+    label: จัดการข้อยกเว้น
+    route: Exception Triage Agent — triage + auto-resolve
+    trigger_examples:
+      - error
+      - exception
+      - fail
+      - crash
+    route_to: architect
+    skills_hint: team-exception-triage
+
+  - id: cron-schedule
+    label: ตั้งเวลา Pipeline
+    route: Cron Pipeline Agent — schedule + retry
+    trigger_examples:
+      - cron
+      - schedule
+      - ประจำ
+      - ทุกวัน
+    route_to: architect
+    skills_hint: team-cron-pipeline
