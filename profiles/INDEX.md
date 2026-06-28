@@ -45,6 +45,8 @@
 || `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | ช่วยเหลือลูกค้า | 🟡 |
 || `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | กฎหมาย / Compliance | 🟡 |
 
+|| `14-web3` | **Web3 & DeFi** | [อัยวา](14-web3/SOUL.md) | Blockchain/DeFi/Solana | 🔴 |
+
 ## Base Profile
 
 | # | Profile | สถานะ |
