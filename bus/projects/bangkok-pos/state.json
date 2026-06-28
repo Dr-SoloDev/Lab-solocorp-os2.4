@@ -1,0 +1,34 @@
+{
+  "project_id": "bangkok-pos",
+  "name": "Bangkok POS \u2014 Mobile Web Phase 1",
+  "status": "in_progress",
+  "phase": "design",
+  "phases": {
+    "spec": {
+      "status": "done",
+      "owner": "architect"
+    },
+    "design": {
+      "status": "in_progress",
+      "owner": "ui_designer"
+    },
+    "arch": {
+      "status": "done",
+      "owner": "architect"
+    },
+    "dev": {
+      "status": "in_progress",
+      "owner": "engineering"
+    },
+    "qa": {
+      "status": "pending",
+      "owner": ""
+    },
+    "deploy": {
+      "status": "pending",
+      "owner": ""
+    }
+  },
+  "blockers": [],
+  "updated_at": "2026-06-28T10:45:42.463908+00:00"
+}

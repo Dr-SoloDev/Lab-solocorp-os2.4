@@ -1,0 +1,6 @@
+**Task s1-1.1 เสร็จแล้ว**
+
+- MySQL container: Running & Healthy
+- `prisma db push`: `The database is already in sync with the Prisma schema` — DB เชื่อมต่อสำเร็จ schema sync แล้ว
+
+หมายเหตุ: phpMyAdmin ติด port 8080 (portถูกใช้งานอยู่) แต่ไม่กระทบการทำงานของ DB
