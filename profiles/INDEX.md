@@ -22,8 +22,8 @@
 | # | Profile | ชื่อ | สถานะ |
 |:-:|:--------|:----|:-----:|
 | `01-ceo` | **CEO** | [เทอโบ ไชยศรีรัมย์ (Turbo)](../01-ceo/SOUL.md) | 🟢 |
-| `02-cfo` | **CFO** | TBD | ⏳ |
-| `03-cmo` | **CMO** | TBD | ⏳ |
+| `02-cfo` | **CFO** | meetoo | ⏳ |
+| `03-cmo` | **CMO** | มาร์ค | ⏳ |
 
 ## System / Pipeline
 
@@ -43,7 +43,7 @@
 || `10-qa` | **QA** | TBD | ทดสอบ / คุณภาพ / Evidence | ⏳ |
 || `11-sales` | **Sales** | TBD | ขาย / ลูกค้า / รายได้ | ⏳ |
 || `12-support` | **Support** | TBD | ช่วยเหลือลูกค้า | ⏳ |
-|| `13-legal` | **Legal** | TBD | กฎหมาย / Compliance | ⏳ |
+|| `13-legal` | **Legal** | ตุลย์ | กฎหมาย / Compliance | ⏳ |
 
 ## Base Profile
 

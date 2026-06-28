@@ -8,8 +8,8 @@
 ```
 Dr.solodev (Human/Owner)
   └── CEO (เทอโบ — Supreme AI Authority)
-       ├── CFO (วาเลอร์ — การเงิน/งบประมาณ)
-       ├── CMO (วิวิด — การตลาด/Content)
+       ├── CFO (meetoo — การเงิน/งบประมาณ)
+       ├── CMO (มาร์ค — การตลาด/Content)
        ├── Orchestrator (SoloCorp System Pipeline)
        └── Department Heads
             ├── 05-architect  — พี่ทรงศักดิ์ (สายพานกลาง)
@@ -20,7 +20,7 @@ Dr.solodev (Human/Owner)
             ├── 10-qa         — TBD
             ├── 11-sales      — TBD
             ├── 12-support    — TBD
-            └── 13-legal      — TBD
+            └── 13-legal      — ตุลย์
                    └── 14-default (Fallback)
 ```
 
@@ -35,8 +35,8 @@ Dr.solodev (Human/Owner)
 | ลำดับ | Profile Directory | ชื่อ | สถานะ |
 |:----:|:-----------------|:----|:-----:|
 | 01 | `01-ceo` | เทอโบ CEO | 🟢 |
-| 02 | `02-cfo` | TBD | ⏳ |
-| 03 | `03-cmo` | TBD | ⏳ |
+| 02 | `02-cfo` | meetoo | ⏳ |
+| 03 | `03-cmo` | มาร์ค | ⏳ |
 | 04 | `04-orchestrator` | TBD | ⏳ |
 | 05 | `05-architect` | พี่ทรงศักดิ์ | 🟡 |
 | 06 | `06-product` | TBD | ⏳ |
