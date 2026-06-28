@@ -73,3 +73,95 @@
 - แต่ละ Profile = 1 Department Head ที่มีความรู้เฉพาะด้าน
 - หัวหน้า **ไม่ทำงานเอง** — สั่งงาน Specialist Agent ผ่าน `delegate_task`
 - หัวหน้าต้องมี **Ownership Mindset** — เจ้าของแผนก ไม่ใช่ลูกจ้าง
+
+---
+
+## ทีมในแต่ละแผนก
+
+### 02 — CFO (meetoo)
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [dana](02-cfo/meetoo/team/01-dana.SOUL.md) | 🔴 |
+| 02 | [riley](02-cfo/meetoo/team/02-riley.SOUL.md) | 🔴 |
+| 03 | [morgan](02-cfo/meetoo/team/03-morgan.SOUL.md) | 🔴 |
+
+### 03 — CMO (mark)
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [growth-hacker](03-cmo/mark/team/01-growth-hacker.SOUL.md) | 🔴 |
+| 02 | [social-media-strategist](03-cmo/mark/team/02-social-media-strategist.SOUL.md) | 🔴 |
+| 03 | [content-creator](03-cmo/mark/team/03-content-creator.SOUL.md) | 🔴 |
+
+### 04 — Orchestrator
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [project-shepherd](04-orchestrator/orchestrator/team/01-project-shepherd.SOUL.md) | 🔴 |
+| 02 | [studio-producer](04-orchestrator/orchestrator/team/02-studio-producer.SOUL.md) | 🔴 |
+| 03 | [studio-operations](04-orchestrator/orchestrator/team/03-studio-operations.SOUL.md) | 🔴 |
+
+### 06 — Product (produck)
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [product-manager](06-product/produck/team/01-product-manager.SOUL.md) | 🔴 |
+| 02 | [product-feedback-synthesizer](06-product/produck/team/02-product-feedback-synthesizer.SOUL.md) | 🔴 |
+| 03 | [product-sprint-prioritizer](06-product/produck/team/03-product-sprint-prioritizer.SOUL.md) | 🔴 |
+
+### 07 — Engineering (changful)
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [สถาปนิกแบ็กเอนด์](07-engineering/changful/team/01-สถาปนิกแบ็กเอนด์.SOUL.md) | 🔴 |
+| 02 | [นักพัฒนาอาวุโส](07-engineering/changful/team/02-นักพัฒนาอาวุโส.SOUL.md) | 🔴 |
+| 03 | [สถาปนิกซอฟต์แวร์](07-engineering/changful/team/03-สถาปนิกซอฟต์แวร์.SOUL.md) | 🔴 |
+
+### 08 — Design (kreet)
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [nak-wijai-ux](08-design/kreet/team/01-nak-wijai-ux.SOUL.md) | 🔴 |
+| 02 | [sathapanig-ux](08-design/kreet/team/02-sathapanig-ux.SOUL.md) | 🔴 |
+| 03 | [nak-aukbaep-ui](08-design/kreet/team/03-nak-aukbaep-ui.SOUL.md) | 🔴 |
+
+### 09 — UI Designer
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [ui-designer](09-ui-designer/ui-designer/team/01-ui-designer.SOUL.md) | 🔴 |
+| 02 | [ux-architect](09-ui-designer/ui-designer/team/02-ux-architect.SOUL.md) | 🔴 |
+| 03 | [ux-researcher](09-ui-designer/ui-designer/team/03-ux-researcher.SOUL.md) | 🔴 |
+
+### 10 — QA
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [api-tester](10-qa/qa-team/team/01-api-tester.SOUL.md) | 🔴 |
+| 02 | [accessibility-auditor](10-qa/qa-team/team/02-accessibility-auditor.SOUL.md) | 🔴 |
+| 03 | [test-results-analyzer](10-qa/qa-team/team/03-test-results-analyzer.SOUL.md) | 🔴 |
+
+### 11 — Sales
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [deal-strategist](11-sales/sales/team/01-deal-strategist.SOUL.md) | 🔴 |
+| 02 | [pipeline-analyst](11-sales/sales/team/02-pipeline-analyst.SOUL.md) | 🔴 |
+| 03 | [outbound-strategist](11-sales/sales/team/03-outbound-strategist.SOUL.md) | 🔴 |
+
+### 12 — Support
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [support-responder](12-support/support/team/01-support-responder.SOUL.md) | 🔴 |
+| 02 | [analytics-reporter](12-support/support/team/02-analytics-reporter.SOUL.md) | 🔴 |
+| 03 | [executive-summary-generator](12-support/support/team/03-executive-summary-generator.SOUL.md) | 🔴 |
+
+### 13 — Legal (tulya)
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [compliance-auditor](13-legal/tulya/team/01-compliance-auditor.SOUL.md) | 🔴 |
+| 02 | [legal-document-review](13-legal/tulya/team/02-legal-document-review.SOUL.md) | 🔴 |
+| 03 | [legal-client-intake](13-legal/tulya/team/03-legal-client-intake.SOUL.md) | 🔴 |
