@@ -98,11 +98,11 @@
 
 | เวอร์ชั่น | สิ่งที่จะทำ |
 |:---------|:-----------|
-| v0.4.0 | Design Head of Marketing profile |
-| v0.5.0 | Design Head of Engineering profile |
-| v0.6.0 | Design Head of Design profile |
-| v0.7.0 | Design Head of Finance profile |
-| v0.8.0 | Design Head of QA profile |
-| v0.9.0 | Design Head of Legal profile |
-| v0.10.0 | Design Head of Sales profile |
+| v0.4.0 | ออกแบบ Profile Head of Marketing |
+| v0.5.0 | ออกแบบ Profile Head of Engineering |
+| v0.6.0 | ออกแบบ Profile Head of Design |
+| v0.7.0 | ออกแบบ Profile Head of Finance |
+| v0.8.0 | ออกแบบ Profile Head of QA |
+| v0.9.0 | ออกแบบ Profile Head of Legal |
+| v0.10.0 | ออกแบบ Profile Head of Sales |
 | v1.0.0 | Release — ทุก Profile พร้อมใช้งาน |

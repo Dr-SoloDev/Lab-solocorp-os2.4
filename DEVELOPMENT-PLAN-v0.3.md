@@ -124,7 +124,7 @@
 | **สร้างจาก** | สร้างใหม่ |
 | **Output** | Compressed Summary / Status Digest |
 
-#### Architecture Upgrade: Central Bus Implementation
+#### อัปเกรด Architecture: Central Bus Implementation
 
 ```text
 ┌────────────────────────────────────────────────────────────┐
@@ -166,7 +166,7 @@
 
 ---
 
-### Phase 4: 🔴 Department Expansion (v1.0.0)
+### Phase 4: 🔴 การขยาย Department (v1.0.0)
 
 **เป้าหมาย:** สร้าง Department Head Profiles ที่เหลือ + เชื่อมเข้า Central Bus
 
@@ -197,7 +197,7 @@
 
 ---
 
-## 📦 สิ่งที่ต้องสร้างใน Phase 1 (Work Immediately)
+## 📦 สิ่งที่ต้องสร้างใน Phase 1 (ลงมือทำทันที)
 
 ### 1. SOUL.md — 📋 Pipeline Auditor
 ใช้ GNAP Protocol (4 JSON files) เป็น Audit Trail:

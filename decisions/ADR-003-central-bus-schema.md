@@ -18,8 +18,8 @@
 8. [Handoff Protocol Template สำหรับ Department Heads](#8-handoff-protocol-template-สำหรับ-department-heads)
 9. [Pipeline Design Rules](#9-pipeline-design-rules)
 10. [ผลกระทบ](#10-ผลกระทบ)
-11. [Implementation Guidelines](#11-implementation-guidelines)
-12. [References](#12-references)
+11. [แนวทางการ Implement](#11-แนวทางการ-implement)
+12. [อ้างอิง](#12-อ้างอิง)
 
 ---
 
@@ -514,7 +514,7 @@ Agent A ไม่สน: ว่า Pipeline มีกี่ขั้นตอน
 
 ## 10. ผลกระทบ
 
-### Positive
+### เชิงบวก
 
 | ผล | รายละเอียด |
 |:---|:-----------|
@@ -524,7 +524,7 @@ Agent A ไม่สน: ว่า Pipeline มีกี่ขั้นตอน
 | **Auto-Route** | งานส่งต่ออัตโนมัติเมื่อ Condition ครบ |
 | **Scale ได้** | เพิ่ม Department → แค่เพิ่ม Field ใน Schema |
 
-### Negative
+### เชิงลบ
 
 | ผล | รายละเอียด |
 |:---|:-----------|
@@ -532,7 +532,7 @@ Agent A ไม่สน: ว่า Pipeline มีกี่ขั้นตอน
 | **Single Point of Failure** | ถ้า Bus ล้ม → ทั้ง Pipeline หยุด |
 | **Schema แข็ง** | ถ้าต้องเพิ่ม Field ใหม่ → ต้อง Migrate Schema |
 
-### Risk Mitigation
+### การลดความเสี่ยง
 
 | ความเสี่ยง | การป้องกัน |
 |:----------|:-----------|
@@ -543,7 +543,7 @@ Agent A ไม่สน: ว่า Pipeline มีกี่ขั้นตอน
 
 ---
 
-## 11. Implementation Guidelines
+## 11. แนวทางการ Implement
 
 ### ขั้นตอนการ Implement
 
@@ -568,7 +568,7 @@ Agent A ไม่สน: ว่า Pipeline มีกี่ขั้นตอน
 
 ---
 
-## 12. References
+## 12. อ้างอิง
 
 | แหล่ง | เนื้อหา |
 |:------|:--------|

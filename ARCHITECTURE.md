@@ -1,4 +1,4 @@
-# Lab-solocorp-os2.4 — Architecture Overview
+# Lab-solocorp-os2.4 — ภาพรวม Architecture
 
 > ระบบออกแบบ Department Architecture สำหรับ SoloCorp OS
 > เริ่มต้น: 2026-06-26
@@ -18,7 +18,7 @@
 ╚══════════════════════════════════════════╝
 ```
 
-## 🏗️ Two-Tier Architecture (Control vs Data)
+## 🏗️ Two-Tier Architecture (การควบคุม vs ข้อมูล)
 
 ```
 ┌────────────────────────────────────────────────┐
@@ -45,7 +45,7 @@
 └────────────────────────────────────────────────┘
 ```
 
-## 📋 Team Structure
+## 📋 โครงสร้างทีม
 
 ### Architect Department — ทีมของพี่ทรงศักดิ์
 
@@ -82,7 +82,7 @@
 > - 🧭 จัดการ exception → **Exception Triage Agent**
 > - ⏰ รันตาม schedule → **Cron Pipeline Agent**
 
-## 📋 ภาพรวม Profiles (Hierarchy Order)
+## 📋 ภาพรวม Profiles (ลำดับตามลำดับชั้น)
 
 | # | Profile | ชื่อ | รับผิดชอบ | สถานะ |
 |:-:|:--------|:----|:----------|:-----:|
@@ -101,9 +101,9 @@
 | 13 | **Legal** | TBD | กฎหมาย / Compliance | ⏳ |
 | 14 | **Default** | — | Fallback / Base Profile | ✅ |
 
-## 🔗 Source of Truth
+## 🔗 แหล่งข้อมูลหลัก
 
-- **Directory Root:** `/home/drsolodev/projects/Lab-solocorp-os2.4/`
+- **โฟลเดอร์หลัก:** `/home/drsolodev/projects/Lab-solocorp-os2.4/`
 - **Git:** [`Dr-SoloDev/Lab-solocorp-os2.4`](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4) (Private)
 - **Hermes Profiles:** `/home/drsolodev/.hermes/profiles/<NN-name>/`
-- **Versioning:** SemVer ผ่าน CHANGELOG.md + Git tags
+- **การกำหนดเวอร์ชัน:** SemVer ผ่าน CHANGELOG.md + Git tags
