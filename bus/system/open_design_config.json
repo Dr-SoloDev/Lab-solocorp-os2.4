@@ -1,0 +1,49 @@
+{
+  "_comment": "open-design MCP tools: read-only via daemon at http://127.0.0.1:41551",
+  "daemon_url": "http://127.0.0.1:41551",
+
+  "departments": {
+    "design": {
+      "owner": "ครีเอท",
+      "role": "Primary — สร้างและ maintain design",
+      "tools": ["get_active_context", "list_projects", "get_project", "list_files", "get_artifact", "search_files"],
+      "use_cases": [
+        "get_active_context → รู้ว่าตอนนี้เปิดไฟล์อะไรอยู่ใน Open Design",
+        "get_artifact → ดึง design component spec ส่งต่อให้ Engineering",
+        "list_files → ตรวจว่า design asset ครบก่อน handoff"
+      ]
+    },
+    "ui_designer": {
+      "owner": "UI Designer",
+      "role": "Secondary — อ่าน design tokens + component spec",
+      "tools": ["get_artifact", "get_file", "search_files"],
+      "use_cases": [
+        "get_artifact → อ่าน design system (tokens, components)",
+        "get_file → อ่าน CSS/JSX/JSON spec ก่อน implement",
+        "search_files → หา component เฉพาะ เช่น 'Button'"
+      ]
+    },
+    "engineering": {
+      "owner": "ช่างฟูล",
+      "role": "Consumer — อ่าน spec ก่อน implement",
+      "tools": ["get_artifact", "get_file", "search_files"],
+      "use_cases": [
+        "get_artifact → อ่าน design spec ก่อนเขียน component",
+        "search_files → หา design token (colors, spacing)",
+        "get_file → อ่าน layout spec/SVG assets"
+      ]
+    },
+    "qa": {
+      "owner": "QA ทีม",
+      "role": "Verifier — เปรียบ implementation กับ design",
+      "tools": ["get_artifact", "get_file"],
+      "use_cases": [
+        "get_artifact → ดึง expected design state เพื่อ pixel-perfect check",
+        "get_file → compare design spec กับ implementation จริง"
+      ]
+    }
+  },
+
+  "restricted_departments": ["cfo", "sales", "legal", "web3", "support"],
+  "_restriction_reason": "ไม่ต้องการ design data — ลด noise"
+}
