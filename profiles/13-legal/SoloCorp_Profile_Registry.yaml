@@ -1,0 +1,138 @@
+# SoloCorp Profile Registry
+# จัดทำโดย: Legal (คุณตุลย์) — Head of Legal & Governance
+# อัปเดตล่าสุด: 2026-06-22
+# ตามนโยบาย SoloCorp Profile Governance Policy v1.0
+# แก้ไขรอบ: Profile Cleanup Phase 1 — arch deleted, mkt→cmo, changful→engineering, ui-designer created
+
+profiles:
+  - name: ceo
+    status: active
+    owner: "CEO (เทอโบ)"
+    department: Executive
+    org_chart_position: CEO
+    config_exists: true
+    profile_yaml_exists: true
+    soul_exists: true
+    compliance: compliant
+    note: ""
+
+  - name: cfo
+    status: active
+    owner: "CFO (meetoo/หญิง/ค่ะ)"
+    department: Finance
+    org_chart_position: CFO
+    config_exists: true
+    profile_yaml_exists: true
+    soul_exists: true
+    compliance: compliant
+    note: ""
+
+  - name: cmo
+    status: active
+    owner: "CMO (มาร์ค)"
+    department: Marketing
+    org_chart_position: CMO
+    config_exists: true
+    profile_yaml_exists: false
+    soul_exists: true
+    compliance: compliant
+    note: "RENAMED from mkt. profile_name = cmo ตรงกับตำแหน่ง CMO ใน Org Chart"
+
+  - name: mkt
+    status: alias
+    owner: "CMO (มาร์ค)"
+    department: Marketing
+    org_chart_position: CMO
+    config_exists: true
+    profile_yaml_exists: false
+    soul_exists: true
+    compliance: compliant
+    note: "SYMLINK ALIAS → cmo. ใช้งานผ่าน mkt ได้เหมือนเดิม (backward compatible)"
+
+  - name: architect
+    status: active
+    owner: "Arch (คุณวุฒิ)"
+    department: Architecture
+    org_chart_position: Architect
+    config_exists: true
+    profile_yaml_exists: false
+    soul_exists: false
+    compliance: partially_compliant
+    note: "ACTION: ต้องเพิ่ม profile.yaml และ SOUL.md ภายใน 30 วัน"
+
+  - name: orchestrator
+    status: active
+    owner: "Orch (พี่ทรงศักดิ์)"
+    department: Orchestration
+    org_chart_position: Orchestrator
+    config_exists: true
+    profile_yaml_exists: false
+    soul_exists: false
+    compliance: partially_compliant
+    note: "ACTION: ต้องเพิ่ม profile.yaml และ SOUL.md ภายใน 30 วัน"
+
+  - name: legal
+    status: active
+    owner: "Legal (ตุลย์)"
+    department: Legal & Governance
+    org_chart_position: Legal
+    config_exists: true
+    profile_yaml_exists: true
+    soul_exists: true
+    compliance: compliant
+    note: "Policy owner"
+
+  - name: design
+    status: active
+    owner: "Design (ครีเอท)"
+    department: Creative
+    org_chart_position: Design
+    config_exists: true
+    profile_yaml_exists: false
+    soul_exists: false
+    compliance: partially_compliant
+    note: "ACTION: ต้องเพิ่ม profile.yaml และ SOUL.md ภายใน 30 วัน"
+
+  - name: engineering
+    status: active
+    owner: "Engineering (ช่างฟูล)"
+    department: Engineering
+    org_chart_position: Engineering
+    config_exists: true
+    profile_yaml_exists: false
+    soul_exists: true
+    compliance: partially_compliant
+    note: "RENAMED from changful. profile_name = engineering ตรงกับ Department Name ตาม Naming Standard"
+
+  - name: changful
+    status: alias
+    owner: "Engineering (ช่างฟูล)"
+    department: Engineering
+    org_chart_position: Engineering
+    config_exists: true
+    profile_yaml_exists: false
+    soul_exists: true
+    compliance: partially_compliant
+    note: "SYMLINK ALIAS → engineering. ใช้งานผ่าน changful ได้เหมือนเดิม (backward compatible)"
+
+  - name: ui-designer
+    status: active
+    owner: "UI/UX Design (ui-designer)"
+    department: UI/UX Design
+    org_chart_position: UI/UX Designer
+    config_exists: true
+    profile_yaml_exists: false
+    soul_exists: true
+    compliance: compliant
+    note: "CREATED: profile ใหม่ สำหรับ UI/UX Designer ตาม Org Chart"
+
+  - name: arch
+    status: deleted
+    owner: "NONE"
+    department: NONE
+    org_chart_position: NONE
+    config_exists: false
+    profile_yaml_exists: false
+    soul_exists: false
+    compliance: deleted
+    note: "DELETED: zombie profile — ไม่มี config.yaml, directory ถูกลบแล้ว (backup อยู่ใน ~/.hermes/trash/)"

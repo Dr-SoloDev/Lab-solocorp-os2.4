@@ -1,0 +1,28 @@
+# SoloCorp Routing Manifest — CFO
+# version: 1.0.0
+
+always_read:
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
+  - skills/solocorp/routing.yaml
+
+tasks:
+  - id: financial-analysis
+    label: วิเคราะห์การเงิน
+    route: CFO — งบประมาณ, รายรับ, รายจ่าย
+    trigger_examples:
+      - การเงิน
+      - budget
+      - revenue
+      - forecast
+    route_to: cfo
+
+  - id: market-research
+    label: วิเคราะห์ตลาด / การลงทุน
+    route: CFO — market data, crypto trends, investment
+    trigger_examples:
+      - ตลาด
+      - investment
+      - polymarket
+    route_to: cfo
+    skills_hint: polymarket, alphaear

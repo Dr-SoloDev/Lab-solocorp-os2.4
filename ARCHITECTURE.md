@@ -101,6 +101,50 @@
 | 13 | **Legal** | TBD | กฎหมาย / Compliance | ⏳ |
 | 14 | **Default** | — | Fallback / Base Profile | ✅ |
 
+## 🔁 Loop Runner (v0.5.0)
+
+Auto-pilot loops ที่ execute จริง — ไม่ใช่แค่ rule ใน SOUL.md
+
+```
+loop_runner/
+├── state.py          ← SQLite: last_run, failures per loop
+├── runner.py         ← base Loop class (interval + execute)
+├── main.py           ← cron entry point
+└── loops/
+    ├── daily_brief.py        L1 — CEO morning report (finance+brain)
+    ├── subscription_audit.py L4 — CFO monthly sub scan
+    └── brain_auto_commit.py  L4 — auto-commit brain/memory files
+```
+
+**Cron:** `*/30 * * * * python3 -m loop_runner.main`
+
+| Loop | Trust | Interval | Action |
+|------|-------|----------|--------|
+| daily_brief | L1 | 20h | finance+brain → stdout report |
+| subscription_audit | L4 | 30d | scan recurring charges |
+| brain_auto_commit | L4 | 1h | git commit brain files only |
+
+→ ADR: `decisions/ADR-005-loop-runner.md`
+
+---
+
+## 🎨 Open Design Integration (v0.5.0)
+
+Read-only bridge จาก Central Bus → Open Design daemon (port 41551)
+
+**Permission model:**
+| Department | Tools allowed |
+|-----------|---------------|
+| design | ทุก tool (6 tools) |
+| ui_designer | get_artifact, get_file, search_files |
+| engineering | get_artifact, get_file, search_files |
+| qa | get_artifact, get_file |
+| cfo/sales/legal/web3/support | ❌ blocked |
+
+Files: `central_bus/open_design.py`, `bus/system/open_design_config.json`
+
+---
+
 ## 🔗 แหล่งข้อมูลหลัก
 
 - **โฟลเดอร์หลัก:** `/home/drsolodev/projects/Lab-solocorp-os2.4/`

@@ -1,0 +1,59 @@
+# SoloCorp Routing Manifest — Support
+# version: 1.0.0
+
+tasks:
+  - id: ticket-handling
+    label: รับเรื่อง / ตอบคำถามลูกค้า
+    route: Support — ticket triage, SLA, multi-channel
+    trigger_examples:
+      - ticket
+      - support
+      - ช่วยด้วย
+      - ปัญหา
+      - ติดต่อ
+      - help
+    route_to: support
+
+  - id: customer-onboarding
+    label: Onboarding ลูกค้าใหม่
+    route: Support — setup assistance, training, adoption
+    trigger_examples:
+      - onboarding
+      - เริ่มใช้
+      - setup
+      - แนะนำการใช้งาน
+    route_to: support
+    skills_hint: solodev-continuity
+
+  - id: issue-escalation
+    label: ส่งต่อปัญหา / Escalation
+    route: Support — severity classification, handoff to engineering/legal
+    trigger_examples:
+      - escalate
+      - ส่งต่อ
+      - P0
+      - urgent
+      - critical
+    route_to: support
+
+  - id: knowledge-base
+    label: จัดการ Knowledge Base
+    route: Support — FAQ, runbook, self-service docs
+    trigger_examples:
+      - knowledge base
+      - FAQ
+      - runbook
+      - คู่มือ
+      - documentation
+    route_to: support
+
+  - id: customer-feedback
+    label: วัดความพึงพอใจ / CSAT
+    route: Support — survey, NPS, feedback loop
+    trigger_examples:
+      - CSAT
+      - NPS
+      - feedback
+      - ความพึงพอใจ
+      - survey
+    route_to: support

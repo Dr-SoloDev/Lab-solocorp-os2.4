@@ -1,0 +1,32 @@
+# SoloCorp Routing Manifest — UI Designer
+# version: 1.0.0
+
+tasks:
+  - id: ui-design
+    label: ออกแบบ UI
+    route: UI Designer — wireframe, mockup, prototype
+    trigger_examples:
+      - UI design
+      - interface
+      - mockup
+      - prototype
+    route_to: ui-designer
+    skills_hint: sketch, claude-design
+
+  - id: design-system
+    label: Design system
+    route: UI Designer — component library, style guide
+    trigger_examples:
+      - design system
+      - component library
+      - style guide
+    route_to: ui-designer
+
+  - id: ux-flow
+    label: ออกแบบ UX flow
+    route: UI Designer — user journey, interaction
+    trigger_examples:
+      - UX
+      - user flow
+      - interaction design
+    route_to: ui-designer

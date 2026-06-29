@@ -1,0 +1,33 @@
+# SoloCorp Routing Manifest — QA
+# version: 1.0.0
+
+tasks:
+  - id: test-plan
+    label: วางแผนทดสอบ
+    route: QA — test strategy, test cases
+    trigger_examples:
+      - test plan
+      - test case
+      - testing strategy
+    route_to: qa
+    skills_hint: TDD, systematic-debugging
+
+  - id: bug-report
+    label: รายงานบั๊ก / ข้อบกพร่อง
+    route: QA — ตรวจสอบ, รายงาน, track
+    trigger_examples:
+      - QA
+      - quality
+      - ตรวจสอบคุณภาพ
+      - bug report
+    route_to: qa
+
+  - id: regression
+    label: ทดสอบ regression
+    route: QA — ensure no regression after change
+    trigger_examples:
+      - regression
+      - E2E test
+      - smoke test
+    route_to: qa
+    skills_hint: dogfood

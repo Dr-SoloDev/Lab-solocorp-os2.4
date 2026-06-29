@@ -1,0 +1,47 @@
+# SoloCorp Routing Manifest — Engineering
+# version: 1.0.0
+
+always_read:
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
+  - skills/solocorp/routing.yaml
+
+tasks:
+  - id: feature-implementation
+    label: พัฒนา feature ใหม่
+    route: Engineering — เขียน code ตาม spec
+    trigger_examples:
+      - implement
+      - สร้าง feature
+      - develop
+      - write code
+    route_to: engineering
+
+  - id: bug-fix
+    label: แก้บั๊ก
+    route: Engineering — debug และ fix
+    trigger_examples:
+      - bug
+      - error
+      - ข้อผิดพลาด
+      - not working
+    route_to: engineering
+
+  - id: code-review
+    label: ตรวจสอบโค้ด
+    route: Engineering — review PR
+    trigger_examples:
+      - review code
+      - ตรวจสอบ
+    route_to: engineering
+
+  - id: deployment
+    label: Deploy / CI/CD
+    route: Engineering — build, deploy, pipeline
+    trigger_examples:
+      - deploy
+      - release
+      - CI/CD
+      - build
+    route_to: engineering
+    skills_hint: wrangler, cloudflare

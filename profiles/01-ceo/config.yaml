@@ -1,0 +1,33 @@
+custom_providers:
+- name: opencode-zen
+  base_url: http://127.0.0.1:4011/zen/v1
+  
+  key_env: OPENCODE_ZEN_API_KEY
+  api_key_env: OPENCODE_ZEN_API_KEY
+  api_mode: openai
+  transport: openai
+  discover_models: false
+  model: deepseek-v4-flash-free
+  models:
+    deepseek-v4-flash-free:
+      context_length: 128000
+model:
+  default: deepseek-v4-flash-free
+  provider: custom:opencode-zen
+model_aliases:
+  deepseek-free:
+    model: deepseek-v4-flash-free
+    provider: custom:opencode-zen
+agent:
+  max_turns: 60
+  reasoning_effort: medium
+  system_prompt_file: /home/drsolodev/.hermes/agents/hermes-ceo/SOUL.md
+terminal:
+  backend: local
+  cwd: .
+  timeout: 180
+onboarding:
+  seen:
+    openclaw_residue_cleanup: true
+    tool_progress_prompt: true
+    busy_input_prompt: true

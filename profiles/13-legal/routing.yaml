@@ -1,0 +1,37 @@
+# SoloCorp Routing Manifest — Legal
+# version: 1.0.0
+
+always_read:
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
+  - skills/solocorp/routing.yaml
+
+tasks:
+  - id: license-review
+    label: ตรวจสอบ license
+    route: Legal — license compliance audit
+    trigger_examples:
+      - license
+      - compliance
+      - ลิขสิทธิ์
+    route_to: legal
+
+  - id: contract-draft
+    label: ร่างสัญญา / เอกสารกฎหมาย
+    route: Legal — contract, agreement, TOS
+    trigger_examples:
+      - สัญญา
+      - contract
+      - TOS
+      - privacy policy
+    route_to: legal
+
+  - id: governance
+    label: Governance / compliance
+    route: Legal — PDPA, GDPR, policy
+    trigger_examples:
+      - governance
+      - compliance
+      - policy
+      - regulation
+    route_to: legal

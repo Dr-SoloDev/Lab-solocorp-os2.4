@@ -1,0 +1,37 @@
+# SoloCorp Routing Manifest — Orchestrator
+# version: 1.0.0
+
+always_read:
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
+  - skills/solocorp/routing.yaml
+
+tasks:
+  - id: workflow-design
+    label: ออกแบบ workflow / pipeline
+    route: Orchestrator — cron, schedule, automation
+    trigger_examples:
+      - workflow
+      - pipeline
+      - cron
+      - schedule
+    route_to: orchestrator
+
+  - id: monitoring
+    label: ตรวจสอบระบบ
+    route: Orchestrator — log, trace, status
+    trigger_examples:
+      - monitor
+      - status
+      - ตรวจสอบระบบ
+    route_to: orchestrator
+
+  - id: infrastructure
+    label: จัดการ infrastructure
+    route: Orchestrator — config, setup, deploy infra
+    trigger_examples:
+      - infrastructure
+      - setup
+      - configure
+    route_to: orchestrator
+    skills_hint: hermes-ops, wrangler

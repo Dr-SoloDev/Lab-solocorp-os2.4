@@ -1,0 +1,26 @@
+# Routing — Head of Web3 (อัยวา)
+always_read:
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/14-web3/SOUL.md
+
+tasks:
+  - id: smart-contract
+    trigger_examples: [solidity, anchor, contract, deploy]
+    route_to: web3
+    skills_hint: team-smart-contract-engineer
+
+  - id: security-audit
+    trigger_examples: [audit, ตรวจสอบ, exploit, vulnerability]
+    route_to: web3
+    skills_hint: team-blockchain-security-auditor
+
+  - id: defi-research
+    trigger_examples: [tokenomics, defi, protocol, TVL]
+    route_to: web3
+    skills_hint: team-defi-protocol-analyst
+
+  - id: solana-dev
+    trigger_examples: [solana, anchor, rust, PDA, devnet]
+    route_to: web3
+    skills_hint: team-solana-developer

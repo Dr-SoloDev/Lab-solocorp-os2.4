@@ -4,6 +4,30 @@
 
 ---
 
+## v0.5.0 (2026-06-28)
+
+### Added
+- **loop_runner/** — Loop Engineering infrastructure (inspired by cobusgreyling/loop-engineering)
+  - `state.py` — SQLite persistent state (last_run, failures per loop)
+  - `runner.py` — base Loop class with `should_run()` / `execute()` + failure tracking
+  - `loops/daily_brief.py` — L1: CEO morning brief (finance + brain → report, runway warning)
+  - `loops/subscription_audit.py` — L4: CFO monthly subscription scan
+  - `loops/brain_auto_commit.py` — L4: auto-commit brain/memory files when git changes detected
+  - `main.py` — cron entry point (`*/30 * * * * python3 -m loop_runner.main`)
+- **central_bus/open_design.py** — Read-only bridge to Open Design daemon (port 41551)
+  - Department permission guard (design/ui_designer/engineering/qa)
+  - Convenience wrappers: `get_artifact`, `get_file`, `search_files`, `list_files`
+- **bus/system/open_design_config.json** — dept→tools mapping for open-design MCP
+
+### Fixed
+- `daily_brief` loop parser: fallback finance/brain scripts return Thai text (not JSON) — switched to regex extraction
+- Runway critical alert: triggers 🚨 when runway < 6 months
+
+### Cleared
+- Finance DB reset (old test data removed — 5 transactions, 3 projects)
+
+---
+
 ## v0.4.0 (2026-06-27)
 
 ### Changed
@@ -94,15 +118,32 @@
 - `awesome-ai-agents-2026` repo — cloned และวิจัยแล้ว
 - `agency-agents` — 6 ไฟล์ที่เกี่ยวข้อง: jira-steward, compliance-auditor, workflow-architect, agents-orchestrator, chief-of-staff, workflow-optimizer
 
+## v0.5.0 (2026-06-28)
+
+### Added
+- **14-web3 — อัยวา (Head of Web3 & DeFi)** — `profiles/14-web3/SOUL.md`
+  - Identity: อัยวา — Head of Web3 & DeFi, รายงานตรงต่อ CEO (เทอโบ)
+  - 3 Pillars: ไม่ทำงานเอง, Security First, Ownership Mindset
+  - Rules: Security audit ก่อน deploy เสมอ, ทุก on-chain decision ผ่าน CFO ก่อน
+- **ทีมของอัยวา — 4 Web3 Specialist Profiles** `profiles/14-web3/aywa/team/`
+  - **⛓️ Smart Contract Engineer** (01) — Solidity/Anchor, gas optimization, upgrade patterns
+  - **🛡️ Blockchain Security Auditor** (02) — Manual audit + Slither/Mythril/Echidna + Attack simulation
+  - **📊 DeFi Protocol Analyst** (03) — Protocol research, tokenomics design, on-chain analytics
+  - **⚡ Solana Developer** (04) — Anchor programs, Web3.js/Solana.js, devnet/mainnet deploy
+- **Sync 13 Department Profiles** จาก Hermes — SOUL.md สำหรับทุก Department Head
+- **ทีมของทุกแผนก** — เพิ่ม Operational Team Agents ใน 11 แผนก (CFO, CMO, Orchestrator, Product, Engineering, Design, UI, QA, Sales, Support, Legal)
+- **INDEX.md** — เพิ่ม Section ทีมทุกแผนก + ลิงก์ครบ 14 Department
+
+### Changed
+- Agent names sync ให้ตรงกับ Hermes: CFO=meetoo, CMO=มาร์ค, Legal=ตุลย์
+- เอกสารทั้งหมดแปลเป็นภาษาไทย
+
+---
+
 ## Roadmap
 
 | เวอร์ชั่น | สิ่งที่จะทำ |
 |:---------|:-----------|
-| v0.4.0 | ออกแบบ Profile Head of Marketing |
-| v0.5.0 | ออกแบบ Profile Head of Engineering |
-| v0.6.0 | ออกแบบ Profile Head of Design |
-| v0.7.0 | ออกแบบ Profile Head of Finance |
-| v0.8.0 | ออกแบบ Profile Head of QA |
-| v0.9.0 | ออกแบบ Profile Head of Legal |
-| v0.10.0 | ออกแบบ Profile Head of Sales |
-| v1.0.0 | Release — ทุก Profile พร้อมใช้งาน |
+| v0.6.0 | Central Bus Agent + Context Optimizer (Phase 2) |
+| v0.7.0 | Pipeline Dashboard + Compliance Gate (Phase 3) |
+| v1.0.0 | Implement Profiles จริงใน Hermes — ทุก Department พร้อมใช้งาน |

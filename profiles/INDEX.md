@@ -21,31 +21,31 @@
 
 | # | Profile | ชื่อ | สถานะ |
 |:-:|:--------|:----|:-----:|
-| `01-ceo` | **CEO** | [เทอโบ ไชยศรีรัมย์ (Turbo)](../01-ceo/SOUL.md) | 🟢 |
-| `02-cfo` | **CFO** | [meetoo](02-cfo/SOUL.md) | 🟡 |
-| `03-cmo` | **CMO** | [มาร์ค](03-cmo/SOUL.md) | 🟡 |
+| `01-ceo` | **CEO** | [เทอโบ ไชยศรีรัมย์ (Turbo)](01-ceo/SOUL.md) | 🟢 |
+| `02-cfo` | **CFO** | [meetoo](02-cfo/SOUL.md) | 🟢 |
+| `03-cmo` | **CMO** | [มาร์ค](03-cmo/SOUL.md) | 🟢 |
 
 ## System / Pipeline
 
 | # | Profile | ชื่อ | สถานะ |
 |:-:|:--------|:----|:-----:|
-| `04-orchestrator` | **Orchestrator** | [Hermes-Orchestrator](04-orchestrator/SOUL.md) | 🟡 |
+| `04-orchestrator` | **Orchestrator** | [Hermes-Orchestrator](04-orchestrator/SOUL.md) | 🟢 |
 
 ## Department Heads
 
 | # | Profile | หัวหน้าแผนก | รับผิดชอบ | สถานะ |
 |:-:|:--------|:-----------|:----------|:-----:|
-| `05-architect` | **Architect** | [พี่ทรงศักดิ์ (Songsak)](05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | ✅ |
-|| `06-product` | **Product** | [โปรดัค](06-product/SOUL.md) | ผลิตภัณฑ์ / Feature / Roadmap | 🟡 |
-|| `07-engineering` | **Engineering** | [ช่างฟูล](07-engineering/SOUL.md) | พัฒนา / โค้ด / เทคโนโลยี | 🟡 |
-|| `08-design` | **Design** | [ครีเอท](08-design/SOUL.md) | ออกแบบ / UI / Brand Visual | 🟡 |
-|| `09-ui-designer` | **UI Designer** | [UI-Designer](09-ui-designer/SOUL.md) | UI Design เฉพาะทาง | 🟡 |
-|| `10-qa` | **QA** | [QA-ทีม](10-qa/SOUL.md) | ทดสอบ / คุณภาพ / Evidence | 🟡 |
-|| `11-sales` | **Sales** | [เซลส์](11-sales/SOUL.md) | ขาย / ลูกค้า / รายได้ | 🟡 |
-|| `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | ช่วยเหลือลูกค้า | 🟡 |
-|| `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | กฎหมาย / Compliance | 🟡 |
+| `05-architect` | **Architect** | [พี่ทรงศักดิ์ (Songsak)](05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | 🟢 |
+|| `06-product` | **Product** | [โปรดัค](06-product/SOUL.md) | ผลิตภัณฑ์ / Feature / Roadmap | 🟢 |
+|| `07-engineering` | **Engineering** | [ช่างฟูล](07-engineering/SOUL.md) | พัฒนา / โค้ด / เทคโนโลยี | 🟢 |
+|| `08-design` | **Design** | [ครีเอท](08-design/SOUL.md) | ออกแบบ / UI / Brand Visual | 🟢 |
+|| `09-ui-designer` | **UI Designer** | [UI-Designer](09-ui-designer/SOUL.md) | UI Design เฉพาะทาง | 🟢 |
+|| `10-qa` | **QA** | [QA-ทีม](10-qa/SOUL.md) | ทดสอบ / คุณภาพ / Evidence | 🟢 |
+|| `11-sales` | **Sales** | [เซลส์](11-sales/SOUL.md) | ขาย / ลูกค้า / รายได้ | 🟢 |
+|| `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | ช่วยเหลือลูกค้า | 🟢 |
+|| `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | กฎหมาย / Compliance | 🟢 |
 
-|| `14-web3` | **Web3 & DeFi** | [อัยวา](14-web3/SOUL.md) | Blockchain/DeFi/Solana | 🔴 |
+| `14-web3` | **Web3 & DeFi** | [อัยวา](14-web3/SOUL.md) | Blockchain/DeFi/Solana | 🟢 |
 
 ## Base Profile
 
@@ -167,3 +167,12 @@
 | 01 | [compliance-auditor](13-legal/tulya/team/01-compliance-auditor.SOUL.md) | 🔴 |
 | 02 | [legal-document-review](13-legal/tulya/team/02-legal-document-review.SOUL.md) | 🔴 |
 | 03 | [legal-client-intake](13-legal/tulya/team/03-legal-client-intake.SOUL.md) | 🔴 |
+
+### 14 — Web3 (อัยวา)
+
+| # | Agent | สถานะ |
+|:-:|:------|:-----:|
+| 01 | [smart-contract-engineer](14-web3/aywa/team/01-smart-contract-engineer.SOUL.md) | 🟡 |
+| 02 | [blockchain-security-auditor](14-web3/aywa/team/02-blockchain-security-auditor.SOUL.md) | 🟡 |
+| 03 | [defi-protocol-analyst](14-web3/aywa/team/03-defi-protocol-analyst.SOUL.md) | 🟡 |
+| 04 | [solana-developer](14-web3/aywa/team/04-solana-developer.SOUL.md) | 🟡 |

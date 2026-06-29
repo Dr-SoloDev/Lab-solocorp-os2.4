@@ -15,3 +15,22 @@ Thumbs.db
 tmp/
 temp/
 *.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Build artifacts
+dist/
+build/
+
+# IDE / tools
+.opencode/
+.hermes/
+
+# Hermes runtime
+.env*
+.skills_prompt_snapshot.json

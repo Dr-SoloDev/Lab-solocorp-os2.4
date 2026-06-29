@@ -1,0 +1,78 @@
+# SoloCorp Routing Manifest — Sales
+# version: 1.0.0
+
+tasks:
+  - id: outbound-prospecting
+    label: หาลูกค้าใหม่ / Outbound
+    route: Sales — ICP, lead research, outreach sequence
+    trigger_examples:
+      - หาลูกค้า
+      - prospect
+      - outbound
+      - lead generation
+      - outreach
+    route_to: sales
+
+  - id: deal-strategy
+    label: วางกลยุทธ์ปิดดีล
+    route: Sales — MEDDIC, stakeholder mapping, win strategy
+    trigger_examples:
+      - deal strategy
+      - win plan
+      - competitive
+      - qualification
+      - MEDDIC
+    route_to: sales
+
+  - id: proposal
+    label: เขียนข้อเสนอ / Proposal
+    route: Sales — custom proposal, pricing, objection handling
+    trigger_examples:
+      - proposal
+      - quote
+      - ข้อเสนอ
+      - pricing
+    route_to: sales
+
+  - id: sales-engineering
+    label: สาธิตสินค้า / Technical demo
+    route: Sales — demo, PoC, solution alignment
+    trigger_examples:
+      - demo
+      - technical sell
+      - PoC
+      - proof of concept
+    route_to: sales
+    skills_hint: agenda-planning
+
+  - id: account-management
+    label: บริหารลูกค้าปัจจุบัน
+    route: Sales — expansion, upsell, QBR, retention
+    trigger_examples:
+      - account
+      - upsell
+      - expansion
+      - QBR
+      - retention
+    route_to: sales
+
+  - id: pipeline-management
+    label: จัดการ Pipeline / CRM
+    route: Sales — forecast, velocity, CRM hygiene
+    trigger_examples:
+      - pipeline
+      - forecast
+      - CRM
+      - sales report
+      - pipeline review
+    route_to: sales
+
+  - id: sales-coaching
+    label: ฝึก Sales / Coaching
+    route: Sales — deal review, win/loss analysis, skill dev
+    trigger_examples:
+      - coaching
+      - win loss
+      - deal review
+      - สอนทีมขาย
+    route_to: sales

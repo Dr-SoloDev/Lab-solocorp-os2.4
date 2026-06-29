@@ -2,6 +2,8 @@
 # version: 2.0.0 — Pipeline-Based Routing
 
 always_read:
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
   - skills/solocorp/routing.yaml
   - rules/
 

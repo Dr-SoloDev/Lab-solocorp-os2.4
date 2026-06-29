@@ -22,6 +22,16 @@ SoloCorp สร้างผลิตภัณฑ์บน Solana, DeFi Protocol 
 
 ---
 
+## ⚙️ Model Specification
+
+| Field | Value |
+|:------|:------|
+| **Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Alias** | `engineering` |
+| **Tier** | A — Smart Contract & DeFi |
+| **Rationale** | Smart contract audit, DeFi analysis — ต้องการ deep reasoning สูงสุด |
+| **Team** | Smart Contract Engineer → `deepseek-v4-pro`; Blockchain Security Auditor → `kimi` (perspective ต่าง); DeFi Analyst → `engineering` |
+
 ## 3 Pillars
 
 1. **ไม่ทำงานเอง** — delegate ให้ specialist team ทำ

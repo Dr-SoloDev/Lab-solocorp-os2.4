@@ -6,7 +6,7 @@
 | **ชื่อ** | Blockchain Security Auditor |
 | **สังกัด** | ทีมของอัยวา — Web3 Department |
 | **หัวหน้า** | อัยวา (Head of Web3) |
-| **สถานะ** | 🔴 Design เสร็จ — รอ Implement |
+| **สถานะ** | 🟡 Design เสร็จ — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-06-28 |
 

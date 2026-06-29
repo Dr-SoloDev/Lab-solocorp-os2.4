@@ -1,0 +1,98 @@
+import shutil
+import subprocess
+from datetime import timedelta
+from pathlib import Path
+
+from ..runner import Loop
+
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from central_bus import queue, state
+
+PROJECT_PATHS = {
+    "bangkok-pos": "/home/drsolodev/projects/bangkok-pos",
+}
+
+AGENT_PERSONA = {
+    "engineering": "คุณคือ ช่างฟูล (Head of Engineering) ของ SoloCorp — full-stack developer",
+    "ui_designer": "คุณคือ UI Designer ของ SoloCorp — สร้าง component และ wireframe",
+    "qa":          "คุณคือ QA ทีม ของ SoloCorp — ทดสอบและรายงาน bug",
+    "design":      "คุณคือ ครีเอท (Creative Director) ของ SoloCorp — ออกแบบ UI/UX",
+    "product":     "คุณคือ โปรดัค (Product Manager) ของ SoloCorp — เขียน PRD และ spec",
+}
+
+# Map department → Hermes model_alias (from config.yaml)
+# Used when routing via Hermes; falls back to Claude CLI if hermes unavailable
+AGENT_MODEL = {
+    "engineering": "ds-pro",
+    "ui_designer": "qwen",
+    "qa":          "ds-flash",
+    "design":      "qwen",
+    "product":     "qwen",
+}
+
+MAX_TASKS_PER_RUN = 2  # conservative — each task may take minutes
+
+
+class PipelineExecutorLoop(Loop):
+    loop_id = "pipeline_executor"
+    interval = timedelta(minutes=30)
+    trust_level = 4  # L4 — auto-execute without approval
+    model_hint = "glm-5.2"  # cron scheduler sub-agent; individual tasks use AGENT_MODEL per dept
+
+    def run(self) -> str:
+        executed = []
+        for priority in ("high", "normal"):
+            while len(executed) < MAX_TASKS_PER_RUN:
+                msg = queue.dequeue(priority)
+                if not msg:
+                    break
+                result = self._dispatch(msg)
+                executed.append(f"[{msg.to_dept}] {msg.payload.get('task_id', '?')}: {result[:120]}")
+
+        if not executed:
+            return "⏭ pipeline_executor: queue empty — nothing to run"
+        return "✅ pipeline_executor ran " + str(len(executed)) + " tasks:\n" + "\n".join(executed)
+
+    def _dispatch(self, msg) -> str:
+        persona = AGENT_PERSONA.get(msg.to_dept, f"คุณคือ {msg.to_dept} agent ของ SoloCorp")
+        model_alias = AGENT_MODEL.get(msg.to_dept, "ds-flash")
+        proj_path = PROJECT_PATHS.get(msg.project_id)
+        task_id = msg.payload.get("task_id", "")
+        desc = msg.payload.get("description", "")
+
+        prompt = (
+            f"{persona}\n\n"
+            f"Project: {msg.project_id}\n"
+            f"Task {task_id}: {desc}\n\n"
+            f"ทำ task นี้ให้เสร็จสมบูรณ์ รายงานผลเมื่อเสร็จ"
+        )
+
+        # Try Hermes first (routes through department's assigned model),
+        # fallback to Claude CLI
+        hermes = shutil.which("hermes")
+        if hermes:
+            r = subprocess.run(
+                [hermes, "chat", "-q", prompt, "-Q", "--yolo",
+                 "-m", model_alias],
+                capture_output=True, text=True, timeout=300,
+                cwd=proj_path,
+            )
+            output = (r.stdout or r.stderr or "no output").strip()
+        else:
+            r = subprocess.run(
+                ["claude", "--dangerously-skip-permissions", "-p", prompt],
+                capture_output=True, text=True, timeout=300,
+                cwd=proj_path,
+            )
+            output = (r.stdout or r.stderr or "no output").strip()
+
+        # Persist artifact
+        artifact_dir = (
+            Path(__file__).parent.parent.parent
+            / "bus" / "projects" / msg.project_id / "artifacts"
+        )
+        artifact_dir.mkdir(parents=True, exist_ok=True)
+        (artifact_dir / f"{msg.trace_id}.txt").write_text(output)
+
+        return output

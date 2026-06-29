@@ -1,0 +1,42 @@
+# SoloCorp Routing Manifest — Product
+# version: 1.0.0
+
+tasks:
+  - id: requirement
+    label: เก็บ requirement / spec feature
+    route: Product — user story, acceptance criteria
+    trigger_examples:
+      - requirement
+      - feature spec
+      - user story
+      - PRD
+    route_to: product
+    skills_hint: plan, web-search
+
+  - id: roadmap
+    label: วางแผน roadmap
+    route: Product — prioritization, timeline
+    trigger_examples:
+      - roadmap
+      - priority
+      - backlog
+    route_to: product
+
+  - id: user-research
+    label: วิจัยผู้ใช้
+    route: Product — interview, survey, feedback
+    trigger_examples:
+      - user research
+      - customer feedback
+      - survey
+    route_to: product
+
+  - id: competitive-analysis
+    label: วิเคราะห์คู่แข่ง
+    route: Product — competitor feature comparison
+    trigger_examples:
+      - competitor
+      - คู่แข่ง
+      - market analysis
+    route_to: product
+    skills_hint: niche-research, blogwatcher

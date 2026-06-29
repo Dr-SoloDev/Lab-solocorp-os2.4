@@ -1,0 +1,40 @@
+# SoloCorp Routing Manifest — CEO
+# Single Source of Truth: defines who handles what
+# version: 1.0.0
+
+always_read:
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
+  - skills/solocorp/routing.yaml
+  - skills/web-search/SKILL.md
+
+tasks:
+  - id: strategic-direction
+    label: กำหนดทิศทางและกลยุทธ์
+    route: CEO — วิเคราะห์ภาพรวม ตัดสินใจเชิงกลยุทธ์
+    trigger_examples:
+      - วางแผน roadmap
+      - strategy
+      - vision
+    route_to: ceo
+    fallback_to: 
+      - architect # technical strategy
+      - cfo # financial strategy
+
+  - id: delegation
+    label: มอบหมายงาน / orchestrate
+    route: CEO — delegate ไปยัง profile ที่เหมาะสม
+    trigger_examples:
+      - เรียกประชุม
+      - kickoff
+      - อนุมัติ
+    route_to: ceo
+
+  - id: vendor-contributor
+    label: ทำงานร่วมกับ Open Source
+    route: CEO — review และ merge PR
+    trigger_examples:
+      - pull request
+      - contribute
+      - open source
+    route_to: ceo

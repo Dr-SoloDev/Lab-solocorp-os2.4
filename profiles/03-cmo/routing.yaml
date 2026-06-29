@@ -1,0 +1,45 @@
+# SoloCorp Routing Manifest — CMO
+# version: 1.0.0
+
+always_read:
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
+  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
+  - skills/solocorp/routing.yaml
+
+tasks:
+  - id: content-creation
+    label: สร้างเนื้อหาการตลาด
+    route: CMO — LinkedIn posts, articles, carousels
+    trigger_examples:
+      - content marketing
+      - LinkedIn post
+      - เขียนบทความ
+    route_to: cmo
+    skills_hint: linkedin-content-creator, content-matrix
+
+  - id: brand-strategy
+    label: วางแผนแบรนด์
+    route: CMO — brand voice, positioning, campaign
+    trigger_examples:
+      - brand strategy
+      - campaign
+      - positioning
+    route_to: cmo
+
+  - id: social-media
+    label: จัดการโซเชียลมีเดีย
+    route: CMO — post, schedule, engagement
+    trigger_examples:
+      - โพสต์
+      - social media
+      - schedule post
+    route_to: cmo
+
+  - id: market-intelligence
+    label: วิจัยตลาด / นิช
+    route: CMO — ตลาดเป้าหมาย, competitor analysis
+    trigger_examples:
+      - วิจัยตลาด
+      - niche research
+      - competitor
+    route_to: cmo
