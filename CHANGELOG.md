@@ -1,6 +1,30 @@
 # Lab-solocorp-os2.4 — Changelog
 
-> เวอร์ชั่นของระบบออกแบบ Department Architecture
+> เวอร์ชั่นของระบบ Department Architecture สำหรับ SoloCorp OS
+
+---
+
+## v0.5.1 (2026-06-30)
+
+### Added
+- **Deploy 14 profiles สู่ Hermes** — ทุก Department Profile มี config.yaml, routing.yaml, skills/ ครบถ้วน
+  - `01-ceo` → `14-web3` พร้อมใช้งานใน Hermes Gateway
+  - Web3 skills: solana-dev reference docs (Anchor, Surfpool, security guides)
+  - .gitignore: 完善 Python/venv/build/Hermes artifacts
+- **pipeline_executor loop** — `loop_runner/loops/pipeline_executor.py` สำหรับคุม pipeline queue
+- **scripts/** — `build-profiles.py`, `pipeline_until_score.py`
+- **tests/** — Phase test suites 1–4
+
+### Changed
+- เอกสารทั้งหมดอัปเดตสถานะ: Design → **Deployed** 🟢
+- ARCHITECTURE.md: ซ่อมลิงก์ตาย `profiles/architect/` → `profiles/05-architect/`
+- README.md: Profiles status 🟡→🟢, เพิ่ม Phase "Deploy to Hermes" และ "Loop Runner"
+- PROJECT.md: File tree สะท้อนโครงสร้างจริง (loop_runner/, scripts/, tests/)
+- CHANGELOG.md Roadmap: v1.0.0 "Implement in Hermes" สำเร็จแล้ว
+
+### Fixed
+- OpenCode-Zen proxy config ถูกลบ (proxy ล่ม ใช้ MaxPlus แทน)
+- session-state-backup cron กลับมาทำงาน正常 (401 resolved)
 
 ---
 
@@ -142,8 +166,13 @@
 
 ## Roadmap
 
-| เวอร์ชั่น | สิ่งที่จะทำ |
-|:---------|:-----------|
-| v0.6.0 | Central Bus Agent + Context Optimizer (Phase 2) |
-| v0.7.0 | Pipeline Dashboard + Compliance Gate (Phase 3) |
-| v1.0.0 | Implement Profiles จริงใน Hermes — ทุก Department พร้อมใช้งาน |
+| เวอร์ชั่น | สิ่งที่จะทำ | สถานะ |
+|:---------|:-----------|:-----:|
+| v0.1–0.2 | Foundation + ADRs + Architecture | ✅ |
+| v0.3 | Pipeline Agents (พี่ทรงศักดิ์ team) | ✅ |
+| v0.4 | Rename Orchestration → Architect | ✅ |
+| v0.5 | 14 Department Profiles + Teams Design | ✅ |
+| **v0.5.1** | **Deploy ทั้งหมดสู่ Hermes + เอกสารปัจจุบัน** | **🟢 Done** |
+| v0.6 | Central Bus Agent + Context Optimizer | 🔴 Next |
+| v0.7 | Pipeline Dashboard + Compliance Gate | ⏳ |
+| v1.0 | Production-ready | ⏳ |

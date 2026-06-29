@@ -36,19 +36,19 @@ Dr.solodev (Human/Owner)
 | ลำดับ | Profile Directory | ชื่อ | สถานะ |
 |:----:|:-----------------|:----|:-----:|
 | 01 | `01-ceo` | เทอโบ CEO | 🟢 |
-| 02 | `02-cfo` | meetoo | 🟡 |
-| 03 | `03-cmo` | มาร์ค | 🟡 |
-| 04 | `04-orchestrator` | Hermes-Orchestrator | 🟡 |
-| 05 | `05-architect` | พี่ทรงศักดิ์ | ✅ |
-| 06 | `06-product` | โปรดัค | 🟡 |
-| 07 | `07-engineering` | ช่างฟูล | 🟡 |
-| 08 | `08-design` | ครีเอท | 🟡 |
-| 09 | `09-ui-designer` | UI-Designer | 🟡 |
-| 10 | `10-qa` | QA-ทีม | 🟡 |
-| 11 | `11-sales` | เซลส์ | 🟡 |
-| 12 | `12-support` | ซัพพอร์ต | 🟡 |
-| 13 | `13-legal` | ตุลย์ | 🟡 |
-| 14 | `14-web3` | อัยวา | 🟡 |
+| 02 | `02-cfo` | meetoo | 🟢 |
+| 03 | `03-cmo` | มาร์ค | 🟢 |
+| 04 | `04-orchestrator` | Hermes-Orchestrator | 🟢 |
+| 05 | `05-architect` | พี่ทรงศักดิ์ | 🟢 |
+| 06 | `06-product` | โปรดัค | 🟢 |
+| 07 | `07-engineering` | ช่างฟูล | 🟢 |
+| 08 | `08-design` | ครีเอท | 🟢 |
+| 09 | `09-ui-designer` | UI-Designer | 🟢 |
+| 10 | `10-qa` | QA-ทีม | 🟢 |
+| 11 | `11-sales` | เซลส์ | 🟢 |
+| 12 | `12-support` | ซัพพอร์ต | 🟢 |
+| 13 | `13-legal` | ตุลย์ | 🟢 |
+| 14 | `14-web3` | อัยวา | 🟢 |
 | — | `default` | Fallback | ✅ |
 
 ## Status
@@ -58,9 +58,10 @@ Dr.solodev (Human/Owner)
 | Foundation (v0.1–0.2) | ADRs + CEO Profile + Architecture | ✅ |
 | Core Sub-agents (v0.3) | 5 Pipeline Agents ของพี่ทรงศักดิ์ | ✅ |
 | All Dept Profiles (v0.5) | 14 Department Heads + ทีมทั้งหมด | ✅ |
+| Deploy to Hermes (v0.5.1) | ทุก Profile Deploy สู่ Hermes Profiles จริง | ✅ |
 | Central Bus (v0.6) | Central Bus Agent + Context Optimizer | 🔴 |
 | Dashboard + Compliance (v0.7) | Pipeline Dashboard + QA Gate | ⏳ |
-| Implement in Hermes (v1.0) | Deploy จริงทุก Profile | ⏳ |
+| Loop Runner (v0.5+) | Cron-based auto-pilot loops ทำงานจริง | 🟢 |
 
 ## Teams
 

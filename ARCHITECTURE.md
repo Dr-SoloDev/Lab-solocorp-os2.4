@@ -69,11 +69,11 @@
 
 | # | Agent | Protocol/Pattern | Mission |
 |:-:|:------|:-----------------|:--------|
-| 1 | [📋 Pipeline Auditor](profiles/architect/phee-thongsak/team/01-pipeline-auditor.SOUL.md) | GNAP + jira-steward + compliance-auditor | ตรวจสอบ audit trail ทุก handoff |
-| 2 | [🗺️ Routing Config Agent](profiles/architect/phee-thongsak/team/02-routing-config-agent.SOUL.md) | GNAP + MagiC + workflow-architect | กำหนดเส้นทาง + circuit breaker |
-| 3 | [🎛️ Monitor Watchdog](profiles/architect/phee-thongsak/team/03-monitor-watchdog.SOUL.md) | model-watchdog + TeamHero + agents-orchestrator | เฝ้าสุขภาพ pipeline real-time |
-| 4 | [🧭 Exception Triage Agent](profiles/architect/phee-thongsak/team/04-exception-triage-agent.SOUL.md) | AXME + MagiC + chief-of-staff + workflow-optimizer | กู้ชีพ pipeline — 80% auto-resolve |
-| 5 | [⏰ Cron Pipeline Agent](profiles/architect/phee-thongsak/team/05-cron-pipeline-agent.SOUL.md) | Temporal + n8n | สั่งรัน pipeline ตาม schedule |
+| 1 | [📋 Pipeline Auditor](profiles/05-architect/phee-thongsak/team/01-pipeline-auditor.SOUL.md) | GNAP + jira-steward + compliance-auditor | ตรวจสอบ audit trail ทุก handoff |
+| 2 | [🗺️ Routing Config Agent](profiles/05-architect/phee-thongsak/team/02-routing-config-agent.SOUL.md) | GNAP + MagiC + workflow-architect | กำหนดเส้นทาง + circuit breaker |
+| 3 | [🎛️ Monitor Watchdog](profiles/05-architect/phee-thongsak/team/03-monitor-watchdog.SOUL.md) | model-watchdog + TeamHero + agents-orchestrator | เฝ้าสุขภาพ pipeline real-time |
+| 4 | [🧭 Exception Triage Agent](profiles/05-architect/phee-thongsak/team/04-exception-triage-agent.SOUL.md) | AXME + MagiC + chief-of-staff + workflow-optimizer | กู้ชีพ pipeline — 80% auto-resolve |
+| 5 | [⏰ Cron Pipeline Agent](profiles/05-architect/phee-thongsak/team/05-cron-pipeline-agent.SOUL.md) | Temporal + n8n | สั่งรัน pipeline ตาม schedule |
 
 > **Key Design**: 5 Agents นี้ไม่ทำงานคนเดียว — พี่ทรงศักดิ์เป็นคนสั่ง แต่ละ Agent มี Mission เฉพาะ:
 > - 📋 ตรวจสอบ **หลัง** handoff → **Pipeline Auditor**
@@ -86,20 +86,21 @@
 
 | # | Profile | ชื่อ | รับผิดชอบ | สถานะ |
 |:-:|:--------|:----|:----------|:-----:|
-| 01 | **CEO** | [เทอโบ (Turbo)](/home/drsolodev/.hermes/profiles/01-ceo/SOUL.md) | Vision / Strategy / Final Decision | 🟢 |
-| 02 | **CFO** | TBD | การเงิน / งบประมาณ / ลงทุน | ⏳ |
-| 03 | **CMO** | TBD | การตลาด / Content / Brand | ⏳ |
-| 04 | **Orchestrator** | TBD | SoloCorp System Pipeline | ⏳ |
-| 05 | **Architect** | [พี่ทรงศักดิ์ (Songsak)](profiles/05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | 🟡 |
-| 06 | **Product** | TBD | ผลิตภัณฑ์ / Feature / Roadmap | ⏳ |
-| 07 | **Engineering** | TBD | พัฒนา / โค้ด / เทคโนโลยี | ⏳ |
-| 08 | **Design** | TBD | ออกแบบ / UI / Brand Visual | ⏳ |
-| 09 | **UI Designer** | TBD | UI Design เฉพาะทาง | ⏳ |
-| 10 | **QA** | TBD | ทดสอบ / คุณภาพ / Evidence | ⏳ |
-| 11 | **Sales** | TBD | ขาย / ลูกค้า / รายได้ | ⏳ |
-| 12 | **Support** | TBD | ช่วยเหลือลูกค้า | ⏳ |
-| 13 | **Legal** | TBD | กฎหมาย / Compliance | ⏳ |
-| 14 | **Default** | — | Fallback / Base Profile | ✅ |
+| 01 | **CEO** | [เทอโบ (Turbo)](profiles/01-ceo/SOUL.md) | Vision / Strategy / Final Decision | 🟢 |
+| 02 | **CFO** | [meetoo](profiles/02-cfo/SOUL.md) | การเงิน / งบประมาณ / ลงทุน | 🟢 |
+| 03 | **CMO** | [มาร์ค](profiles/03-cmo/SOUL.md) | การตลาด / Content / Brand | 🟢 |
+| 04 | **Orchestrator** | [Hermes-Orchestrator](profiles/04-orchestrator/SOUL.md) | SoloCorp System Pipeline | 🟢 |
+| 05 | **Architect** | [พี่ทรงศักดิ์ (Songsak)](profiles/05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | 🟢 |
+| 06 | **Product** | [โปรดัค](profiles/06-product/SOUL.md) | ผลิตภัณฑ์ / Feature / Roadmap | 🟢 |
+| 07 | **Engineering** | [ช่างฟูล](profiles/07-engineering/SOUL.md) | พัฒนา / โค้ด / เทคโนโลยี | 🟢 |
+| 08 | **Design** | [ครีเอท](profiles/08-design/SOUL.md) | ออกแบบ / UI / Brand Visual | 🟢 |
+| 09 | **UI Designer** | [UI-Designer](profiles/09-ui-designer/SOUL.md) | UI Design เฉพาะทาง | 🟢 |
+| 10 | **QA** | [QA-ทีม](profiles/10-qa/SOUL.md) | ทดสอบ / คุณภาพ / Evidence | 🟢 |
+| 11 | **Sales** | [เซลส์](profiles/11-sales/SOUL.md) | ขาย / ลูกค้า / รายได้ | 🟢 |
+| 12 | **Support** | [ซัพพอร์ต](profiles/12-support/SOUL.md) | ช่วยเหลือลูกค้า | 🟢 |
+| 13 | **Legal** | [ตุลย์](profiles/13-legal/SOUL.md) | กฎหมาย / Compliance | 🟢 |
+| 14 | **Web3** | [อัยวา](profiles/14-web3/SOUL.md) | Blockchain / DeFi / Solana | 🟢 |
+| — | **Default** | — | Fallback / Base Profile | ✅ |
 
 ## 🔁 Loop Runner (v0.5.0)
 
