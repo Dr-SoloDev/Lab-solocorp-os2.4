@@ -48,11 +48,15 @@ def get(project_id: str) -> dict:
 
 
 def update_phase(project_id: str, phase: str, status: PhaseStatus, owner: str = "") -> dict:
-    """Update a phase status with optimistic locking via updated_at."""
+    """Update a phase status with sequence validation and optimistic locking."""
+    if phase not in PHASES:
+        raise ValueError(f"Invalid phase '{phase}'. Valid phases: {', '.join(PHASES)}")
     path = _state_path(project_id)
     with open(path, "r+") as f:
         fcntl.flock(f, fcntl.LOCK_EX)
         state = json.load(f)
+        if status != "failed":
+            _validate_phase_transition(state["phases"], phase, status)
         state["phases"][phase]["status"] = status
         if owner:
             state["phases"][phase]["owner"] = owner
@@ -64,6 +68,24 @@ def update_phase(project_id: str, phase: str, status: PhaseStatus, owner: str = 
         f.truncate()
         fcntl.flock(f, fcntl.LOCK_UN)
     return state
+
+
+VALID_PHASE_ORDER = {p: i for i, p in enumerate(PHASES)}
+
+
+def _validate_phase_transition(phases: dict, target_phase: str, target_status: PhaseStatus) -> None:
+    if target_status == "pending":
+        return
+    target_idx = VALID_PHASE_ORDER.get(target_phase)
+    if target_idx is None:
+        raise ValueError(f"Invalid phase: {target_phase}")
+    if target_status in ("in_progress", "done"):
+        for prev_phase in PHASES[:target_idx]:
+            if phases[prev_phase]["status"] == "pending":
+                raise ValueError(
+                    f"Cannot set '{target_phase}' to '{target_status}': "
+                    f"previous phase '{prev_phase}' is still pending"
+                )
 
 
 def _current_phase(phases: dict) -> str:
