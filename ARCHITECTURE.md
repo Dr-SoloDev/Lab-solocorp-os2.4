@@ -89,7 +89,7 @@
 | 01 | **CEO** | [เทอโบ (Turbo)](profiles/01-ceo/SOUL.md) | Vision / Strategy / Final Decision | 🟢 |
 | 02 | **CFO** | [meetoo](profiles/02-cfo/SOUL.md) | การเงิน / งบประมาณ / ลงทุน | 🟢 |
 | 03 | **CMO** | [มาร์ค](profiles/03-cmo/SOUL.md) | การตลาด / Content / Brand | 🟢 |
-| 04 | **Orchestrator** | [Hermes-Orchestrator](profiles/04-orchestrator/SOUL.md) | SoloCorp System Pipeline | 🟢 |
+| 04 | **Orchestrator** | พี่วุฒิ (Wut) | [Hermes-Orchestrator](profiles/04-orchestrator/SOUL.md) | SoloCorp System Pipeline | 🟢 |
 | 05 | **Architect** | [พี่ทรงศักดิ์ (Songsak)](profiles/05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | 🟢 |
 | 06 | **Product** | [โปรดัค](profiles/06-product/SOUL.md) | ผลิตภัณฑ์ / Feature / Roadmap | 🟢 |
 | 07 | **Engineering** | [ช่างฟูล](profiles/07-engineering/SOUL.md) | พัฒนา / โค้ด / เทคโนโลยี | 🟢 |

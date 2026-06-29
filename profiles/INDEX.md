@@ -29,7 +29,7 @@
 
 | # | Profile | ชื่อ | สถานะ |
 |:-:|:--------|:----|:-----:|
-| `04-orchestrator` | **Orchestrator** | [Hermes-Orchestrator](04-orchestrator/SOUL.md) | 🟢 |
+| `04-orchestrator` | **Orchestrator** | [พี่วุฒิ (Wut)](04-orchestrator/SOUL.md) | 🟢 |
 
 ## Department Heads
 

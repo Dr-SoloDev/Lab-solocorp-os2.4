@@ -10,7 +10,7 @@ Dr.solodev (Human/Owner)
   └── CEO (เทอโบ — Supreme AI Authority)
        ├── CFO (meetoo — การเงิน/งบประมาณ)
        ├── CMO (มาร์ค — การตลาด/Content)
-       ├── Orchestrator (Hermes — System Pipeline)
+       ├── Orchestrator (พี่วุฒิ — System Pipeline)
        └── Department Heads
             ├── 05-architect   — พี่ทรงศักดิ์ (สายพานกลาง)
             ├── 06-product     — โปรดัค
@@ -38,7 +38,7 @@ Dr.solodev (Human/Owner)
 | 01 | `01-ceo` | เทอโบ CEO | 🟢 |
 | 02 | `02-cfo` | meetoo | 🟢 |
 | 03 | `03-cmo` | มาร์ค | 🟢 |
-| 04 | `04-orchestrator` | Hermes-Orchestrator | 🟢 |
+| 04 | `04-orchestrator` | พี่วุฒิ (Wut) | 🟢 |
 | 05 | `05-architect` | พี่ทรงศักดิ์ | 🟢 |
 | 06 | `06-product` | โปรดัค | 🟢 |
 | 07 | `07-engineering` | ช่างฟูล | 🟢 |
@@ -91,7 +91,7 @@ Dr.solodev (Human/Owner)
 | 02 | [Social Media Strategist](profiles/03-cmo/mark/team/02-social-media-strategist.SOUL.md) | สร้าง brand authority บน LinkedIn/Twitter — community building, thought leadership, เชื่อม social กับ B2B pipeline | 🔴 |
 | 03 | [Content Creator](profiles/03-cmo/mark/team/03-content-creator.SOUL.md) | สร้าง content ทุกช่องทาง — SEO content, video scripts, editorial ที่ engage และ convert | 🔴 |
 
-### 04 — Orchestrator (Hermes)
+### 04 — Orchestrator (พี่วุฒิ)
 
 | # | Agent | หน้าที่ | สถานะ |
 |:-:|:------|:--------|:-----:|
