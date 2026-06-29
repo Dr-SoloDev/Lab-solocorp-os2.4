@@ -1,0 +1,1 @@
+TypeScript clean — no errors. `src/app/dashboard/sale-lots/page.tsx` สร้างเสร็จแล้ว พร้อม list + create form (branchId, buyerName, saleDate, items[] พร้อม confirm/cancel actions)

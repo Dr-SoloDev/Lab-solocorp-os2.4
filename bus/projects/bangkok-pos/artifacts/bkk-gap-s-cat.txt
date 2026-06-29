@@ -1,0 +1,1 @@
+ไม่มี TypeScript error ในไฟล์ใหม่ — `src/app/dashboard/catalog/page.tsx` พร้อมใช้งานแล้ว รองรับ create/edit/list ผ่าน `api.catalog` ครบ

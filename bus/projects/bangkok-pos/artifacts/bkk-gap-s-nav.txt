@@ -1,0 +1,5 @@
+งานเสร็จแล้ว — ทั้ง `src/components/BottomNav.tsx` และการใช้งานใน `layout.tsx` มีอยู่ครบถ้วนแล้ว
+
+สรุปสิ่งที่มีอยู่:
+- `BottomNav.tsx` — client component, ใช้ `usePathname` highlight active link, แสดงเฉพาะ mobile (`md:hidden`), ครบทุก8 linksตาม spec
+- `layout.tsx` — import และ render `<BottomNav />` ไว้แล้ว, `main` มี `pb-20md:pb-8` เพื่อเว้นที่ให้ nav
