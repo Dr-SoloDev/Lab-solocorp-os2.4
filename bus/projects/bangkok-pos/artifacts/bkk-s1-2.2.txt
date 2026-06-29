@@ -1,0 +1,9 @@
+TS errors ทั้งหมดอยู่ใน files เดิม (categories/page.tsx, products/page.tsx) — ไม่มีใน sellers page ใหม่
+
+**Task s1-2.2 เสร็จแล้ว** — `src/app/dashboard/sellers/page.tsx` สร้างเรียบร้อย
+
+Features:
+- **List** — ตารางแสดง fullName, phone, idCard, vehiclePlate, branch, blacklist status
+- **Create** — form เพิ่มผู้ขายใหม่ (branchId hardcode1เหมือน products)
+- **Update** — แก้ไขข้อมูลผู้ขาย
+- **Blacklist / Unblacklist** — inline form ระบุเหตุผล + ปุ่มปลด blacklist

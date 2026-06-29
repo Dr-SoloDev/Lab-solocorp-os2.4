@@ -1,0 +1,1 @@
+`src/app/dashboard/expenses/page.tsx` สร้างเสร็จแล้ว — รองรับ create/update/delete ครบใช้ pattern เดียวกับ products page, nav link ใน layout มีอยู่แล้ว

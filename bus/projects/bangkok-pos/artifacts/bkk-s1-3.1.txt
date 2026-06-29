@@ -1,0 +1,12 @@
+No errors in the new files. Pre-existing `Decimal` type errors elsewhere are unrelated.
+
+**Done. What was created:**
+
+`src/components/BottomNav.tsx` — client component with:
+- Dark theme (`bg-gray-900`, `border-gray-700`)
+- 8 SVG icons (Dashboard, สั่งซื้อ, ล็อตขาย, Catalog, คลัง, ผู้ขาย, ค่าใช้จ่าย, สาขา)
+- Active state: blue top-bar indicator + `text-blue-400` + subtle glow, using `usePathname()`
+- `max-w-[375px] mx-auto` inner container
+- `md:hidden` — mobile only
+
+`layout.tsx` — replaced inline emoji nav with `<BottomNav />`.

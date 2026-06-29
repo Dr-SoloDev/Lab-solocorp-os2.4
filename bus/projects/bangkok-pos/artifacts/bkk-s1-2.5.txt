@@ -1,0 +1,1 @@
+สร้าง `src/app/dashboard/inventory/page.tsx` เสร็จแล้ว — แสดง summary stats4 ช่อง (จำนวน SKU, สต็อกรวม, สต็อกต่ำ, หมดสต็อก) และตารางสินค้าเรียงจากสต็อกน้อยไปมาก โดยใช้ `api.product.getAll.useQuery()` จาก product router ตาม pattern เดิมของโปรเจกต์
