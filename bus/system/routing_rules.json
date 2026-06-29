@@ -1,15 +1,15 @@
 {
   "version": "1.0.0",
   "rules": [
-    {"rule_id": "r_to_cfo",      "trigger": {"keywords": ["finance","budget","cost","การเงิน","งบ"]},     "route_to": "cfo",         "priority": "high"},
+    {"rule_id": "r_to_cfo",      "trigger": {"keywords": ["finance","budget","cost","การเงิน"]},           "route_to": "cfo",         "priority": "high"},
     {"rule_id": "r_to_cmo",      "trigger": {"keywords": ["marketing","content","brand","การตลาด"]},      "route_to": "cmo",         "priority": "normal"},
-    {"rule_id": "r_to_architect", "trigger": {"keywords": ["architecture","pipeline","routing","bus"]},   "route_to": "architect",   "priority": "high"},
+    {"rule_id": "r_to_architect", "trigger": {"keywords": ["architecture","routing","bus"]},              "route_to": "architect",   "priority": "high"},
     {"rule_id": "r_to_product",  "trigger": {"keywords": ["product","feature","roadmap","prd"]},          "route_to": "product",     "priority": "normal"},
     {"rule_id": "r_to_engineering","trigger": {"keywords": ["code","backend","frontend","bug","fix"]},    "route_to": "engineering", "priority": "normal"},
     {"rule_id": "r_to_design",   "trigger": {"keywords": ["ux","design","brand","visual","wireframe"]},   "route_to": "design",      "priority": "normal"},
     {"rule_id": "r_to_ui",       "trigger": {"keywords": ["ui","component","interface","css","tailwind"]},"route_to": "ui_designer", "priority": "normal"},
     {"rule_id": "r_to_qa",       "trigger": {"keywords": ["test","qa","bug","quality","regression"]},     "route_to": "qa",          "priority": "high"},
-    {"rule_id": "r_to_sales",    "trigger": {"keywords": ["sales","deal","pipeline","prospect"]},         "route_to": "sales",       "priority": "normal"},
+    {"rule_id": "r_to_sales",    "trigger": {"keywords": ["sales","deal","prospect","pipeline deal"]},    "route_to": "sales",       "priority": "normal"},
     {"rule_id": "r_to_support",  "trigger": {"keywords": ["support","customer","ticket","ลูกค้า"]},       "route_to": "support",     "priority": "high"},
     {"rule_id": "r_to_web3",     "trigger": {"keywords": ["solana","defi","smart contract","blockchain"]},"route_to": "web3",        "priority": "high"},
     {"rule_id": "r_to_legal",    "trigger": {"keywords": ["legal","compliance","contract","gdpr","pdpa"]},"route_to": "legal",       "priority": "high"},

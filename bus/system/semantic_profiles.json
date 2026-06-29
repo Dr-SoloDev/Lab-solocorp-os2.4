@@ -1,0 +1,106 @@
+{
+  "version": "1.0.0",
+  "threshold": 0.10,
+  "profiles": {
+    "ceo": [
+      "strategic vision and company direction",
+      "high level decision making and leadership",
+      "cross departmental coordination and escalation",
+      "วิสัยทัศน์ทิศทางบริษัท",
+      "ตัดสินใจระดับสูงผู้นำองค์กร"
+    ],
+    "cfo": [
+      "financial planning budgeting and accounting",
+      "cost analysis revenue forecasting tax compliance",
+      "budget approval and financial reporting",
+      "การเงินงบประมาณบัญชีภาษี",
+      "วิเคราะห์ต้นทุนรายได้กระแสเงินสด",
+      "financial audit internal control billing revenue"
+    ],
+    "cmo": [
+      "marketing strategy brand management and content",
+      "social media campaign and advertising",
+      "customer acquisition and growth marketing",
+      "การตลาดกลยุทธ์แบรนด์คอนเทนต์",
+      "แคมเปญโฆษณาโซเชียลมีเดีย",
+      "brand positioning market research messaging"
+    ],
+    "architect": [
+      "system architecture design and technical roadmap",
+      "central bus pipeline message routing queue delivery",
+      "infrastructure decisions design patterns integration",
+      "สถาปัตยกรรมระบบสายพานกลาง",
+      "ออกแบบโครงสร้างพื้นฐานแพทเทิร์น"
+    ],
+    "product": [
+      "product requirements and feature specification",
+      "user research market analysis roadmap prd",
+      "product strategy backlog prioritization review",
+      "prd ความต้องการผลิตภัณฑ์ฟีเจอร์",
+      "roadmap การวางแผนผลิตภัณฑ์"
+    ],
+    "engineering": [
+      "software development coding and implementation",
+      "backend frontend api database bug fix",
+      "performance optimization devops deployment",
+      "พัฒนาโปรแกรมเขียนโค้ดแบ็กเอนด์ฟร้อนท์",
+      "แก้บั๊กปรับปรุงประสิทธิภาพระบบ"
+    ],
+    "design": [
+      "visual design wireframe prototype landing page",
+      "brand identity color typography and layout",
+      "user experience journey and design system",
+      "ออกแบบกราฟิกไวร์เฟรมต้นแบบหน้าเว็บ",
+      "เอกลักษณ์แบรนด์สีตัวอักษรเลย์เอาต์"
+    ],
+    "ui_designer": [
+      "ui component design and interface development",
+      "css html tailwind and design implementation",
+      "component library and design to code handoff",
+      "ออกแบบส่วนติดต่อผู้ใช้หน้าจอ ui คอมโพเนนต์",
+      "css tailwind นำดีไซน์ไปใช้งาน"
+    ],
+    "qa": [
+      "software testing quality assurance validation",
+      "test case automation regression bug tracking",
+      "performance testing security testing",
+      "ทดสอบซอฟต์แวร์ประกันคุณภาพ",
+      "เทสเคสอัตโนมัติ regression บั๊ก"
+    ],
+    "sales": [
+      "sales strategy deal management pipeline",
+      "customer acquisition proposal negotiation",
+      "revenue growth client relationship",
+      "กลยุทธ์การขายดีลไพพ์ไลน์",
+      "ลูกค้าใหม่ข้อเสนอเจรจาต่อรอง"
+    ],
+    "support": [
+      "customer support ticket handling issue resolution",
+      "faq troubleshooting user assistance",
+      "customer complaint billing problem solution",
+      "บริการลูกค้าแจ้งปัญหาตั๋วคำถาม",
+      "แก้ปัญหาช่วยเหลือผู้ใช้ลูกค้า"
+    ],
+    "legal": [
+      "legal compliance contract review agreements",
+      "regulatory requirements gdpr pdpa data privacy",
+      "risk management vendor agreement terms",
+      "กฎหมาย compliance สัญญาข้อตกลง",
+      "ข้อกำหนด regulatory ความเป็นส่วนตัว"
+    ],
+    "web3": [
+      "blockchain smart contract defi protocol",
+      "solana development web3 decentralized apps",
+      "nft tokenomics crypto wallet integration",
+      "blockchain smart contract solana defi",
+      "web3 แอปกระจายศูนย์คริปโต"
+    ],
+    "orchestrator": [
+      "cross department workflow orchestration pipeline",
+      "task delegation multi agent coordination monitoring",
+      "pipeline status process automation",
+      "orchestration ข้ามแผนกสายพานทำงาน",
+      "มอบหมายงานประสานงานหลายเอเจนต์"
+    ]
+  }
+}
