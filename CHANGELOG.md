@@ -176,3 +176,19 @@
 | v0.6 | Central Bus Agent + Context Optimizer | 🔴 Next |
 | v0.7 | Pipeline Dashboard + Compliance Gate | ⏳ |
 | v1.0 | Production-ready | ⏳ |
+
+## v0.5.2 (2026-06-30)
+
+### Changed
+- **Free Pool Migration** — สลับ API Key จาก deepseek pool → Free Pool (VIP3)
+  - Key "เฮอเมส" — pool: free, base_url: `/v1/`
+  - qwen3.7-max ราคา $0.28/M (ถูกกว่า Chinese pool 13x!)
+- **Model Optimization ครั้งใหญ่** — ใช้ Free Pool ราคาจริง:
+  - CEO, CFO, Architect, Engineering, Web3, Legal → `deepseek-v4-pro` ($0.87)
+  - CMO, Product, Design, UI-Designer, Orchestrator, Sales → `qwen3.7-max` ($0.28)
+  - QA, Support → `deepseek-v4-flash` ($0.28)
+
+### Cost Impact
+- ก่อน: ~$50-80/เดือน (Chinese Pool 16×)
+- หลัง: ~$10-20/เดือน (Free Pool VIP3)
+- Credit คงเหลือ: $1,080 — ใช้ได้ 50-100 เดือน
