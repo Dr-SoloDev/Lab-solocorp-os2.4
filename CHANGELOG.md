@@ -4,6 +4,24 @@
 
 ---
 
+## v0.5.2 (2026-06-30)
+
+### Changed
+- **Migrate to Free Pool (VIP3)** — เปลี่ยน API Key จาก pool deepseek → pool free
+  - Key "เฮอเมส" — base_url: `/v1/`, ราคาถูกกว่า Chinese pool 4-13x
+  - qwen3.7-max: $0.28/M (จากเดิม $3.75 🔥 ถูก 13x!)
+- **Model Mapping ปรับใหม่** ตามราคา Free Pool จริง:
+  - CEO, CFO, Architect, Engineering, Web3, Legal → `deepseek-v4-pro` ($0.87)
+  - CMO, Product, Design, UI-Designer, Orchestrator, Sales → `qwen3.7-max` ($0.28)
+  - QA, Support → `deepseek-v4-flash` ($0.28)
+
+### Cost Impact
+- ก่อน: ~$50-80/เดือน (Chinese Pool 16×)
+- หลัง: ~$10-20/เดือน (Free Pool VIP3)
+- Credit คงเหลือ: $1,080 — เพียงพอ 50-100 เดือน
+
+---
+
 ## v0.5.1 (2026-06-30)
 
 ### Added
