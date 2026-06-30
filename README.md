@@ -21,8 +21,9 @@ Dr.solodev (Human/Owner)
             ├── 11-sales       — เซลส์
             ├── 12-support     — ซัพพอร์ต
             ├── 13-legal       — ตุลย์
-            └── 14-web3        — อัยวา (Blockchain/DeFi/Solana)
-                   └── default (Fallback)
+            ├── 14-web3        — อัยวา (Blockchain/DeFi/Solana)
+            │       └── 15-content-creator  — เสก (Content/Creative)
+            └── default (Fallback)
 ```
 
 ## Core Principles
@@ -49,6 +50,7 @@ Dr.solodev (Human/Owner)
 | 12 | `12-support` | ซัพพอร์ต | 🟢 |
 | 13 | `13-legal` | ตุลย์ | 🟢 |
 | 14 | `14-web3` | อัยวา | 🟢 |
+| 15 | `15-content-creator` | เสก | 🟢 |
 | — | `default` | Fallback | ✅ |
 
 ## Status

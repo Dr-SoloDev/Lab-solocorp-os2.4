@@ -4,6 +4,23 @@
 
 ---
 
+## v0.6.0 (2026-06-30)
+
+### Added
+- **15-content-creator "เสก"** — แผนก Content Creation รับผิดชอบงานภาพ/สื่อ/เนื้อหาทุกประเภท
+  - Profile: `15-content-creator` (qwen3.7-max, tier S/B)
+  - Head SOUL: `hermes-content/SOUL.md` (brief intake, team structure, platform playbook)
+  - 10 sub-agent references จาก agency-agents (content, social, twitter, tiktok, video, growth, trend, design)
+  - Shared skills: `gen-image` (MaxPlus GPT Image API), `video-use` (video editing)
+- **LICENSE** — Custom license (SoloCorp Organization — All Rights Reserved)
+- **scripts/ + loop_runner/** — Sanitized absolute paths → relative/env-var
+
+### Changed
+- README.md: Hierarchy + profile table → 15 profiles
+- CLAUDE.md: Department routing → เพิ่ม Content Creator (เสก)
+
+---
+
 ## v0.5.2 (2026-06-30)
 
 ### Changed

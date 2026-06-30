@@ -1,8 +1,10 @@
 import subprocess
+from pathlib import Path
 from datetime import timedelta
 from ..runner import Loop
 
-_REPO = "/home/drsolodev/projects/Lab-solocorp-os2.4"
+import os
+_REPO = os.environ.get("SOLOCORP_REPO", str(Path(__file__).parent.parent.parent))
 
 
 def _git(cmd: list[str]) -> str:

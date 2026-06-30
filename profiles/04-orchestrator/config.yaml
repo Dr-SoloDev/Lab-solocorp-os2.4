@@ -21,7 +21,7 @@ model_aliases:
 agent:
   max_turns: 50
   reasoning_effort: medium
-  system_prompt_file: /home/drsolodev/.hermes/agents/hermes-orchestrator/SOUL.md
+  system_prompt_file: ~/.hermes/agents/hermes-orchestrator/SOUL.md
 terminal:
   backend: local
   cwd: .

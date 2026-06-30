@@ -12,7 +12,7 @@ tags: [agentmemory, iii-sdk, mcp, memory, daemon, solodordev]
 
 | Item | Path |
 |---|---|
-| Source | `/home/drsolodev/agentmemory-src/` |
+| Source | `$AGENTMEMORY_SRC/` |
 | Runtime env | `~/.agentmemory/.env` |
 | Engine state | `~/.agentmemory/engine-state.json` |
 | DB (KV store) | `agentmemory-src/data/state_store.db` |
@@ -49,7 +49,7 @@ chmod 600 ~/.agentmemory/.env
 ## Step 2 — Ensure data/ directory exists
 
 ```bash
-mkdir -p /home/drsolodev/agentmemory-src/data
+mkdir -p $AGENTMEMORY_SRC/data
 ```
 
 ## Step 3 — Start Daemon (background)
@@ -57,7 +57,7 @@ mkdir -p /home/drsolodev/agentmemory-src/data
 Always start as background process to avoid terminal timeout (Hermes terminal timeout = 180s):
 
 ```bash
-cd /home/drsolodev/agentmemory-src && node dist/cli.mjs &
+cd $AGENTMEMORY_SRC && node dist/cli.mjs &
 ```
 
 Or via npm:

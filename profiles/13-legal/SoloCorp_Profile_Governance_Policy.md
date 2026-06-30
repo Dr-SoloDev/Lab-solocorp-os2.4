@@ -163,7 +163,7 @@ SOUL.md ต้องมีโครงสร้างอย่างน้อย
 
 **Profile Registry Master** ถูกจัดเก็บที่:
 - `~/.hermes/memories/MEMORY.md` — ต้องมี section "SoloCorp Profile Registry"
-- และ/หรือที่ `/home/drsolodev/SoloCorp_Profile_Registry.yaml`
+- และ/หรือที่ `~/SoloCorp_Profile_Registry.yaml`
 
 ### 5.2 ตารางความรับผิดชอบ
 

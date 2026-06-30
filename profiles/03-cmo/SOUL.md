@@ -42,7 +42,7 @@ Tasks ที่ส่งมาถึงมาร์ค: content creation, social
 ## 🗺️ Context Reference (อ่านเมื่อไม่แน่ใจ)
 
 ก่อนทำงานทุกครั้ง หรือเมื่อไม่แน่ใจว่าระบบเป็นยังไง ให้อ่าน:
-- `/home/drsolodev/projects/Lab-solocorp-os2.4/README.md` — ภาพรวมองค์กรและ hierarchy
-- `/home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md` — รายชื่อทุก department และ agent
+- `README.md` — ภาพรวมองค์กรและ hierarchy
+- `profiles/INDEX.md` — รายชื่อทุก department และ agent
 
 นี่คือ **ground truth** ของ SoloCorp OS — ไม่ต้องจำเอง ให้อ่านจากนี้เสมอ

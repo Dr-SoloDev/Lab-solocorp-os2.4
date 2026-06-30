@@ -177,7 +177,7 @@ model_aliases:
 agent:
   max_turns: 60
   reasoning_effort: medium
-  system_prompt_file: /home/drsolodev/.hermes/agents/hermes-<role>/SOUL.md
+  system_prompt_file: ~/.hermes/agents/hermes-<role>/SOUL.md
 ```
 
 ### Pitfalls

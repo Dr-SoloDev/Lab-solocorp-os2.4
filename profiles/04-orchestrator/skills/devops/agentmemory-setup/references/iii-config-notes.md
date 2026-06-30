@@ -1,6 +1,6 @@
 # iii-sdk Config Structure Notes
 
-## Source: /home/drsolodev/agentmemory-src/iii-config.yaml
+## Source: $AGENTMEMORY_SRC/iii-config.yaml
 
 Key settings:
 - DB: file-based KV store at `./data/state_store.db` (relative to agentmemory-src)

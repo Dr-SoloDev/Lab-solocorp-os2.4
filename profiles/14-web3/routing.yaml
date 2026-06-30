@@ -1,8 +1,8 @@
 # Routing — Head of Web3 (อัยวา)
 always_read:
-  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
-  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
-  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/14-web3/SOUL.md
+  - README.md
+  - profiles/INDEX.md
+  - profiles/14-web3/SOUL.md
 
 tasks:
   - id: smart-contract

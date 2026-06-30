@@ -1,0 +1,26 @@
+# Routing — Head of Content Creator (เสก)
+always_read:
+  - README.md
+  - profiles/INDEX.md
+  - profiles/15-content-creator/SOUL.md
+
+tasks:
+  - id: copywriting
+    trigger_examples: [แคปชั่น, caption, hook, copy, คำโปรย, เขียนโพสต์]
+    route_to: content-creator
+
+  - id: image-generation
+    trigger_examples: [สร้างรูป, รูปประกอบ, banner, ภาพ, image, gen-image]
+    route_to: content-creator
+
+  - id: video-editing
+    trigger_examples: [ตัดต่อ, วิดีโอ, คลิป, video, edit video, reels]
+    route_to: content-creator
+
+  - id: social-content
+    trigger_examples: [โพสต์ X, tweet, tiktok, facebook post, content]
+    route_to: content-creator
+
+  - id: campaign
+    trigger_examples: [แคมเปญ, โฆษณา, โปรโมท, promote, campaign, ad]
+    route_to: content-creator

@@ -3,8 +3,8 @@
 # version: 1.0.0
 
 always_read:
-  - /home/drsolodev/projects/Lab-solocorp-os2.4/README.md
-  - /home/drsolodev/projects/Lab-solocorp-os2.4/profiles/INDEX.md
+  - README.md
+  - profiles/INDEX.md
   - skills/solocorp/routing.yaml
   - skills/web-search/SKILL.md
 

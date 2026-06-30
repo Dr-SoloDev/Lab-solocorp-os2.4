@@ -148,7 +148,7 @@ Files: `central_bus/open_design.py`, `bus/system/open_design_config.json`
 
 ## 🔗 แหล่งข้อมูลหลัก
 
-- **โฟลเดอร์หลัก:** `/home/drsolodev/projects/Lab-solocorp-os2.4/`
+- **โฟลเดอร์หลัก:** `$(PROJECT_ROOT)/`
 - **Git:** [`Dr-SoloDev/Lab-solocorp-os2.4`](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4) (Private)
-- **Hermes Profiles:** `/home/drsolodev/.hermes/profiles/<NN-name>/`
+- **Hermes Profiles:** `~/.hermes/profiles/<NN-name>/`
 - **การกำหนดเวอร์ชัน:** SemVer ผ่าน CHANGELOG.md + Git tags

@@ -1,0 +1,22 @@
+# SoloCorp OS 2.4 — Custom License
+
+**Copyright © 2026 SoloCorp Organization (Dr-SoloDev). All rights reserved.**
+
+This repository and all its contents (including but not limited to source code, agent prompts, documentation, architectural designs, and configuration files) are the exclusive property of SoloCorp Organization.
+
+## Permitted Use
+
+- **Internal Use:** Members of SoloCorp Organization may freely use, modify, and adapt this repository for internal operations.
+- **Reference:** External parties may view the public repository for educational and reference purposes only.
+
+## Restrictions
+
+- **No Commercial Use:** This software and its derivatives may not be used, copied, modified, or distributed for commercial purposes outside SoloCorp Organization without explicit written permission.
+- **No Redistribution:** You may not redistribute this repository or any derivative works in any form, whether modified or unmodified.
+- **No Sub-licensing:** You may not sub-license this software under any terms.
+
+## Attribution
+
+This repository describes the **SoloCorp Operating System** — an AI-agent organizational architecture built on top of [Hermes Agent](https://hermes-agent.nousresearch.com/).
+
+For inquiries, contact: Dr-SoloDev (GitHub)

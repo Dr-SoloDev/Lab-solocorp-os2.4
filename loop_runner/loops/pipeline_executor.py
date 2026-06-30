@@ -9,8 +9,9 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from central_bus import queue, state
 
+import os
 PROJECT_PATHS = {
-    "bangkok-pos": "/home/drsolodev/projects/bangkok-pos",
+    "bangkok-pos": os.environ.get("BKK_POS_PATH", "/tmp/bangkok-pos"),
 }
 
 AGENT_PERSONA = {

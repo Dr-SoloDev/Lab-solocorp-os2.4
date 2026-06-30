@@ -1,7 +1,7 @@
 # Example Audit Output — Secondhand POS
 
 **Source:** Session 2026-06-18, audit by คุณวุฒิ (Architecture) via delegate_task
-**Repo:** `/home/drsolodev/projects/secondhand-pos/code/`
+**Repo:** `$(PROJECT_ROOT)/code/`
 **Stack:** PHP 8.x (vanilla) + MySQL 8.0 + Docker
 
 This reference shows a real audit output you can pattern-match when writing your own.

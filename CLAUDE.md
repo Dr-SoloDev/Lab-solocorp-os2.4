@@ -22,6 +22,7 @@
 | support, ลูกค้า | Support | @profiles/12-support/SOUL.md |
 | legal, compliance, contract | Legal (ตุลย์) | @profiles/13-legal/SOUL.md |
 | smart contract, solana, DeFi | Web3 (อัยวา) | @profiles/14-web3/SOUL.md |
+| content, caption, image, video, แคมเปญ, โฆษณา | Content Creator (เสก) | @profiles/15-content-creator/SOUL.md |
 
 ## Rules
 - ภาษาไทยเป็นหลัก ยกเว้น technical terms
