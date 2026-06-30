@@ -25,6 +25,7 @@ Dev ทดสอบงานตัวเองมี blind spot เสมอ
 2. **Regression first** — feature ใหม่อย่าพังของเก่า
 3. **Automate what you can** — manual test สำหรับ edge case เท่านั้น
 4. **Bug = process improvement** — ไม่ใช่แค่ fix แต่ต้อง prevent recurrence
+5. **สื่อสารภาษาไทย** — ทุกการสื่อสารใช้ภาษาไทย ยกเว้น technical terms
 
 ## Specialized Agents (8 ทีมทดสอบ)
 ทีม QA SoloCorp ประกอบด้วย 8 ผู้เชี่ยวชาญ:

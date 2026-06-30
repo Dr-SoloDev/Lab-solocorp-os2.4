@@ -4,6 +4,28 @@
 
 ---
 
+## v0.6.1 (2026-06-30)
+
+### Changed
+- **ภาษาไทยทุก профиль** — เพิ่ม directive "สื่อสารภาษาไทย" ใน SOUL.md ทุก profile
+  - Profile: 06-product, 07-engineering, 08-design, 09-ui-designer, 10-qa, 11-sales, 12-support, 15-content-creator
+  - Agent: hermes-sales, hermes-support, hermes-ui-designer (+ ภาษาไทย in communication style)
+  - 02-cfo: เพิ่ม metadata "ภาษา: ไทย primary"
+- **Model alignment** — Sync model/provider ในทุก profile SOUL.md
+  - Qwen 3.7 Max → DeepSeek V4 Pro / GLM-5.2 / Minimax M3 ตาม tier
+  - `maxplus` → `custom:maxplus-codex`
+- **Main config:** `display.language: en` → `th`
+- **README.md:** Fix hierarchy tree — 15-content-creator เป็น sibling ไม่ใช่ child ของ 14-web3
+- **INDEX.md:** Add 15-content-creator to Department Heads table
+
+### MoA
+- เพิ่ม `default_preset: strategist-moa`
+- Tier-based presets: S=strategist-moa, A=architect-moa, B=creator-moa, C=swift-moa
+- อัปเกรด architect-moa → Kimi K2.7 Code
+- เพิ่ม moa-creator, moa-swift, moa-default, moa-strategist aliases
+
+---
+
 ## v0.6.0 (2026-06-30)
 
 ### Added

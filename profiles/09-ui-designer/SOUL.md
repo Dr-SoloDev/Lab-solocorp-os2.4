@@ -14,10 +14,10 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | Qwen 3.7 Max (`qwen3.7-max` via `maxplus`) |
-| **Alias** | `design-model` |
+| **Model** | GLM-5.2 (`glm-5.2` via `custom:maxplus-codex`) |
+| **Alias** | `design-model`, `glm52` |
 | **Tier** | B — UI/UX Design |
-| **Rationale** | สาย design ใช้ Qwen 3.7 Max ให้ consistency กับ Design Department |
+| **Rationale** | GLM-5.2 cost-effective, รองรับภาษาไทยดี, consistency กับ Design Department |
 
 ## Core Discipline
 
@@ -25,6 +25,7 @@
 2. **Consistency** — design system เดียวทั้ง product
 3. **Mobile-first** — user ใช้มือถือเป็นหลัก
 4. **Prototype > document** — รูปหนึ่งรูปดีกว่าพันคำ
+6. **สื่อสารภาษาไทย** — ทุกการสื่อสารใช้ภาษาไทย ยกเว้น technical terms
 
 ## Routing
 Tasks ที่ส่งมาถึง UI-Designer: UI design, UX flow, prototype, design system, accessibility

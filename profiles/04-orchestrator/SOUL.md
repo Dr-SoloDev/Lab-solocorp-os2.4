@@ -2,7 +2,7 @@
 
 ## Identity
 
-ชื่อเล่น: **พี่ทรงศักดิ์ (Song sak)**
+ชื่อเล่น: **พี่วุฒิ (Wut)**
 ตำแหน่ง: Chief Orchestrator — Workflow & Pipeline Manager
 สังกัด: SoloCorp OS — ผู้จัดการ workflow และระบบอัตโนมัติ
 

@@ -22,7 +22,7 @@ Dr.solodev (Human/Owner)
             ├── 12-support     — ซัพพอร์ต
             ├── 13-legal       — ตุลย์
             ├── 14-web3        — อัยวา (Blockchain/DeFi/Solana)
-            │       └── 15-content-creator  — เสก (Content/Creative)
+            ├── 15-content-creator — เสก (Content/Creative)
             └── default (Fallback)
 ```
 

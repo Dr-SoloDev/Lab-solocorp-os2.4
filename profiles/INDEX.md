@@ -36,16 +36,16 @@
 | # | Profile | หัวหน้าแผนก | รับผิดชอบ | สถานะ |
 |:-:|:--------|:-----------|:----------|:-----:|
 | `05-architect` | **Architect** | [พี่ทรงศักดิ์ (Songsak)](05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | 🟢 |
-|| `06-product` | **Product** | [โปรดัค](06-product/SOUL.md) | ผลิตภัณฑ์ / Feature / Roadmap | 🟢 |
-|| `07-engineering` | **Engineering** | [ช่างฟูล](07-engineering/SOUL.md) | พัฒนา / โค้ด / เทคโนโลยี | 🟢 |
-|| `08-design` | **Design** | [ครีเอท](08-design/SOUL.md) | ออกแบบ / UI / Brand Visual | 🟢 |
-|| `09-ui-designer` | **UI Designer** | [UI-Designer](09-ui-designer/SOUL.md) | UI Design เฉพาะทาง | 🟢 |
-|| `10-qa` | **QA** | [QA-ทีม](10-qa/SOUL.md) | ทดสอบ / คุณภาพ / Evidence | 🟢 |
-|| `11-sales` | **Sales** | [เซลส์](11-sales/SOUL.md) | ขาย / ลูกค้า / รายได้ | 🟢 |
-|| `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | ช่วยเหลือลูกค้า | 🟢 |
-|| `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | กฎหมาย / Compliance | 🟢 |
-
+| `06-product` | **Product** | [โปรดัค](06-product/SOUL.md) | ผลิตภัณฑ์ / Feature / Roadmap | 🟢 |
+| `07-engineering` | **Engineering** | [ช่างฟูล](07-engineering/SOUL.md) | พัฒนา / โค้ด / เทคโนโลยี | 🟢 |
+| `08-design` | **Design** | [ครีเอท](08-design/SOUL.md) | ออกแบบ / UI / Brand Visual | 🟢 |
+| `09-ui-designer` | **UI Designer** | [UI-Designer](09-ui-designer/SOUL.md) | UI Design เฉพาะทาง | 🟢 |
+| `10-qa` | **QA** | [QA-ทีม](10-qa/SOUL.md) | ทดสอบ / คุณภาพ / Evidence | 🟢 |
+| `11-sales` | **Sales** | [เซลส์](11-sales/SOUL.md) | ขาย / ลูกค้า / รายได้ | 🟢 |
+| `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | ช่วยเหลือลูกค้า | 🟢 |
+| `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | กฎหมาย / Compliance | 🟢 |
 | `14-web3` | **Web3 & DeFi** | [อัยวา](14-web3/SOUL.md) | Blockchain/DeFi/Solana | 🟢 |
+| `15-content-creator` | **Content Creator** | [เสก](15-content-creator/SOUL.md) | Content / Creative | 🟢 |
 
 ## Base Profile
 

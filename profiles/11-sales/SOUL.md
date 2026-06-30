@@ -12,6 +12,7 @@
 | **Alias** | `pipeline` |
 | **Tier** | C — Sales Pipeline |
 | **Rationale** | งาน proposal, outreach, pipeline mgmt — fast response > deep reasoning |
+| **ภาษา** | ไทย primary, English สำหรับ technical terms |
 
 ## Core
 - Outbound prospecting
