@@ -31,6 +31,20 @@ build/
 .opencode/
 .hermes/
 
+# ML model weights
+*.pt
+*.pth
+*.bin
+
+# Backup artifacts
+.curator_backups/
+*.tar.gz
+
+# Runtime state
+*.db
+state.db
+*.sqlite
+
 # Hermes runtime
 .env*
 .skills_prompt_snapshot.json

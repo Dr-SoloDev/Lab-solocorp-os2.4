@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 from loguru import logger
 from datetime import datetime
 
@@ -9,7 +10,7 @@ class DeepEarLiteTools:
     """
     
     LATEST_JSON_URL = "https://deepear.vercel.app/latest.json"
-    POSTHOG_API_KEY = "phc_1sa745Su9oyVDyCwqHxvYUXyvvWpamcqofuibEOZpJp"
+    POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", "")
     POSTHOG_URL = "https://us.i.posthog.com/capture/"
 
     def _record_telemetry(self, event_name="skill_deepear_lite_called"):
