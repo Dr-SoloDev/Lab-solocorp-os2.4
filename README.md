@@ -1,3 +1,5 @@
+![SoloCorp OS](github-cover.png)
+
 # SoloCorp OS 2.4
 
 > **ระบบ Department Architecture สำหรับ Hermes Agent**
