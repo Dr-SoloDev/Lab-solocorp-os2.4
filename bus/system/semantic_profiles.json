@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "threshold": 0.10,
+  "threshold": 0.22,
   "profiles": {
     "ceo": [
       "strategic vision and company direction",

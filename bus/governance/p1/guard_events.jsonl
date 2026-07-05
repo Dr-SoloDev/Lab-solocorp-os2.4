@@ -1,0 +1,151 @@
+{"ts": "2026-07-05T02:49:52.788071+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T02:51:58.498430+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:06:53.825211+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:08:00.435734+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:10:03.727917+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:14:40.717588+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:15:52.179489+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:23:32.476897+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:24:56.387640+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:33:01.485599+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:34:05.839497+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:35:09.948897+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:35:52.392660+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:37:33.664609+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:40:21.002829+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T03:40:25.526182+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T05:54:05.404669+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:09:05.496112+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:17:14.517455+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:17:36.284038+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:24:06.363380+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:31:29.747824+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:06.663071+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:06.676285+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:06.680548+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T06:44:06.682902+00:00", "event": "guard_added", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' added to active_guards"}
+{"ts": "2026-07-05T06:44:06.691166+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 1)"}
+{"ts": "2026-07-05T06:44:06.693899+00:00", "event": "guard_resolved", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' passed (remaining: 0)"}
+{"ts": "2026-07-05T06:44:06.713957+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:06.716354+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T06:44:06.724359+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T06:44:06.876143+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:06.878340+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T06:44:06.906744+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T06:44:06.979450+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:06.984540+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T06:44:06.987935+00:00", "event": "guard_added", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' added to active_guards"}
+{"ts": "2026-07-05T06:44:06.995002+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 1)"}
+{"ts": "2026-07-05T06:44:06.998032+00:00", "event": "guard_resolved", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' passed (remaining: 0)"}
+{"ts": "2026-07-05T06:44:07.015222+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:07.017108+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T06:44:07.021986+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T06:44:07.082815+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:07.085381+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T06:44:07.089920+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T06:44:07.146683+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:07.160536+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T06:44:07.163055+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T06:44:07.167315+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T06:44:07.171837+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T06:44:07.175680+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T06:44:07.779145+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:47:06.234367+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:47:20.989562+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:47:25.887352+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T06:47:30.093879+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.514071+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.521064+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.523793+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.525552+00:00", "event": "guard_added", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.531954+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 1)"}
+{"ts": "2026-07-05T09:26:48.536402+00:00", "event": "guard_resolved", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:26:48.551040+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.553681+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.558335+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:26:48.593932+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.595569+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.606681+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:26:48.644496+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.647038+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.648860+00:00", "event": "guard_added", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.653055+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 1)"}
+{"ts": "2026-07-05T09:26:48.654813+00:00", "event": "guard_resolved", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:26:48.665250+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.666635+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.670239+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:26:48.712387+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.713486+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.715889+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:26:48.741660+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.748657+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:26:48.750798+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.753938+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:26:48.757513+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:26:48.760540+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:26:50.775408+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.250524+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.256515+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.258026+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.258925+00:00", "event": "guard_added", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.261640+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 1)"}
+{"ts": "2026-07-05T09:32:57.262552+00:00", "event": "guard_resolved", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:32:57.269444+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.270422+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.272910+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:32:57.411893+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.412470+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.415313+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:32:57.433652+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.434438+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.434894+00:00", "event": "guard_added", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.436156+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 1)"}
+{"ts": "2026-07-05T09:32:57.436607+00:00", "event": "guard_resolved", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:32:57.440098+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.440753+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.441807+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:32:57.463413+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.463843+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.464802+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:32:57.483086+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.486965+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:32:57.487775+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.489047+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:32:57.490480+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:32:57.491991+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:32:57.496451+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T09:34:00.759502+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.320672+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.324153+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.325038+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.325542+00:00", "event": "guard_added", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.327065+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 1)"}
+{"ts": "2026-07-05T09:37:16.327624+00:00", "event": "guard_resolved", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:37:16.330807+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.331256+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.334775+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.335233+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.338828+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.339686+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.340202+00:00", "event": "guard_added", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.341822+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 1)"}
+{"ts": "2026-07-05T09:37:16.342289+00:00", "event": "guard_resolved", "guard": "GUARD-002", "detail": "Guard 'GUARD-002' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:37:16.345600+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.346025+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.349773+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.350209+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.353736+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.357080+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:37:16.357881+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.359247+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:37:16.360511+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:37:16.361734+00:00", "event": "guard_resolved", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' passed (remaining: 0)"}
+{"ts": "2026-07-05T09:37:16.364560+00:00", "event": "project_init", "detail": "Project 'Test' initialized with auto threshold"}
+{"ts": "2026-07-05T09:38:06.224324+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:38:06.225056+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:38:06.230410+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:38:06.231245+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:38:06.237799+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:38:06.238705+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}
+{"ts": "2026-07-05T09:38:06.244873+00:00", "event": "project_init", "detail": "Project '' initialized with auto threshold"}
+{"ts": "2026-07-05T09:38:06.245442+00:00", "event": "guard_added", "guard": "GUARD-001", "detail": "Guard 'GUARD-001' added to active_guards"}

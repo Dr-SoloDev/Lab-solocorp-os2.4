@@ -1,0 +1,47 @@
+{
+  "project_id": "test-gov-001",
+  "name": "Test Governance",
+  "status": "in_progress",
+  "phase": "design",
+  "phases": {
+    "spec": {
+      "status": "done",
+      "owner": ""
+    },
+    "design": {
+      "status": "pending",
+      "owner": ""
+    },
+    "arch": {
+      "status": "pending",
+      "owner": ""
+    },
+    "dev": {
+      "status": "pending",
+      "owner": ""
+    },
+    "qa": {
+      "status": "pending",
+      "owner": ""
+    },
+    "deploy": {
+      "status": "pending",
+      "owner": ""
+    }
+  },
+  "blockers": [],
+  "governance": {
+    "rfcs": [
+      "RFC-001"
+    ],
+    "adrs": [
+      "ADR-001",
+      "ADR-002"
+    ],
+    "active_guards": [],
+    "guard_status": "passed",
+    "complexity_score": 0,
+    "threshold": "auto"
+  },
+  "updated_at": "2026-07-05T02:33:39.671618+00:00"
+}

@@ -13,7 +13,9 @@
     {"rule_id": "r_to_support",  "trigger": {"keywords": ["support","customer","ticket","ลูกค้า"]},       "route_to": "support",     "priority": "high"},
     {"rule_id": "r_to_web3",     "trigger": {"keywords": ["solana","defi","smart contract","blockchain"]},"route_to": "web3",        "priority": "high"},
     {"rule_id": "r_to_legal",    "trigger": {"keywords": ["legal","compliance","contract","gdpr","pdpa"]},"route_to": "legal",       "priority": "high"},
-    {"rule_id": "r_to_orch",     "trigger": {"keywords": ["orchestrat","pipeline status","cross-dept"]},  "route_to": "orchestrator","priority": "normal"},
+    {"rule_id": "r_to_orch",     "trigger": {"keywords": ["orchestrat","pipeline status","cross-dept"]},         "route_to": "orchestrator","priority": "normal"},
+    {"rule_id": "r_to_governance","trigger": {"keywords": ["governance","rfc","adr","guard check","complexity","xgov"]}, "route_to": "architect",  "priority": "high"},
+    {"rule_id": "r_to_guard",    "trigger": {"keywords": ["guard failed","guard failure","guard escalate"]},         "route_to": "orchestrator","priority": "critical"},
     {"rule_id": "r_fallback",    "trigger": {"keywords": []},                                             "route_to": "ceo",         "priority": "normal", "is_fallback": true}
   ],
   "sla_minutes": {
