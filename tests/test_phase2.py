@@ -1,3 +1,4 @@
+import asyncio
 import pytest
 import sys
 from pathlib import Path
@@ -76,32 +77,61 @@ def test_project_status_failed(tmp_path, monkeypatch):
     assert state["status"] == "failed"
 
 
-# ── Audit Logger tests ───────────────────────────────────────────────────────
+# ── Audit Logger tests (async SQLite) ───────────────────────────────────────
 
-def test_audit_log_and_read(tmp_path, monkeypatch):
-    import central_bus.audit as a
-    monkeypatch.setattr(a, "PROJECTS_DIR", tmp_path)
+def _run(coro):
+    """Run a coroutine in an isolated event loop (no pytest-asyncio required)."""
+    return asyncio.run(coro)
+
+
+def _reset_db(db_path: str) -> None:
+    """Reset the global DbManager singleton to force re-init with given path."""
+    import central_bus.db as _db
+    _db.reset_db_for_testing()
+    import central_bus.config as _cfg
+    _cfg.settings.db_path = db_path
+
+
+def test_audit_log_and_read(tmp_path):
+    _reset_db(str(tmp_path / "test.db"))
     msg = make_msg()
-    log(msg)
-    entries = read("proj_p2")
+
+    async def _run_test():
+        await log(msg)
+        return await read("proj_p2")
+
+    entries = _run(_run_test())
     assert len(entries) == 1
-    assert entries[0]["id"] == msg.id
+    assert entries[0]["entity_id"] == msg.id
 
-def test_audit_append_only(tmp_path, monkeypatch):
-    import central_bus.audit as a
-    monkeypatch.setattr(a, "PROJECTS_DIR", tmp_path)
-    for _ in range(3):
-        log(make_msg())
-    assert len(read("proj_p2")) == 3
 
-def test_audit_read_empty(tmp_path, monkeypatch):
-    import central_bus.audit as a
-    monkeypatch.setattr(a, "PROJECTS_DIR", tmp_path)
-    assert read("no_project") == []
+def test_audit_append_only(tmp_path):
+    _reset_db(str(tmp_path / "test.db"))
 
-def test_audit_trace_id_preserved(tmp_path, monkeypatch):
-    import central_bus.audit as a
-    monkeypatch.setattr(a, "PROJECTS_DIR", tmp_path)
+    async def _run_test():
+        for _ in range(3):
+            await log(make_msg())
+        return await read("proj_p2")
+
+    assert len(_run(_run_test())) == 3
+
+
+def test_audit_read_empty(tmp_path):
+    _reset_db(str(tmp_path / "test.db"))
+
+    async def _run_test():
+        return await read("no_project")
+
+    assert _run(_run_test()) == []
+
+
+def test_audit_trace_id_preserved(tmp_path):
+    _reset_db(str(tmp_path / "test.db"))
     msg = make_msg()
-    log(msg)
-    assert read("proj_p2")[0]["trace_id"] == "trace_p2"
+
+    async def _run_test():
+        await log(msg)
+        return await read("proj_p2")
+
+    entries = _run(_run_test())
+    assert entries[0]["trace_id"] == "trace_p2"

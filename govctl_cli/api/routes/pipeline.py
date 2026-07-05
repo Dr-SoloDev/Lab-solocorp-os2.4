@@ -109,7 +109,7 @@ async def get_pipeline_history(
     try:
         from central_bus.audit import read as audit_read
         # Single date for now (date-range extension is trivial)
-        audit_entries = audit_read(project_id, start_date)
+        audit_entries = await audit_read(project_id, start_date)
         for entry in audit_entries:
             event = _bus_message_to_event(entry)
             if event:

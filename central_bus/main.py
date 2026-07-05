@@ -28,16 +28,17 @@ import logging
 import time
 import uuid
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
 from typing import Any, Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from central_bus.aar import AARGenerator
 from central_bus.config import settings
 from central_bus.db import DbManager, ensure_db, get_db, new_id, now_iso
 from central_bus.facts import FactsService
+from central_bus.health import get_health
 from central_bus.models import BusMessage
 from central_bus.queue import SQLiteQueueManager
 from central_bus.router import RoutingEngine, route as jsonl_route
@@ -398,72 +399,13 @@ async def update_message(request: Request):
     )
 
     # ── AAR generation hook ──────────────────────────────────────
-    aar_id = None
-    final_status = status
-    is_terminal = status in ("completed", "failed")
-
-    if is_terminal:
-        retry_count = updated.get("retry_count", 0)
-        max_retries = updated.get("max_retries", 3)
-        is_dead = retry_count >= max_retries and status == "failed"
-
-        if is_dead:
-            final_status = "dead"
-
-        # Calculate latency
-        created_at_str = updated.get("created_at", now_iso())
-        try:
-            created_dt = datetime.fromisoformat(created_at_str)
-            latency_ms = int(
-                (datetime.now(timezone.utc) - created_dt).total_seconds() * 1000
-            )
-        except (ValueError, TypeError):
-            latency_ms = 0
-
-        entry = {
-            "aar_id": f"aar-{new_id()}",
-            "trace_id": trace_id,
-            "task_id": updated.get("task_id", ""),
-            "queue_id": queue_id,
-            "total_hops": len(
-                json.loads(updated.get("routing_hops", "[]"))
-            ),
-            "total_retries": retry_count,
-            "final_status": final_status,
-            "latency_ms": latency_ms,
-            "failure_pattern": (
-                error if is_dead else None
-            ),
-            "notes": None,
-            "created_at": now_iso(),
-        }
-
-        await services["db"].execute(
-            """
-            INSERT INTO aar (id, trace_id, task_id, queue_id, total_hops,
-                             total_retries, final_status, latency_ms,
-                             failure_pattern, notes, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                entry["aar_id"],
-                trace_id,
-                entry["task_id"],
-                queue_id,
-                entry["total_hops"],
-                retry_count,
-                final_status,
-                latency_ms,
-                entry["failure_pattern"],
-                None,
-                entry["created_at"],
-            ),
-        )
-        aar_id = entry["aar_id"]
-        log.info(
-            "AAR generated: %s (trace=%s, status=%s, latency=%dms)",
-            aar_id, trace_id, final_status, latency_ms,
-        )
+    aar_id, final_status = await AARGenerator(services["db"]).generate(
+        trace_id=trace_id,
+        queue_id=queue_id,
+        status=status,
+        error=error,
+        updated=updated,
+    )
 
     return {
         "trace_id": trace_id,
@@ -481,50 +423,14 @@ async def update_message(request: Request):
 @app.get("/v1/health")
 async def health():
     """Health check — DB status, queue depth, uptime."""
-    try:
-        services = await _get_services()
-        db = services["db"]
-        qm: SQLiteQueueManager = services["queue"]
-        facts_service: FactsService = services["facts"]
-        engine: RoutingEngine = services["router"]
-
-        # Quick DB connectivity check
-        await db.fetch_one("SELECT 1 AS ok")
-
-        pending_count = await qm.count_pending()
-        failed_count = await qm.count_failed()
-        dead_count = await qm.count_dead_letters()
-        facts_count = await facts_service.count_facts()
-        rules_count = await engine.count_rules()
-        uptime = int(time.time() - _STARTED_AT)
-
-        # Degraded status if dead letters exist
-        status = "degraded" if dead_count > 0 else "ok"
-
-        return {
-            "status": status,
-            "db": {
-                "queue_pending": pending_count,
-                "queue_failed": failed_count,
-                "queue_dead": dead_count,
-            },
-            "facts_count": facts_count,
-            "routing_rules": rules_count,
-            "loops_active": 0,  # placeholder — injected by orchestrator
-            "uptime_seconds": uptime,
-            "version": "0.6.0",
-        }
-    except Exception as exc:
-        log.exception("Health check failed")
-        return JSONResponse(
-            status_code=503,
-            content={
-                "status": "error",
-                "detail": str(exc),
-                "uptime_seconds": int(time.time() - _STARTED_AT),
-                "version": "0.6.0",
-            },
-        )
+    services = await _get_services()
+    return await get_health(
+        db=services["db"],
+        qm=services["queue"],
+        facts_service=services["facts"],
+        engine=services["router"],
+        started_at=_STARTED_AT,
+    )
 
 
 # ═══════════════════════════════════════════════════════════════════════

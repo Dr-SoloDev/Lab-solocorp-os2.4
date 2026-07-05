@@ -46,6 +46,9 @@
 | `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | Compliance, Contracts, Law | Active |
 | `14-web3` | **Web3 & DeFi** | [อัยวา](14-web3/SOUL.md) | Blockchain, DeFi, Solana | Active |
 | `15-content-creator` | **Content Creator** | [เสก](15-content-creator/SOUL.md) | Content, Creative, Media | Active |
+| `16-neteng` | **Network Engineer** | [นีต (Neet)](16-neteng/SOUL.md) | Network Design, Infrastructure, CDN, VPN, DNS | Active |
+| `17-cybersec` | **Cyber Security** | [ซาย (Sai)](17-cybersec/SOUL.md) | Threat Detection, Vulnerability Assessment, Incident Response | Active |
+| `18-psychology` | **Psychology** | [จิต (Jit)](18-psychology/SOUL.md) | User Behavior, Behavioral Economics, Organizational Psychology | Active |
 
 ## Base Profile
 
@@ -184,6 +187,32 @@ solocorp-mark-workflow, content creation pipeline
 
 ---
 
+## Team — 16-neteng (นีต)
+
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [Network Architect](16-neteng/neet/team/01-network-architect.SOUL.md) | Network topology design, BGP/OSPF routing, datacenter interconnects | Design |
+| 02 | [Infrastructure Engineer](16-neteng/neet/team/02-infrastructure-engineer.SOUL.md) | Cloud provisioning (AWS/GCP/DO), load balancer, CDN, DNS via IaC | Design |
+| 03 | [Network Ops](16-neteng/neet/team/03-network-ops.SOUL.md) | 24/7 monitoring, incident response, SLA tracking, bandwidth optimization | Design |
+
+## Team — 17-cybersec (ซาย)
+
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [Threat Analyst](17-cybersec/sai/team/01-threat-analyst.SOUL.md) | SIEM monitoring, threat hunting, IOC classification, threat intel reports | Design |
+| 02 | [Vulnerability Assessor](17-cybersec/sai/team/02-vulnerability-assessor.SOUL.md) | Vulnerability scans, CVSS scoring, OWASP compliance, patch prioritization | Design |
+| 03 | [Incident Responder](17-cybersec/sai/team/03-incident-responder.SOUL.md) | Full IR lifecycle, containment, forensics, RCA, playbooks | Design |
+
+## Team — 18-psychology (จิต)
+
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [User Behavior Analyst](18-psychology/jit/team/01-user-behavior-analyst.SOUL.md) | Cognitive bias mapping, UX psychology, heatmap/session analysis, behavioral segmentation | Design |
+| 02 | [Behavioral Economist](18-psychology/jit/team/02-behavioral-economist.SOUL.md) | Nudge theory, prospect theory, pricing psychology, choice architecture | Design |
+| 03 | [Organizational Psychologist](18-psychology/jit/team/03-organizational-psychologist.SOUL.md) | AI agent team health, communication patterns, conflict resolution, motivation systems | Design |
+
+---
+
 ## Team Summary
 
 | Department | Head | Specialists | Total |
@@ -203,8 +232,11 @@ solocorp-mark-workflow, content creation pipeline
 | 13 Legal | ตุลย์ | 3 | 4 |
 | 14 Web3 | อัยวา | 4 | 5 |
 | 15 Content Creator | เสก | (10 refs) | 1 |
+| 16 Network Engineer | นีต | 3 | 4 |
+| 17 Cyber Security | ซาย | 3 | 4 |
+| 18 Psychology | จิต | 3 | 4 |
 | — | Default (Fallback) | — | 1 |
-| **Total** | **15 Departments** | **46+ Specialists** | **57+ Active Members** |
+| **Total** | **18 Departments** | **55+ Specialists** | **68+ Active Members** |
 
 ---
 

@@ -175,3 +175,48 @@ def run_guards_for_phase(
         })
 
     return results
+
+
+# ---------------------------------------------------------------------------
+# Bus-level pre-flight guard — independent of govctl spec
+# ---------------------------------------------------------------------------
+
+VALID_PRIORITIES = frozenset({"high", "normal", "low"})
+
+
+class BusGuardRunner:
+    """Pre-flight guard for messages entering the central bus.
+
+    Validates structural integrity of a message before it is enqueued.
+    This class is intentionally decoupled from the govctl spec machinery above.
+    """
+
+    async def check(self, message: dict) -> bool:
+        """Validate a bus message before routing.
+
+        Args:
+            message: The message dict to validate.
+
+        Returns:
+            True if all checks pass.
+
+        Raises:
+            ValueError: If any check fails, with a human-readable reason.
+        """
+        source_agent = message.get("source_agent", "")
+        if not source_agent or not str(source_agent).strip():
+            raise ValueError("source_agent must not be empty")
+
+        payload = message.get("payload")
+        if not isinstance(payload, dict):
+            raise ValueError(
+                f"payload must be a dict, got {type(payload).__name__}"
+            )
+
+        priority = message.get("priority")
+        if priority not in VALID_PRIORITIES:
+            raise ValueError(
+                f"priority must be one of {sorted(VALID_PRIORITIES)}, got {priority!r}"
+            )
+
+        return True

@@ -14,6 +14,8 @@ OpenCode ใช้ `@mention` เพื่อเรียก department head โ
 
 | คำสั่ง / หัวข้อ | OpenCode Agent | ไฟล์ |
 |:---------------|:--------------|:-----|
+| vision, strategy, final decision, CEO | `@ceo-turbo` | `.opencode/agents/ceo-turbo.md` |
+| pipeline, orchestration, workflow, handoff | `@orchestrator-wut` | `.opencode/agents/orchestrator-wut.md` |
 | การเงิน, งบ, cost | `@cfo-meetoo` | `.opencode/agents/cfo-meetoo.md` |
 | การตลาด, content, brand | `@cmo-mark` | `.opencode/agents/cmo-mark.md` |
 | architecture, pipeline, routing | `@architect-songsak` | `.opencode/agents/architect-songsak.md` |
@@ -27,6 +29,9 @@ OpenCode ใช้ `@mention` เพื่อเรียก department head โ
 | legal, compliance, contract | `@legal-tulya` | `.opencode/agents/legal-tulya.md` |
 | smart contract, solana, DeFi | `@web3-aywa` | `.opencode/agents/web3-aywa.md` |
 | content, caption, image, video | `@content-creator-sek` | `.opencode/agents/content-creator-sek.md` |
+| network, infrastructure, VPN, CDN, DNS | `@neteng-neet` | `.opencode/agents/neteng-neet.md` |
+| security, threat, vulnerability, incident, SIEM | `@cybersec-sai` | `.opencode/agents/cybersec-sai.md` |
+| psychology, behavior, UX research, bias, org health | `@psych-jit` | `.opencode/agents/psych-jit.md` |
 
 Architect Team (specialists under พี่ทรงศักดิ์):
 
@@ -57,6 +62,8 @@ Architect Team (specialists under พี่ทรงศักดิ์):
 
 | คำสั่ง / หัวข้อ | แผนก | Profile |
 |:---------------|:-----|:--------|
+| vision, strategy, final decision | CEO (เทอโบ) | `@profiles/01-ceo/SOUL.md` |
+| pipeline, orchestration, workflow | Orchestrator (พี่วุฒิ) | `@profiles/04-orchestrator/SOUL.md` |
 | การเงิน, งบ, cost | CFO (meetoo) | `@profiles/02-cfo/SOUL.md` |
 | การตลาด, content, brand | CMO (มาร์ค) | `@profiles/03-cmo/SOUL.md` |
 | architecture, pipeline, routing | Architect (พี่ทรงศักดิ์) | `@profiles/05-architect/SOUL.md` |
@@ -70,6 +77,9 @@ Architect Team (specialists under พี่ทรงศักดิ์):
 | legal, compliance, contract | Legal (ตุลย์) | `@profiles/13-legal/SOUL.md` |
 | smart contract, solana, DeFi | Web3 (อัยวา) | `@profiles/14-web3/SOUL.md` |
 | content, caption, image, video, แคมเปญ, โฆษณา | Content Creator (เสก) | `@profiles/15-content-creator/SOUL.md` |
+| network, infrastructure, VPN, CDN, DNS, load balancing | Network Engineer (นีต) | `@profiles/16-neteng/SOUL.md` |
+| security, threat, vulnerability, incident response, SIEM | Cyber Security (ซาย) | `@profiles/17-cybersec/SOUL.md` |
+| psychology, behavior, cognitive bias, UX psychology, org health | Psychology (จิต) | `@profiles/18-psychology/SOUL.md` |
 
 ---
 
@@ -92,6 +102,9 @@ Architect Team (specialists under พี่ทรงศักดิ์):
 | Legal | ตุลย์ | Compliance, Contracts, Law |
 | Web3 | อัยวา | Blockchain, DeFi, Solana |
 | Content Creator | เสก | Content, Creative, Media |
+| Network Engineer | นีต | Network Design, Infrastructure, CDN, VPN |
+| Cyber Security | ซาย | Threat Detection, Vulnerability, Incident Response |
+| Psychology | จิต | User Behavior, Behavioral Economics, Org Psychology |
 
 ---
 

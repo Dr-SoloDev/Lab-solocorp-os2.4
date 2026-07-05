@@ -29,7 +29,19 @@ from typing import Optional
 
 from central_bus.models import BusMessage
 from central_bus.queue import dequeue, enqueue
-from central_bus.audit import log as audit_log
+import asyncio
+from central_bus.audit import log as _audit_log_coro
+
+
+def _audit_sync(msg) -> None:
+    """Fire-and-forget audit write from a sync context (no running loop)."""
+    try:
+        asyncio.run(_audit_log_coro(msg))
+    except Exception as exc:  # noqa: BLE001
+        log.warning("audit write failed: %s", exc)
+
+
+audit_log = _audit_sync
 from .adapter import (
     process_ao_request,
     AO_REQUEST_TYPE,

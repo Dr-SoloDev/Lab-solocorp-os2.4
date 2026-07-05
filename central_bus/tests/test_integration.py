@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 from central_bus.db import DbManager, ensure_db, reset_db_for_testing
 from central_bus.config import settings
 from central_bus.main import app
+from central_bus.guard_runner import BusGuardRunner
 
 
 pytestmark = pytest.mark.usefixtures("_setup_db")
@@ -309,3 +310,95 @@ class TestAAR:
         assert entry["trace_id"] == trace_id
         assert entry["final_status"] == "completed"
         assert entry["latency_ms"] >= 0
+
+
+# ── BusGuardRunner unit tests ────────────────────────────────────
+
+
+class TestBusGuardRunner:
+    @pytest.mark.asyncio
+    async def test_guard_pass(self) -> None:
+        """Valid message passes all checks and returns True."""
+        guard = BusGuardRunner()
+        result = await guard.check({
+            "source_agent": "test-agent",
+            "payload": {"type": "code"},
+            "priority": "high",
+        })
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_guard_fail_missing_source(self) -> None:
+        """Empty source_agent raises ValueError."""
+        guard = BusGuardRunner()
+        with pytest.raises(ValueError, match="source_agent"):
+            await guard.check({
+                "source_agent": "",
+                "payload": {"type": "code"},
+                "priority": "normal",
+            })
+
+    @pytest.mark.asyncio
+    async def test_guard_fail_invalid_payload(self) -> None:
+        """Payload as list raises ValueError."""
+        guard = BusGuardRunner()
+        with pytest.raises(ValueError, match="payload"):
+            await guard.check({
+                "source_agent": "test-agent",
+                "payload": [1, 2, 3],
+                "priority": "normal",
+            })
+
+    @pytest.mark.asyncio
+    async def test_guard_fail_invalid_priority(self) -> None:
+        """Unknown priority value raises ValueError."""
+        guard = BusGuardRunner()
+        with pytest.raises(ValueError, match="priority"):
+            await guard.check({
+                "source_agent": "test-agent",
+                "payload": {"type": "code"},
+                "priority": "urgent",
+            })
+
+    @pytest.mark.asyncio
+    async def test_full_pipeline_with_guard(self) -> None:
+        """Full pipeline: guard.check() passes → observe → route → update."""
+        message = {
+            "source_agent": "pipeline-agent",
+            "payload": {"type": "code", "feature": "guard"},
+            "priority": "normal",
+        }
+
+        # Step 1: pre-flight guard check
+        guard = BusGuardRunner()
+        guard_result = await guard.check(message)
+        assert guard_result is True
+
+        # Step 2: observe (route)
+        observe_resp = client.post(
+            "/v1/observe",
+            json={"task_id": "guard-pipeline-test", **message},
+        )
+        assert observe_resp.status_code == 200
+        data = observe_resp.json()
+        assert data["status"] == "routed"
+        queue_id = data["queue_id"]
+        trace_id = data["trace_id"]
+        assert queue_id is not None
+        assert trace_id is not None
+
+        # Step 3: update (complete)
+        update_resp = client.post(
+            "/v1/update",
+            json={
+                "trace_id": trace_id,
+                "queue_id": queue_id,
+                "agent_id": "pipeline-agent",
+                "status": "completed",
+                "result": {"guard_checked": True},
+            },
+        )
+        assert update_resp.status_code == 200
+        update_data = update_resp.json()
+        assert update_data["status"] == "completed"
+        assert update_data["dead_letter"] is False
