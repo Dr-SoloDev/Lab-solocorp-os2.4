@@ -1,0 +1,43 @@
+# SoloCorp OS xGov Configuration
+# version: 0.3.0 | 2026-07-05
+
+[system]
+name = "SoloCorp OS xGov"
+version = "0.3.0"
+default_guard_profile = "default"
+
+[paths]
+adr_dir = "adr"
+rfc_dir = "rfc"
+guard_dir = "guards"
+
+[governance]
+threshold_model = "hybrid"
+complexity_matrix_enabled = true
+auto_guard_enforcement = true
+min_approvers = 1
+escalation_timeout_minutes = 120
+
+[complexity_matrix]
+questions = [
+    "Scope Impact (S) — How many departments / bounded contexts are affected?",
+    "Reversibility (R) — How difficult / costly is it to reverse this decision once implemented?",
+    "Resource Commitment (C) — How much organizational resource is required?"
+]
+
+[api]
+require_auth = false
+key = ""  # Set your API key here to enable X-API-Key auth. Empty = auth disabled.
+# Uncomment to enable: key = "dev-local-key"
+
+[notifications]
+channel = "orchestrator-bus"
+on_guard_failure = "notify"
+on_escalation = "notify-urgent"
+reality_checker_integration = true
+
+[ao]
+enabled = false
+daemon_port = 3001
+parallel_limit = 3
+default_timeout_seconds = 300
