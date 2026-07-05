@@ -95,3 +95,47 @@ def test_advance_blocks_and_escalates(tmp_path, monkeypatch):
     result = advance("pg2", "dev", evidence={})
     assert result is False
     assert (tmp_path / "esc.jsonl").exists()
+
+
+# ── update_phase QA gate integration tests ─────────────────────────────
+
+def test_update_phase_with_evidence_passes_gate(tmp_path, monkeypatch):
+    """update_phase() with valid evidence should pass the gate and mark phase done."""
+    import central_bus.state as s
+    monkeypatch.setattr(s, "PROJECTS_DIR", tmp_path)
+    init_project("proj_wire1")
+    # Advance prior phases so "dev" can be set to done
+    update_phase("proj_wire1", "spec", "done")
+    update_phase("proj_wire1", "design", "done")
+    update_phase("proj_wire1", "arch", "done")
+    # Mark dev done with all required evidence
+    evidence = {c: True for c in GATE_RULES["dev"]}
+    state = update_phase("proj_wire1", "dev", "done", evidence=evidence)
+    assert state["phases"]["dev"]["status"] == "done"
+
+
+def test_update_phase_with_missing_evidence_raises(tmp_path, monkeypatch):
+    """update_phase() with incomplete evidence should raise ValueError."""
+    import central_bus.state as s
+    monkeypatch.setattr(s, "PROJECTS_DIR", tmp_path)
+    init_project("proj_wire2")
+    update_phase("proj_wire2", "spec", "done")
+    update_phase("proj_wire2", "design", "done")
+    update_phase("proj_wire2", "arch", "done")
+    # Only provide one of the two required conditions
+    evidence = {"code_review_passed": True}  # missing unit_tests_passed
+    with pytest.raises(ValueError, match="QA gate check failed"):
+        update_phase("proj_wire2", "dev", "done", evidence=evidence)
+
+
+def test_update_phase_skips_gate_without_evidence(tmp_path, monkeypatch):
+    """update_phase() without evidence should skip gate check (backward compat) and succeed."""
+    import central_bus.state as s
+    monkeypatch.setattr(s, "PROJECTS_DIR", tmp_path)
+    init_project("proj_wire3")
+    update_phase("proj_wire3", "spec", "done")
+    update_phase("proj_wire3", "design", "done")
+    update_phase("proj_wire3", "arch", "done")
+    # No evidence — should skip QA gate, log warning, and still succeed
+    state = update_phase("proj_wire3", "dev", "done")
+    assert state["phases"]["dev"]["status"] == "done"

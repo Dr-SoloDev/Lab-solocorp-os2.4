@@ -1,0 +1,274 @@
+# =============================================================================
+# RFC-001: Complexity Matrix for Governance Threshold
+# =============================================================================
+# English schema + Thai content — Hybrid Threshold Model
+# Orchestrator (Architect) is the decision-maker for threshold routing.
+# =============================================================================
+
+[metadata]
+id = "RFC-001"
+title = "Complexity Matrix for Governance Threshold"
+status = "proposed"
+author = "Software Architect (พี่ทรงศักดิ์)"
+created = "2026-07-05"
+version = "0.1.0"
+
+[classification]
+domain = "governance"
+impact = "high"
+complexity = "medium"
+scope = "organization-wide"
+
+# =============================================================================
+# BODY — ENGLISH
+# =============================================================================
+[body.en]
+
+summary = "Define a repeatable 3-question Complexity Matrix that determines which governance path a proposal must follow: Direct ADR, RFC, or Full Review."
+
+context = """
+SoloCorp OS is entering Phase 0: Governance Foundation. Historically, decisions were made ad-hoc — some changes that should have been lightweight ADRs went through heavy review, while complex cross-department changes slipped through without scrutiny.
+
+The `gov/` directory is established as the SSoT for governance artifacts, but we lack a consistent threshold mechanism to decide: "Does this change need an RFC? A Full Review? Or can it go directly to an ADR?"
+
+This RFC proposes a Complexity Matrix — three binary questions whose summed score gates the governance path:
+
+  Score 0   → Simple        → Direct ADR
+  Score 1   → Medium        → RFC (light review)
+  Score 2-3 → Complex       → Full Review
+
+The Orchestrator (Architect) is the designated decision-maker for threshold routing. If the score is borderline (1), the Orchestrator may escalate if context warrants.
+"""
+
+proposal = """
+## The Three Questions
+
+Each question is scored 0 or 1. The total (S + R + C) determines the governance path.
+
+### Q1 — Scope Impact (S)
+How many departments / bounded contexts are affected?
+
+| Criterion | Score | Example |
+|:----------|:------|:--------|
+| Single team / single bounded context | **0** | Backend API change internal to Engineering |
+| Cross-team (2+ departments or external API consumers) | **1** | Changing shared schema between Engineering & Product |
+
+### Q2 — Reversibility (R)
+How difficult / costly is it to reverse this decision once implemented?
+
+| Criterion | Score | Example |
+|:----------|:------|:--------|
+| Easy to reverse (code-only, no data migration, no external commitments) | **0** | Adding a new optional field to an internal config file |
+| Hard or costly to reverse (data migration, breaking changes, user-facing, third-party contracts) | **1** | Changing the Central Bus JSON schema that 5 agents depend on |
+
+### Q3 — Resource Commitment (C)
+How much organizational resource is required?
+
+| Criterion | Score | Example |
+|:----------|:------|:--------|
+| Low effort (< 1 sprint, soloable, or purely documentation) | **0** | Updating a README or writing an ADR for an existing pattern |
+| Significant effort (1+ sprints, multiple people, external dependencies) | **1** | Adding a new Pipeline that touches 3 departments |
+
+## Decision Tree
+
+```
+                ┌─────────────────────────────┐
+                │  Answer Q1, Q2, Q3 (0 or 1) │
+                │  Total = S + R + C           │
+                └──────────┬──────────────────┘
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+           Total=0      Total=1      Total=2-3
+              │            │            │
+              ▼            ▼            ▼
+        ┌──────────┐ ┌──────────┐ ┌──────────────┐
+        │Direct ADR│ │   RFC    │ │ Full Review  │
+        │ Light-   │ │ Standard │ │ Deep Review  │
+        │ weight   │ │ Review   │ │ + Stakeholder│
+        │ No RFC   │ │ Cycle    │ │ + CEO if 3   │
+        └──────────┘ └──────────┘ └──────────────┘
+              │            │            │
+              ▼            ▼            ▼
+         Create ADR    Write RFC     Full Review
+         direct in     → 7-day       → Stakeholder
+         gov/adr/      comment       presentations
+                       period        → 14-day review
+                                    → Orchestrator
+                                      decision
+```
+
+### Threshold Escalation
+If the Orchestrator determines that context warrants a higher path (e.g., a score-1 change that touches a political boundary), they may escalate one level with a brief rationale in the decision log.
+
+## Example Scenarios
+
+| # | Scenario | S | R | C | Total | Path | Rationale |
+|:-:|:---------|:-:|:-:|:-:|:-----:|:-----|:----------|
+| 1 | Adding a new optional field to an internal ADR template (Engineering-only, no migration, < 1 day) | 0 | 0 | 0 | **0** | Direct ADR | Pure documentation change |
+| 2 | Updating the CMO profile SOUL.md with new skills (Single team, easy to undo, < 1 sprint) | 0 | 0 | 0 | **0** | Direct ADR | Team-internal, no ripple effects |
+| 3 | Adding a new Pipeline Agent to the Architect's team (Single department, but moderate effort to integrate) | 0 | 0 | 1 | **1** | RFC | New agent affects routing tables and handoff protocols |
+| 4 | Changing the bilingual schema policy from Thai-only to Thai+English (Single policy file, but hard to reverse once agents adapt) | 0 | 1 | 0 | **1** | RFC | Policy change with downstream training implications |
+| 5 | Migrating Central Bus from JSON to TOML (Cross-department, schema migration, 2+ sprints) | 1 | 1 | 1 | **3** | Full Review | Affects all 9 departments, requires data migration, high coordination cost |
+| 6 | Introducing a new department (e.g., Data Science) into SoloCorp OS (Org-wide, irreversible restructuring, 3+ sprints) | 1 | 1 | 1 | **3** | Full Review | New org structure, routing changes, budget implications, CEO sign-off required |
+| 7 | Changing the Orchestrator's routing.yaml to add new trigger keywords (Single team, easy to reverse, < 1 day) | 0 | 0 | 0 | **0** | Direct ADR | Config update, no migration |
+| 8 | Deprecating an existing Pipeline that 2 departments depend on (Cross-team, migration needed, moderate effort) | 1 | 1 | 1 | **3** | Full Review | Breaking change with downstream consumers |
+"""
+
+consequences = """
+**Positive:**
+- Consistent, repeatable threshold mechanism removes ambiguity
+- Low-complexity changes stay fast (Direct ADR in minutes)
+- High-complexity changes get the scrutiny they deserve
+- Orchestrator has clear framework + escalation authority
+
+**Negative:**
+- Binary questions may oversimplify borderline cases (mitigated by escalation clause)
+- Requires all contributors to learn the matrix (mitigated by this RFC + examples)
+- Orchestrator must stay disciplined — not escalate everything to Full Review
+
+**Risk:**
+- Matrix gaming — inflating/deflating scores intentionally
+  → Mitigated by: rationale required, review trail, random audit
+"""
+alternatives = """
+1. **Floating threshold** — Let each Department Head decide their own path
+   → Rejected: inconsistent, no organization-wide visibility
+
+2. **Always Full Review** — Every change through full cycle
+   → Rejected: kills velocity for trivial changes
+
+3. **Algorithmic scoring** — Weighted formula with 5+ factors
+   → Rejected: too complex, defeats the purpose of a quick triage tool
+"""
+
+# =============================================================================
+# BODY — THAI
+# =============================================================================
+[body.th]
+
+summary = "กำหนด Complexity Matrix แบบ 3 คำถาม ที่ใช้ตัดสินว่า Proposal ควรเข้าสู่ Governance Path ไหน: Direct ADR, RFC, หรือ Full Review"
+
+context = """
+SoloCorp OS กำลังเริ่ม Phase 0: Governance Foundation ที่ผ่านมา Decisions ถูกทำแบบ ad-hoc — บางครั้งการเปลี่ยนแปลงเล็กๆ ที่ควรเป็น ADR เบาๆ กลับโดน review หนัก ในขณะที่การเปลี่ยนแปลงข้ามแผนกที่ซับซ้อนกลับลอดผ่านโดยไม่ถูก scrutinize
+
+เรามี `gov/` directory เป็น SSoT สำหรับ governance artifacts แล้ว แต่ยังขาดกลไก Threshold ที่สอดคล้องกันในการตัดสินว่า "การเปลี่ยนแปลงนี้ต้องใช้ RFC หรือ Full Review หรือแค่ ADR?"
+
+RFC นี้เสนอ Complexity Matrix — คำถาม binary 3 ข้อ ที่รวมคะแนนแล้วกำหนด Governance Path:
+
+  คะแนน 0   → Simple        → Direct ADR
+  คะแนน 1   → Medium        → RFC (light review)
+  คะแนน 2-3 → Complex       → Full Review
+
+Orchestrator (Architect) เป็น decision-maker สำหรับ threshold routing ถ้าคะแนนอยู่ในขอบเขต (1) Orchestrator อาจ escalate ถ้าบริบทเหมาะสม
+"""
+
+proposal = """
+## 3 คำถาม
+
+แต่ละคำถามให้คะแนน 0 หรือ 1 ผลรวม (S + R + C) กำหนด Governance Path
+
+### Q1 — ขอบเขตผลกระทบ (S — Scope Impact)
+มีกี่ Department / Bounded Context ที่ได้รับผลกระทบ?
+
+| เงื่อนไข | คะแนน | ตัวอย่าง |
+|:----------|:------|:---------|
+| ทีมเดียว / bounded context เดียว | **0** | การเปลี่ยน Backend API ภายใน Engineering |
+| ข้ามทีม (2+ departments หรือ external API consumers) | **1** | การเปลี่ยน shared schema ที่ Engineering และ Product ใช้ร่วมกัน |
+
+### Q2 — ความสามารถในการย้อนกลับ (R — Reversibility)
+ยากหรือง่ายแค่ไหนที่จะย้อนกลับการตัดสินใจหลังจาก implement แล้ว?
+
+| เงื่อนไข | คะแนน | ตัวอย่าง |
+|:----------|:------|:---------|
+| ย้อนกลับง่าย (code-only, ไม่มี data migration, ไม่มี commitments ภายนอก) | **0** | เพิ่ม optional field ใน internal config file |
+| ย้อนกลับยากหรือมีต้นทุนสูง (data migration, breaking changes, ส่งผลถึง user, third-party contracts) | **1** | เปลี่ยน Central Bus JSON schema ที่ Agent 5 ตัวพึ่งพา |
+
+### Q3 — ทรัพยากรที่ต้องใช้ (C — Resource Commitment)
+องค์กรต้องใช้ทรัพยากรมากแค่ไหน?
+
+| เงื่อนไข | คะแนน | ตัวอย่าง |
+|:----------|:------|:---------|
+| ใช้ทรัพยากรน้อย (< 1 sprint, ทำคนเดียวได้, หรือเป็น documentation ล้วนๆ) | **0** | อัปเดต README หรือเขียน ADR สำหรับ pattern ที่มีอยู่แล้ว |
+| ใช้ทรัพยากรมาก (1+ sprints, หลายคน, มี external dependencies) | **1** | เพิ่ม Pipeline ใหม่ที่เกี่ยวข้อง 3 Departments |
+
+## Decision Tree
+
+```
+                ┌─────────────────────────────────┐
+                │  ตอบ Q1, Q2, Q3 (0 หรือ 1)      │
+                │  รวมคะแนน = S + R + C            │
+                └──────────┬──────────────────────┘
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+           รวม=0        รวม=1        รวม=2-3
+              │            │            │
+              ▼            ▼            ▼
+        ┌──────────┐ ┌──────────┐ ┌──────────────┐
+        │Direct ADR│ │   RFC    │ │ Full Review  │
+        │ เบาๆ     │ │ Review   │ │ Review ลึก   │
+        │ ไม่ต้อง  │ │ มาตรฐาน  │ │ + Stakeholder│
+        │ RFC      │ │          │ │ + CEO ถ้า 3  │
+        └──────────┘ └──────────┘ └──────────────┘
+              │            │            │
+              ▼            ▼            ▼
+         สร้าง ADR     เขียน RFC     Full Review
+         ใน gov/adr/   → 7 วัน       → Stakeholder
+         ทันที         comment       presentations
+                       period        → 14 วัน review
+                                    → Orchestrator
+                                      decision
+```
+
+### Threshold Escalation
+ถ้า Orchestrator พิจารณาแล้วว่าบริบทสมควรให้ใช้ Path ที่สูงกว่า (เช่น การเปลี่ยนแปลงที่คะแนน 1 แต่แตะเส้นแบ่งทางการเมืองระหว่างแผนก) สามารถ escalate ได้หนึ่งระดับ พร้อม写明เหตุผลใน decision log
+
+## ตัวอย่าง Scenario
+
+| # | สถานการณ์ | S | R | C | รวม | Path | เหตุผล |
+|:-:|:-----------|:-:|:-:|:-:|:---:|:-----|:--------|
+| 1 | เพิ่ม optional field ใน ADR template (Engineering-only, ไม่มี migration, < 1 วัน) | 0 | 0 | 0 | **0** | Direct ADR | เปลี่ยน documentation ล้วนๆ |
+| 2 | อัปเดต CMO profile SOUL.md เพิ่ม skills (ทีมเดียว, ย้อนกลับง่าย, < 1 sprint) | 0 | 0 | 0 | **0** | Direct ADR | ภายในทีม ไม่มี ripple effect |
+| 3 | เพิ่ม Pipeline Agent ใหม่ในทีม Architect (แผนกเดียว แต่ต้อง integrate ปานกลาง) | 0 | 0 | 1 | **1** | RFC | Agent ใหม่มีผลต่อ routing tables และ handoff protocols |
+| 4 | เปลี่ยนนโยบาย bilingual schema จากไทย-only เป็น ไทย+อังกฤษ (ไฟล์นโยบายเดียว แต่ย้อนกลับยากถ้า Agent ปรับตัวแล้ว) | 0 | 1 | 0 | **1** | RFC | Policy change มีผลต่อการเทรน Agent |
+| 5 | ย้าย Central Bus จาก JSON → TOML (ข้าม department, schema migration, 2+ sprints) | 1 | 1 | 1 | **3** | Full Review | กระทบ 9 แผนก, ต้อง data migration, coordination สูง |
+| 6 | เพิ่ม department ใหม่ (Data Science) เข้า SoloCorp OS (องค์กร-wide, ย้อนกลับยาก, 3+ sprints) | 1 | 1 | 1 | **3** | Full Review | โครงสร้างองค์กรใหม่, routing เปลี่ยน, งบประมาณ, CEO sign-off |
+| 7 | เปลี่ยน routing.yaml ของ Orchestrator เพิ่ม trigger keywords (ทีมเดียว, ย้อนกลับง่าย, < 1 วัน) | 0 | 0 | 0 | **0** | Direct ADR | config update ไม่มี migration |
+| 8 | Deprecate Pipeline ที่มีอยู่ซึ่ง 2 แผนกพึ่งพา (ข้ามทีม, ต้อง migration, effort ปานกลาง) | 1 | 1 | 1 | **3** | Full Review | Breaking change ที่มี downstream consumers |
+"""
+
+consequences = """
+**ข้อดี:**
+- กลไก Threshold ที่สอดคล้องและทำซ้ำได้ ช่วยลดความ ambiguity
+- การเปลี่ยนแปลงที่มีความซับซ้อนต่ำยังคงรวดเร็ว (Direct ADR ในไม่กี่นาที)
+- การเปลี่ยนแปลงที่ซับซ้อนได้รับการตรวจสอบอย่างเหมาะสม
+- Orchestrator มีกรอบการทำงานที่ชัดเจน + อำนาจ escalation
+
+**ข้อเสีย:**
+- คำถาม binary อาจ oversimplify กรณี borderline (ลดด้วย escalation clause)
+- Contributor ทุกคนต้องเรียนรู้ matrix (ลดด้วย RFC นี้ + examples)
+- Orchestrator ต้องมีวินัย — ไม่ escalate ทุกอย่างเป็น Full Review
+
+**ความเสี่ยง:**
+- Matrix gaming — จงใจเพิ่ม/ลดคะแนน
+  → ลดด้วย: ต้องมี rationale, มี review trail, สุ่ม audit
+"""
+alternatives = """
+1. **Floating threshold** — ให้ Head แต่ละแผนกกำหนด path เอง
+   → ❌ ไม่ consistent, ไม่มี visibility ในระดับองค์กร
+
+2. **Always Full Review** — ทุกการเปลี่ยนแปลงผ่าน Full Cycle
+   → ❌ ตายตอน trivial change
+
+3. **Algorithmic scoring** — สูตรถ่วงน้ำหนัก 5+ ปัจจัย
+   → ❌ ซับซ้อนเกินไป ไม่เหมาะกับ triage tool ที่ต้องเร็ว
+"""
+
+# =============================================================================
+# FOOTER
+# =============================================================================
+[footer]
+references = ["gov/adr/ADR-001.toml"]
+tags = ["complexity-matrix", "governance", "threshold", "rfc", "phase-0"]
+review_date = "2026-10-05"

@@ -1,0 +1,15 @@
+background = ""
+proposal = "Testing RFC creation"
+alternatives = []
+implementation = ""
+
+[metadata]
+id = "RFC-001"
+title = "Test RFC via API"
+status = "draft"
+author = ""
+date = "2026-07-05"
+complexity_score = 0
+
+[classification]
+domain = "test"

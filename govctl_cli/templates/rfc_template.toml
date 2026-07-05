@@ -1,0 +1,30 @@
+[metadata]
+id = "RFC-{id}"
+title = "{title}"
+status = "draft"
+author = "{author}"
+created = "{date}"
+updated = "{date}"
+
+[governance]
+threshold_score = {score}
+approver = "orchestrator"
+
+[links]
+supersedes = []
+related_adrs = []
+work_items = []
+
+[body.en]
+summary = ""
+context = ""
+proposal = ""
+alternatives = ""
+consequences = ""
+
+[body.th]
+summary = ""
+context = ""
+proposal = ""
+alternatives = ""
+consequences = ""

@@ -1,0 +1,127 @@
+[metadata]
+id = "ADR-006"
+title = "Guard Engine — Automated Validation for Governance Artifacts"
+status = "accepted"
+author = "Software Architect (พี่ทรงศักดิ์)"
+date = "2026-07-05"
+version = "1.0.0"
+
+[classification]
+domain = "governance"
+impact = "high"
+complexity = "medium"
+scope = "organization-wide"
+
+[body.en]
+summary = """
+Implement a real automated Guard Engine in govctl_cli/guard.py that validates governance
+artifacts (ADRs, RFCs) against the 9-guard specification in gov/guards/default.toml.
+"""
+
+context = """
+SoloCorp OS governance requires all ADRs and RFCs to pass 9 verification guards before
+transitioning to "accepted" status.
+
+Prior to this decision, the guard runner existed as scaffolding in govctl_cli/guard.py
+with the 6 automated Phase 1 guards (GUARD-001 to GUARD-006) already executing real
+validation logic — checking schema compliance, bilingual completeness, complexity score,
+status validity, review date, and cross-reference integrity.
+
+The 3 manual guards (GUARD-007, GUARD-008, GUARD-009) require explicit human approval and
+cannot be fully automated. However, GUARD-009 (Reality Checker) benefits from automated
+internal consistency pre-checks before the human reviewer is involved.
+
+State at time of this ADR:
+- Guard profiles on disk: 1 (gov/guards/default.toml)
+- Total guards in that profile: 9 (6 automated + 3 manual)
+- Accepted ADRs on disk: ADR-001, ADR-002
+- All ADRs were authored in TOML from the start; no markdown-to-TOML migration occurred
+"""
+
+decision = """
+1. Phase 1 — GUARD-001 to GUARD-006 (automated): real validation logic is implemented in
+   govctl_cli/guard.py. Each checker inspects specific TOML fields and returns PASS/FAIL/WARN
+   with field-level detail.
+
+2. Phase 2 — GUARD-007, GUARD-008 (manual): remain PENDING until explicit human approval via
+   `govctl guard approve`. No automated substitute.
+
+3. Phase 3 — GUARD-009 (Reality Checker, manual + automated pre-check): automated
+   internal-consistency checks run first. If any pre-check fails the human reviewer is not
+   invoked yet. Automated checks cover:
+   - Artifact ID matches ADR-NNN or RFC-NNN pattern
+   - review_date is not earlier than created date
+   - scope=organization-wide with impact=low is flagged as suspicious
+   - Critical fields (title, author, body sections) must not contain placeholder text
+"""
+
+consequences = """
+Positive:
+- Governance artifacts can be validated locally before submission via `govctl guard run`
+- Automated guards catch structural issues immediately without waiting for human review
+- GUARD-009 pre-checks reduce back-and-forth in the human reality-check cycle
+
+Negative:
+- Authors of new artifacts must use the bilingual body schema (body.en / body.th);
+  ADR-001 and ADR-002 pre-date this requirement and will fail GUARD-002 if validated now
+- Guard checker logic must be maintained as the artifact schema evolves
+"""
+
+[body.th]
+summary = """
+ติดตั้ง Guard Engine จริงใน govctl_cli/guard.py เพื่อตรวจสอบ governance artifacts (ADR, RFC)
+ตาม 9-guard specification ที่กำหนดไว้ใน gov/guards/default.toml
+"""
+
+context = """
+SoloCorp OS Governance กำหนดให้ ADR และ RFC ทุกชิ้นต้องผ่าน 9 verification guards ก่อนเปลี่ยน
+สถานะเป็น "accepted"
+
+ก่อน ADR นี้ guard runner มีอยู่แล้วใน govctl_cli/guard.py โดย 6 automated guards ใน Phase 1
+(GUARD-001 ถึง GUARD-006) มี validation logic จริงแล้ว ครอบคลุม schema compliance,
+bilingual completeness, complexity score, status validity, review date และ cross-reference
+integrity
+
+3 manual guards (GUARD-007, GUARD-008, GUARD-009) ต้องอนุมัติโดยมนุษย์เท่านั้น แต่ GUARD-009
+(Reality Checker) ได้ประโยชน์จาก automated internal consistency pre-checks ก่อนที่ผู้ตรวจ
+จะเข้ามา
+
+สถานะ ณ เวลาสร้าง ADR นี้:
+- Guard profiles บน disk: 1 ไฟล์ (gov/guards/default.toml)
+- Guards ทั้งหมดใน profile นั้น: 9 guards (6 automated + 3 manual)
+- ADR ที่ accepted อยู่: ADR-001, ADR-002
+- ADR ทุกชิ้นถูกเขียนในรูปแบบ TOML มาตั้งแต่ต้น ไม่เคยมีการ migrate จาก markdown
+"""
+
+decision = """
+1. Phase 1 — GUARD-001 ถึง GUARD-006 (automated): มี validation logic จริงใน govctl_cli/guard.py
+   แต่ละ checker ตรวจสอบ TOML fields เฉพาะและคืนค่า PASS/FAIL/WARN พร้อมรายละเอียดระดับ field
+
+2. Phase 2 — GUARD-007, GUARD-008 (manual): ยังคงเป็น PENDING จนกว่าจะอนุมัติโดยมนุษย์ผ่าน
+   `govctl guard approve` ไม่มี automated substitute
+
+3. Phase 3 — GUARD-009 (Reality Checker, manual + automated pre-check): automated
+   internal-consistency checks ทำงานก่อน ถ้า pre-check ล้มเหลว ผู้ตรวจยังไม่ถูกเรียก
+   Automated checks ครอบคลุม:
+   - Artifact ID ตรงกับ pattern ADR-NNN หรือ RFC-NNN
+   - review_date ต้องไม่ก่อน created date
+   - scope=organization-wide กับ impact=low ถูก flag ว่า suspicious
+   - Critical fields (title, author, body sections) ต้องไม่มี placeholder text
+"""
+
+consequences = """
+ข้อดี:
+- ตรวจสอบ governance artifacts ในเครื่องได้ก่อน submit ผ่าน `govctl guard run`
+- Automated guards จับปัญหาเชิง structure ทันที ไม่ต้องรอ human review
+- GUARD-009 pre-checks ลด back-and-forth ในขั้นตอน human reality-check
+
+ข้อเสีย:
+- ผู้เขียน artifacts ใหม่ต้องใช้ bilingual body schema (body.en / body.th)
+  ADR-001 และ ADR-002 ถูกสร้างก่อนมาตรฐานนี้และจะ fail GUARD-002 ถ้าตรวจสอบ
+- Guard checker logic ต้องอัปเดตเมื่อ artifact schema เปลี่ยน
+"""
+
+[footer]
+references = ["gov/adr/ADR-001.toml", "gov/adr/ADR-002.toml", "gov/guards/default.toml"]
+tags = ["governance", "guard-engine", "automation", "validation", "phase-1"]
+review_date = "2026-10-05"

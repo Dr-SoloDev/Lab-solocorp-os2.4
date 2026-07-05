@@ -1,0 +1,286 @@
+# =============================================================================
+# Default Verification Guard Spec — SoloCorp OS Governance
+# =============================================================================
+# Every governance artifact (ADR, RFC) MUST pass ALL guards before
+# transitioning status from "proposed" to "accepted".
+#
+# Guard types:
+#   automated — run by CI/Pipeline Auditor, no human needed
+#   manual    — requires human (Department Head or Orchestrator) approval
+# =============================================================================
+
+[metadata]
+id = "GUARD-SPEC-001"
+title = "Default Verification Guard Spec"
+version = "1.0.0"
+status = "active"
+author = "Software Architect (พี่ทรงศักดิ์)"
+created = "2026-07-05"
+applies_to = ["gov/adr/*.toml", "gov/rfc/*.toml"]
+
+# =============================================================================
+# AUTOMATED GUARDS — run by Pipeline Auditor on every status transition
+# =============================================================================
+# If ANY automated guard fails → status reverts to "draft", author notified.
+# =============================================================================
+
+[[guards]]
+id = "GUARD-001"
+name = "Schema Compliance"
+type = "automated"
+severity = "blocking"
+description = "Verify that the TOML/YAML file conforms to the required schema structure"
+
+checks = [
+  "metadata.id exists and is non-empty",
+  "metadata.title exists and is non-empty",
+  "metadata.status is one of: proposed | draft | accepted | deprecated | superseded",
+  "metadata.author exists and is non-empty",
+  "metadata.created is a valid ISO date (YYYY-MM-DD)",
+  "classification.domain exists and is in allowed list",
+  "classification.impact exists and is in: low | medium | high",
+  "classification.complexity exists and is in: low | medium | high",
+  "classification.scope exists and is non-empty"
+]
+
+failure_action = """
+Block transition. Return specific field-level errors to author.
+Pipeline Auditor logs to gov/audit/schema-violations.log.
+"""
+
+# ---
+
+[[guards]]
+id = "GUARD-002"
+name = "Bilingual Completeness"
+type = "automated"
+severity = "blocking"
+description = "Ensure both English (body.en) and Thai (body.th) sections are present and non-empty"
+
+checks = [
+  "body.en.summary exists and is non-empty",
+  "body.en.context exists and is non-empty",
+  "body.en.decision OR body.en.proposal exists and is non-empty",
+  "body.en.consequences exists and is non-empty",
+  "body.th.summary exists and is non-empty",
+  "body.th.context exists and is non-empty",
+  "body.th.decision OR body.th.proposal exists and is non-empty",
+  "body.th.consequences exists and is non-empty"
+]
+
+failure_action = """
+Block transition. Report which section(s) missing in which language.
+For ADRs: require both decision sections; for RFCs: require both proposal sections.
+"""
+
+# ---
+
+[[guards]]
+id = "GUARD-003"
+name = "Complexity Score Recorded"
+type = "automated"
+severity = "blocking"
+description = "Verify that the artifact's classification.complexity field is set and matches RFC-001 scoring (if applicable)"
+
+checks = [
+  "classification.complexity is set (low | medium | high)",
+  "If artifact is an RFC: complexity MUST reference RFC-001 matrix scoring",
+  "If artifact.score exists: score must be integer 0-3 and match complexity label (0=low, 1=medium, 2-3=high)"
+]
+
+failure_action = """
+Block transition if complexity is missing or inconsistent.
+Require author to run through RFC-001 Complexity Matrix and record score.
+"""
+
+# ---
+
+[[guards]]
+id = "GUARD-004"
+name = "Status Validity & Transition Logic"
+type = "automated"
+severity = "blocking"
+description = "Ensure the status transition follows the allowed state machine"
+
+allowed_transitions = [
+  "draft → proposed",
+  "proposed → accepted",
+  "proposed → deprecated",
+  "accepted → deprecated",
+  "accepted → superseded",
+  "deprecated → superseded",
+  "superseded → (terminal)"
+]
+
+checks = [
+  "If superseded: footer.references MUST contain the superseding ADR/RFC ID",
+  "If deprecated: footer.references MUST contain the deprecation rationale or replacement",
+  "Status MUST progress forward — no rollback (e.g., accepted back to proposed)"
+]
+
+failure_action = """
+Block transition. Log invalid transition attempt to audit trail.
+Require author to use correct transition path or create a new artifact.
+"""
+
+# ---
+
+[[guards]]
+id = "GUARD-005"
+name = "Review Date Compliance"
+type = "automated"
+severity = "warning"
+description = "Ensure the artifact has a review_date set within acceptable timeframe"
+
+checks = [
+  "footer.review_date exists and is a valid ISO date (YYYY-MM-DD)",
+  "footer.review_date is within 90 days of created date (for active status artifacts)",
+  "If review_date is past due: flag as WARNING but allow transition"
+]
+
+failure_action = """
+Flag as warning — non-blocking. Notify author to set/update review_date.
+If review_date is more than 30 days overdue, elevate to HIGH warning.
+"""
+
+# ---
+
+[[guards]]
+id = "GUARD-006"
+name = "Cross-Reference Integrity"
+type = "automated"
+severity = "blocking"
+description = "Verify that all references to other artifacts (ADRs, RFCs, files) are resolvable"
+
+checks = [
+  "footer.references: each reference ID maps to an existing file in gov/",
+  "If supersedes ADR-XXX: ADR-XXX must exist in gov/adr/",
+  "No circular references (A → B → A)"
+]
+
+failure_action = """
+Block transition. List unresolvable references.
+Author must fix broken references or justify external references (e.g., link to external RFC).
+"""
+
+# =============================================================================
+# MANUAL GUARDS — require human approval via Orchestrator or Department Head
+# =============================================================================
+# If ANY manual guard is not yet approved → status remains "proposed" with
+# pending-approval flag. Pipeline Auditor notifies the designated approver.
+# =============================================================================
+
+[[guards]]
+id = "GUARD-007"
+name = "Stakeholder Sign-off"
+type = "manual"
+severity = "blocking"
+description = "All affected Department Heads must explicitly approve the artifact"
+
+approval_required_from = [
+  "Orchestrator (Architect) — ALWAYS required for cross-department changes",
+  "Department Head of each affected department identified in scope/impact analysis"
+]
+
+approval_process = """
+1. Author identifies affected departments based on classification.scope
+2. Pipeline Auditor sends notification to each Department Head
+3. Each Head reviews and explicitly approves/rejects in decision log
+4. If any Head rejects: artifact returns to draft with rejection rationale
+5. All approvals recorded in gov/audit/approval-log/
+"""
+
+failure_action = """
+Block transition. Mark as "pending-approval".
+Require author to gather sign-offs before re-submitting.
+"""
+
+# ---
+
+[[guards]]
+id = "GUARD-008"
+name = "Cross-Department Impact Notification"
+type = "manual"
+severity = "blocking"
+description = "Ensure downstream departments are notified even if not directly affected"
+
+checks = [
+  "If scope = organization-wide: ALL 9+ Department Heads notified",
+  "If scope = cross-team: at minimum, Engineering + Product + affected depts notified",
+  "If scope = single-team: Head of that team notified (self-notification is sufficient)",
+  "Notification sent via Central Bus or documented in decision log"
+]
+
+failure_action = """
+Block transition. Require proof of notification (decision log entry).
+Pipeline Auditor verifies notification was sent before clearing this guard.
+"""
+
+# ---
+
+[[guards]]
+id = "GUARD-009"
+name = "Reality Checker Integration (Final Gate)"
+type = "manual"
+severity = "blocking"
+description = """
+FINAL GUARD — Reality Checker reviews the complete artifact for practical viability.
+This is the last guard before status transitions to "accepted".
+"""
+
+approval_process = """
+1. ALL automated guards (001-006) already PASSED
+2. ALL prior manual guards (007-008) already APPROVED
+3. Reality Checker (a designated QA or Architect specialist) reviews:
+   a. Is the proposal feasible given current SoloCorp OS state?
+   b. Are there hidden dependencies not captured in the matrix?
+   c. Does the change introduce unacceptable risk?
+   d. Is the implementation path clear enough for execution?
+4. Reality Checker logs verdict in gov/audit/reality-checker-log/
+5. Verdict options: APPROVED | NEEDS WORK | REJECTED
+   - APPROVED → artifact status transitions to "accepted"
+   - NEEDS WORK → artifact returns to "draft" with specific remediation items
+   - REJECTED → artifact status set to "deprecated" with rejection rationale
+"""
+
+failure_action = """
+If NEEDS WORK: return to draft with remediation list. Author iterates and re-submits.
+If REJECTED: deposit with full rationale. May be re-proposed via new RFC.
+"""
+
+# =============================================================================
+# GUARD EXECUTION ORDER
+# =============================================================================
+# Guards MUST execute in this order. Early failure saves effort.
+#
+# [Phase 1 — Automated Checks]
+#   1. GUARD-001: Schema Compliance        → fast structural check
+#   2. GUARD-004: Status Validity           → state machine check
+#   3. GUARD-006: Cross-Reference Integrity → link resolution
+#   4. GUARD-002: Bilingual Completeness    → content check
+#   5. GUARD-003: Complexity Score          → scoring check
+#   6. GUARD-005: Review Date               → date check (warning only)
+#
+# [Phase 2 — Manual Approvals]
+#   7. GUARD-007: Stakeholder Sign-off      → department head approvals
+#   8. GUARD-008: Cross-Dept Notification   → notification proof
+#
+# [Phase 3 — Final Gate]
+#   9. GUARD-009: Reality Checker           → final viability review
+# =============================================================================
+
+[execution]
+order = [
+  "GUARD-001",
+  "GUARD-004",
+  "GUARD-006",
+  "GUARD-002",
+  "GUARD-003",
+  "GUARD-005",
+  "GUARD-007",
+  "GUARD-008",
+  "GUARD-009"
+]
+auto_retry = true
+max_retries = 3
+retry_delay_minutes = 15

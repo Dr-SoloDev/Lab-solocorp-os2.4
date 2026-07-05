@@ -1,0 +1,20 @@
+# AO CLI Bridge Configuration
+# SoloCorp OS — Agent Orchestrator Integration
+# version: 0.1.0 | 2026-07-05
+
+[ao]
+enabled = false
+cli_path = "agent_orchestrator"
+timeout_seconds = 120
+max_concurrent = 3
+
+[agents]
+ceo = { enabled = true, model = "default" }
+orchestrator = { enabled = true, model = "default" }
+architect = { enabled = true, model = "default" }
+engineering = { enabled = true, model = "default" }
+qa = { enabled = true, model = "default" }
+
+[bus]
+poll_interval = 2
+queue_prefix = "bus/queue/"

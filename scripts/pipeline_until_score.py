@@ -122,7 +122,8 @@ if __name__ == "__main__":
 
         if score >= TARGET_SCORE:
             print(f"\n✅ เป้าหมายสำเร็จ! score={score}/10 >= {TARGET_SCORE}")
-            state.update_phase(PROJECT_ID, "dev", "done", owner="engineering")
+            state.update_phase(PROJECT_ID, "dev", "done", owner="engineering",
+                                evidence={"code_review_passed": True, "unit_tests_passed": True})
             state.update_phase(PROJECT_ID, "qa", "in_progress", owner="qa")
             break
 

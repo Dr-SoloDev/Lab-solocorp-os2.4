@@ -1,22 +1,224 @@
-# SoloCorp OS 2.4 — Custom License
+SOLOCORP OPERATING SYSTEM -- PROPRIETARY LICENSE
+Copyright (c) 2026 SoloCorp Organization (Dr-SoloDev). All rights reserved.
 
-**Copyright © 2026 SoloCorp Organization (Dr-SoloDev). All rights reserved.**
+================================================================================
+1. DEFINITIONS
+================================================================================
 
-This repository and all its contents (including but not limited to source code, agent prompts, documentation, architectural designs, and configuration files) are the exclusive property of SoloCorp Organization.
+"Software" means the SoloCorp Operating System, including but not limited to all
+source code, agent prompts, agent profiles, SOUL.md identity files,
+architectural designs, routing configurations, pipeline definitions, workflow
+specifications, documentation, scripts, configuration files, knowledge graphs,
+decision records, and any other materials contained in or associated with this
+repository and its related repositories.
 
-## Permitted Use
+"SoloCorp Organization" means the legal entity operating under the name
+SoloCorp, its founders, owners, authorized members, and designated assigns.
 
-- **Internal Use:** Members of SoloCorp Organization may freely use, modify, and adapt this repository for internal operations.
-- **Reference:** External parties may view the public repository for educational and reference purposes only.
+"Derivative Work" means any work that is based on or derived from the Software
+in any form, including but not limited to modifications, adaptations,
+translations, restructurings, extensions, or any work that reproduces,
+recasts, or transforms the architectural patterns, agent routing topologies,
+department structures, pipeline workflows, or any substantial portion of the
+Software's design or implementation.
 
-## Restrictions
+"Authorized User" means an individual who has been explicitly granted written
+permission by SoloCorp Organization to access and use the Software for
+specified purposes.
 
-- **No Commercial Use:** This software and its derivatives may not be used, copied, modified, or distributed for commercial purposes outside SoloCorp Organization without explicit written permission.
-- **No Redistribution:** You may not redistribute this repository or any derivative works in any form, whether modified or unmodified.
-- **No Sub-licensing:** You may not sub-license this software under any terms.
+================================================================================
+2. PROPRIETARY RIGHTS AND OWNERSHIP
+================================================================================
 
-## Attribution
+The Software is the exclusive, proprietary property of SoloCorp Organization.
+All right, title, and interest in and to the Software, including all
+intellectual property rights therein, are owned and retained by SoloCorp
+Organization. The Software is protected by applicable copyright laws,
+international treaty provisions, trade secret laws, and other intellectual
+property laws worldwide.
 
-This repository describes the **SoloCorp Operating System** — an AI-agent organizational architecture built on top of [Hermes Agent](https://hermes-agent.nousresearch.com/).
+The architecture, design patterns, multi-agent routing topology, department
+hierarchy, pipeline orchestration system, agent profile structure, handoff
+protocols, and all other original elements of the Software constitute
+confidential and proprietary information of SoloCorp Organization.
 
-For inquiries, contact: Dr-SoloDev (GitHub)
+ALL RIGHTS RESERVED. No part of the Software may be reproduced, distributed,
+or transmitted in any form or by any means without the prior written
+permission of SoloCorp Organization, except as expressly provided in
+Section 3 below.
+
+================================================================================
+3. LIMITED PERMISSIONS
+================================================================================
+
+3.1 Internal Use by SoloCorp Members
+    Authorized members of SoloCorp Organization may use, modify, and adapt
+    the Software for internal organizational operations.
+
+3.2 Reference and Educational Viewing
+    External parties may view the publicly available repository for
+    non-commercial reference and educational purposes only. This limited
+    right to view does not confer any license, ownership, or right to use
+    the Software in any manner beyond passive viewing.
+
+3.3 Attribution for Reference Use
+    Any reference to the Software in academic papers, articles, blog posts,
+    presentations, or other publications must include the following
+    attribution prominently displayed:
+
+    "SoloCorp Operating System (SoloCorp OS) (c) 2026 SoloCorp Organization
+    (Dr-SoloDev). All rights reserved. Used with permission."
+
+    Failure to include this attribution constitutes a violation of this
+    license.
+
+================================================================================
+4. STRICTLY PROHIBITED ACTIVITIES
+================================================================================
+
+Without the express prior written consent of SoloCorp Organization, the
+following activities are strictly prohibited:
+
+4.1 Commercial Use
+    Any commercial use, sale, rental, lease, licensing, or other commercial
+    exploitation of the Software or any portion thereof, in any form.
+
+4.2 Redistribution
+    Any redistribution of the Software, whether modified or unmodified, in
+    source or binary form, through any channel or medium.
+
+4.3 Derivative Works
+    Any creation, distribution, or exploitation of Derivative Works based on
+    the Software.
+
+4.4 Training of Artificial Intelligence Models
+    Any use of the Software, its code, its agent prompts, its architectural
+    designs, or any portion thereof to train, fine-tune, or otherwise improve
+    any artificial intelligence model, machine learning system, or large
+    language model, whether commercial or open-source.
+
+4.5 Courses, Tutorials, and Educational Products
+    Any creation, sale, distribution, or publication of courses, tutorials,
+    workshops, training materials, books, videos, or any other educational or
+    instructional content that teaches, explains, replicates, or is based
+    upon the Software's architecture, design patterns, agent topology,
+    pipeline structure, or any substantial portion thereof.
+
+4.6 Competitive Products
+    Any use of the Software to develop, enhance, or inform the development of
+    any competing product, service, or system that provides similar
+    functionality to the Software.
+
+4.7 Misrepresentation and Passing Off
+    Any representation, whether express or implied, that any product,
+    service, or work is affiliated with, endorsed by, or associated with
+    SoloCorp Organization without explicit written authorization.
+
+4.8 Removal of Notices
+    Any removal, alteration, or obscuring of any copyright, trademark, or
+    proprietary rights notice contained in or on the Software.
+
+================================================================================
+5. REPORTING INFRINGEMENT
+================================================================================
+
+If you become aware of any violation of this license, including unauthorized
+use, redistribution, derivative works, or unauthorized courses/tutorials
+based on the Software, you are encouraged to report it to:
+
+    SoloCorp Organization Legal Department
+    Contact: Dr-SoloDev (GitHub)
+    Repository: https://github.com/Dr-SoloDev/Lab-solocorp-os2.4
+
+Reports should include:
+- The nature of the infringement
+- The location (URL) where the infringement is occurring
+- The date and time of discovery
+- Any supporting evidence or documentation
+- Your contact information (optional)
+
+SoloCorp Organization takes all reports seriously and will investigate and
+pursue appropriate legal action against infringers.
+
+================================================================================
+6. CONSEQUENCES OF VIOLATION
+================================================================================
+
+Violation of any term of this license may result in:
+
+6.1 Immediate Revocation
+    Any and all implied or granted permissions are immediately and
+    automatically revoked upon any violation.
+
+6.2 Legal Action
+    SoloCorp Organization reserves the right to pursue all available legal
+    remedies, including but not limited to:
+
+    a) Filing a DMCA takedown notice with the relevant platform or hosting
+       provider.
+
+    b) Filing a copyright infringement lawsuit seeking statutory damages of
+       up to $150,000 per work infringed under the Copyright Act (17 U.S.C.
+       Section 504).
+
+    c) Seeking injunctive relief to prevent further infringement.
+
+    d) Reporting the violation to relevant platform providers for account
+       termination.
+
+    e) Pursuing criminal charges where applicable under applicable copyright
+       and intellectual property laws.
+
+6.3 Damages and Costs
+    The infringer shall be liable for all actual damages, statutory damages,
+    profits attributable to the infringement, and all legal costs and
+    attorneys' fees incurred by SoloCorp Organization in enforcing its
+    rights.
+
+6.4 Public Disclosure
+    SoloCorp Organization reserves the right to publicly identify
+    infringers and the nature of their infringement.
+
+================================================================================
+7. NO WARRANTY AND LIMITATION OF LIABILITY
+================================================================================
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL
+SOLOCORP ORGANIZATION BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY
+ARISING FROM THE USE OR INABILITY TO USE THE SOFTWARE.
+
+================================================================================
+8. GOVERNING LAW AND JURISDICTION
+================================================================================
+
+This license shall be governed by and construed in accordance with the laws
+applicable to SoloCorp Organization's jurisdiction. Any disputes arising
+under this license shall be resolved in the competent courts of that
+jurisdiction.
+
+================================================================================
+9. SEVERABILITY AND ENTIRE AGREEMENT
+================================================================================
+
+If any provision of this license is held to be unenforceable, the remaining
+provisions shall remain in full force and effect. This license constitutes the
+entire agreement between SoloCorp Organization and any user of the Software
+regarding the Software and supersedes all prior agreements and understandings.
+
+================================================================================
+COPYRIGHT NOTICE FORMAT
+================================================================================
+
+The following copyright notice must appear on all authorized copies and
+derivative versions of the Software:
+
+    SoloCorp Operating System (SoloCorp OS)
+    Copyright (c) 2026 SoloCorp Organization (Dr-SoloDev)
+    All Rights Reserved.
+    Proprietary and Confidential.
+
+================================================================================
+END OF LICENSE
+================================================================================

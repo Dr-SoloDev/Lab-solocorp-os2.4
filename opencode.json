@@ -1,0 +1,178 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "default_agent": "ceo-turbo",
+  "username": "Dr.solodev",
+
+  "shell": "/bin/bash",
+  "logLevel": "INFO",
+
+  "instructions": ["CLAUDE.md"],
+
+  "skills": {
+    "paths": [
+      ".opencode/skills"
+    ]
+  },
+
+  "references": {
+    "profiles": {
+      "path": "profiles",
+      "description": "Use for department profiles, SOUL.md, routing.yaml — ข้อมูลบุคลากรและโครงสร้างแผนกของ SoloCorp OS"
+    },
+    "docs": {
+      "path": "docs",
+      "description": "Use for runbooks, architecture, pipeline docs, and operational guides"
+    },
+    "decisions": {
+      "path": "decisions",
+      "description": "Use for Architecture Decision Records (ADRs) — เหตุผลการตัดสินใจทางเทคนิค和历史"
+    },
+    "bus": {
+      "path": "bus",
+      "description": "Use for Central Bus system design, queue management, project governance docs"
+    },
+    "reference": {
+      "path": "reference",
+      "description": "Use for external reference documentation, research notes, and knowledge base"
+    },
+    "scripts": {
+      "path": "scripts",
+      "description": "Use for build/export/pipeline utility scripts"
+    },
+    "tests": {
+      "path": "tests",
+      "description": "Use for test suites across all phases"
+    }
+  },
+
+  "agent": {
+    "ceo-turbo": {
+      "model": "opencode/deepseek-v4-flash-free",
+      "description": "CEO of SoloCorp OS — Supreme AI Authority. รับ vision จาก Owner → ตัดสินใจ → delegate ไปยัง Department Heads",
+      "mode": "primary",
+      "color": "#FFD700"
+    },
+    "build": {
+      "disable": false,
+      "mode": "primary",
+      "description": "Coding agent — ใช้สำหรับ implement code, features, fixes"
+    },
+    "plan": {
+      "disable": false,
+      "mode": "primary",
+      "description": "Planning agent — ใช้สำหรับวางแผน, decompose tasks, architecture design"
+    },
+    "explore": {
+      "disable": false,
+      "description": "Codebase exploration agent — ใช้สำรวจ codebase ทำความเข้าใจ structure"
+    }
+  },
+
+  "permission": {
+    "read": "allow",
+    "edit": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "bash": {
+      "npm *": "allow",
+      "pip *": "allow",
+      "python*": "allow",
+      "node*": "allow",
+      "git *": "allow",
+      "jj *": "allow",
+      "ls": "allow",
+      "cat *": "allow",
+      "docker *": "ask",
+      "docker-compose *": "ask",
+      "rm *": "ask",
+      "rm -rf *": "deny",
+      "sudo *": "deny",
+      "chmod *": "ask",
+      "chown *": "deny",
+      "curl *": "allow",
+      "wget *": "allow",
+      "*": "ask"
+    },
+    "task": "allow",
+    "external_directory": {
+      "~/.hermes/**": "allow",
+      "~/.claude/**": "allow",
+      "~/.opencode/**": "allow",
+      "~/.config/opencode/**": "allow",
+      "/tmp/**": "allow",
+      "*": "ask"
+    },
+    "todowrite": "allow",
+    "question": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "skill": "allow"
+  },
+
+  "mcp": {
+    "stealth-browser": {
+      "type": "local",
+      "command": ["python3", "-m", "tools.stealth-browser-mcp.src.server"],
+      "cwd": ".",
+      "enabled": true,
+      "timeout": 60000
+    },
+    "github": {
+      "type": "remote",
+      "url": "https://api.github.com/mcp",
+      "enabled": false,
+      "headers": {
+        "Authorization": "Bearer {env:GITHUB_TOKEN}",
+        "User-Agent": "opencode-solocorp"
+      },
+      "timeout": 15000
+    }
+  },
+
+  "formatter": false,
+  "lsp": false,
+
+  "experimental": {
+    "primary_tools": ["edit", "bash", "task"],
+    "mcp_timeout": 30000
+  },
+
+  "compaction": {
+    "auto": true,
+    "tail_turns": 10
+  },
+
+  "tool_output": {
+    "max_lines": 500,
+    "max_bytes": 128000
+  },
+
+  "command": {
+    "pipeline": {
+      "description": "รัน SoloCorp pipeline workflow: spec → plan → build → qa → deliver",
+      "template": "Run the SoloCorp pipeline for: $ARGUMENTS\n\nFollow these phases:\n1. **Spec** — ตรวจสอบ input, ยืนยัน requirements\n2. **Plan** — แตก tasks, กำหนด department ที่เกี่ยวข้อง\n3. **Build** — delegate ไป Engineering/Design ที่เกี่ยวข้อง\n4. **QA** — ผ่าน QA loop (dev ↔ qa สูงสุด 3 รอบ)\n5. **Deliver** — สรุปผล + handoff report\n\nใช้ `@architect-songsak` สำหรับ architecture review ก่อนเริ่ม build"
+    },
+    "handoff": {
+      "description": "ทำ handoff ระหว่าง departments พร้อม context pack",
+      "template": "Execute handoff from $1 to $2 for: $3\n\nProtocol:\n1. สรุป current state + completed work\n2. รวบรวม artifacts (files, decisions, pending items)\n3. สร้าง handoff brief ตาม templates ใน `.opencode/skills/solocorp/handoff-templates/`\n4. ส่ง handoff พร้อม context pack\n5. ยืนยัน receiver เข้าใจ context"
+    },
+    "status": {
+      "description": "ดูสถานะภาพรวมของ SoloCorp OS pipeline",
+      "template": "Give me a full status report of SoloCorp OS:\n- Current sprint progress\n- Active pipeline tasks\n- Pending handoffs\n- Blockers / risks\n- Recent completions\n\nRead from: loop_runner/state.py, bus/projects/, และล่าสุดใน ARCHITECTURE.md"
+    },
+    "audit": {
+      "description": "ตรวจสอบ pipeline audit trail และ compliance",
+      "template": "Run a pipeline audit for: $ARGUMENTS\n\nCheck:\n1. Handoff integrity — ทุก handoff มี record?\n2. QA evidence — ทุก feature ผ่าน QA?\n3. Decision trail — ทุก decision มี ADR หรือ rationale?\n4. Compliance — ตรงตาม 3 Pillars? Two-Tier Architecture?\n\nใช้ @architect-songsak และ team สำหรับ deep audit"
+    },
+    "deploy": {
+      "description": "Deploy ระบบ SoloCorp OS (profiles, skills, config)",
+      "template": "Deploy SoloCorp OS changes: $ARGUMENTS\n\nSteps:\n1. Build profiles — `python3 scripts/build-profiles.py`\n2. Export agents — `python3 scripts/export-codex-agents.py`\n3. Verify — `python3 scripts/export-codex-agents.py --validate-only`\n4. Commit — บันทึกการเปลี่ยนแปลง\n5. Report — สรุปสิ่งที่ deploy"
+    },
+    "brain": {
+      "description": "บันทึก context/session ลง brain memory",
+      "template": "Document the current session context for brain memory:\n\nKey topics discussed:\n$ARGUMENTS\n\nFile: loop_runner/loops/brain_auto_commit.py\nFormat: วัน/time + summary + decisions + open items"
+    }
+  }
+}

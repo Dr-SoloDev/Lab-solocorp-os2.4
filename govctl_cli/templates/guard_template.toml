@@ -1,0 +1,11 @@
+[guard]
+id = "{id}"
+applies_to = ["{applies_to}"]
+priority = "{priority}"
+
+[[guard.checks]]
+id = "{check_id}"
+name = "{check_name}"
+description = ""
+check_type = "automated"
+on_failure = "block"

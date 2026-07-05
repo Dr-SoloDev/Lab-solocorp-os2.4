@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoloCorp OS — Dashboard</title>
+  <link rel="stylesheet" href="/static/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- DES-10: Skip navigation link — first focusable element on page -->
+  <a href="#main" class="skip-nav">Skip to main content</a>
+  <div class="app-container">
+    <!-- ════════ Header ════════ -->
+    <header class="app-header">
+      <div class="app-header__left">
+        <!-- DES-09: h1 as first/primary heading on the page -->
+        <h1 class="app-header__logo">SoloCorp <span>OS</span></h1>
+        <span id="health-indicator">
+          <span class="status-badge status-badge--error">
+            <span class="status-dot status-dot--error"></span> Loading...
+          </span>
+        </span>
+      </div>
+      <div class="app-header__right">
+        <div class="refresh-indicator">
+          <span class="refresh-spinner" id="refresh-spinner" style="display:none"></span>
+          <span id="refresh-status">Ready</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- DES-07: Live region for dynamic content announcements (screen readers) -->
+    <div aria-live="polite" id="live-region" class="sr-only"></div>
+
+    <!-- DES-02: main landmark wrapping all primary content -->
+    <main id="main">
+    <!-- ════════ Dashboard Grid ════════ -->
+    <div class="dashboard-grid">
+
+      <!-- ── Governance Panel ── -->
+      <section class="card">
+        <div class="card__header">
+          <h2 class="card__title">⚖️ Governance</h2>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="stat-item__value stat-item__value--accent" id="gov-adr-count">—</div>
+            <div class="stat-item__label">ADRs</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__value stat-item__value--purple" id="gov-rfc-count">—</div>
+            <div class="stat-item__label">RFCs</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__value stat-item__value--success" id="gov-guard-count">—</div>
+            <div class="stat-item__label">Guards</div>
+          </div>
+        </div>
+        <h3 style="font-size:0.8rem;color:var(--text-muted);margin:0.75rem 0 0.5rem;">Recent Artifacts</h3>
+        <div id="gov-artifact-list">
+          <div class="loading">Loading...</div>
+        </div>
+      </section>
+
+      <!-- ── Agent Panel ── -->
+      <section class="card">
+        <div class="card__header">
+          <h2 class="card__title">🤖 Agents</h2>
+          <span class="card__count" id="agent-count">—/5</span>
+        </div>
+        <div class="agent-grid" id="agent-grid">
+          <div class="loading">Loading...</div>
+        </div>
+      </section>
+
+      <!-- ── Pipeline Panel ── -->
+      <section class="card">
+        <div class="card__header">
+          <h2 class="card__title">🔷 Pipeline</h2>
+          <span class="card__count" id="pipeline-total">—</span>
+        </div>
+        <div id="pipeline-project-list">
+          <div class="loading">Loading...</div>
+        </div>
+      </section>
+
+      <!-- ── Monitoring Panel ── -->
+      <section class="card">
+        <div class="card__header">
+          <h2 class="card__title">📊 Monitoring</h2>
+          <span class="card__count">Live</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="stat-item__value stat-item__value--info" id="mon-active-projects">—</div>
+            <div class="stat-item__label">Active Projects</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__value stat-item__value--warning" id="mon-total-queued">—</div>
+            <div class="stat-item__label">Queued Messages</div>
+          </div>
+        </div>
+
+        <h3 style="font-size:0.8rem;color:var(--text-muted);margin:0.75rem 0 0.5rem;">Queue Breakdown</h3>
+        <div class="queue-legend">
+          <div class="queue-item">
+            <span class="queue-item__dot" style="background:var(--danger)"></span>
+            Critical: <strong id="mon-queue-critical">0</strong>
+          </div>
+          <div class="queue-item">
+            <span class="queue-item__dot" style="background:var(--warning)"></span>
+            High: <strong id="mon-queue-high">0</strong>
+          </div>
+          <div class="queue-item">
+            <span class="queue-item__dot" style="background:var(--accent)"></span>
+            Normal: <strong id="mon-queue-normal">0</strong>
+          </div>
+          <div class="queue-item">
+            <span class="queue-item__dot" style="background:var(--text-muted)"></span>
+            Low: <strong id="mon-queue-low">0</strong>
+          </div>
+        </div>
+
+        <h3 style="font-size:0.8rem;color:var(--text-muted);margin:0.75rem 0 0.5rem;">Recent Events</h3>
+        <!-- DES-14: tabindex="0" lets keyboard users scroll the event log -->
+        <div class="event-log" id="event-log-content" tabindex="0" aria-label="Recent events log">
+          <div class="loading">Loading...</div>
+        </div>
+      </section>
+
+    </div>
+    </main><!-- end #main -->
+
+    <footer style="text-align:center;padding:1rem;color:var(--text-muted);font-size:0.75rem;">
+      SoloCorp OS · govctl v0.1.0 · Dashboard auto-refreshes every 10s
+    </footer>
+  </div>
+
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>

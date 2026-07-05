@@ -1,189 +1,418 @@
-![SoloCorp OS](github-cover.png)
+================================================================================
+  ███████  ██████  ██      ██████  ██████  ██████  ██████  ██████  ██████
+  ██      ██    ██ ██      ██   ██ ██   ██ ██   ██ ██   ██ ██   ██      ██
+  ███████ ██    ██ ██      ██████  ██████  ██████  ██████  ██████   █████
+       ██ ██    ██ ██      ██   ██ ██      ██   ██ ██   ██ ██           ██
+  ███████  ██████  ███████ ██   ██ ██      ██   ██ ██   ██ ██      ██████
 
-# SoloCorp OS 2.4
+   ██████  ██████
+  ██      ██    ██
+   █████  ██    ██
+       ██ ██    ██
+  ██████   ██████
+================================================================================
+                     OPERATING SYSTEM  ===  VERSION 2.4
+================================================================================
 
-> **ระบบ Department Architecture สำหรับ Hermes Agent**
-> Human → CEO → C-Level → Orchestrator → Department Heads (→ Agents)
+  [ SYSTEM ]  Department Architecture for AI Agents
+  [ STATUS ]  Production Deployed     [ ENGINE ]  Hermes Agent Gateway
+  [ PLATFORM ]  Hermes + OpenCode + Codex CLI
+  [ LICENSE ]  Proprietary — SoloCorp Organization. All Rights Reserved.
 
-## Hierarchy
+================================================================================
 
-```
-Dr.solodev (Human/Owner)
-  └── CEO (เทอโบ — Supreme AI Authority)
-       ├── CFO (meetoo — การเงิน/งบประมาณ)
-       ├── CMO (มาร์ค — การตลาด/Content)
-       ├── Orchestrator (พี่วุฒิ — System Pipeline)
-       └── Department Heads
-            ├── 05-architect   — พี่ทรงศักดิ์ (สายพานกลาง)
-            ├── 06-product     — โปรดัค
-            ├── 07-engineering — ช่างฟูล
-            ├── 08-design      — ครีเอท
-            ├── 09-ui-designer — UI-Designer
-            ├── 10-qa          — QA-ทีม
-            ├── 11-sales       — เซลส์
-            ├── 12-support     — ซัพพอร์ต
-            ├── 13-legal       — ตุลย์
-            ├── 14-web3        — อัยวา (Blockchain/DeFi/Solana)
-            ├── 15-content-creator — เสก (Content/Creative)
-            └── default (Fallback)
-```
+What is SoloCorp OS?
+================================================================================
 
-## Core Principles
+SoloCorp OS is an **organizational operating system for AI agents** — a complete
+Department Architecture that transforms a single AI into a coordinated workforce
+of specialized departments, each with its own Head, team of sub-agents, defined
+responsibilities, and clear chains of command.
 
-1. **3 Pillars** — หัวหน้าไม่ทำงานเอง, Leadership Skills, Ownership Mindset
-2. **Two-Tier Architecture** — Control Layer (Head) vs Data Layer (Central Bus)
-3. **Head-to-Head Handoff** — 80% ส่งตรง, 5% Escalate
+Instead of a monolithic AI trying to do everything, SoloCorp OS gives you:
 
-## Profile Order (Hermes)
+  - **15 Departments** — Each with a dedicated Head who owns outcomes
+  - **46+ Specialist Agents** — Sub-agents who execute, not just advise
+  - **Two-Tier Architecture** — Control flows through Heads; data flows
+    autonomously through a Central Bus
+  - **Head-to-Head Handoff** — Work moves between departments without
+    bottlenecking on a single orchestrator
 
-| ลำดับ | Profile Directory | ชื่อ | สถานะ |
-|:----:|:-----------------|:----|:-----:|
-| 01 | `01-ceo` | เทอโบ CEO | 🟢 |
-| 02 | `02-cfo` | meetoo | 🟢 |
-| 03 | `03-cmo` | มาร์ค | 🟢 |
-| 04 | `04-orchestrator` | พี่วุฒิ (Wut) | 🟢 |
-| 05 | `05-architect` | พี่ทรงศักดิ์ | 🟢 |
-| 06 | `06-product` | โปรดัค | 🟢 |
-| 07 | `07-engineering` | ช่างฟูล | 🟢 |
-| 08 | `08-design` | ครีเอท | 🟢 |
-| 09 | `09-ui-designer` | UI-Designer | 🟢 |
-| 10 | `10-qa` | QA-ทีม | 🟢 |
-| 11 | `11-sales` | เซลส์ | 🟢 |
-| 12 | `12-support` | ซัพพอร์ต | 🟢 |
-| 13 | `13-legal` | ตุลย์ | 🟢 |
-| 14 | `14-web3` | อัยวา | 🟢 |
-| 15 | `15-content-creator` | เสก | 🟢 |
-| — | `default` | Fallback | ✅ |
+The architecture is inspired by how real companies scale: clear hierarchy,
+delegated authority, and autonomous execution at every level.
 
-## Status
+Human  →  CEO  →  C-Level  →  Department Heads  →  Specialist Teams
 
-| Phase | เนื้อหา | สถานะ |
-|:------|:--------|:-----:|
-| Foundation (v0.1–0.2) | ADRs + CEO Profile + Architecture | ✅ |
-| Core Sub-agents (v0.3) | 5 Pipeline Agents ของพี่ทรงศักดิ์ | ✅ |
-| All Dept Profiles (v0.5) | 14 Department Heads + ทีมทั้งหมด | ✅ |
-| Deploy to Hermes (v0.5.1) | ทุก Profile Deploy สู่ Hermes Profiles จริง | ✅ |
-| Central Bus (v0.6) | Central Bus Agent + Context Optimizer | 🔴 |
-| **Sub-agent Teams (v0.6.1)** | **Deploy 14 sub-agent teams → Test → All 🟢** | **✅** |
-| Dashboard + Compliance (v0.7) | Pipeline Dashboard + QA Gate | ⏳ |
-| Loop Runner (v0.5+) | Cron-based auto-pilot loops ทำงานจริง | 🟢 |
 
-## Teams
+================================================================================
+Why SoloCorp OS?
+================================================================================
 
-### 05 — Architect (พี่ทรงศักดิ์)
+Most AI agent systems suffer from the same problem: they can do everything
+but nobody is responsible for anything. SoloCorp OS solves this with three
+core principles:
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [📋 Pipeline Auditor](profiles/05-architect/phee-thongsak/team/01-pipeline-auditor.SOUL.md) | ตรวจสอบทุก handoff ใน pipeline — บันทึกประวัติ, ตรวจ compliance, รับรองว่า payload ครบถ้วน | 🟢 |
-| 02 | [🗺️ Routing Config Agent](profiles/05-architect/phee-thongsak/team/02-routing-config-agent.SOUL.md) | กำหนดเส้นทางงานระหว่างแผนก — ออกแบบ routing rules, เงื่อนไข, circuit breaker ป้องกันระบบล่ม | 🟢 |
-| 03 | [🎛️ Monitor Watchdog](profiles/05-architect/phee-thongsak/team/03-monitor-watchdog.SOUL.md) | เฝ้า pipeline real-time — ตรวจ health ทุก agent, SLA, แจ้งเตือนและ rollback เมื่อผิดปกติ | 🟢 |
-| 04 | [🧭 Exception Triage Agent](profiles/05-architect/phee-thongsak/team/04-exception-triage-agent.SOUL.md) | หน่วยกู้ชีพ — รับ exception, แยกแยะระดับความรุนแรง, แก้ไขอัตโนมัติ หรือ escalate ให้พี่ทรงศักดิ์ | 🟢 |
-| 05 | [⏰ Cron Pipeline Agent](profiles/05-architect/phee-thongsak/team/05-cron-pipeline-agent.SOUL.md) | รัน pipeline ตาม schedule — durable execution ด้วย Temporal, retry อัตโนมัติ, ไม่มีงานหาย | 🟢 |
+  OWNERSHIP  ─  Every department has a Head who owns outcomes. No orphan
+                 work, no ambiguous ownership, no passing the buck.
 
-### 02 — CFO (meetoo)
+  DELEGATION ─  Department Heads do not work themselves. They lead.
+                 Strategy, direction, escalation — not implementation.
+                 Execution belongs to specialist sub-agents.
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [Dana](profiles/02-cfo/meetoo/team/01-dana.SOUL.md) | นักบัญชีและผู้ควบคุมการเงิน — ดูแลบัญชีรายวัน, ปิดงบรายเดือน, ระบบควบคุมภายใน | 🟢 |
-| 02 | [Riley](profiles/02-cfo/meetoo/team/02-riley.SOUL.md) | FP&A Analyst — จัดทำ budget, rolling forecast, วิเคราะห์ variance และส่งสัญญาณเตือนเมื่อผลเบี่ยงเป้า | 🟢 |
-| 03 | [Morgan](profiles/02-cfo/meetoo/team/03-morgan.SOUL.md) | Financial Analyst — สร้าง financial model, scenario analysis, cash-flow insight เพื่อ C-suite | 🟢 |
+  ARCHITECTURE ─  Two-Tier design separates control flow (decisions,
+                  approvals, status) from data flow (code, designs,
+                  reports). Heads stay strategic; work moves fast.
 
-### 03 — CMO (มาร์ค)
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [Growth Hacker](profiles/03-cmo/mark/team/01-growth-hacker.SOUL.md) | ออกแบบ growth loop — A/B testing, viral mechanics, funnel optimization ขับเคลื่อนด้วยข้อมูล | 🟢 |
-| 02 | [Social Media Strategist](profiles/03-cmo/mark/team/02-social-media-strategist.SOUL.md) | สร้าง brand authority บน LinkedIn/Twitter — community building, thought leadership, เชื่อม social กับ B2B pipeline | 🟢 |
-| 03 | [Content Creator](profiles/03-cmo/mark/team/03-content-creator.SOUL.md) | สร้าง content ทุกช่องทาง — SEO content, video scripts, editorial ที่ engage และ convert | 🟢 |
+================================================================================
+Architecture
+================================================================================
 
-### 04 — Orchestrator (พี่วุฒิ)
+                    ┌──────────────────────────────────────┐
+                    │           Dr.solodev (Human)          │
+                    │             (Owner / Vision)          │
+                    └──────────────────┬───────────────────┘
+                                       │
+                    ┌──────────────────▼───────────────────┐
+                    │      CEO — เทอโบ ไชยศรีรัมย์            │
+                    │   (Supreme AI Authority / Vision)     │
+                    └──────┬──────┬──────┬─────────────────┘
+                           │      │      │
+              ┌────────────┘      │      └──────────────┐
+              ▼                   ▼                     ▼
+       ┌──────────┐       ┌──────────┐        ┌──────────────┐
+       │ CFO      │       │ CMO      │        │ Orchestrator │
+       │ meetoo   │       │ มาร์ค    │        │ พี่วุฒิ      │
+       │ Finance  │       │Marketing │        │ Pipeline     │
+       └──────────┘       └──────────┘        └──────┬───────┘
+                                                      │
+                              ┌───────────────────────┼───────────────────┐
+                              │                       │                   │
+                              ▼                       ▼                   ▼
+                    ┌──────────────────┐    ┌──────────────────┐   ┌──────────┐
+                    │ 05-Architect     │    │ 06-Product       │   │ 07-Eng   │
+                    │ พี่ทรงศักดิ์      │    │ โปรดัค           │   │ ช่างฟูล  │
+                    │ Central Bus      │    │ Roadmap / PRD    │   │ Code     │
+                    └──────────────────┘    └──────────────────┘   └──────────┘
+                    ┌──────────────────┐    ┌──────────────────┐   ┌──────────┐
+                    │ 08-Design        │    │ 09-UI Designer   │   │ 10-QA    │
+                    │ ครีเอท           │    │ UI Designer      │   │ QA-ทีม   │
+                    │ UX / Brand       │    │ Interface        │   │ Testing  │
+                    └──────────────────┘    └──────────────────┘   └──────────┘
+                    ┌──────────────────┐    ┌──────────────────┐   ┌──────────┐
+                    │ 11-Sales         │    │ 12-Support       │   │ 13-Legal │
+                    │ เซลส์            │    │ ซัพพอร์ต         │   │ ตุลย์    │
+                    │ B2B Pipeline     │    │ Customer Success │   │Compliance│
+                    └──────────────────┘    └──────────────────┘   └──────────┘
+                    ┌──────────────────┐    ┌──────────────────┐
+                    │ 14-Web3          │    │ 15-Content       │
+                    │ อัยวา            │    │ เสก              │
+                    │ Blockchain/DeFi  │    │ Content/Creative │
+                    └──────────────────┘    └──────────────────┘
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [Project Shepherd](profiles/04-orchestrator/orchestrator/team/01-project-shepherd.SOUL.md) | จัดการโครงการข้ามสายงาน — ประสานทีม, บริหาร timeline และ risk, ให้ทุก stakeholder เดินทิศเดียวกัน | 🟢 |
-| 02 | [Studio Producer](profiles/04-orchestrator/orchestrator/team/02-studio-producer.SOUL.md) | บริหาร portfolio โครงการสร้างสรรค์มูลค่าสูง — เชื่อม vision กับเป้าธุรกิจ, รักษาความสัมพันธ์ executive | 🟢 |
-| 03 | [Studio Operations](profiles/04-orchestrator/orchestrator/team/03-studio-operations.SOUL.md) | ปฏิบัติการประจำวัน — ออกแบบ SOP, บริหาร vendor, เพิ่มประสิทธิภาพกระบวนการ ≥95% | 🟢 |
+Two-Tier Architecture (Control Layer vs Data Layer)
 
-### 06 — Product (โปรดัค)
+  ┌───────────────────────────────────────────────────────────────────────┐
+  │                     CONTROL LAYER (Head-to-Head)                       │
+  │                                                                        │
+  │  Status, Goals, Exceptions, Approvals, Handoffs                        │
+  │  "Work completed" / "Issue detected" / "Approval needed"               │
+  │                                                                        │
+  │  Head A ──────────(status/report)──────────→ Head B                    │
+  │    ↑                                            ↑                      │
+  │    │   Only what's necessary for coordination   │                      │
+  └────┼────────────────────────────────────────────┼──────────────────────┘
+       │                                            │
+       ▼                                            ▼
+  ┌───────────────────────────────────────────────────────────────────────┐
+  │                      DATA LAYER (Autonomous)                          │
+  │                                                                        │
+  │  Code, Designs, Reports, Docs, Raw Outputs                             │
+  │  → Central Bus / Shared State                                          │
+  │                                                                        │
+  │  Specialist A ──(write)──→  CENTRAL BUS  ──(notify)──→ Specialist B   │
+  │                              ┌──────┐                                  │
+  │                              │ Queue│                                  │
+  │                              └──────┘                                  │
+  │                                                                        │
+  │  Heads only see: "Work Item X completed"                               │
+  └───────────────────────────────────────────────────────────────────────┘
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [Alex — Product Manager](profiles/06-product/produck/team/01-product-manager.SOUL.md) | ดูแล product lifecycle ตั้งแต่ discovery ถึง launch — PRD, Opportunity Assessment, เชื่อม user/business/engineering | 🟢 |
-| 02 | [Product Feedback Synthesizer](profiles/06-product/produck/team/02-product-feedback-synthesizer.SOUL.md) | รวบรวม user feedback จากทุกช่องทาง — แปลง qualitative เป็น priority เชิงปริมาณ ด้วย RICE/MoSCoW/Kano | 🟢 |
-| 03 | [Product Sprint Prioritizer](profiles/06-product/produck/team/03-product-sprint-prioritizer.SOUL.md) | Agile sprint planning — จัดลำดับ feature, จัดการ dependency/risk, เพิ่ม team velocity และ business value | 🟢 |
 
-### 07 — Engineering (ช่างฟูล)
+================================================================================
+Badges / Status
+================================================================================
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [สถาปนิกแบ็กเอนด์](profiles/07-engineering/changful/team/01-สถาปนิกแบ็กเอนด์.SOUL.md) | ออกแบบ backend ที่ scale ได้ — database architecture, API design, cloud infra, query <20ms | 🟢 |
-| 02 | [นักพัฒนาอาวุโส](profiles/07-engineering/changful/team/02-นักพัฒนาอาวุโส.SOUL.md) | Full-stack senior dev — Laravel, Livewire, FluxUI, Three.js, animation และ micro-interaction | 🟢 |
-| 03 | [สถาปนิกซอฟต์แวร์](profiles/07-engineering/changful/team/03-สถาปนิกซอฟต์แวร์.SOUL.md) | Domain-driven design — microservices/modular monolith/event-driven, วิเคราะห์ trade-offs, เขียน ADR | 🟢 |
+  [ PLATFORM ]  Hermes Agent            [ VERSION ]  v0.6.1
+  [ ENGINE  ]  Hermes Gateway          [ PROFILES ]  15 Departments
+  [ RUNTIME ]  Loop Runner (Cron)      [ AGENTS   ]  46+ Specialists
+  [ CLI     ]  OpenCode                [ COMMANDS ]  6 Pipeline Commands
+  [ CODEX   ]  Codex CLI Subagents     [ SKILLS   ]  93 Integration Skills
 
-### 08 — Design (ครีเอท)
+  [ STATUS  ]  Foundation ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ 100%  (v0.1-v0.5)
+  [ STATUS  ]  Profiles   ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ 100%  (v0.5-v0.5.1)
+  [ STATUS  ]  Sub-Agents ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ 100%  (v0.6.1)
+  [ STATUS  ]  Central Bus ▰▰▰▰▰▰▰▰▰▰░░░░░░░░░░  50%  (v0.6)
+  [ STATUS  ]  Dashboard  ▰▰▰▰▰▰▰░░░░░░░░░░░░░░  35%  (v0.7)
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [นักวิจัย UX](profiles/08-design/kreet/team/01-nak-wijai-ux.SOUL.md) | วิจัยพฤติกรรมผู้ใช้ — usability testing, เชื่อม user data กับ design decision ให้ทีมทำงานบนหลักฐาน | 🟢 |
-| 02 | [สถาปนิก UX](profiles/08-design/kreet/team/02-sathapanig-ux.SOUL.md) | UX Architecture — Design Systems, Layout Frameworks, Component Structures ที่ Dev นำไปใช้ได้จริง | 🟢 |
-| 03 | [นักออกแบบ UI](profiles/08-design/kreet/team/03-nak-aukbaep-ui.SOUL.md) | Visual Design Systems — Component Library, pixel-perfect, WCAG AA, Design Tokens พร้อม Dev spec | 🟢 |
 
-### 09 — UI Designer
+================================================================================
+Quick Start
+================================================================================
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [UI Designer](profiles/09-ui-designer/ui-designer/team/01-ui-designer.SOUL.md) | Interface ระดับ pixel — Visual Design System, Component Library, Responsive Framework, Dev-ready spec | 🟢 |
-| 02 | [UX Architect](profiles/09-ui-designer/ui-designer/team/02-ux-architect.SOUL.md) | CSS Design System + Layout Framework — Component Hierarchy ที่ scale ได้, รองรับ Light/Dark Theme | 🟢 |
-| 03 | [UX Researcher](profiles/09-ui-designer/ui-designer/team/03-ux-researcher.SOUL.md) | วิจัย UX เชิงปริมาณและคุณภาพ — Usability Testing, แปลง User Insights เป็น design recommendation | 🟢 |
+  # 1. Clone and enter the repository
+  git clone https://github.com/Dr-SoloDev/Lab-solocorp-os2.4.git
+  cd Lab-solocorp-os2.4
 
-### 10 — QA (QA-ทีม)
+  # 2. Use with OpenCode (recommended)
+  opencode
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [API Tester](profiles/10-qa/qa-team/team/01-api-tester.SOUL.md) | ทดสอบ API ครบวงจร — functional, performance, security (OWASP Top 10), automated test suite บน CI/CD | 🟢 |
-| 02 | [Accessibility Auditor](profiles/10-qa/qa-team/team/02-accessibility-auditor.SOUL.md) | ตรวจ accessibility ตามมาตรฐาน WCAG 2.2 — automated tools + assistive technology testing + code-level fix | 🟢 |
-| 03 | [Test Results Analyzer](profiles/10-qa/qa-team/team/03-test-results-analyzer.SOUL.md) | วิเคราะห์ผลทดสอบด้วย statistical modeling — go/no-go release recommendation, quality trend tracking | 🟢 |
+  # 3. Or use @mention to call a specific department head
+  opencode "@architect-songsak design pipeline for new feature"
+  opencode "@changful implement API endpoint for user registration"
+  opencode "@cfo-meetoo วิเคราะห์งบ Q3"
 
-### 11 — Sales (เซลส์)
+  # 4. Or use with Codex CLI
+  python3 scripts/export-codex-agents.py
+  codex
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [Deal Strategist](profiles/11-sales/sales/team/01-deal-strategist.SOUL.md) | กลยุทธ์ปิดดีล B2B — ใช้ MEDDPICC คัดกรอง deal, วางตำแหน่งแข่งขัน, เพิ่ม win rate | 🟢 |
-| 02 | [Pipeline Analyst](profiles/11-sales/sales/team/02-pipeline-analyst.SOUL.md) | Revenue Operations — วิเคราะห์ pipeline velocity, deal quality scoring, forecast accuracy | 🟢 |
-| 03 | [Outbound Strategist](profiles/11-sales/sales/team/03-outbound-strategist.SOUL.md) | Signal-based outbound — ออกแบบ prospecting จาก buying intent, วัดผลด้วย reply rate และ meeting booked | 🟢 |
+  # 5. Run the pipeline
+  opencode "/pipeline <feature-name>"
 
-### 12 — Support (ซัพพอร์ต)
+  # 6. Check system status
+  opencode "/status"
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [Support Responder](profiles/12-support/support/team/01-support-responder.SOUL.md) | ด่านหน้าลูกค้าทุกช่องทาง — first-contact resolution 85%, ตอบกลับภายใน 2 ชั่วโมง | 🟢 |
-| 02 | [Analytics Reporter](profiles/12-support/support/team/02-analytics-reporter.SOUL.md) | แปลง raw data เป็น insight — KPI dashboards, รายงานอัตโนมัติ, customer segmentation | 🟢 |
-| 03 | [Executive Summary Generator](profiles/12-support/support/team/03-executive-summary-generator.SOUL.md) | สรุป executive-ready — McKinsey SCQA framework, 325-475 คำ, impact วัดได้ + next steps ชัดเจน | 🟢 |
 
-### 13 — Legal (ตุลย์)
+================================================================================
+The Full Team — 15 Department Heads + 46+ Specialist Agents
+================================================================================
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [Compliance Auditor](profiles/13-legal/tulya/team/01-compliance-auditor.SOUL.md) | ตรวจสอบมาตรฐานความปลอดภัย — SOC 2, ISO 27001, HIPAA, PCI-DSS ตั้งแต่ gap analysis ถึง certification | 🟢 |
-| 02 | [Legal Document Review](profiles/13-legal/tulya/team/02-legal-document-review.SOUL.md) | ตรวจสอบเอกสารกฎหมาย — สัญญา, ข้อตกลง, ระบุความเสี่ยงตามระดับ severity พร้อมสรุปให้ทนาย | 🟢 |
-| 03 | [Legal Client Intake](profiles/13-legal/tulya/team/03-legal-client-intake.SOUL.md) | รับลูกค้าทางกฎหมาย — คัดกรอง, รวบรวมข้อมูลคดี, ตรวจ conflict of interest, ส่งต่อทนาย | 🟢 |
+C-Level Executives
+--------------------------------------------------------------------------------
 
-### 14 — Web3 (อัยวา)
+  #01  CEO        เทอโบ (Turbo Chaisriram)     Vision / Strategy / Final Decision
+       └── No direct sub-agents — commands through C-Level
 
-| # | Agent | หน้าที่ | สถานะ |
-|:-:|:------|:--------|:-----:|
-| 01 | [⛓️ Smart Contract Engineer](profiles/14-web3/aywa/team/01-smart-contract-engineer.SOUL.md) | เขียน Solidity/Anchor — gas optimization, upgrade pattern, test coverage ≥90% ก่อนส่ง audit | 🟡 |
-| 02 | [🛡️ Blockchain Security Auditor](profiles/14-web3/aywa/team/02-blockchain-security-auditor.SOUL.md) | audit contract ก่อน deploy — manual review + Slither/Mythril/Echidna + attack simulation | 🟡 |
-| 03 | [📊 DeFi Protocol Analyst](profiles/14-web3/aywa/team/03-defi-protocol-analyst.SOUL.md) | วิเคราะห์ DeFi market — tokenomics design, on-chain analytics, risk assessment | 🟡 |
-| 04 | [⚡ Solana Developer](profiles/14-web3/aywa/team/04-solana-developer.SOUL.md) | Solana specialist — Anchor programs (Rust), Web3.js/Solana.js, deploy devnet/mainnet | 🟡 |
+  #02  CFO        meetoo                       Finance / Budget / Investment
+       ├── Dana          — Bookkeeper & Controller
+       ├── Riley         — FP&A Analyst
+       └── Morgan        — Financial Analyst
 
-## Docs
+  #03  CMO        มาร์ค                         Marketing / Content / Brand
+       ├── Growth Hacker           — Growth loops, A/B testing, funnel optimization
+       ├── Social Media Strategist — Brand authority, community building
+       └── Content Creator         — SEO content, video scripts, editorial
 
-- [`ARCHITECTURE.md`](ARCHITECTURE.md) — ภาพรวมระบบ + Hierarchy Order
-- [`profiles/INDEX.md`](profiles/INDEX.md) — ดัชนี Profiles ทั้งหมด (เรียงตาม Hierarchy)
-- [`CHANGELOG.md`](CHANGELOG.md) — บันทึกการเปลี่ยนแปลง
-- [`decisions/`](decisions/) — ADR (Architecture Decision Records)
+System Pipeline
+--------------------------------------------------------------------------------
 
----
+  #04  Orchestrator  พี่วุฒิ (Wut)              Cross-Department Pipeline
+       ├── Project Shepherd     — Multi-team project management
+       ├── Studio Producer      — Creative portfolio management
+       └── Studio Operations    — SOP design, vendor management
 
-*SoloCorp OS — System First, Everything Follows*
+  #05  Architect     พี่ทรงศักดิ์ (Songsak)     Central Bus / Routing / Monitoring
+       ├── Pipeline Auditor          — Audit trail, compliance check
+       ├── Routing Config Agent      — Routing rules, circuit breaker
+       ├── Monitor Watchdog          — Health probe, SLA tracking
+       ├── Exception Triage Agent    — Auto-classification, RCA
+       └── Cron Pipeline Agent       — Scheduled execution, retry queue
+
+Product & Engineering
+--------------------------------------------------------------------------------
+
+  #06  Product       โปรดัค                     Feature Roadmap / PRD / Delivery
+       ├── Alex (Product Manager)     — Lifecycle from discovery to launch
+       ├── Product Feedback Synthesizer — Multi-channel feedback analysis
+       └── Product Sprint Prioritizer  — Agile planning, dependency management
+
+  #07  Engineering   ช่างฟูล                     Backend / Frontend / Architecture
+       ├── สถาปนิกแบ็กเอนด์           — Scalable backend, database, API
+       ├── นักพัฒนาอาวุโส             — Full-stack, Laravel, Livewire, Three.js
+       └── สถาปนิกซอฟต์แวร์          — Domain-driven design, microservices
+
+  #08  Design        ครีเอท                      UX Research / Brand Visual
+       ├── นักวิจัย UX               — Usability testing, behavioral research
+       ├── สถาปนิก UX                — Design systems, layout frameworks
+       └── นักออกแบบ UI              — Visual design, WCAG AA, design tokens
+
+  #09  UI Designer   UI Designer                Interface / Component Library
+       ├── UI Designer              — Pixel-perfect visual design system
+       ├── UX Architect             — CSS design system, component hierarchy
+       └── UX Researcher            — Quantitative UX research, usability testing
+
+Quality & Testing
+--------------------------------------------------------------------------------
+
+  #10  QA            QA-ทีม                      Testing / Quality / Evidence
+       ├── API Tester               — Functional, performance, security testing
+       ├── Accessibility Auditor    — WCAG 2.2 compliance, assistive technology
+       └── Test Results Analyzer    — Statistical modeling, go/no-go decisions
+
+Revenue & Customer
+--------------------------------------------------------------------------------
+
+  #11  Sales         เซลส์                       B2B Deal Strategy / Pipeline
+       ├── Deal Strategist         — MEDDPICC qualification, competitive positioning
+       ├── Pipeline Analyst        — Revenue operations, forecast accuracy
+       └── Outbound Strategist     — Signal-based prospecting, reply rate
+
+  #12  Support       ซัพพอร์ต                   Customer Success / Analytics
+       ├── Support Responder       — First-contact resolution, 2-hour SLA
+       ├── Analytics Reporter      — KPI dashboards, customer segmentation
+       └── Executive Summary Generator — SCQA framework, executive-ready
+
+Legal & Compliance
+--------------------------------------------------------------------------------
+
+  #13  Legal         ตุลย์                        Law / Compliance / Contracts
+       ├── Compliance Auditor      — SOC 2, ISO 27001, HIPAA, PCI-DSS
+       ├── Legal Document Review   — Contract review, risk assessment
+       └── Legal Client Intake     — Conflict check, case data collection
+
+Blockchain & Content
+--------------------------------------------------------------------------------
+
+  #14  Web3          อัยวา                       Blockchain / DeFi / Solana
+       ├── Smart Contract Engineer     — Solidity/Anchor, gas optimization
+       ├── Blockchain Security Auditor — Manual audit, Slither/Mythril/Echidna
+       ├── DeFi Protocol Analyst       — Tokenomics, on-chain analytics
+       └── Solana Developer            — Anchor programs, Web3.js
+
+  #15  Content       เสก                         Content / Creative / Media
+       Creator
+       ├── References 10 specialist profiles from agency-agents library
+       ├── Platforms: LinkedIn, TikTok, Instagram, YouTube, Reddit
+       ├── Skills: gen-image, video-use, content production
+       └── Full creative pipeline from concept to distribution
+
+
+================================================================================
+OpenCode Agents
+================================================================================
+
+SoloCorp OS ships with a complete OpenCode configuration and 20 agent
+definitions — 15 department heads plus 5 architect pipeline specialists.
+
+  .opencode/
+  ├── agents/             20 agents
+  │   ├── ceo-turbo.md              CEO (default agent)
+  │   ├── cfo-meetoo.md             CFO
+  │   ├── cmo-mark.md               CMO
+  │   ├── orchestrator-wut.md       Orchestrator
+  │   ├── architect-songsak.md      Architect
+  │   ├── product-produck.md        Product
+  │   ├── engineering-changful.md   Engineering
+  │   ├── design-kreet.md           Design
+  │   ├── ui-designer.md            UI Designer
+  │   ├── qa.md                     QA
+  │   ├── sales.md                  Sales
+  │   ├── support.md                Support
+  │   ├── legal-tulya.md            Legal
+  │   ├── web3-aywa.md              Web3
+  │   ├── content-creator-sek.md    Content Creator
+  │   ├── pipeline-auditor.md       Pipeline Auditor (Architect)
+  │   ├── routing-config-agent.md   Routing Config (Architect)
+  │   ├── monitor-watchdog.md       Monitor Watchdog (Architect)
+  │   ├── exception-triage.md       Exception Triage (Architect)
+  │   └── cron-pipeline.md          Cron Pipeline (Architect)
+  ├── commands/            SoloCorp workflow commands
+  └── skills/              93 skills (Symlink to Hermes)
+
+Usage:
+
+  # Default = CEO (เทอโบ) — routes to the right department
+  opencode
+
+  # @mention a department head directly
+  opencode "@architect-songsak ออกแบบ pipeline สำหรับ feature ใหม่"
+  opencode "@changful implement API endpoint for user registration"
+  opencode "@cfo-meetoo วิเคราะห์งบ Q3"
+  opencode "@qa review test results for sprint 5"
+
+Built-in Pipeline Commands:
+
+  /pipeline <feature>    Run the SoloCorp pipeline full cycle
+  /handoff <from> <to>   Structured handoff between departments
+  /status                View overall pipeline health
+  /audit [scope]         Inspect audit trail
+  /deploy                Deploy profiles and config
+  /brain <context>       Save session to brain memory
+
+
+================================================================================
+Codex CLI Subagents
+================================================================================
+
+All SoloCorp profiles can be exported as Codex CLI custom sub-agents:
+
+  # Export all agents
+  python3 scripts/export-codex-agents.py
+
+  # Validate only (no export)
+  python3 scripts/export-codex-agents.py --validate-only
+
+  # Start Codex and spawn the agents you need
+  codex
+
+Full usage guide: `dist/codex/README-CODEX-CLI.md`
+
+
+================================================================================
+Profile Order (Hermes Gateway)
+================================================================================
+
+  #   Profile Directory      Name                    Status
+  --  ---------------------  ----------------------  ------
+  01  01-ceo                 เทอโบ CEO               Active
+  02  02-cfo                 meetoo                  Active
+  03  03-cmo                 มาร์ค                   Active
+  04  04-orchestrator        พี่วุฒิ (Wut)           Active
+  05  05-architect           พี่ทรงศักดิ์             Active
+  06  06-product             โปรดัค                  Active
+  07  07-engineering         ช่างฟูล                 Active
+  08  08-design              ครีเอท                  Active
+  09  09-ui-designer         UI-Designer             Active
+  10  10-qa                  QA-ทีม                  Active
+  11  11-sales               เซลส์                   Active
+  12  12-support             ซัพพอร์ต                Active
+  13  13-legal               ตุลย์                   Active
+  14  14-web3                อัยวา                   Active
+  15  15-content-creator     เสก                    Active
+  --  default                Fallback                Active
+
+
+================================================================================
+Development Status
+================================================================================
+
+  Phase                          Content                                  Status
+  ------------------------------  --------------------------------------  ------
+  Foundation (v0.1-v0.2)          ADRs + CEO Profile + Architecture       Complete
+  Pipeline Agents (v0.3)          Architect team — 5 pipeline agents      Complete
+  Department Profiles (v0.5)      15 Department Heads + Teams             Complete
+  Deploy to Hermes (v0.5.1)       All profiles deployed to Hermes         Complete
+  Sub-agent Teams (v0.6.1)        42 specialist agents deployed           Complete
+  Central Bus (v0.6)              Central Bus Agent + Context Optimizer   In Design
+  Dashboard + Compliance (v0.7)   Pipeline Dashboard + QA Gate            Planned
+  Loop Runner (v0.5+)             Cron auto-pilot running every 30 min    Active
+
+
+================================================================================
+Documentation
+================================================================================
+
+  ARCHITECTURE.md        System architecture, design principles, flow
+  PROJECT.md             Getting started guide (for newcomers)
+  profiles/INDEX.md      Index of all 15 department profiles
+  CHANGELOG.md           Version history and release notes
+  decisions/             Architecture Decision Records (ADRs)
+  dist/codex/            Codex CLI export guide
+
+
+================================================================================
+  SoloCorp OS — System First, Everything Follows
+
+  Proprietary software (c) SoloCorp Organization. All Rights Reserved.
+  Built by Dr.SoloDev & เทอโบ ไชยศรีรัมย์
+================================================================================

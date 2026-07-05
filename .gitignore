@@ -25,11 +25,20 @@ venv/
 
 # Build artifacts
 dist/
+!dist/
+dist/*
+!dist/codex/
+dist/codex/*
+!dist/codex/README-CODEX-CLI.md
 build/
 
 # IDE / tools
 .opencode/
 .hermes/
+
+# Local MCP runtimes
+.codex/mcp/
+tools/stealth-browser-mcp/
 
 # ML model weights
 *.pt

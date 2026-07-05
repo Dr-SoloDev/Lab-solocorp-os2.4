@@ -1,0 +1,1153 @@
+openapi: "3.0.3"
+info:
+  title: "SoloCorp OS — Admin API"
+  description: |
+    REST API for SoloCorp OS governance, agent orchestration, pipeline
+    monitoring, and system health. Used by the Dashboard UI and external
+    integrations.
+
+    **Base URL:** `http://localhost:8765`
+
+    **Authentication:** API key via `X-API-Key` header (required for write ops).
+  version: "1.0.0"
+  contact:
+    name: "Software Architect (พี่ทรงศักดิ์)"
+    url: "https://github.com/DrSoloDev/Lab-solocorp-os2.4"
+
+servers:
+  - url: http://localhost:8765
+    description: "Local development server"
+  - url: https://api.solocorp.local
+    description: "Production server (future)"
+
+paths:
+  # ===================================================================
+  # Governance — ADR
+  # ===================================================================
+  /api/v1/gov/adrs:
+    get:
+      operationId: list_adrs
+      summary: List Architecture Decision Records
+      description: |
+        Returns all ADRs from the governance directory. Supports optional
+        filtering by status, domain, and search across title/context.
+      tags: [Governance]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [proposed, accepted, deprecated, superseded]
+          description: "Filter by ADR status"
+          required: false
+        - name: domain
+          in: query
+          schema:
+            type: string
+          description: "Filter by governance domain (e.g. architecture, security)"
+          required: false
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: "Search in title and context text"
+          required: false
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: "Maximum results to return"
+          required: false
+      responses:
+        "200":
+          description: "List of ADRs"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ADRSummary"
+                  total:
+                    type: integer
+                    description: "Total count matching filters (before limit)"
+                  page:
+                    type: integer
+                    default: 1
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    post:
+      operationId: create_adr
+      summary: Create an Architecture Decision Record
+      description: |
+        Creates a new ADR artifact as a TOML file in the governance directory
+        and publishes a governance event to Central Bus for audit trailing.
+      tags: [Governance]
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ADRCreateRequest"
+      responses:
+        "201":
+          description: "ADR created successfully"
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "URL of the created ADR"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ADRDetail"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/gov/adrs/{id}:
+    get:
+      operationId: get_adr
+      summary: Get ADR detail
+      description: "Returns the full ADR content including all metadata fields."
+      tags: [Governance]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^ADR-\\d+$"
+          description: "ADR identifier (e.g. ADR-001)"
+      responses:
+        "200":
+          description: "ADR detail"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ADRDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ===================================================================
+  # Governance — RFC
+  # ===================================================================
+  /api/v1/gov/rfcs:
+    get:
+      operationId: list_rfcs
+      summary: List Request for Comments
+      description: |
+        Returns all RFCs from the governance directory with optional filtering.
+      tags: [Governance]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, review, approved, rejected, implemented]
+          description: "Filter by RFC status"
+          required: false
+        - name: domain
+          in: query
+          schema:
+            type: string
+          description: "Filter by governance domain"
+          required: false
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          required: false
+      responses:
+        "200":
+          description: "List of RFCs"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RFCSummary"
+                  total:
+                    type: integer
+
+    post:
+      operationId: create_rfc
+      summary: Create a Request for Comments
+      description: |
+        Creates a new RFC artifact as a TOML file and publishes a governance
+        event to the Central Bus. The RFC triggers notification to relevant
+        departments based on domain classification.
+      tags: [Governance]
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RFCCreateRequest"
+      responses:
+        "201":
+          description: "RFC created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RFCDetail"
+
+  /api/v1/gov/rfcs/{id}:
+    get:
+      operationId: get_rfc
+      summary: Get RFC detail
+      tags: [Governance]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^RFC-\\d+$"
+          description: "RFC identifier (e.g. RFC-001)"
+      responses:
+        "200":
+          description: "RFC detail"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RFCDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ===================================================================
+  # Governance — Guards
+  # ===================================================================
+  /api/v1/gov/guards:
+    get:
+      operationId: list_guards
+      summary: List verification guards
+      description: |
+        Returns all guard definitions and their current status across projects.
+      tags: [Governance]
+      parameters:
+        - name: project_id
+          in: query
+          schema:
+            type: string
+          description: "Filter by project"
+          required: false
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, running, passed, failed]
+          required: false
+      responses:
+        "200":
+          description: "List of guards"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GuardSummary"
+                  total:
+                    type: integer
+
+    post:
+      operationId: create_guard
+      summary: Create a guard check
+      description: |
+        Creates a new guard check for a project. This adds the guard to the
+        project's active_guards list and sets guard_status to 'pending'.
+        The guard must pass before the phase can transition to 'done'.
+      tags: [Governance]
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GuardCreateRequest"
+      responses:
+        "201":
+          description: "Guard created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuardDetail"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  # ===================================================================
+  # Agent
+  # ===================================================================
+  /api/v1/agents:
+    get:
+      operationId: list_agents
+      summary: List registered AO agents
+      description: |
+        Returns all registered AO agents with their display names and
+        descriptions. Sources from the agent adapter REGISTRY.
+      tags: [Agent]
+      responses:
+        "200":
+          description: "List of agents"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AgentSummary"
+                  total:
+                    type: integer
+                  cli_available:
+                    type: boolean
+                    description: "Whether the AO CLI binary is found on PATH"
+
+  /api/v1/agents/{id}/run:
+    post:
+      operationId: run_agent
+      summary: Run an AO agent asynchronously
+      description: |
+        Invokes an AO agent with the provided context. The execution is
+        async — the endpoint returns immediately with a trace_id, and the
+        result can be polled via GET /agents/{id}/status?trace_id=...
+
+        The request is published as an AO_REQUEST message to Central Bus,
+        where the AO Bridge picks it up and spawns the agent.
+      tags: [Agent]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [ceo, orchestrator, architect, engineering, qa]
+          description: "Agent identifier"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AgentRunRequest"
+      responses:
+        "202":
+          description: "Agent execution accepted — async"
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "URL to poll for agent status"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentRunResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/AgentNotFound"
+
+  /api/v1/agents/{id}/status:
+    get:
+      operationId: get_agent_status
+      summary: Poll agent execution status
+      description: |
+        Returns the current status of an agent execution identified by
+        trace_id. Status transitions: pending → running → success|failed.
+
+        Once status is 'success' or 'failed', the response includes the
+        agent's output.
+      tags: [Agent]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Agent identifier"
+        - name: trace_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: "Trace ID from the run response"
+      responses:
+        "200":
+          description: "Agent execution status"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentStatusResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ===================================================================
+  # Pipeline
+  # ===================================================================
+  /api/v1/pipeline/status:
+    get:
+      operationId: get_pipeline_status
+      summary: Get pipeline status for all or one project
+      description: |
+        Returns aggregated pipeline status including phase progress,
+        guard status, queue depth, and recent events. If no project_id
+        is specified, returns summary for all active projects.
+      tags: [Pipeline]
+      parameters:
+        - name: project_id
+          in: query
+          schema:
+            type: string
+          description: "Filter to a single project (optional)"
+          required: false
+      responses:
+        "200":
+          description: "Pipeline status"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/PipelineStatus"
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/PipelineStatus"
+
+  /api/v1/pipeline/history:
+    get:
+      operationId: get_pipeline_history
+      summary: Get pipeline execution history
+      description: |
+        Returns timeline of pipeline events (phase transitions, guard
+        checks, agent executions) for a project. Useful for debugging
+        pipeline flow and auditing.
+      tags: [Pipeline]
+      parameters:
+        - name: project_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: "Project identifier"
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date
+          description: "Start date (YYYY-MM-DD). Default: today"
+          required: false
+        - name: until
+          in: query
+          schema:
+            type: string
+            format: date
+          description: "End date (YYYY-MM-DD). Default: today"
+          required: false
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+          description: "Maximum events to return"
+          required: false
+      responses:
+        "200":
+          description: "Pipeline history"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PipelineEvent"
+                  total:
+                    type: integer
+                  project_id:
+                    type: string
+
+  # ===================================================================
+  # Monitoring
+  # ===================================================================
+  /api/v1/metrics:
+    get:
+      operationId: get_metrics
+      summary: Get system metrics
+      description: |
+        Returns current system metrics snapshot including queue depths,
+        agent call statistics, and pipeline health indicators.
+      tags: [Monitoring]
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [current, last_hour, last_24h, last_7d]
+            default: current
+          description: "Time period for aggregated metrics"
+          required: false
+      responses:
+        "200":
+          description: "System metrics"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetricSnapshot"
+
+  /api/v1/health:
+    get:
+      operationId: health_check
+      summary: Health check endpoint
+      description: |
+        Returns the health status of all system components:
+        - API server (always OK if responding)
+        - Central Bus (queue accessibility)
+        - AO CLI (binary on PATH)
+        - Governance directory (writable)
+      tags: [Monitoring]
+      responses:
+        "200":
+          description: "System healthy"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheck"
+        "503":
+          description: "One or more components unhealthy"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheck"
+
+# ===================================================================
+# Components
+# ===================================================================
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: "API key for write operations. Configurable in gov/config.toml"
+
+  schemas:
+    # ── ADR ──────────────────────────────────────────────────────────
+    ADRSummary:
+      type: object
+      description: "Summary of an Architecture Decision Record"
+      required: [id, title, status]
+      properties:
+        id:
+          type: string
+          example: "ADR-001"
+        title:
+          type: string
+          example: "Use Postgres for event store"
+        status:
+          type: string
+          enum: [proposed, accepted, deprecated, superseded]
+        domain:
+          type: string
+          example: "architecture"
+        impact:
+          type: string
+          example: "high"
+        date:
+          type: string
+          format: date
+        author:
+          type: string
+
+    ADRDetail:
+      type: object
+      description: "Full ADR content"
+      allOf:
+        - $ref: "#/components/schemas/ADRSummary"
+        - type: object
+          properties:
+            context:
+              type: string
+              description: "The issue motivating this decision"
+            decision:
+              type: string
+              description: "The change being proposed"
+            consequences:
+              type: string
+              description: "What becomes easier or harder"
+            options:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  pros:
+                    type: array
+                    items:
+                      type: string
+                  cons:
+                    type: array
+                    items:
+                      type: string
+            path:
+              type: string
+              description: "Absolute path to the TOML file"
+
+    ADRCreateRequest:
+      type: object
+      required: [title, status]
+      properties:
+        title:
+          type: string
+          description: "ADR title"
+          example: "Use Postgres for event store"
+        status:
+          type: string
+          enum: [proposed, accepted, deprecated, superseded]
+          default: proposed
+        context:
+          type: string
+          description: "The issue motivating this decision"
+        decision:
+          type: string
+          description: "The change being proposed"
+        consequences:
+          type: string
+          description: "What becomes easier or harder"
+        domain:
+          type: string
+          example: "architecture"
+        impact:
+          type: string
+          enum: [low, medium, high, critical]
+          default: medium
+
+    # ── RFC ──────────────────────────────────────────────────────────
+    RFCSummary:
+      type: object
+      description: "Summary of a Request for Comments"
+      required: [id, title, status]
+      properties:
+        id:
+          type: string
+          example: "RFC-001"
+        title:
+          type: string
+          example: "Complexity Threshold Model"
+        status:
+          type: string
+          enum: [draft, review, approved, rejected, implemented]
+        domain:
+          type: string
+          example: "governance"
+        author:
+          type: string
+        date:
+          type: string
+          format: date
+        complexity_score:
+          type: integer
+          minimum: 0
+          maximum: 3
+
+    RFCDetail:
+      type: object
+      description: "Full RFC content"
+      allOf:
+        - $ref: "#/components/schemas/RFCSummary"
+        - type: object
+          properties:
+            background:
+              type: string
+              description: "Background and motivation"
+            proposal:
+              type: string
+              description: "The proposed change"
+            alternatives:
+              type: array
+              items:
+                type: string
+            implementation:
+              type: string
+              description: "Implementation notes"
+            path:
+              type: string
+
+    RFCCreateRequest:
+      type: object
+      required: [title, status]
+      properties:
+        title:
+          type: string
+          description: "RFC title"
+        status:
+          type: string
+          enum: [draft, review, approved, rejected, implemented]
+          default: draft
+        background:
+          type: string
+        proposal:
+          type: string
+        domain:
+          type: string
+          example: "governance"
+        complexity_score:
+          type: integer
+          minimum: 0
+          maximum: 3
+          default: 0
+
+    # ── Guard ────────────────────────────────────────────────────────
+    GuardSummary:
+      type: object
+      description: "Summary of a verification guard"
+      required: [name, status]
+      properties:
+        name:
+          type: string
+          example: "adr_format"
+        status:
+          type: string
+          enum: [pending, running, passed, failed]
+        project_id:
+          type: string
+          example: "PRJ-1"
+        added_at:
+          type: string
+          format: date-time
+
+    GuardDetail:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/GuardSummary"
+        - type: object
+          properties:
+            phase:
+              type: string
+              description: "The phase this guard blocks"
+            description:
+              type: string
+            resolved_at:
+              type: string
+              format: date-time
+              nullable: true
+            detail:
+              type: object
+              description: "Guard-specific result data"
+
+    GuardCreateRequest:
+      type: object
+      required: [name, project_id]
+      properties:
+        name:
+          type: string
+          description: "Guard name (unique per project)"
+        project_id:
+          type: string
+          description: "Project to attach the guard to"
+        phase:
+          type: string
+          description: "Phase this guard applies to (optional)"
+        description:
+          type: string
+          description: "Human-readable description"
+
+    # ── Agent ────────────────────────────────────────────────────────
+    AgentSummary:
+      type: object
+      required: [agent_id, display_name]
+      properties:
+        agent_id:
+          type: string
+          enum: [ceo, orchestrator, architect, engineering, qa]
+        display_name:
+          type: string
+          example: "สถาปนิกซอฟต์แวร์"
+        description:
+          type: string
+          example: "ออกแบบ system architecture และ ADR"
+        mapped_profiles:
+          type: array
+          items:
+            type: string
+            example: "05-architect"
+
+    AgentRunRequest:
+      type: object
+      required: [context]
+      properties:
+        context:
+          type: object
+          description: "Agent context — forwarded to build_prompt()"
+          properties:
+            project_id:
+              type: string
+            phase:
+              type: string
+            task:
+              type: string
+            input_data:
+              type: object
+            constraints:
+              type: array
+              items:
+                type: string
+        timeout:
+          type: integer
+          description: "Override default timeout in seconds"
+          default: 300
+
+    AgentRunResponse:
+      type: object
+      required: [trace_id, status, check_url]
+      properties:
+        trace_id:
+          type: string
+          format: uuid
+          description: "Trace ID for polling and audit trail"
+        status:
+          type: string
+          enum: [pending, queued]
+          description: "Initial status (always pending on acceptance)"
+        check_url:
+          type: string
+          format: uri
+          description: "URL to poll for final status"
+        agent_id:
+          type: string
+        message:
+          type: string
+          description: "Human-readable confirmation"
+
+    AgentStatusResponse:
+      type: object
+      required: [trace_id, status]
+      properties:
+        trace_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, running, success, failed]
+        agent_id:
+          type: string
+        elapsed_ms:
+          type: integer
+          description: "Elapsed time in ms (only when status is success/failed)"
+        output:
+          type: object
+          description: "Agent output (only when status is success/failed)"
+          properties:
+            summary:
+              type: string
+            detail:
+              type: object
+            raw:
+              type: string
+        error:
+          type: string
+          description: "Error message (only when status is failed)"
+
+    # ── Pipeline ─────────────────────────────────────────────────────
+    PipelineStatus:
+      type: object
+      required: [project_id, status, phase]
+      properties:
+        project_id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [pending, in_progress, done, failed]
+        phase:
+          type: string
+          enum: [spec, design, arch, dev, qa, deploy]
+        progress_pct:
+          type: integer
+          minimum: 0
+          maximum: 100
+        phases:
+          type: object
+          description: "Per-phase status map"
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [pending, in_progress, done, failed]
+              owner:
+                type: string
+        blockers:
+          type: array
+          items:
+            type: string
+        guard_status:
+          type: string
+          enum: [pending, passed, failed]
+        queue_depth:
+          type: integer
+          description: "Pending messages for this project"
+        updated_at:
+          type: string
+          format: date-time
+
+    PipelineEvent:
+      type: object
+      description: "A single pipeline event in the audit trail"
+      required: [id, type, status, timestamp]
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [governance, agent, deploy]
+          description: "Event category"
+        status:
+          type: string
+          enum: [pending, running, success, failed]
+        source:
+          type: string
+          description: "Department ID that generated the event"
+          example: "05-architect"
+        timestamp:
+          type: string
+          format: date-time
+        duration_ms:
+          type: integer
+          description: "Execution duration in milliseconds (if applicable)"
+        detail:
+          type: object
+          description: "Event-specific payload"
+
+    # ── Monitoring ───────────────────────────────────────────────────
+    MetricSnapshot:
+      type: object
+      required: [timestamp]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        active_projects:
+          type: integer
+          description: "Number of projects in progress"
+        queued_messages:
+          type: integer
+          description: "Total messages across all queue priorities"
+        queued_by_priority:
+          type: object
+          properties:
+            critical:
+              type: integer
+            high:
+              type: integer
+            normal:
+              type: integer
+            low:
+              type: integer
+        agent_calls_total:
+          type: integer
+          description: "Total agent calls since last reset"
+        agent_calls_failed:
+          type: integer
+          description: "Failed agent calls since last reset"
+        agent_success_rate:
+          type: number
+          format: float
+          description: "Ratio of successful agent calls (0.0-1.0)"
+        avg_response_time_ms:
+          type: number
+          format: float
+          description: "Average agent response time in ms"
+        dead_letter_count:
+          type: integer
+          description: "Messages that exceeded max retries"
+        health_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: "Composite pipeline health score"
+
+    HealthCheck:
+      type: object
+      required: [status, timestamp]
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: "1.0.0"
+        components:
+          type: object
+          properties:
+            api:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ok, error]
+            central_bus:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ok, error]
+                queue_path:
+                  type: string
+                message_count:
+                  type: integer
+            ao_cli:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ok, error, not_configured]
+                path:
+                  type: string
+                version:
+                  type: string
+                  nullable: true
+            gov_dir:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ok, error]
+                adr_count:
+                  type: integer
+                rfc_count:
+                  type: integer
+                guard_count:
+                  type: integer
+
+  responses:
+    BadRequest:
+      description: "Invalid request parameters"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+                  details:
+                    type: object
+
+    NotFound:
+      description: "Resource not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "RESOURCE_NOT_FOUND"
+                  message:
+                    type: string
+
+    ValidationError:
+      description: "Validation error"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "VALIDATION_ERROR"
+                  message:
+                    type: string
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                        message:
+                          type: string
+
+    AgentNotFound:
+      description: "Agent not found in registry"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "AGENT_NOT_FOUND"
+                  message:
+                    type: string
+                  details:
+                    type: object
+                    properties:
+                      available:
+                        type: array
+                        items:
+                          type: string
+
+# ===================================================================
+# Tags
+# ===================================================================
+tags:
+  - name: Governance
+    description: "Governance artifacts — ADRs, RFCs, Guards"
+  - name: Agent
+    description: "AO agent orchestration — run, status, list"
+  - name: Pipeline
+    description: "Pipeline status and history"
+  - name: Monitoring
+    description: "System health and metrics"

@@ -1,0 +1,53 @@
+[metadata]
+id = "ADR-001"
+title = "Governance Directory Structure and Artifact Schema"
+status = "accepted"
+author = "Software Architect (พี่ทรงศักดิ์)"
+date = "2026-07-05"
+version = "1.0.0"
+
+[classification]
+domain = "governance"
+impact = "high"
+complexity = "low"
+scope = "organization-wide"
+
+context = """
+SoloCorp OS needs a standardized directory structure and schema for governance artifacts (ADRs, RFCs, Guards) to ensure consistency across all 9 departments. Previously, decisions were documented ad-hoc in markdown files scattered across the repository.
+
+The gov/ directory must serve as the Single Source of Truth (SSoT) for all architectural and governance decisions, with a consistent TOML schema that both humans and automated tooling can parse.
+"""
+
+decision = """
+Adopt a gov/ directory structure with three subdirectories:
+- gov/adr/ — Architecture Decision Records
+- gov/rfc/ — Request for Comments (proposals requiring discussion)
+- gov/guards/ — Verification guard specifications
+
+Each artifact follows a standardized TOML schema with metadata, classification, English body, Thai body, and footer sections. The schema requires author, date, status, domain, impact, complexity, and scope fields in all artifacts.
+"""
+
+consequences = """
+**Positive:**
+- Consistent artifact format across all departments
+- Machine-parseable TOML enables automated tooling (validation, CI checks)
+- Bilingual support (EN + TH) ensures accessibility for all stakeholders
+- Clear directory convention eliminates "where do I put this?" confusion
+
+**Negative:**
+- Migration effort to convert existing markdown ADRs to TOML
+- Learning curve for contributors unfamiliar with TOML schema
+- Schema changes require updating all existing artifacts
+"""
+
+options = [
+    "Markdown-based ADRs in doc/ directory — rejected: not machine-parseable",
+    "YAML schema — rejected: less readable than TOML for nested structures",
+    "TOML with gov/ directory — accepted: balance of readability and parseability",
+    "Database-backed governance store — rejected: over-engineered for current scale"
+]
+
+[footer]
+references = []
+tags = ["governance", "schema", "ssot", "phase-0"]
+review_date = "2026-10-05"

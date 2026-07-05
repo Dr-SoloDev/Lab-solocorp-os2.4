@@ -1,0 +1,32 @@
+[metadata]
+id = "ADR-{id}"
+title = "{title}"
+status = "proposed"
+date = "{date}"
+version = "1.0.0"
+author = "{author}"
+
+[classification]
+domain = "{domain}"
+impact = "{impact}"
+complexity = "{complexity}"
+scope = "{scope}"
+
+[body.en]
+summary = ""
+context = ""
+decision = ""
+consequences = ""
+alternatives = ""
+
+[body.th]
+summary = ""
+context = ""
+decision = ""
+consequences = ""
+alternatives = ""
+
+[footer]
+references = []
+tags = []
+review_date = "{review_date}"

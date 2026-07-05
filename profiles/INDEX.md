@@ -1,178 +1,225 @@
 # Lab-solocorp-os2.4 — Profile Index
 
-> ดัชนี Profile ทั้งหมดในระบบ SoloCorp OS
-> ลำดับตาม Hierarchy: CEO → CFO → CMO → Orchestrator → Architect → Product → Engineering → Design → UI-Designer → QA → Sales → Support → Legal → Default
+> Master index of all profiles in SoloCorp OS.
+> Sorted by hierarchy: CEO → CFO → CMO → Orchestrator → Architect → Product
+> → Engineering → Design → UI-Designer → QA → Sales → Support → Legal
+> → Web3 → Content Creator → Default
 
 ---
 
 ## Status Legend
 
-| สัญลักษณ์ | ความหมาย |
-|:---------:|:---------|
-|| 🔴 กำลังออกแบบ / ระหว่าง Implement |
-| ⏳ รอออกแบบ |
-| 🟡 Design เสร็จ — รอ Implement |
-| ✅ Implement แล้ว |
-| 🟢 ใช้งานจริง |
+| Symbol | Meaning |
+|:------:|:--------|
+| Active | In production — deployed and operational |
+| Design | Architecture defined, implementation in progress |
+| Planned | On roadmap, not yet started |
 
 ---
 
-## C-Level
+## C-Level Executives
 
-| # | Profile | ชื่อ | สถานะ |
-|:-:|:--------|:----|:-----:|
-| `01-ceo` | **CEO** | [เทอโบ ไชยศรีรัมย์ (Turbo)](01-ceo/SOUL.md) | 🟢 |
-| `02-cfo` | **CFO** | [meetoo](02-cfo/SOUL.md) | 🟢 |
-| `03-cmo` | **CMO** | [มาร์ค](03-cmo/SOUL.md) | 🟢 |
+| # | Profile | Name | Responsibility | Status |
+|:-:|:--------|:-----|:--------------|:------:|
+| `01-ceo` | **CEO** | [เทอโบ ไชยศรีรัมย์ (Turbo)](01-ceo/SOUL.md) | Vision, Strategy, Final Decision | Active |
+| `02-cfo` | **CFO** | [meetoo](02-cfo/SOUL.md) | Finance, Budget, Investment | Active |
+| `03-cmo` | **CMO** | [มาร์ค](03-cmo/SOUL.md) | Marketing, Content, Brand | Active |
 
-## System / Pipeline
+## System Pipeline
 
-| # | Profile | ชื่อ | สถานะ |
-|:-:|:--------|:----|:-----:|
-| `04-orchestrator` | **Orchestrator** | [พี่วุฒิ (Wut)](04-orchestrator/SOUL.md) | 🟢 |
+| # | Profile | Name | Responsibility | Status |
+|:-:|:--------|:-----|:--------------|:------:|
+| `04-orchestrator` | **Orchestrator** | [พี่วุฒิ (Wut)](04-orchestrator/SOUL.md) | System Pipeline Coordination | Active |
 
 ## Department Heads
 
-| # | Profile | หัวหน้าแผนก | รับผิดชอบ | สถานะ |
-|:-:|:--------|:-----------|:----------|:-----:|
-| `05-architect` | **Architect** | [พี่ทรงศักดิ์ (Songsak)](05-architect/01-head-of-architect.md) | สายพานกลาง / Central Bus | 🟢 |
-| `06-product` | **Product** | [โปรดัค](06-product/SOUL.md) | ผลิตภัณฑ์ / Feature / Roadmap | 🟢 |
-| `07-engineering` | **Engineering** | [ช่างฟูล](07-engineering/SOUL.md) | พัฒนา / โค้ด / เทคโนโลยี | 🟢 |
-| `08-design` | **Design** | [ครีเอท](08-design/SOUL.md) | ออกแบบ / UI / Brand Visual | 🟢 |
-| `09-ui-designer` | **UI Designer** | [UI-Designer](09-ui-designer/SOUL.md) | UI Design เฉพาะทาง | 🟢 |
-| `10-qa` | **QA** | [QA-ทีม](10-qa/SOUL.md) | ทดสอบ / คุณภาพ / Evidence | 🟢 |
-| `11-sales` | **Sales** | [เซลส์](11-sales/SOUL.md) | ขาย / ลูกค้า / รายได้ | 🟢 |
-| `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | ช่วยเหลือลูกค้า | 🟢 |
-| `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | กฎหมาย / Compliance | 🟢 |
-| `14-web3` | **Web3 & DeFi** | [อัยวา](14-web3/SOUL.md) | Blockchain/DeFi/Solana | 🟢 |
-| `15-content-creator` | **Content Creator** | [เสก](15-content-creator/SOUL.md) | Content / Creative | 🟢 |
+| # | Profile | Head | Responsibility | Status |
+|:-:|:--------|:-----|:--------------|:------:|
+| `05-architect` | **Architect** | [พี่ทรงศักดิ์ (Songsak)](05-architect/01-head-of-architect.md) | Central Bus, Routing, Monitoring | Active |
+| `06-product` | **Product** | [โปรดัค](06-product/SOUL.md) | Feature Roadmap, PRD, Delivery | Active |
+| `07-engineering` | **Engineering** | [ช่างฟูล](07-engineering/SOUL.md) | Backend, Frontend, Architecture | Active |
+| `08-design` | **Design** | [ครีเอท](08-design/SOUL.md) | UX Research, Brand Visual | Active |
+| `09-ui-designer` | **UI Designer** | [UI-Designer](09-ui-designer/SOUL.md) | Interface, Component Library | Active |
+| `10-qa` | **QA** | [QA-ทีม](10-qa/SOUL.md) | Testing, Quality, Evidence | Active |
+| `11-sales` | **Sales** | [เซลส์](11-sales/SOUL.md) | B2B Deal Strategy, Pipeline | Active |
+| `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | Customer Success, Analytics | Active |
+| `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | Compliance, Contracts, Law | Active |
+| `14-web3` | **Web3 & DeFi** | [อัยวา](14-web3/SOUL.md) | Blockchain, DeFi, Solana | Active |
+| `15-content-creator` | **Content Creator** | [เสก](15-content-creator/SOUL.md) | Content, Creative, Media | Active |
 
 ## Base Profile
 
-| # | Profile | สถานะ |
-|:-:|:--------|:-----:|
-| `default` | **Default (Fallback)** | ✅ |
+| # | Profile | Status |
+|:-:|:--------|:------:|
+| `default` | **Default (Fallback)** | Active |
 
 ---
 
-## Team — Architect Department (พี่ทรงศักดิ์)
+## Team — 05-architect (พี่ทรงศักดิ์)
 
-| # | Profile | Protocol/Pattern | หน้าที่ | สถานะ |
-|:-:|:--------|:-----------------|:-------|:-----:|
-| 01 | **[📋 Pipeline Auditor](05-architect/phee-thongsak/team/01-pipeline-auditor.SOUL.md)** | GNAP + jira-steward + compliance-auditor | Audit Trail, Compliance Check, Evidence | 🟢 |
-| 02 | **[🗺️ Routing Config Agent](05-architect/phee-thongsak/team/02-routing-config-agent.SOUL.md)** | GNAP + MagiC + workflow-architect | Routing Rules, Circuit Breaker, DAG | 🟢 |
-| 03 | **[🎛️ Monitor Watchdog](05-architect/phee-thongsak/team/03-monitor-watchdog.SOUL.md)** | model-watchdog + TeamHero + agents-orchestrator | Health Probe, SLA, Dashboard | 🟢 |
-| 04 | **[🧭 Exception Triage Agent](05-architect/phee-thongsak/team/04-exception-triage-agent.SOUL.md)** | AXME + MagiC + chief-of-staff + workflow-optimizer | Triage, RCA, Auto-Resolve | 🟢 |
-| 05 | **[⏰ Cron Pipeline Agent](05-architect/phee-thongsak/team/05-cron-pipeline-agent.SOUL.md)** | Temporal + n8n | Schedule, Durable Execution | 🟢 |
+| # | Agent | Protocol/Pattern | Responsibility | Status |
+|:-:|:------|:-----------------|:--------------|:------:|
+| 01 | [Pipeline Auditor](05-architect/phee-thongsak/team/01-pipeline-auditor.SOUL.md) | GNAP + jira-steward + compliance-auditor | Audit trail, compliance check, evidence collection | Active |
+| 02 | [Routing Config Agent](05-architect/phee-thongsak/team/02-routing-config-agent.SOUL.md) | GNAP + MagiC + workflow-architect | Routing rules, circuit breaker, DAG | Active |
+| 03 | [Monitor Watchdog](05-architect/phee-thongsak/team/03-monitor-watchdog.SOUL.md) | model-watchdog + TeamHero + agents-orchestrator | Health probe, SLA tracking, dashboard | Active |
+| 04 | [Exception Triage Agent](05-architect/phee-thongsak/team/04-exception-triage-agent.SOUL.md) | AXME + MagiC + chief-of-staff + workflow-optimizer | Triage, RCA, 80% auto-resolve | Active |
+| 05 | [Cron Pipeline Agent](05-architect/phee-thongsak/team/05-cron-pipeline-agent.SOUL.md) | Temporal + n8n | Schedule, durable execution, retry | Active |
 
-> **หมายเหตุ:** paths ภายใน repo ใช้เฉพาะสำหรับ design docs จริง — ไม่ใช่ symlink ไปยัง Hermes profiles จริง
-
----
-
-## หมายเหตุ
-
-- Profile naming convention: `NN-name` (NN = ลำดับ Hierarchy)
-- แต่ละ Profile = 1 Department Head ที่มีความรู้เฉพาะด้าน
-- หัวหน้า **ไม่ทำงานเอง** — สั่งงาน Specialist Agent ผ่าน `delegate_task`
-- หัวหน้าต้องมี **Ownership Mindset** — เจ้าของแผนก ไม่ใช่ลูกจ้าง
+> 5 agents — Pipeline management lifecycle: Audit → Route → Monitor → Triage → Schedule
 
 ---
 
-## ทีมในแต่ละแผนก
+## Team — 02-cfo (meetoo)
 
-### 02 — CFO (meetoo)
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [dana](02-cfo/meetoo/team/01-dana.SOUL.md) | Bookkeeper & Controller — daily accounting, monthly close, internal controls | Active |
+| 02 | [riley](02-cfo/meetoo/team/02-riley.SOUL.md) | FP&A Analyst — budget, rolling forecast, variance analysis, early warnings | Active |
+| 03 | [morgan](02-cfo/meetoo/team/03-morgan.SOUL.md) | Financial Analyst — financial models, scenario analysis, cash-flow insights | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [dana](02-cfo/meetoo/team/01-dana.SOUL.md) | 🟢 |
-| 02 | [riley](02-cfo/meetoo/team/02-riley.SOUL.md) | 🟢 |
-| 03 | [morgan](02-cfo/meetoo/team/03-morgan.SOUL.md) | 🟢 |
+## Team — 03-cmo (มาร์ค)
 
-### 03 — CMO (mark)
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [growth-hacker](03-cmo/mark/team/01-growth-hacker.SOUL.md) | Growth loops, A/B testing, viral mechanics, funnel optimization | Active |
+| 02 | [social-media-strategist](03-cmo/mark/team/02-social-media-strategist.SOUL.md) | LinkedIn/Twitter brand authority, community building, B2B pipeline | Active |
+| 03 | [content-creator](03-cmo/mark/team/03-content-creator.SOUL.md) | Multi-channel content, SEO, video scripts, editorial strategy | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [growth-hacker](03-cmo/mark/team/01-growth-hacker.SOUL.md) | 🟢 |
-| 02 | [social-media-strategist](03-cmo/mark/team/02-social-media-strategist.SOUL.md) | 🟢 |
-| 03 | [content-creator](03-cmo/mark/team/03-content-creator.SOUL.md) | 🟢 |
+## Team — 04-orchestrator (พี่วุฒิ)
 
-### 04 — Orchestrator
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [project-shepherd](04-orchestrator/orchestrator/team/01-project-shepherd.SOUL.md) | Cross-functional project management, timeline and risk coordination | Active |
+| 02 | [studio-producer](04-orchestrator/orchestrator/team/02-studio-producer.SOUL.md) | Creative portfolio management, executive relationship management | Active |
+| 03 | [studio-operations](04-orchestrator/orchestrator/team/03-studio-operations.SOUL.md) | Daily operations, SOP design, vendor management, >=95% efficiency | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [project-shepherd](04-orchestrator/orchestrator/team/01-project-shepherd.SOUL.md) | 🟢 |
-| 02 | [studio-producer](04-orchestrator/orchestrator/team/02-studio-producer.SOUL.md) | 🟢 |
-| 03 | [studio-operations](04-orchestrator/orchestrator/team/03-studio-operations.SOUL.md) | 🟢 |
+## Team — 06-product (โปรดัค)
 
-### 06 — Product (produck)
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [product-manager](06-product/produck/team/01-product-manager.SOUL.md) | Product lifecycle — discovery to launch, PRD, opportunity assessment | Active |
+| 02 | [product-feedback-synthesizer](06-product/produck/team/02-product-feedback-synthesizer.SOUL.md) | Multi-channel feedback analysis, RICE/MoSCoW/Kano prioritization | Active |
+| 03 | [product-sprint-prioritizer](06-product/produck/team/03-product-sprint-prioritizer.SOUL.md) | Agile sprint planning, dependency/risk management, velocity optimization | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [product-manager](06-product/produck/team/01-product-manager.SOUL.md) | 🟢 |
-| 02 | [product-feedback-synthesizer](06-product/produck/team/02-product-feedback-synthesizer.SOUL.md) | 🟢 |
-| 03 | [product-sprint-prioritizer](06-product/produck/team/03-product-sprint-prioritizer.SOUL.md) | 🟢 |
+## Team — 07-engineering (ช่างฟูล)
 
-### 07 — Engineering (changful)
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [สถาปนิกแบ็กเอนด์](07-engineering/changful/team/01-สถาปนิกแบ็กเอนด์.SOUL.md) | Scalable backend, database architecture, API design, cloud infra (<20ms) | Active |
+| 02 | [นักพัฒนาอาวุโส](07-engineering/changful/team/02-นักพัฒนาอาวุโส.SOUL.md) | Full-stack senior dev — Laravel, Livewire, FluxUI, Three.js, animations | Active |
+| 03 | [สถาปนิกซอฟต์แวร์](07-engineering/changful/team/03-สถาปนิกซอฟต์แวร์.SOUL.md) | Domain-driven design, microservices/modular monolith, event-driven, ADRs | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [สถาปนิกแบ็กเอนด์](07-engineering/changful/team/01-สถาปนิกแบ็กเอนด์.SOUL.md) | 🟢 |
-| 02 | [นักพัฒนาอาวุโส](07-engineering/changful/team/02-นักพัฒนาอาวุโส.SOUL.md) | 🟢 |
-| 03 | [สถาปนิกซอฟต์แวร์](07-engineering/changful/team/03-สถาปนิกซอฟต์แวร์.SOUL.md) | 🟢 |
+## Team — 08-design (ครีเอท)
 
-### 08 — Design (kreet)
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [nak-wijai-ux](08-design/kreet/team/01-nak-wijai-ux.SOUL.md) | User behavior research, usability testing, data-driven design decisions | Active |
+| 02 | [sathapanig-ux](08-design/kreet/team/02-sathapanig-ux.SOUL.md) | UX architecture, design systems, layout frameworks, component structures | Active |
+| 03 | [nak-aukbaep-ui](08-design/kreet/team/03-nak-aukbaep-ui.SOUL.md) | Visual design systems, component library, WCAG AA, design tokens + dev spec | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [nak-wijai-ux](08-design/kreet/team/01-nak-wijai-ux.SOUL.md) | 🟢 |
-| 02 | [sathapanig-ux](08-design/kreet/team/02-sathapanig-ux.SOUL.md) | 🟢 |
-| 03 | [nak-aukbaep-ui](08-design/kreet/team/03-nak-aukbaep-ui.SOUL.md) | 🟢 |
+## Team — 09-ui-designer
 
-### 09 — UI Designer
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [ui-designer](09-ui-designer/ui-designer/team/01-ui-designer.SOUL.md) | Pixel-perfect visual design system, component library, responsive framework | Active |
+| 02 | [ux-architect](09-ui-designer/ui-designer/team/02-ux-architect.SOUL.md) | CSS design system + layout framework, component hierarchy, light/dark theme | Active |
+| 03 | [ux-researcher](09-ui-designer/ui-designer/team/03-ux-researcher.SOUL.md) | Quantitative/qualitative UX research, usability testing, design recommendations | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [ui-designer](09-ui-designer/ui-designer/team/01-ui-designer.SOUL.md) | 🟢 |
-| 02 | [ux-architect](09-ui-designer/ui-designer/team/02-ux-architect.SOUL.md) | 🟢 |
-| 03 | [ux-researcher](09-ui-designer/ui-designer/team/03-ux-researcher.SOUL.md) | 🟢 |
+## Team — 10-qa
 
-### 10 — QA
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [api-tester](10-qa/qa-team/team/01-api-tester.SOUL.md) | Full-cycle API testing — functional, performance, security (OWASP Top 10) | Active |
+| 02 | [accessibility-auditor](10-qa/qa-team/team/02-accessibility-auditor.SOUL.md) | WCAG 2.2 compliance, automated tools + assistive technology + code-level fix | Active |
+| 03 | [test-results-analyzer](10-qa/qa-team/team/03-test-results-analyzer.SOUL.md) | Statistical modeling, go/no-go release recommendations, quality trend tracking | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [api-tester](10-qa/qa-team/team/01-api-tester.SOUL.md) | 🟢 |
-| 02 | [accessibility-auditor](10-qa/qa-team/team/02-accessibility-auditor.SOUL.md) | 🟢 |
-| 03 | [test-results-analyzer](10-qa/qa-team/team/03-test-results-analyzer.SOUL.md) | 🟢 |
+## Team — 11-sales
 
-### 11 — Sales
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [deal-strategist](11-sales/sales/team/01-deal-strategist.SOUL.md) | B2B deal strategy, MEDDPICC qualification, competitive positioning, win rate | Active |
+| 02 | [pipeline-analyst](11-sales/sales/team/02-pipeline-analyst.SOUL.md) | Revenue operations, pipeline velocity, deal quality scoring, forecast accuracy | Active |
+| 03 | [outbound-strategist](11-sales/sales/team/03-outbound-strategist.SOUL.md) | Signal-based prospecting, buying intent detection, reply rate optimization | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [deal-strategist](11-sales/sales/team/01-deal-strategist.SOUL.md) | 🟢 |
-| 02 | [pipeline-analyst](11-sales/sales/team/02-pipeline-analyst.SOUL.md) | 🟢 |
-| 03 | [outbound-strategist](11-sales/sales/team/03-outbound-strategist.SOUL.md) | 🟢 |
+## Team — 12-support
 
-### 12 — Support
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [support-responder](12-support/support/team/01-support-responder.SOUL.md) | First-contact resolution 85%, 2-hour response SLA, multi-channel | Active |
+| 02 | [analytics-reporter](12-support/support/team/02-analytics-reporter.SOUL.md) | KPI dashboards, automated reports, customer segmentation, data insights | Active |
+| 03 | [executive-summary-generator](12-support/support/team/03-executive-summary-generator.SOUL.md) | Executive-ready summaries, SCQA framework, 325-475 words, measurable impact | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [support-responder](12-support/support/team/01-support-responder.SOUL.md) | 🟢 |
-| 02 | [analytics-reporter](12-support/support/team/02-analytics-reporter.SOUL.md) | 🟢 |
-| 03 | [executive-summary-generator](12-support/support/team/03-executive-summary-generator.SOUL.md) | 🟢 |
+## Team — 13-legal (ตุลย์)
 
-### 13 — Legal (tulya)
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [compliance-auditor](13-legal/tulya/team/01-compliance-auditor.SOUL.md) | SOC 2, ISO 27001, HIPAA, PCI-DSS — gap analysis to certification readiness | Active |
+| 02 | [legal-document-review](13-legal/tulya/team/02-legal-document-review.SOUL.md) | Contract review, agreement analysis, severity-based risk assessment summaries | Active |
+| 03 | [legal-client-intake](13-legal/tulya/team/03-legal-client-intake.SOUL.md) | Screening, case data collection, conflict of interest check, attorney routing | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [compliance-auditor](13-legal/tulya/team/01-compliance-auditor.SOUL.md) | 🟢 |
-| 02 | [legal-document-review](13-legal/tulya/team/02-legal-document-review.SOUL.md) | 🟢 |
-| 03 | [legal-client-intake](13-legal/tulya/team/03-legal-client-intake.SOUL.md) | 🟢 |
+## Team — 14-web3 (อัยวา)
 
-### 14 — Web3 (อัยวา)
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [smart-contract-engineer](14-web3/aywa/team/01-smart-contract-engineer.SOUL.md) | Solidity/Anchor, gas optimization, upgrade patterns, test coverage >=90% | Active |
+| 02 | [blockchain-security-auditor](14-web3/aywa/team/02-blockchain-security-auditor.SOUL.md) | Pre-deploy audit, manual review + Slither/Mythril/Echidna, attack simulation | Active |
+| 03 | [defi-protocol-analyst](14-web3/aywa/team/03-defi-protocol-analyst.SOUL.md) | DeFi market analysis, tokenomics design, on-chain analytics, risk assessment | Active |
+| 04 | [solana-developer](14-web3/aywa/team/04-solana-developer.SOUL.md) | Anchor programs (Rust), Web3.js/Solana.js, devnet/mainnet deployment | Active |
 
-| # | Agent | สถานะ |
-|:-:|:------|:-----:|
-| 01 | [smart-contract-engineer](14-web3/aywa/team/01-smart-contract-engineer.SOUL.md) | 🟢 |
-| 02 | [blockchain-security-auditor](14-web3/aywa/team/02-blockchain-security-auditor.SOUL.md) | 🟢 |
-| 03 | [defi-protocol-analyst](14-web3/aywa/team/03-defi-protocol-analyst.SOUL.md) | 🟢 |
-| 04 | [solana-developer](14-web3/aywa/team/04-solana-developer.SOUL.md) | 🟢 |
+## Team — 15-content-creator (เสก)
+
+Content Creator department references 10 specialist profiles from the
+agency-agents library for content production across multiple platforms.
+
+| Platform | Focus |
+|:---------|:------|
+| LinkedIn | Thought leadership, brand authority, B2B content |
+| TikTok | Short-form video, trend-driven content, viral mechanics |
+| Instagram | Visual storytelling, reels, carousel content |
+| YouTube | Long-form video, tutorials, deep-dive content |
+| Reddit | Community engagement, value-driven posts |
+
+**Skills:** gen-image (MaxPlus GPT Image API), video-use (ComfyUI/FFmpeg),
+solocorp-mark-workflow, content creation pipeline
+
+---
+
+## Team Summary
+
+| Department | Head | Specialists | Total |
+|:-----------|:-----|:-----------:|:-----:|
+| 01 CEO | เทอโบ | 0 | 1 |
+| 02 CFO | meetoo | 3 | 4 |
+| 03 CMO | มาร์ค | 3 | 4 |
+| 04 Orchestrator | พี่วุฒิ | 3 | 4 |
+| 05 Architect | พี่ทรงศักดิ์ | 5 | 6 |
+| 06 Product | โปรดัค | 3 | 4 |
+| 07 Engineering | ช่างฟูล | 3 | 4 |
+| 08 Design | ครีเอท | 3 | 4 |
+| 09 UI Designer | UI-Designer | 3 | 4 |
+| 10 QA | QA-ทีม | 3 | 4 |
+| 11 Sales | เซลส์ | 3 | 4 |
+| 12 Support | ซัพพอร์ต | 3 | 4 |
+| 13 Legal | ตุลย์ | 3 | 4 |
+| 14 Web3 | อัยวา | 4 | 5 |
+| 15 Content Creator | เสก | (10 refs) | 1 |
+| — | Default (Fallback) | — | 1 |
+| **Total** | **15 Departments** | **46+ Specialists** | **57+ Active Members** |
+
+---
+
+## Notes
+
+- Profile naming convention: `NN-name` (NN = hierarchy order)
+- Each profile = 1 Department Head with specialized domain knowledge
+- Department Heads **do not work themselves** — they delegate to specialist
+  agents via `delegate_task`
+- Heads must have **Ownership Mindset** — owner of the department, not an
+  employee
+- Paths within this repo refer to design documents — not symlinks to actual
+  Hermes profiles
+- For actual Hermes deployment: `~/.hermes/profiles/<NN-name>/`
+
+---
+
+*SoloCorp OS — System First, Everything Follows*
