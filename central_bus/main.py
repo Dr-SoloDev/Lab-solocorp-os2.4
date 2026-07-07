@@ -35,6 +35,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from central_bus.aar import AARGenerator
+from central_bus.api_compliance import router as compliance_router
 from central_bus.config import settings
 from central_bus.db import DbManager, ensure_db, get_db, new_id, now_iso
 from central_bus.facts import FactsService
@@ -88,6 +89,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Include compliance validator router ───────────────────────────────
+app.include_router(compliance_router)
 
 
 # ═══════════════════════════════════════════════════════════════════════
