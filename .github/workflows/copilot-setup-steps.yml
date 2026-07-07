@@ -45,9 +45,13 @@ jobs:
         run: |
           pip install -r central_bus/requirements.txt
 
-      - name: Install Legal Vault MCP dependencies
+      - name: Install Legal Vault MCP dependencies (if available)
         run: |
-          pip install -r legal_vault/mcp_server/requirements.txt
+          if [[ -f "legal_vault/mcp_server/requirements.txt" ]]; then
+            pip install -r legal_vault/mcp_server/requirements.txt
+          else
+            echo "⚠ legal_vault/mcp_server/requirements.txt not found (optional)"
+          fi
 
       - name: Verify installation
         run: |
