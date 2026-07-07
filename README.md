@@ -18,15 +18,15 @@
 
 # SoloCorp OS
 
-![version](https://img.shields.io/badge/version-v2.4.0--pre--release-%23FF6B35?style=flat-square)
-![status](https://img.shields.io/badge/status-pre--release-%23FF6B35?style=flat-square)
-![packs](https://img.shields.io/badge/product%20packs-3%20available-%23E74C3C?style=flat-square)
-![departments](https://img.shields.io/badge/departments-18-purple?style=flat-square)
-![agents](https://img.shields.io/badge/agents-55%2B%20specialists-blueviolet?style=flat-square)
-![skills](https://img.shields.io/badge/skills-93%20integrations-%23008080?style=flat-square)
-![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex-orange?style=flat-square)
+[![version](https://img.shields.io/badge/version-v2.4.0--pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases/tag/v2.4.0-pre)
+[![status](https://img.shields.io/badge/status-pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases)
+[![packs](https://img.shields.io/badge/product%20packs-3%20available-%23E74C3C?style=flat-square)](#product-packs)
+[![departments](https://img.shields.io/badge/departments-18-purple?style=flat-square)](profiles/INDEX.md)
+[![agents](https://img.shields.io/badge/agents-55%2B%20specialists-blueviolet?style=flat-square)](.opencode/agents/)
+[![skills](https://img.shields.io/badge/skills-93%20integrations-%23008080?style=flat-square)](.opencode/skills/)
+[![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex-orange?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4)
 [![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
-![license](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)
+[![license](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)](LEGAL.md)
 
 > ⚡ **v2.4.0 Pre-release** · Three Product Packs now entering qualification →
 > [`@cfo-meetoo`](./.opencode/agents/cfo-meetoo.md) ·
