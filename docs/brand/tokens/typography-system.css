@@ -1,0 +1,119 @@
+/* ============================================================
+   SoloCorp OS — Typography System Tokens v0.1
+   Brand: Dark-tech minimal
+   Author: Design (ครีเอท) + UI Designer
+   Status: Draft — รอ CEO approve
+   ============================================================ */
+
+:root {
+  /* —————————————————————————————————————————
+     FONT FAMILY STACK
+     —————————————————————————————————————————
+     Inter: UI text — open-source, humanist, same DNA as SF Pro
+     JetBrains Mono: Code/technical — ligatures, readability
+     Noto Sans Thai: ภาษาไทย fallback สำหรับ technical context
+     ————————————————————————————————————————— */
+
+  --sc-font-ui:       'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sc-font-mono:     'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --sc-font-thai:     'Noto Sans Thai', 'Sarabun', 'Kanit', sans-serif;
+  --sc-font-heading:  var(--sc-font-ui);  /* Headings ใช้ Inter เช่นกัน */
+
+  /* —————————————————————————————————————————
+     TYPE SCALE — Modular scale 1.25
+     Base: 16px (1rem)
+     ————————————————————————————————————————— */
+
+  --sc-text-xs:       0.75rem;   /* 12px — Label, Caption, Meta */
+  --sc-text-sm:       0.813rem;  /* 13px — Small body, Code inline */
+  --sc-text-base:     0.875rem;  /* 14px — Body text หลัก (compact) */
+  --sc-text-md:       1rem;      /* 16px — Large body, Paragraph */
+  --sc-text-lg:       1.25rem;   /* 20px — Subheading */
+  --sc-text-xl:       1.5rem;    /* 24px — Section heading */
+  --sc-text-2xl:      2rem;      /* 32px — Page heading */
+  --sc-text-3xl:      3rem;      /* 48px — Hero / Display */
+
+  /* —————————————————————————————————————————
+     FONT WEIGHT TOKENS
+     ————————————————————————————————————————— */
+
+  --sc-weight-regular:  400;
+  --sc-weight-medium:   500;
+  --sc-weight-semibold: 600;
+  --sc-weight-bold:     700;
+
+  /* —————————————————————————————————————————
+     LINE HEIGHT TOKENS
+     ————————————————————————————————————————— */
+
+  --sc-leading-tight:    1.1;    /* Headings */
+  --sc-leading-normal:   1.5;    /* Body */
+  --sc-leading-relaxed:  1.625;  /* Long-form text */
+  --sc-leading-mono:     1.4;    /* Code blocks */
+
+  /* —————————————————————————————————————————
+     LETTER SPACING
+     ————————————————————————————————————————— */
+
+  --sc-tracking-tight:   -0.025em;  /* Headings */
+  --sc-tracking-normal:  0em;       /* Body */
+  --sc-tracking-wide:    0.05em;    /* Uppercase label */
+  --sc-tracking-mono:    0em;       /* Code */
+}
+
+/* —————————————————————————————————————————
+   USAGE GUIDELINES
+   ————————————————————————————————————————— */
+
+/* Headings — ใช้ sc-font-heading + sc-weight-semibold */
+/* Body — ใช้ sc-font-ui + sc-weight-regular */
+/* Code — ใช้ sc-font-mono + sc-weight-regular */
+/* Thai in technical context — ใช้ sc-font-thai เป็น fallback ใน sc-font-mono */
+
+/* —————————————————————————————————————————
+   RESPONSIVE BREAKPOINT ADJUSTMENTS
+   —————————————————————————————————————————
+   ปัจจุบัน type scale คงที่ทุก breakpoint
+   future: อาจปรับ lg/2xl scale บน mobile
+   เช่น --sc-text-3xl: 2rem (32px) บน viewport < 768px
+   ————————————————————————————————————————— */
+
+/* —————————————————————————————————————————
+   EXAMPLE USAGE
+   —————————————————————————————————————————
+   .hero-title {
+     font-family: var(--sc-font-heading);
+     font-size: var(--sc-text-3xl);
+     font-weight: var(--sc-weight-bold);
+     line-height: var(--sc-leading-tight);
+     letter-spacing: var(--sc-tracking-tight);
+   }
+
+   .card-title {
+     font-family: var(--sc-font-heading);
+     font-size: var(--sc-text-lg);
+     font-weight: var(--sc-weight-semibold);
+   }
+
+   .body-text {
+     font-family: var(--sc-font-ui);
+     font-size: var(--sc-text-base);
+     font-weight: var(--sc-weight-regular);
+     line-height: var(--sc-leading-normal);
+   }
+
+   .code-snippet {
+     font-family: var(--sc-font-mono);
+     font-size: var(--sc-text-sm);
+     line-height: var(--sc-leading-mono);
+   }
+
+   .caption {
+     font-family: var(--sc-font-ui);
+     font-size: var(--sc-text-xs);
+     font-weight: var(--sc-weight-medium);
+     color: var(--sc-text-secondary);
+     letter-spacing: var(--sc-tracking-wide);
+     text-transform: uppercase;
+   }
+   ————————————————————————————————————————— */

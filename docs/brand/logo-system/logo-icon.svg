@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 64" fill="none">
+  <!-- SoloCorp OS Icon — Hexagon Nexus Mark (Navy Enterprise) -->
+  <defs>
+    <linearGradient id="grad-blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#60A5FA"/>
+    </linearGradient>
+    <linearGradient id="grad-indigo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Row 1 -->
+  <polygon points="18,0 27,5.2 27,15.6 18,20.8 9,15.6 9,5.2" fill="#334155" stroke="#475569" stroke-width="0.8"/>
+  <polygon points="36,0 45,5.2 45,15.6 36,20.8 27,15.6 27,5.2" fill="#1E293B" stroke="#475569" stroke-width="0.8"/>
+  <polygon points="54,0 63,5.2 63,15.6 54,20.8 45,15.6 45,5.2" fill="url(#grad-blue)" opacity="0.85"/>
+
+  <!-- Row 2 -->
+  <polygon points="9,10.4 18,15.6 18,26 9,31.2 0,26 0,15.6" fill="#1E293B" stroke="#475569" stroke-width="0.8"/>
+  <polygon points="27,10.4 36,15.6 36,26 27,31.2 18,26 18,15.6" fill="url(#grad-indigo)" opacity="0.6"/>
+  <polygon points="45,10.4 54,15.6 54,26 45,31.2 36,26 36,15.6" fill="#334155" stroke="#475569" stroke-width="0.8"/>
+
+  <!-- Row 3 -->
+  <polygon points="18,20.8 27,26 27,36.4 18,41.6 9,36.4 9,26" fill="url(#grad-blue)" opacity="0.35"/>
+  <polygon points="36,20.8 45,26 45,36.4 36,41.6 27,36.4 27,26" fill="#334155" stroke="#475569" stroke-width="0.8"/>
+  <polygon points="54,20.8 63,26 63,36.4 54,41.6 45,36.4 45,26" fill="#1E293B" stroke="#475569" stroke-width="0.8"/>
+
+  <!-- Row 4 -->
+  <polygon points="9,31.2 18,36.4 18,46.8 9,52 0,46.8 0,36.4" fill="#1E293B" stroke="#475569" stroke-width="0.8"/>
+  <polygon points="27,31.2 36,36.4 36,46.8 27,52 18,46.8 18,36.4" fill="#334155" stroke="#475569" stroke-width="0.8"/>
+  <polygon points="45,31.2 54,36.4 54,46.8 45,52 36,46.8 36,36.4" fill="url(#grad-indigo)" opacity="0.35"/>
+</svg>

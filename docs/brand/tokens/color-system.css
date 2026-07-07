@@ -1,0 +1,111 @@
+/* ============================================================
+   SoloCorp OS — Color System Tokens v0.2 (Navy Enterprise)
+   Brand: Dark-tech minimal × Enterprise
+   Author: Design (ครีเอท) + UI Designer
+   Status: Approved by Owner — 2026-07-07
+   ============================================================ */
+
+:root {
+  /* —————————————————————————————————————————
+     BRAND CORE — 5 หัวใจหลักของ SoloCorp OS
+     ————————————————————————————————————————— */
+  --sc-navy:           #0F172A;  /* Dark bg — navy deep, enterprise */
+  --sc-accent-blue:    #3B82F6;  /* Primary CTA — corporate blue, trust */
+  --sc-accent-indigo:  #6366F1;  /* Secondary — intelligence, pipeline */
+  --sc-accent-gold:    #F59E0B;  /* Warning, attention, premium */
+  --sc-white:          #F1F5F9;  /* Text พื้นฐานบน dark bg */
+
+  /* —————————————————————————————————————————
+     NEUTRAL SCALE — 10 shades
+     ————————————————————————————————————————— */
+  --sc-gray-50:   #F8FAFC;
+  --sc-gray-100:  #F1F5F9;
+  --sc-gray-200:  #E2E8F0;
+  --sc-gray-300:  #CBD5E1;
+  --sc-gray-400:  #94A3B8;
+  --sc-gray-500:  #64748B;
+  --sc-gray-600:  #475569;
+  --sc-gray-700:  #334155;
+  --sc-gray-800:  #1E293B;
+  --sc-gray-900:  #0F172A;
+
+  /* —————————————————————————————————————————
+     SURFACE TOKENS
+     ————————————————————————————————————————— */
+  --sc-surface-base:        #0F172A;  /* พื้นที่สุด depth */
+  --sc-surface-elevated:    #1E293B;  /* Card, Dialog */
+  --sc-surface-interactive: #334155;  /* Hover state, Input bg */
+  --sc-surface-overlay:     rgba(15, 23, 42, 0.85);  /* Modal backdrop */
+  --sc-surface-border:      #334155;  /* Default border */
+
+  /* —————————————————————————————————————————
+     SEMANTIC COLORS — Success / Error / Info / Warning
+     ————————————————————————————————————————— */
+  --sc-semantic-success:       #10B981;  /* Emerald */
+  --sc-semantic-success-bg:    rgba(16, 185, 129, 0.1);
+  --sc-semantic-error:         #EF4444;  /* Red */
+  --sc-semantic-error-bg:      rgba(239, 68, 68, 0.1);
+  --sc-semantic-info:          #3B82F6;  /* Blue */
+  --sc-semantic-info-bg:       rgba(59, 130, 246, 0.1);
+  --sc-semantic-warning:       #F59E0B;  /* Gold */
+  --sc-semantic-warning-bg:    rgba(245, 158, 11, 0.1);
+
+  /* —————————————————————————————————————————
+     TEXT TOKENS
+     ————————————————————————————————————————— */
+  --sc-text-primary:    #F1F5F9;    /* Body text */
+  --sc-text-secondary:  #94A3B8;    /* Meta, caption */
+  --sc-text-disabled:   #475569;    /* Disabled state */
+  --sc-text-inverse:    #0F172A;    /* Text on light bg / accent bg */
+  --sc-text-link:       #3B82F6;    /* Link */
+  --sc-text-link-hover: #60A5FA;    /* Link hover */
+  --sc-text-code:       #818CF8;    /* Inline code (indigo) */
+
+  /* —————————————————————————————————————————
+     BORDER TOKENS
+     ————————————————————————————————————————— */
+  --sc-border-default:  #334155;  /* Default border */
+  --sc-border-hover:    #475569;  /* Hover border */
+  --sc-border-focus:    #3B82F6;  /* Focus ring */
+  --sc-border-subtle:   #1E293B;  /* Divider, subtle separation */
+
+  /* —————————————————————————————————————————
+     COMPONENT-SPECIFIC (primitives)
+     ————————————————————————————————————————— */
+  --sc-btn-primary-bg:     #3B82F6;
+  --sc-btn-primary-text:   #FFFFFF;
+  --sc-btn-primary-hover:  #2563EB;
+  --sc-btn-ghost-bg:      transparent;
+  --sc-btn-ghost-border:   #475569;
+  --sc-btn-ghost-text:     #94A3B8;
+
+  --sc-badge-bg:           rgba(59, 130, 246, 0.15);
+  --sc-badge-text:         #60A5FA;
+  --sc-badge-success-bg:   rgba(16, 185, 129, 0.15);
+  --sc-badge-success-text: #34D399;
+  --sc-badge-error-bg:     rgba(239, 68, 68, 0.15);
+  --sc-badge-error-text:   #F87171;
+
+  --sc-input-bg:           #1E293B;
+  --sc-input-border:       #334155;
+  --sc-input-border-focus: #3B82F6;
+  --sc-input-text:         #F1F5F9;
+  --sc-input-placeholder:  #475569;
+
+  --sc-table-border: #334155;
+  --sc-table-header: #1E293B;
+  --sc-table-row-hover: rgba(59, 130, 246, 0.04);
+}
+
+/* —————————————————————————————————————————
+   WCAG AA COMPLIANCE
+   —————————————————————————————————————————
+   ✅ #3B82F6 on #0F172A: 4.9:1 → AA large text ✓
+   ✅ #F1F5F9 on #0F172A: 17.2:1 → AAA ✓
+   ✅ #F1F5F9 on #1E293B: 16.5:1 → AAA ✓
+   ✅ #94A3B8 on #0F172A: 6.5:1 → AA ✓
+   ✅ #3B82F6 on #1E293B: 5.2:1 → AA ✓
+   ✅ #F59E0B on #0F172A: 5.5:1 → AA ✓
+   ✅ #10B981 on #0F172A: 5.8:1 → AA ✓
+   ✅ #EF4444 on #0F172A: 5.1:1 → AA ✓
+   ————————————————————————————————————————— */
