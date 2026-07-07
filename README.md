@@ -22,8 +22,8 @@
 [![status](https://img.shields.io/badge/status-pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases)
 [![packs](https://img.shields.io/badge/product%20packs-3%20available-%23E74C3C?style=flat-square)](#product-packs)
 [![departments](https://img.shields.io/badge/departments-18-purple?style=flat-square)](profiles/INDEX.md)
-[![agents](https://img.shields.io/badge/agents-55%2B%20specialists-blueviolet?style=flat-square)](.opencode/agents/)
-[![skills](https://img.shields.io/badge/skills-93%20integrations-%23008080?style=flat-square)](.opencode/skills/)
+[![agents](https://img.shields.io/badge/agents-55%2B%20specialists-blueviolet?style=flat-square)](profiles/INDEX.md)
+[![skills](https://img.shields.io/badge/skills-93%20integrations-%23008080?style=flat-square)](profiles/INDEX.md)
 [![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex-orange?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4)
 [![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
 [![license](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)](LEGAL.md)
@@ -75,7 +75,7 @@ SoloCorp OS replaces that single point of failure with a structured department h
 | **Central Bus** | Async-first message routing between departments via a shared queue system |
 | **Head-to-Head Handoff** | Work moves between departments without bottlenecking on a single orchestrator |
 | **93 Skills** | Integration skills across all departments — symlinked to the Hermes skill library |
-| **20 OpenCode Agents** | 15 department heads + 5 architect pipeline specialists, all `@mention`-ready |
+| **20 OpenCode Agents** | 18 department heads + 5 architect pipeline specialists, all `@mention`-ready |
 | **Codex CLI Export** | All profiles exportable as Codex CLI custom sub-agents via `export-codex-agents.py` |
 | **xGov Governance** | RFC → ADR → Guard Gates protocol with a 3-question complexity matrix |
 | **Loop Runner** | Cron auto-pilot — scheduled pipeline execution every 30 minutes |
@@ -325,7 +325,7 @@ The fastest path to a working multi-agent team:
 
 **Reference docs:**
 
-- `profiles/INDEX.md` — Index of all 15 department profiles and specialist teams
+- `profiles/INDEX.md` — Index of all 18 department profiles and specialist teams
 - `ARCHITECTURE.md` — System design, principles, and flow
 - `PROJECT.md` — Getting started guide for newcomers
 - `CHANGELOG.md` — Version history and release notes

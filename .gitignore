@@ -33,7 +33,8 @@ dist/codex/*
 build/
 
 # IDE / tools
-.opencode/
+.opencode/*
+!.opencode/agents/
 .hermes/
 
 # Local MCP runtimes

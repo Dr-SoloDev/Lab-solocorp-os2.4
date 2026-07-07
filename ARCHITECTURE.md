@@ -11,8 +11,8 @@
 2. [Three Pillars of Department Head Design](#three-pillars-of-department-head-design)
 3. [Two-Tier Architecture](#two-tier-architecture)
 4. [Hierarchy & Chain of Command](#hierarchy--chain-of-command)
-5. [Department Profiles (15)](#department-profiles)
-6. [Specialist Sub-Agents (46+)](#specialist-sub-agents)
+5. [Department Profiles (18)](#department-profiles)
+6. [Specialist Sub-Agents (55+)](#specialist-sub-agents)
 7. [Communication Protocols](#communication-protocols)
 8. [Loop Runner](#loop-runner)
 9. [Open Design Integration](#open-design-integration)
@@ -180,18 +180,21 @@ It flows autonomously through the Central Bus — Heads never pass files.
          ├── CFO (meetoo — Finance / Budget)
          ├── CMO (มาร์ค — Marketing / Content / Brand)
          └── Orchestrator (พี่วุฒิ — System Pipeline Coordination)
-              └── Department Heads (05-15)
-                   ├── 05-Architect (พี่ทรงศักดิ์)
-                   ├── 06-Product (โปรดัค)
-                   ├── 07-Engineering (ช่างฟูล)
-                   ├── 08-Design (ครีเอท)
-                   ├── 09-UI Designer
-                   ├── 10-QA (QA-ทีม)
-                   ├── 11-Sales (เซลส์)
-                   ├── 12-Support (ซัพพอร์ต)
-                   ├── 13-Legal (ตุลย์)
-                   ├── 14-Web3 (อัยวา)
-                   └── 15-Content Creator (เสก)
+               └── Department Heads (05-18)
+                    ├── 05-Architect (พี่ทรงศักดิ์)
+                    ├── 06-Product (โปรดัค)
+                    ├── 07-Engineering (ช่างฟูล)
+                    ├── 08-Design (ครีเอท)
+                    ├── 09-UI Designer
+                    ├── 10-QA (QA-ทีม)
+                    ├── 11-Sales (เซลส์)
+                    ├── 12-Support (ซัพพอร์ต)
+                    ├── 13-Legal (ตุลย์)
+                    ├── 14-Web3 (อัยวา)
+                    ├── 15-Content Creator (เสก)
+                    ├── 16-Network Engineer (นีต)
+                    ├── 17-Cyber Security (ซาย)
+                    └── 18-Psychology (จิต)
 ```
 
 **Communication Flow Rules:**
@@ -219,21 +222,24 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 03 | CMO | มาร์ค | Marketing, Content, Brand | Active |
 | 04 | Orchestrator | พี่วุฒิ (Wut) | System Pipeline Coordination | Active |
 
-### Department Heads (05-15)
+### Department Heads (05-18)
 
 | # | Profile | Head | Responsibility | Status |
 |:-:|:--------|:-----|:--------------|:------:|
-| 05 | Architect | พี่ทรงศักดิ์ (Songsak) | Central Bus, Routing, Monitoring | Active |
+| 05 | Architect | พี่ทรงศักดิ์ | Central Bus, Routing, Monitoring | Active |
 | 06 | Product | โปรดัค | Feature Roadmap, PRD, Delivery | Active |
 | 07 | Engineering | ช่างฟูล | Backend, Frontend, Architecture | Active |
 | 08 | Design | ครีเอท | UX Research, Brand Visual | Active |
-| 09 | UI Designer | UI-Designer | Interface, Component Library | Active |
+| 09 | UI Designer | UI Designer | Interface, Component Library | Active |
 | 10 | QA | QA-ทีม | Testing, Quality, Evidence | Active |
 | 11 | Sales | เซลส์ | B2B Deal Strategy, Pipeline | Active |
 | 12 | Support | ซัพพอร์ต | Customer Success, Analytics | Active |
 | 13 | Legal | ตุลย์ | Compliance, Contracts, Law | Active |
 | 14 | Web3 | อัยวา | Blockchain, DeFi, Solana | Active |
 | 15 | Content Creator | เสก | Content, Creative, Media | Active |
+| 16 | Network Engineer | นีต | Network, Infrastructure, VPN, CDN, DNS | Active |
+| 17 | Cyber Security | ซาย | Threat Detection, Incident Response | Active |
+| 18 | Psychology | จิต | User Behavior, Cognitive Bias, Org Health | Active |
 
 ### Base Profile
 
@@ -359,7 +365,33 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 01 | Content Specialist | Referenced from agency-agents library | Active |
 | 02-10 | Social, Twitter, TikTok, Video, Growth, Trend, Design + others | Referenced from agency-agents library | Active |
 
-**Total: 15 Department Heads + 46+ Specialist Sub-Agents = 61+ Active Members**
+### 16 — Network Engineering Department (Team of นีต)
+
+| # | Agent | Role | Status |
+|:-:|:------|:-----|:------:|
+| 01 | Infrastructure Maintainer | Network design, VPN, CDN, DNS, load balancing, system reliability | Active |
+| 02 | DevOps Automator | CI/CD pipeline, cloud operations, infrastructure automation | Active |
+| 03 | SRE | SLOs, error budgets, observability, toil reduction | Active |
+
+### 17 — Cyber Security Department (Team of ซาย)
+
+| # | Agent | Role | Status |
+|:-:|:------|:-----|:------:|
+| 01 | Security Engineer | Threat modeling, vulnerability assessment, secure code review | Active |
+| 02 | Threat Detection Engineer | SIEM rule development, MITRE ATT&CK mapping, threat hunting | Active |
+| 03 | Incident Response Commander | Production incident management, post-mortem facilitation | Active |
+| 04 | Compliance Auditor | SOC 2, ISO 27001, HIPAA, PCI-DSS audits | Active |
+
+### 18 — Psychology Department (Team of จิต)
+
+| # | Agent | Role | Status |
+|:-:|:------|:-----|:------:|
+| 01 | Behavioral Nudge Engine | Adapts interaction cadences to user motivation | Active |
+| 02 | Cultural Intelligence Strategist | CQ specialist, inclusive design, cross-cultural resonance | Active |
+| 03 | Whimsy Injector | Playful elements, personality, brand delight | Active |
+| 04 | Psychologist | Human behavior, personality theory, cognitive patterns | Active |
+
+**Total: 18 Department Heads + 55+ Specialist Sub-Agents = 68+ Active Members**
 
 ---
 
