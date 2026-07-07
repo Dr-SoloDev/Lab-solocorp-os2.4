@@ -26,10 +26,20 @@ router = APIRouter(prefix="/api/v1/gov", tags=["Governance"])
 
 # ── Paths ─────────────────────────────────────────────────────────────
 
-GOV_DIR = Path("gov")
+GOV_DIR = Path("gov").resolve()
 ADR_DIR = GOV_DIR / "adr"
 RFC_DIR = GOV_DIR / "rfc"
 GUARD_DIR = GOV_DIR / "guards"
+
+
+def _safe_gov_id(artifact_id: str, base_dir: Path) -> str:
+    """Validate artifact ID to prevent path traversal."""
+    if not artifact_id or artifact_id.startswith(".") or "/" in artifact_id or "\\" in artifact_id:
+        raise HTTPException(status_code=400, detail=f"Invalid ID: {artifact_id!r}")
+    candidate = (base_dir / f"{artifact_id}.toml").resolve()
+    if not str(candidate).startswith(str(base_dir.resolve())):
+        raise HTTPException(status_code=400, detail=f"Path traversal detected: {artifact_id!r}")
+    return artifact_id
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -107,6 +117,7 @@ async def create_adr(req: ADRCreateRequest):
 @router.get("/adrs/{id}")
 async def get_adr(id: str):
     """Get ADR detail by ID."""
+    _safe_gov_id(id, ADR_DIR)
     path = ADR_DIR / f"{id}.toml"
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"ADR {id} not found")
@@ -181,6 +192,7 @@ async def create_rfc(req: RFCCreateRequest):
 @router.get("/rfcs/{id}")
 async def get_rfc(id: str):
     """Get RFC detail by ID."""
+    _safe_gov_id(id, RFC_DIR)
     path = RFC_DIR / f"{id}.toml"
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"RFC {id} not found")
@@ -430,12 +442,19 @@ def _list_projects(projects_dir: Path) -> list[str]:
 
 
 def _safe_read_state(projects_dir: Path, project_id: str) -> Optional[dict]:
-    """Read project state.json safely."""
+    """Read project state.json safely with path-traversal protection."""
     import json
-    path = projects_dir / project_id / "state.json"
-    if not path.exists():
+    if not project_id or project_id.startswith(".") or "/" in project_id or "\\" in project_id:
+        log.warning("Invalid project_id in _safe_read_state: %r", project_id)
+        return None
+    candidate = (projects_dir / project_id / "state.json").resolve()
+    base = projects_dir.resolve()
+    if not str(candidate).startswith(str(base)):
+        log.warning("Path traversal blocked for project_id: %r", project_id)
+        return None
+    if not candidate.exists():
         return None
     try:
-        return json.loads(path.read_text())
+        return json.loads(candidate.read_text())
     except (json.JSONDecodeError, OSError):
         return None

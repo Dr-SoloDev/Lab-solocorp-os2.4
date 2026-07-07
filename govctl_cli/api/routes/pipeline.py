@@ -38,6 +38,7 @@ async def get_pipeline_status(project_id: Optional[str] = None):
     """
     try:
         from central_bus.state import get as state_get, PROJECTS_DIR
+        from central_bus.state import _safe_project_path
         from central_bus.dashboard import summary as dash_summary
     except ImportError:
         raise HTTPException(status_code=503, detail="Central Bus not available")
@@ -95,7 +96,7 @@ async def get_pipeline_history(
     """
     try:
         from central_bus.audit import read as audit_read
-        from central_bus.state import GOV_LOG_DIR
+        from central_bus.state import GOV_LOG_DIR, _safe_project_path
     except ImportError:
         raise HTTPException(status_code=503, detail="Central Bus not available")
 
@@ -118,7 +119,7 @@ async def get_pipeline_history(
         log.warning("Failed to read audit log: %s", exc)
 
     # 2. Read guard events
-    guard_log = GOV_LOG_DIR / project_id / "guard_events.jsonl"
+    guard_log = _safe_project_path(GOV_LOG_DIR, project_id) / "guard_events.jsonl"
     if guard_log.exists():
         try:
             for line in guard_log.read_text().splitlines():

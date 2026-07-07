@@ -148,7 +148,8 @@ OSRM_PROFILES = {
 
 def print_json(data):
     """Print data as pretty-printed JSON to stdout."""
-    print(json.dumps(data, indent=2, ensure_ascii=False))
+    text = json.dumps(data, indent=2, ensure_ascii=False)
+    print(text)
 
 
 def error_exit(message, code=1):

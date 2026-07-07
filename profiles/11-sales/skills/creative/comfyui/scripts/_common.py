@@ -827,9 +827,11 @@ def fmt_kv(d: dict) -> str:
 
 def emit_json(obj: Any, *, indent: int = 2) -> None:
     """Print JSON to stdout. Centralised so behavior can be tweaked (e.g., --raw)."""
-    print(json.dumps(obj, indent=indent, default=str))
+    text = json.dumps(obj, indent=indent, default=str)
+    print(text)
 
 
 def log(msg: str) -> None:
     """stderr log with consistent prefix (so JSON stdout stays clean)."""
-    print(f"[comfyui-skill] {msg}", file=sys.stderr)
+    line = f"[comfyui-skill] {msg}"
+    print(line, file=sys.stderr)

@@ -61,12 +61,12 @@ async def get_health(
             "version": VERSION,
         }
     except Exception as exc:
-        log.exception("Health check failed")
+        log.exception("Health check failed: %s", exc)
         return JSONResponse(
             status_code=503,
             content={
                 "status": "error",
-                "detail": str(exc),
+                "detail": "Internal health check error",
                 "uptime_seconds": int(time.time() - started_at),
                 "version": VERSION,
             },

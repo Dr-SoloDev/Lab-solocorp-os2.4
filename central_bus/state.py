@@ -18,9 +18,19 @@ PHASES = ["spec", "design", "arch", "dev", "qa", "deploy"]
 # ── Helper: guard event log ──────────────────────────────────────────
 
 
+def _safe_project_path(base: Path, project_id: str) -> Path:
+    """Build a project path with path-traversal protection."""
+    if not project_id or project_id.startswith(".") or "/" in project_id or "\\" in project_id:
+        raise ValueError(f"Invalid project_id: {project_id!r}")
+    resolved = (base / project_id).resolve()
+    if not str(resolved).startswith(str(base.resolve())):
+        raise ValueError(f"Path traversal detected for project_id: {project_id!r}")
+    return resolved
+
+
 def _log_guard_event(project_id: str, event: dict) -> None:
     """Append a governance event to the project's guard log."""
-    log_path = GOV_LOG_DIR / project_id / "guard_events.jsonl"
+    log_path = _safe_project_path(GOV_LOG_DIR, project_id) / "guard_events.jsonl"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with open(log_path, "a") as f:
         fcntl.flock(f, fcntl.LOCK_EX)
@@ -32,7 +42,7 @@ def _log_guard_event(project_id: str, event: dict) -> None:
 
 
 def _state_path(project_id: str) -> Path:
-    path = PROJECTS_DIR / project_id / "state.json"
+    path = _safe_project_path(PROJECTS_DIR, project_id) / "state.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     return path
 
