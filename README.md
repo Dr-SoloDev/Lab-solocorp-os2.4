@@ -6,11 +6,11 @@
        ██ ██    ██ ██      ██    ██ ██      ██    ██ ██   ██ ██      
   ███████  ██████  ███████  ██████   ██████  ██████  ██   ██ ██      
 
-   ██████  ███████
-  ██    ██ ██     
-  ██    ██ ███████
-  ██    ██      ██
-   ██████  ███████
+   ██████  ███████  ███████   ██   ██
+  ██    ██ ██            ██   ██   ██
+  ██    ██ ███████  ███████ █ ███████
+  ██    ██      ██  ██      █      ██
+   ██████  ███████  ███████        ██
 ================================================================================
                      OPERATING SYSTEM  ===  VERSION 2.4
 ================================================================================
@@ -18,17 +18,22 @@
 
 # SoloCorp OS
 
-![version](https://img.shields.io/badge/version-v0.6.1-blue?style=flat-square)
-![status](https://img.shields.io/badge/status-production%20deployed-brightgreen?style=flat-square)
-![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex-orange?style=flat-square)
-![copilot](https://img.shields.io/badge/copilot-✅%20cloud%20agent-27AE60?style=flat-square)
-[![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
-![license](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)
+![version](https://img.shields.io/badge/version-v2.4.0--pre--release-%23FF6B35?style=flat-square)
+![status](https://img.shields.io/badge/status-pre--release-%23FF6B35?style=flat-square)
+![packs](https://img.shields.io/badge/product%20packs-3%20available-%23E74C3C?style=flat-square)
 ![departments](https://img.shields.io/badge/departments-18-purple?style=flat-square)
 ![agents](https://img.shields.io/badge/agents-55%2B%20specialists-blueviolet?style=flat-square)
 ![skills](https://img.shields.io/badge/skills-93%20integrations-%23008080?style=flat-square)
+![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex-orange?style=flat-square)
+[![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
+![license](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)
 
-> **Department Architecture for AI Agents** — transform a single AI into a coordinated workforce of 15 specialized departments, each with its own Head, specialist team, and clear chain of command.
+> ⚡ **v2.4.0 Pre-release** · Three Product Packs now entering qualification →
+> [`@cfo-meetoo`](./.opencode/agents/cfo-meetoo.md) ·
+> [`@legal-tulya`](./.opencode/agents/legal-tulya.md) ·
+> [`@content-creator-sek`](./.opencode/agents/content-creator-sek.md)
+
+> **Department Architecture for AI Agents** — transform a single AI into a coordinated workforce of 18 specialized departments, each with its own Head, specialist team, and clear chain of command.
 
 ---
 
@@ -74,6 +79,27 @@ SoloCorp OS replaces that single point of failure with a structured department h
 | **Codex CLI Export** | All profiles exportable as Codex CLI custom sub-agents via `export-codex-agents.py` |
 | **xGov Governance** | RFC → ADR → Guard Gates protocol with a 3-question complexity matrix |
 | **Loop Runner** | Cron auto-pilot — scheduled pipeline execution every 30 minutes |
+
+---
+
+## 🎯 Product Packs — v2.4.0 Pre-release
+
+Three departments now available as **standalone packs** — deploy them into your own
+agent workflow without importing the entire OS.
+
+| Pack | Head | What It Does | Specialists |
+|:-----|:-----|:-------------|:-----------:|
+| **CFO Pack** `@cfo-meetoo` | meetoo | Budget control · Financial analysis · Audit trail · Tax strategy · FP&A | 5 |
+| **Legal Pack** `@legal-tulya` | ตุลย์ (Tul) | Contract review · License compliance · Risk assessment · Data governance | 3 |
+| **Content Creator Pack** `@content-creator-sek` | เสก (Sek) | Multi-platform content · Video production · Copywriting · Visual creation | 10 |
+
+Each pack ships with:
+- **SOUL.md** — Full identity, principles, and delegation rules
+- **Sub-agent team** — Ready-to-deploy specialists via `delegate_task`
+- **Routing rules** — Explicit handoff paths to other departments
+- **Skills library** — Symlinked to 93 integrated Hermes skills
+
+> `@mention` any head to begin. No setup required.
 
 ---
 
@@ -247,6 +273,7 @@ opencode "/status"
 | Central Bus | FastAPI daemon + SQLite WAL + Guard + AAR | v0.6 | Complete |
 | Multi-Platform Support | Hermes · OpenCode · Claude Code · Codex CLI | v0.7 | In Progress |
 | Dashboard + Compliance | Pipeline Dashboard + Audit trail (Legal/CFO) | v0.7 | Planned |
+| **Product Packs** | **CFO · Legal · Content Creator** — standalone packs | **v2.4.0** | **Pre-release** |
 | Public Launch | GTM · Content Campaign · Skill Docs | v0.7 | In Progress |
 | Loop Runner | Cron auto-pilot — every 30 min | v0.5+ | Active |
 
@@ -261,6 +288,29 @@ Multi-Platform  ████████░░░░░░░░░░░░  40
 Public Launch   ████████░░░░░░░░░░░░  40%
 Dashboard       ███████░░░░░░░░░░░░░  35%
 ```
+
+---
+
+## 🔐 Qualify for Early Access
+
+Product Packs are in **controlled pre-release**. Not everyone should use SoloCorp OS — and that's by design.
+
+To unlock access to any Product Pack:
+
+```
+1. Clone the repo
+2. Open with `opencode`
+3. @mention the pack head you want to evaluate
+4. The head will run a 3-question qualification gate
+```
+
+```bash
+# Example: qualify for CFO Pack
+opencode "@cfo-meetoo เริ่ม qualification gate สำหรับ CFO Pack"
+```
+
+> **You are not a customer. You are a potential operator.**  
+> SoloCorp OS doesn't sell software. It deploys organizational capability.
 
 ---
 
