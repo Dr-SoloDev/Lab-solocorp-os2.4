@@ -21,6 +21,7 @@
 ![version](https://img.shields.io/badge/version-v0.6.1-blue?style=flat-square)
 ![status](https://img.shields.io/badge/status-production%20deployed-brightgreen?style=flat-square)
 ![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex-orange?style=flat-square)
+![copilot](https://img.shields.io/badge/copilot-✅%20cloud%20agent-27AE60?style=flat-square)
 ![license](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)
 ![departments](https://img.shields.io/badge/departments-18-purple?style=flat-square)
 ![agents](https://img.shields.io/badge/agents-55%2B%20specialists-blueviolet?style=flat-square)
@@ -149,16 +150,22 @@ opencode "@architect-songsak design pipeline for new feature"
 opencode "@changful implement API endpoint for user registration"
 opencode "@cfo-meetoo วิเคราะห์งบ Q3"
 
-# 4. Export and use all profiles as Codex CLI sub-agents
+# 4. Use with GitHub Copilot Cloud Agent ✅
+# → Merge .github/workflows/copilot-setup-steps.yml to default branch
+# → See COPILOT-SETUP.md for full guide
+
+# 5. Export and use all profiles as Codex CLI sub-agents
 python3 scripts/export-codex-agents.py
 codex
 
-# 5. Run the full pipeline for a feature
+# 6. Run the full pipeline for a feature
 opencode "/pipeline <feature-name>"
 
-# 6. Check system status
+# 7. Check system status
 opencode "/status"
 ```
+
+**For GitHub Copilot Cloud Agent** → See [`COPILOT-SETUP.md`](./COPILOT-SETUP.md)
 
 **Built-in Pipeline Commands**
 
@@ -271,6 +278,7 @@ The fastest path to a working multi-agent team:
 - `ARCHITECTURE.md` — System design, principles, and flow
 - `PROJECT.md` — Getting started guide for newcomers
 - `CHANGELOG.md` — Version history and release notes
+- `COPILOT-SETUP.md` — **GitHub Copilot Cloud Agent integration guide** ✅
 - `decisions/` — Architecture Decision Records (ADRs)
 - `dist/codex/README-CODEX-CLI.md` — Codex CLI export guide
 
