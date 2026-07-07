@@ -22,13 +22,14 @@ Key metrics at a glance:
 
 | Dimension | Value |
 |:----------|:------|
-| Departments | 15 (C-Level + System + Product + Revenue + Legal + Web3 + Content) |
-| Department Heads | 15 |
-| Specialist Agents | 46+ (across 14 departments) |
+| Departments | 18 (C-Level + System + Product + Revenue + Legal + Web3 + Content + NetEng + CyberSec + Psychology) |
+| Department Heads | 18 |
+| Specialist Agents | 55+ (across 18 departments) |
 | Skills Integration | 93 skills |
 | Pipeline Commands | 6 |
 | Platforms | Hermes, OpenCode, Codex CLI |
 | Runtime | Loop Runner (cron every 30 min) |
+| Central Bus | Production Ready (FastAPI v0.6, port 8099) |
 | Status | Production Deployed |
 
 ---
@@ -94,7 +95,7 @@ Dr.solodev (Human / Owner)
        ├── CMO — มาร์ค                      Marketing, Content, Brand
        └── Orchestrator — พี่วุฒิ (Wut)     System Pipeline Coordination
             │
-            └── Department Heads (05-15)
+            └── Department Heads (05-18)
                  ├── 05-Architect     — พี่ทรงศักดิ์   — Central Bus
                  ├── 06-Product       — โปรดัค        — Roadmap / PRD
                  ├── 07-Engineering   — ช่างฟูล        — Code / Architecture
@@ -105,8 +106,10 @@ Dr.solodev (Human / Owner)
                  ├── 12-Support       — ซัพพอร์ต       — Customer Success
                  ├── 13-Legal         — ตุลย์           — Compliance / Law
                  ├── 14-Web3          — อัยวา          — Blockchain / DeFi
-                 └── 15-Content       — เสก            — Content / Creative
-                      Creator
+                 ├── 15-Content       — เสก            — Content / Creative
+                 ├── 16-NetEng        — นีต            — Network / Infrastructure
+                 ├── 17-CyberSec      — ซาย            — Security / Threat / IR
+                 └── 18-Psychology    — จิต            — Behavior / Econ / Org
 ```
 
 Communication rules:
@@ -178,6 +181,9 @@ simply see "Work Item X completed."
 | 13 | Legal | ตุลย์ | Compliance, Contracts, Law | 3 |
 | 14 | Web3 | อัยวา | Blockchain, DeFi, Solana | 4 |
 | 15 | Content Creator | เสก | Content, Creative, Media | 10 refs |
+| 16 | Network Engineer | นีต | Network, Infrastructure, VPN, CDN, DNS | 3 |
+| 17 | Cyber Security | ซาย | Threat Detection, Vulnerability, Incident Response | 3 |
+| 18 | Psychology | จิต | User Behavior, Behavioral Economics, Org Psychology | 3 |
 
 Each department has between 3-5 specialist agents who execute the
 actual work. Department Heads do not execute — they lead, prioritize,
@@ -312,12 +318,33 @@ Lab-solocorp-os2.4/
 │   ├── export-codex-agents.py     Export Codex CLI sub-agents
 │   └── pipeline_until_score.py    Pipeline scoring utility
 │
-├── central_bus/                   Central Bus implementation
-│   └── open_design.py             Open Design read-only bridge
+├── central_bus/                   Central Bus — Production Ready (v0.6)
+│   ├── main.py                    FastAPI daemon (busd) — port 8099, 5 endpoints
+│   ├── queue.py                   Async queue (SQLite WAL + JSONL dual backend)
+│   ├── router.py                  Message routing (keyword + TF-IDF + SQLite rules)
+│   ├── audit.py                   Audit logger (SQLite-backed)
+│   ├── db.py                      Database manager (SQLite WAL)
+│   ├── state.py                   State management
+│   ├── monitor_watchdog.py        Health monitor (PARTIAL — JSONL backend)
+│   ├── dashboard.py               Project-state dashboard (PARTIAL — no HTTP endpoint)
+│   ├── guard_runner.py            xGov guard gate runner
+│   ├── webhook_receiver.py        Inbound webhook handler
+│   ├── api_compliance.py          Compliance validator router
+│   ├── aar.py                     After Action Review generator
+│   ├── facts.py                   Context facts service
+│   ├── semantic.py                TF-IDF semantic router
+│   ├── config.py                  Settings (host, port, paths)
+│   ├── models.py                  Pydantic message models
+│   ├── migrate.py                 DB migration runner
+│   ├── open_design.py             Open Design read-only bridge
+│   ├── bus.db                     SQLite WAL database (live)
+│   └── requirements.txt           Python dependencies
 │
-├── bus/                           Central Bus design docs
-│   └── system/
-│       └── open_design_config.json
+├── bus/                           Central Bus runtime data
+│   ├── queue/                     JSONL queue files (high/normal priority + dead_letter/)
+│   ├── projects/                  Active project state dirs
+│   ├── governance/                Governance state dirs
+│   └── system/                   routing_rules.json, semantic_profiles.json
 │
 ├── decisions/                     Architecture Decision Records (ADRs)
 ├── tests/                         Phase test suites (1-4)
@@ -374,11 +401,13 @@ is structured the way it is:
 
 | Component | Status | Notes |
 |:----------|:-------|:------|
-| 15 Department Profiles | Active | All deployed to Hermes Gateway |
-| 46+ Specialist Agents | Active | SOUL.md files complete and deployed |
+| 18 Department Profiles | Active | All deployed — 18 SOUL.md files complete |
+| 55+ Specialist Agents | Active | SOUL.md files complete and deployed |
 | Loop Runner | Active | Cron runs every 30 minutes |
-| Central Bus | In Design | Core architecture defined, implementation in progress |
-| Pipeline Dashboard | Planned | Q4 2026 target |
+| Central Bus (busd) | Production Ready | FastAPI v0.6, port 8099 — 5 endpoints, SQLite WAL, dual-queue backend (4,342 lines) |
+| Central Bus — Monitor Watchdog | Partial | Functional but on JSONL backend; real-time mode + health probe pending |
+| Central Bus — Dashboard | Partial | Project-state reader only; full pipeline observability (TeamHero UI) → v0.5.0 |
+| Pipeline Dashboard | Planned | Q4 2026 target — TeamHero UI + Langfuse |
 | OpenCode Integration | Active | 20 agents, 6 commands |
 | Codex CLI Export | Active | 60 sub-agent TOML files |
 | Open Design Bridge | Active | Read-only integration on port 41551 |

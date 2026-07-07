@@ -7,6 +7,23 @@
 
 ---
 
+## ⚠️ IMPLEMENTATION STATUS UPDATE (2026-07-07)
+
+**Actual v0.6 implementation has progressed beyond this plan:**
+
+| Component | Plan (2026-06-26) | Actual (2026-07-07) |
+|:----------|:-----------------|:--------------------|
+| Central Bus | Phase 2 (v0.4.0) — future | **v0.6 IMPLEMENTED** — 4,342 lines, FastAPI port 8099, SQLite WAL, 5 endpoints |
+| Queue System | Phase 2 — future | **IMPLEMENTED** — dual backend (SQLite + JSONL) |
+| Router | Phase 2 — future | **IMPLEMENTED** — keyword + TF-IDF + SQLite rules |
+| Audit Log | Phase 2 — future | **IMPLEMENTED** — SQLite-backed |
+| Monitor Watchdog | Phase 3 — future | **PARTIAL** — on JSONL backend, no real-time mode yet |
+| Dashboard | Phase 3 (v0.5.0) — future | **PARTIAL** — project-state only, no pipeline observability |
+
+**This plan document remains as historical reference — actual implementation is in `central_bus/` directory.**
+
+---
+
 ## 🧭 ทิศทางเชิงกลยุทธ์ — CEO Decision
 
 ### สิ่งที่เราเลือกทำ
