@@ -22,6 +22,7 @@
 ![status](https://img.shields.io/badge/status-production%20deployed-brightgreen?style=flat-square)
 ![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex-orange?style=flat-square)
 ![copilot](https://img.shields.io/badge/copilot-✅%20cloud%20agent-27AE60?style=flat-square)
+[![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
 ![license](https://img.shields.io/badge/license-Proprietary-red?style=flat-square)
 ![departments](https://img.shields.io/badge/departments-18-purple?style=flat-square)
 ![agents](https://img.shields.io/badge/agents-55%2B%20specialists-blueviolet?style=flat-square)
