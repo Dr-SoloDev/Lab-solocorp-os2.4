@@ -26,6 +26,29 @@ jobs:
     # You can define any steps you want, and they will run before the agent starts.
     # If you do not check out your code, Copilot will do this for you.
     steps:
+      - name: Display SoloCorp OS Banner
+        run: |
+          cat << 'EOF'
+          ================================================================================
+            ███████  ██████  ██      ██████  ██████  ██████  ██████  ██████  ██████
+            ██      ██    ██ ██      ██   ██ ██   ██ ██   ██ ██   ██ ██   ██      ██
+            ███████ ██    ██ ██      ██████  ██████  ██████  ██████  ██████   █████
+                 ██ ██    ██ ██      ██   ██ ██      ██   ██ ██   ██ ██           ██
+            ███████  ██████  ███████ ██   ██ ██      ██   ██ ██   ██ ██      ██████
+          
+             ██████  ██████
+            ██      ██    ██
+             █████  ██    ██
+                 ██ ██    ██
+            ██████   ██████
+          ================================================================================
+                           OPERATING SYSTEM  ===  VERSION 2.4
+          ================================================================================
+          
+          🚀 GitHub Copilot Cloud Agent Setup
+          ================================================================================
+          EOF
+
       - name: Checkout code
         uses: actions/checkout@v5
 
@@ -37,30 +60,46 @@ jobs:
 
       - name: Install SoloCorp OS core dependencies
         run: |
+          echo "📦 Installing SoloCorp OS core dependencies..."
           python -m pip install --upgrade pip setuptools wheel
           # Install base requirements
           pip install -r requirements-api.txt
+          echo "✅ Core dependencies installed"
 
       - name: Install Central Bus dependencies
         run: |
+          echo "📦 Installing Central Bus dependencies..."
           pip install -r central_bus/requirements.txt
+          echo "✅ Central Bus dependencies installed"
 
       - name: Install Legal Vault MCP dependencies (if available)
         run: |
           if [[ -f "legal_vault/mcp_server/requirements.txt" ]]; then
+            echo "📦 Installing Legal Vault MCP dependencies..."
             pip install -r legal_vault/mcp_server/requirements.txt
+            echo "✅ Legal Vault dependencies installed"
           else
             echo "⚠ legal_vault/mcp_server/requirements.txt not found (optional)"
           fi
 
       - name: Verify installation
         run: |
+          echo "🔍 Verifying installations..."
           python -c "import fastapi; import uvicorn; import aiosqlite; import pydantic; print('✅ All core dependencies installed successfully')"
 
       - name: Check project structure
         run: |
-          echo "📁 Project structure verified:"
-          ls -la profiles/ 2>/dev/null | head -5 || echo "  profiles/"
-          ls -la skills/ 2>/dev/null | head -5 || echo "  skills/"
-          ls -la central_bus/ 2>/dev/null | head -5 || echo "  central_bus/"
-          echo "✅ SoloCorp OS environment ready for Copilot"
+          echo ""
+          echo "📁 SoloCorp OS Project Structure:"
+          echo "=================================="
+          echo "✓ profiles/ — $(ls profiles/ 2>/dev/null | wc -l) items"
+          echo "✓ skills/ — $(ls skills/ 2>/dev/null | wc -l) items"
+          echo "✓ central_bus/ — FastAPI daemon ready"
+          echo "✓ decisions/ — Architecture Decision Records"
+          echo ""
+          echo "================================================================================"
+          echo "✅ SoloCorp OS environment ready for Copilot Cloud Agent"
+          echo "================================================================================"
+          echo ""
+          echo "🎯 Next: Copilot will now initialize..."
+          echo ""
