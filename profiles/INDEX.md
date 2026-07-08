@@ -203,6 +203,7 @@ solocorp-mark-workflow, content creation pipeline
 | 01 | [Threat Analyst](17-cybersec/sai/team/01-threat-analyst.SOUL.md) | SIEM monitoring, threat hunting, IOC classification, threat intel reports | Design |
 | 02 | [Vulnerability Assessor](17-cybersec/sai/team/02-vulnerability-assessor.SOUL.md) | Vulnerability scans, CVSS scoring, OWASP compliance, patch prioritization | Design |
 | 03 | [Incident Responder](17-cybersec/sai/team/03-incident-responder.SOUL.md) | Full IR lifecycle, containment, forensics, RCA, playbooks | Design |
+| 04 | [Red Team Operator](17-cybersec/sai/team/04-red-team-operator.SOUL.md) 🆕 | 🔴 Offensive security — MCP auth bypass, Central Bus abuse, SOUL.md integrity, HackAgent campaigns | Design |
 
 ## Team — 18-psychology (จิต)
 

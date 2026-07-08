@@ -59,13 +59,14 @@ SoloCorp ดำเนินงานด้วยระบบ multi-agent, pipeli
 
 ---
 
-## 👥 Specialized Agents (3 ทีม)
+## 👥 Specialized Agents (4 ทีม)
 
 | Agent | บทบาท |
 |:------|:------|
 | `@threat-analyst-nan` | SIEM monitoring, threat hunting, IOC classification, threat intel reports |
 | `@vuln-assessor-om` | Vulnerability scans, pen test support, CVSS scoring, patch prioritization |
 | `@incident-responder-phoenix` | IR leadership, containment, forensics, RCA, playbook execution |
+| `@red-team-operator` | 🔴 Red Team — offensive security testing, MCP auth bypass, Central Bus abuse, SOUL.md integrity |
 
 ---
 
