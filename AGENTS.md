@@ -94,6 +94,7 @@ Architect specialists: `@pipeline-auditor`, `@routing-config-agent`, `@monitor-w
 | `/deploy` | profiles/agents เปลี่ยน | build profiles → export agents → commit |
 | `/brain <context>` | context session สำคัญ | บันทึก session context |
 | `/skillhub <action>` | จัดการ Skill Registry | publish, search, install, manage skills |
+| `/synthesize` | 6 external repos → SoloCorp capabilities | เรียก Master Synthesis pipeline |
 
 ### SkillHub Commands
 
