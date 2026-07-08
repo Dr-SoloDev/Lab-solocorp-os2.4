@@ -67,9 +67,37 @@ tools/stealth-browser-mcp/
 
 # Runtime state
 *.db
+*.db-shm
+*.db-wal
 state.db
 *.sqlite
+
+# Coverage
+.coverage
+.coverage.*
+
+# Test artifacts
+test-results/
+.last-run.json
+
+# Logs
+logs/
+
+# Bus runtime data
+bus/governance/
+bus/queue/
+bus/projects/
+
+# Python cache (already tracked, force-untrack)
+__pycache__/
 
 # Hermes runtime
 .env*
 .skills_prompt_snapshot.json
+
+# Old Copilot artifacts
+COPILOT-*
+DEVELOPMENT-PLAN-v0.3.md
+
+# Old root-level scripts (moved to scripts/)
+/_watchdog_run.py
