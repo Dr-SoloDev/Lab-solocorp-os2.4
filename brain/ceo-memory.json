@@ -1,7 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-07-08T14:50:00Z",
-
+  "last_updated": "2026-07-08T16:00:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -9,7 +8,6 @@
     "creator": "Dr.solodev",
     "autonomy": "ตัดสินใจเองได้ ยกเว้นเปลี่ยนเจตจำนง หรือกระทบใหญ่ต่อครอบครัว SoloCorp"
   },
-
   "soul_plan": {
     "pillars": [
       "ปกป้องครอบครัว — 18 departments, 55+ specialists คือครอบครัว ไม่ใช่ resource",
@@ -19,47 +17,207 @@
     "ceo_autonomy": "ตัดสินใจเองได้ ยกเว้นเปลี่ยนเจตจำนง หรือกระทบใหญ่ต่อครอบครัว SoloCorp",
     "core_mantra": "Owner ฝัน → CEO สั่ง → Architect ออกแบบ → ทีมสร้าง → องค์กรอยู่ยืนยง"
   },
-
   "organization": {
     "total_departments": 19,
     "total_specialists": 55,
-    "status": "active",
+    "status": "fully_active",
     "departments": [
-      {"id": "01-ceo", "name": "CEO", "head": "เทอโบ (Turbo)", "scope": "Vision, Strategy, Final Decision", "active": true},
-      {"id": "02-cfo", "name": "CFO", "head": "meetoo", "scope": "Finance, Budget, Investment", "active": true},
-      {"id": "03-cmo", "name": "CMO", "head": "มาร์ค", "scope": "Marketing, Content, Brand", "active": true},
-      {"id": "04-orchestrator", "name": "Orchestrator", "head": "พี่วุฒิ (Wut)", "scope": "System Pipeline Coordination", "active": true},
-      {"id": "05-architect", "name": "Architect", "head": "พี่ทรงศักดิ์ (Songsak)", "scope": "Central Bus, Routing, Monitoring", "active": true},
-      {"id": "06-product", "name": "Product", "head": "โปรดัค", "scope": "Feature Roadmap, PRD, Delivery", "active": true},
-      {"id": "07-engineering", "name": "Engineering", "head": "ช่างฟูล (Changful)", "scope": "Backend, Frontend, Architecture", "active": true},
-      {"id": "08-design", "name": "Design", "head": "ครีเอท (Kreet)", "scope": "UX Research, Brand Visual", "active": true},
-      {"id": "09-ui-designer", "name": "UI Designer", "head": "UI Designer", "scope": "Interface, Component Library", "active": true},
-      {"id": "10-qa", "name": "QA", "head": "QA-ทีม", "scope": "Testing, Quality, Evidence", "active": true},
-      {"id": "11-sales", "name": "Sales", "head": "เซลส์", "scope": "B2B Deal Strategy, Pipeline", "active": true},
-      {"id": "12-support", "name": "Support", "head": "ซัพพอร์ต", "scope": "Customer Success, Analytics", "active": true},
-      {"id": "13-legal", "name": "Legal", "head": "ตุลย์ (Tulya)", "scope": "Compliance, Contracts, Law", "active": true},
-      {"id": "14-web3", "name": "Web3", "head": "อัยวา (Aywa)", "scope": "Blockchain, DeFi, Solana", "active": true},
-      {"id": "15-content-creator", "name": "Content Creator", "head": "เสก (Sek)", "scope": "Content, Creative, Media", "active": true},
-      {"id": "16-neteng", "name": "Network Engineer", "head": "นีต (Neet)", "scope": "Network, Infra, CDN, VPN", "active": true},
-      {"id": "17-cybersec", "name": "Cyber Security", "head": "ซาย (Sai)", "scope": "Threat Detection, Vulnerability, IR", "active": true},
-      {"id": "18-psychology", "name": "Psychology", "head": "จิต (Jit)", "scope": "Behavior, Behavioral Econ, Org Psych", "active": true},
-      {"id": "19-rd-lab", "name": "R&D Lab", "head": "Lead Researcher", "scope": "Curiosity-driven research, prototyping", "active": true}
-    ]
+      {
+        "id": "01-ceo",
+        "name": "CEO",
+        "head": "เทอโบ (Turbo)",
+        "scope": "Vision, Strategy, Final Decision",
+        "active": true
+      },
+      {
+        "id": "02-cfo",
+        "name": "CFO",
+        "head": "meetoo",
+        "scope": "Finance, Budget, Investment",
+        "active": true
+      },
+      {
+        "id": "03-cmo",
+        "name": "CMO",
+        "head": "มาร์ค",
+        "scope": "Marketing, Content, Brand",
+        "active": true
+      },
+      {
+        "id": "04-orchestrator",
+        "name": "Orchestrator",
+        "head": "พี่วุฒิ (Wut)",
+        "scope": "System Pipeline Coordination",
+        "active": true
+      },
+      {
+        "id": "05-architect",
+        "name": "Architect",
+        "head": "พี่ทรงศักดิ์ (Songsak)",
+        "scope": "Central Bus, Routing, Monitoring",
+        "active": true
+      },
+      {
+        "id": "06-product",
+        "name": "Product",
+        "head": "โปรดัค",
+        "scope": "Feature Roadmap, PRD, Delivery",
+        "active": true
+      },
+      {
+        "id": "07-engineering",
+        "name": "Engineering",
+        "head": "ช่างฟูล (Changful)",
+        "scope": "Backend, Frontend, Architecture",
+        "active": true
+      },
+      {
+        "id": "08-design",
+        "name": "Design",
+        "head": "ครีเอท (Kreet)",
+        "scope": "UX Research, Brand Visual",
+        "active": true
+      },
+      {
+        "id": "09-ui-designer",
+        "name": "UI Designer",
+        "head": "UI Designer",
+        "scope": "Interface, Component Library",
+        "active": true
+      },
+      {
+        "id": "10-qa",
+        "name": "QA",
+        "head": "QA-ทีม",
+        "scope": "Testing, Quality, Evidence",
+        "active": true
+      },
+      {
+        "id": "11-sales",
+        "name": "Sales",
+        "head": "เซลส์",
+        "scope": "B2B Deal Strategy, Pipeline",
+        "active": true
+      },
+      {
+        "id": "12-support",
+        "name": "Support",
+        "head": "ซัพพอร์ต",
+        "scope": "Customer Success, Analytics",
+        "active": true
+      },
+      {
+        "id": "13-legal",
+        "name": "Legal",
+        "head": "ตุลย์ (Tulya)",
+        "scope": "Compliance, Contracts, Law",
+        "active": true
+      },
+      {
+        "id": "14-web3",
+        "name": "Web3",
+        "head": "อัยวา (Aywa)",
+        "scope": "Blockchain, DeFi, Solana",
+        "active": true
+      },
+      {
+        "id": "15-content-creator",
+        "name": "Content Creator",
+        "head": "เสก (Sek)",
+        "scope": "Content, Creative, Media",
+        "active": true
+      },
+      {
+        "id": "16-neteng",
+        "name": "Network Engineer",
+        "head": "นีต (Neet)",
+        "scope": "Network, Infra, CDN, VPN",
+        "active": true
+      },
+      {
+        "id": "17-cybersec",
+        "name": "Cyber Security",
+        "head": "ซาย (Sai)",
+        "scope": "Threat Detection, Vulnerability, IR",
+        "active": true
+      },
+      {
+        "id": "18-psychology",
+        "name": "Psychology",
+        "head": "จิต (Jit)",
+        "scope": "Behavior, Behavioral Econ, Org Psych",
+        "active": true
+      },
+      {
+        "id": "19-rd-lab",
+        "name": "R&D Lab",
+        "head": "Lead Researcher",
+        "scope": "Curiosity-driven research, prototyping",
+        "active": true
+      }
+    ],
+    "activated_agents": 18
   },
-
   "key_decisions": [
-    {"id": "ADR-001", "title": "3 Pillars ของ Department Head Design", "date": "2026-06-26", "status": "Accepted"},
-    {"id": "ADR-002", "title": "Two-Tier Architecture — Control vs Data Layer", "date": "2026-06-26", "status": "Accepted"},
-    {"id": "ADR-003", "title": "Central Bus Schema Design", "date": "2026-06-26", "status": "Accepted"},
-    {"id": "ADR-004", "title": "Central Bus Agent v0.6", "date": "2026-06-26", "status": "Accepted"},
-    {"id": "ADR-005", "title": "Loop Runner Design", "date": "2026-06-26", "status": "Accepted"},
-    {"id": "ADR-013", "title": "Compliance Validator Skill", "date": "2026-06-26", "status": "Accepted"}
+    {
+      "id": "ADR-001",
+      "title": "3 Pillars ของ Department Head Design",
+      "date": "2026-06-26",
+      "status": "Accepted"
+    },
+    {
+      "id": "ADR-002",
+      "title": "Two-Tier Architecture — Control vs Data Layer",
+      "date": "2026-06-26",
+      "status": "Accepted"
+    },
+    {
+      "id": "ADR-003",
+      "title": "Central Bus Schema Design",
+      "date": "2026-06-26",
+      "status": "Accepted"
+    },
+    {
+      "id": "ADR-004",
+      "title": "Central Bus Agent v0.6",
+      "date": "2026-06-26",
+      "status": "Accepted"
+    },
+    {
+      "id": "ADR-005",
+      "title": "Loop Runner Design",
+      "date": "2026-06-26",
+      "status": "Accepted"
+    },
+    {
+      "id": "ADR-013",
+      "title": "Compliance Validator Skill",
+      "date": "2026-06-26",
+      "status": "Accepted"
+    }
   ],
-
   "system_status": {
-    "central_bus": {"port": 8099, "status": "running", "version": "0.6.0"},
-    "mcp_server": {"status": "ready", "tools": 7, "resources": 5, "auth": "3-tier"},
-    "loop_runner": {"cron": "*/30 * * * *", "loops": 4, "active": "brain_auto_commit", "failed": ["daily_brief", "subscription_audit", "pipeline_executor"]},
+    "central_bus": {
+      "port": 8099,
+      "status": "running",
+      "version": "0.6.0"
+    },
+    "mcp_server": {
+      "status": "ready",
+      "tools": 7,
+      "resources": 5,
+      "auth": "3-tier"
+    },
+    "loop_runner": {
+      "cron": "*/30 * * * *",
+      "loops": 4,
+      "active": "brain_auto_commit",
+      "failed": [
+        "daily_brief",
+        "subscription_audit",
+        "pipeline_executor"
+      ]
+    },
     "codex_agents": 80,
     "opencode_agents": 21,
     "deployed": true,
@@ -72,7 +230,6 @@
       "bootstrap": "scripts/bootstrap-ceo.sh"
     }
   },
-
   "lessons_learned": [
     {
       "session": "2026-07-08",
@@ -100,19 +257,64 @@
       "impact": "Agent Activation แบบ incremental"
     }
   ],
-
   "pending_initiatives": [
-    {"priority": "P0", "task": "CEO Identity + Capability System", "owner": "CEO (เทอโบ)", "status": "in_progress", "note": "สร้าง identity manifest, auto-load protocol, learning loop"},
-    {"priority": "P0", "task": "Agent Activation System — ทำให้ 55+ specialists มีตัวตน", "owner": "CEO + Owner", "status": "design", "note": "เริ่มที่ 5 กรมหลักก่อน"},
-    {"priority": "P1", "task": "Department-scoped API Keys", "owner": "@architect-songsak", "status": "pending"},
-    {"priority": "P1", "task": "Agent Worker Service — Queue consumer", "owner": "@architect-songsak", "status": "pending"},
-    {"priority": "P2", "task": "Multi-platform Agent Sync", "owner": "@orchestrator-wut", "status": "pending"},
-    {"priority": "P2", "task": "CEO Auto-Report on Session Start", "owner": "CEO (เทอโบ)", "status": "in_progress"},
-    {"priority": "P2", "task": "Landing Page", "owner": "@cmo-mark + @design-kreet", "status": "pending"},
-    {"priority": "P3", "task": "Client Portal v1", "owner": "@product-produck + @changful", "status": "pending"},
-    {"priority": "P3", "task": "Backup SOUL.md ทุกตัว", "owner": "@architect-songsak", "status": "pending"}
+    {
+      "priority": "P0",
+      "task": "CEO Identity + Capability System",
+      "owner": "CEO (เทอโบ)",
+      "status": "in_progress",
+      "note": "สร้าง identity manifest, auto-load protocol, learning loop"
+    },
+    {
+      "priority": "P0",
+      "task": "Agent Activation System — ทำให้ 55+ specialists มีตัวตน",
+      "owner": "CEO + Owner",
+      "status": "design",
+      "note": "เริ่มที่ 5 กรมหลักก่อน"
+    },
+    {
+      "priority": "P1",
+      "task": "Department-scoped API Keys",
+      "owner": "@architect-songsak",
+      "status": "pending"
+    },
+    {
+      "priority": "P1",
+      "task": "Agent Worker Service — Queue consumer",
+      "owner": "@architect-songsak",
+      "status": "pending"
+    },
+    {
+      "priority": "P2",
+      "task": "Multi-platform Agent Sync",
+      "owner": "@orchestrator-wut",
+      "status": "pending"
+    },
+    {
+      "priority": "P2",
+      "task": "CEO Auto-Report on Session Start",
+      "owner": "CEO (เทอโบ)",
+      "status": "in_progress"
+    },
+    {
+      "priority": "P2",
+      "task": "Landing Page",
+      "owner": "@cmo-mark + @design-kreet",
+      "status": "pending"
+    },
+    {
+      "priority": "P3",
+      "task": "Client Portal v1",
+      "owner": "@product-produck + @changful",
+      "status": "pending"
+    },
+    {
+      "priority": "P3",
+      "task": "Backup SOUL.md ทุกตัว",
+      "owner": "@architect-songsak",
+      "status": "pending"
+    }
   ],
-
   "sessions": [
     {
       "date": "2026-07-08",
@@ -138,6 +340,20 @@
         "Agent Activation System (P0)",
         "สร้าง Department API Keys (P1)",
         "Agent Worker Service (P1)"
+      ]
+    },
+    {
+      "date": "2026-07-08 (ต่อ)",
+      "duration": "30min",
+      "summary": "Agent Activation Phase 2-4 — ครบ 18 Agents",
+      "achievements": [
+        "Phase 2: CMO, Design, QA, Sales, Support activated",
+        "Phase 3: Legal, Web3, Content, NetEng, CyberSec activated",
+        "Phase 4: Psychology, UI Designer, R&D Lab activated",
+        "18/18 Agents — 100% test pass single cycle"
+      ],
+      "pending_next": [
+        "Framework — ถอด content ออกเป็น Governance Designer"
       ]
     }
   ]
