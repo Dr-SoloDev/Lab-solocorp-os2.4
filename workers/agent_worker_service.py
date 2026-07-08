@@ -39,6 +39,11 @@ from workers.agents.architect_agent import ArchitectAgent
 from workers.agents.engineering_agent import EngineeringAgent
 from workers.agents.product_agent import ProductAgent
 from workers.agents.orchestrator_agent import OrchestratorAgent
+from workers.agents.cmo_agent import CMOAgent
+from workers.agents.design_agent import DesignAgent
+from workers.agents.qa_agent import QAAgent
+from workers.agents.sales_agent import SalesAgent
+from workers.agents.support_agent import SupportAgent
 
 
 class AgentWorkerService:
@@ -67,13 +72,20 @@ class AgentWorkerService:
         self.running = False
         self._semaphore = asyncio.Semaphore(max_concurrent)
 
-        # ── Register Agents ────────────────────────────────────────────
+        # ── Register Agents — Phase 1 + Phase 2 ───────────────────────
         self.agents: dict[str, Any] = {
+            # Phase 1 — 5 กรมหลัก
             "cfo-meetoo": CFOAgent(bus_url=bus_url, api_key=self.api_key),
             "architect-songsak": ArchitectAgent(bus_url=bus_url, api_key=self.api_key),
             "changful": EngineeringAgent(bus_url=bus_url, api_key=self.api_key),
             "product-produck": ProductAgent(bus_url=bus_url, api_key=self.api_key),
             "orchestrator-wut": OrchestratorAgent(bus_url=bus_url, api_key=self.api_key),
+            # Phase 2 — การตลาด+ดีไซน์+QA+ขาย+ซัพพอร์ต
+            "cmo-mark": CMOAgent(bus_url=bus_url, api_key=self.api_key),
+            "design-kreet": DesignAgent(bus_url=bus_url, api_key=self.api_key),
+            "qa": QAAgent(bus_url=bus_url, api_key=self.api_key),
+            "sales": SalesAgent(bus_url=bus_url, api_key=self.api_key),
+            "support": SupportAgent(bus_url=bus_url, api_key=self.api_key),
         }
 
         log.info(
