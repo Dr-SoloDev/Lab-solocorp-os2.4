@@ -14,6 +14,9 @@ Thumbs.db
 # Agency Agents (cloned agent personality library)
 /reference/agency-agents/
 
+# Awesome AI Dev Agents (curated list of AI software dev agents)
+/reference/awesome-ai-dev-agents/
+
 # IDE
 .idea/
 .vscode/
