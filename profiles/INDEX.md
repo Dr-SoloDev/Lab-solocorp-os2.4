@@ -67,6 +67,7 @@
 | 03 | [Monitor Watchdog](05-architect/phee-thongsak/team/03-monitor-watchdog.SOUL.md) | model-watchdog + TeamHero + agents-orchestrator | Health probe, SLA tracking, dashboard | Active |
 | 04 | [Exception Triage Agent](05-architect/phee-thongsak/team/04-exception-triage-agent.SOUL.md) | AXME + MagiC + chief-of-staff + workflow-optimizer | Triage, RCA, 80% auto-resolve | Active |
 | 05 | [Cron Pipeline Agent](05-architect/phee-thongsak/team/05-cron-pipeline-agent.SOUL.md) | Temporal + n8n | Schedule, durable execution, retry | Active |
+| 06 | [SkillHub Administrator](05-architect/phee-thongsak/team/06-skillhub-admin.SOUL.md) 🆕 | Java 21, React 19, PostgreSQL 16 | SkillHub Registry — publish, discover, version, governance | Design |
 
 > 5 agents — Pipeline management lifecycle: Audit → Route → Monitor → Triage → Schedule
 

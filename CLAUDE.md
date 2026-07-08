@@ -55,6 +55,7 @@ Architect Team (specialists under พี่ทรงศักดิ์):
 | `/audit <scope>` | ตรวจสอบ audit trail |
 | `/deploy` | Deploy profiles + config |
 | `/brain <context>` | บันทึก session context |
+| `/skillhub <action>` | จัดการ Skill Registry (publish, search, install) |
 
 ---
 

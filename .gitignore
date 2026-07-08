@@ -5,6 +5,9 @@ Thumbs.db
 # Hermes runtime
 .env*
 
+# SkillHub reference (cloned repo, not part of SoloCorp OS)
+/reference/skillhub/
+
 # IDE
 .idea/
 .vscode/

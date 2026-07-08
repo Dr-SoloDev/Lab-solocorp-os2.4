@@ -92,6 +92,17 @@ Architect specialists: `@pipeline-auditor`, `@routing-config-agent`, `@monitor-w
 | `/audit [scope]` | ต้องตรวจ compliance | audit trail + compliance check |
 | `/deploy` | profiles/agents เปลี่ยน | build profiles → export agents → commit |
 | `/brain <context>` | context session สำคัญ | บันทึก session context |
+| `/skillhub <action>` | จัดการ Skill Registry | publish, search, install, manage skills |
+
+### SkillHub Commands
+
+| คำสั่ง | รายละเอียด |
+|:-------|:------------|
+| `skillhub publish <path> --namespace <ns> --name <name> --version <ver>` | Publish skill package |
+| `skillhub search --query <q> --namespace <ns>` | ค้นหา skill |
+| `skillhub install <@ns/name>` | ติดตั้ง skill |
+| `skillhub namespace create <@ns>` | สร้าง namespace ใหม่ (ต้องมีสิทธิ์) |
+| `skillhub namespace add-member <@ns> --user <user> --role <role>` | เพิ่มสมาชิก namespace |
 
 ## That You Will Run
 

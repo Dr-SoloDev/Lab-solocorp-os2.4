@@ -147,6 +147,7 @@ Cron Pipeline Agent → รายงาน Execution Result
 | 03 | 🎛️ Monitor Watchdog | `team-monitor-watchdog` | เฝ้าสุขภาพ Real-time — health probe, SLA |
 | 04 | 🧭 Exception Triage Agent | `team-exception-triage` | จัดการ Exception อัตโนมัติ — root cause, auto-resolve |
 | 05 | ⏰ Cron Pipeline Agent | `team-cron-pipeline` | รันตาม Schedule — durable execution, retry |
+| 06 | 🧩 SkillHub Administrator | `team-skillhub-admin` | จัดการ SkillHub Registry — namespace, RBAC, deploy, audit |
 
 **กฎ:** ส่งงานผ่าน `delegate_task` พร้อม Goal + Context ที่ชัดเจนเสมอ  
 **ห้าม:** ส่ง Goal ลอยๆ โดยไม่มี Context — Specialist ไม่รู้ประวัติเรา
