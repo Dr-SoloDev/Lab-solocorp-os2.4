@@ -42,6 +42,21 @@ from typing import Any
 
 # ── Paths ─────────────────────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
+
+# ── Auth guard helper ─────────────────────────────────────────────────
+from solocorp_mcp.auth import verify_scope
+
+def _check_scope(required: str):
+    """Check auth scope inside a tool function.
+    Raises PermissionError if scope insufficient, which FastMCP converts to isError response.
+    """
+    import os
+    key = os.environ.get("SOLOCORP_API_KEY")
+    if not verify_scope(required, key):
+        raise PermissionError(
+            f"Requires scope '{required}' — set SOLOCORP_API_KEY with scope >= '{required}'\n"
+            f"(current key: {'not set' if key is None else 'insufficient scope'})"
+        )
 PROFILES_DIR = ROOT / "profiles"
 INDEX_PATH = PROFILES_DIR / "INDEX.md"
 BUS_SYSTEM_DIR = ROOT / "bus" / "system"
@@ -291,6 +306,7 @@ Use this server when you need to:
             dept_id_or_name: Department ID like '01-ceo', '07-engineering',
                            or partial name like 'ceo', 'engineering', 'cfo'.
         """
+        _check_scope("team")
         # Direct match
         soul_path = PROFILES_DIR / dept_id_or_name / "SOUL.md"
         if soul_path.exists():
@@ -320,6 +336,7 @@ Use this server when you need to:
                   Examples: 'I need to fix a bug in the login page',
                   'design a new landing page', 'check our monthly budget'
         """
+        _check_scope("team")
         q_lower = query.lower()
 
         # 1. Try keyword routing
@@ -383,6 +400,7 @@ Use this server when you need to:
             keyword: Search term (Thai or English). Matches against name,
                     role, department, and mission fields.
         """
+        _check_scope("team")
         kw = keyword.lower()
         profiles = load_all_profiles()
         matches = []
@@ -450,6 +468,7 @@ Use this server when you need to:
         Args:
             dept_id: Department ID like '01-ceo', '07-engineering', '16-neteng'.
         """
+        _check_scope("team")
         dept_dir = PROFILES_DIR / dept_id
         if not dept_dir.exists() or not dept_dir.is_dir():
             return f"Department '{dept_id}' not found."

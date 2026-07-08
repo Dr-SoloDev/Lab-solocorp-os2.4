@@ -124,7 +124,10 @@
       "command": ["python3", "-m", "solocorp_mcp.server"],
       "cwd": ".",
       "enabled": true,
-      "timeout": 30000
+      "timeout": 30000,
+      "env": {
+        "SOLOCORP_API_KEY": "sk-solocorp-admin-local-dev-001"
+      }
     },
     "github": {
       "type": "remote",
