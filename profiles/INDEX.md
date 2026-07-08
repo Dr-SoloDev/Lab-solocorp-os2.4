@@ -1,7 +1,7 @@
 # Lab-solocorp-os2.4 — Profile Index
 
 > Master index of all profiles in SoloCorp OS.
-> Sorted by hierarchy: CEO → CFO → CMO → Orchestrator → Architect → Product
+> Sorted by hierarchy: Owner → R&D Lab → CEO → CFO → CMO → Orchestrator → Architect → Product
 > → Engineering → Design → UI-Designer → QA → Sales → Support → Legal
 > → Web3 → Content Creator → Default
 
@@ -24,6 +24,26 @@
 | `01-ceo` | **CEO** | [เทอโบ ไชยศรีรัมย์ (Turbo)](01-ceo/SOUL.md) | Vision, Strategy, Final Decision | Active |
 | `02-cfo` | **CFO** | [meetoo](02-cfo/SOUL.md) | Finance, Budget, Investment | Active |
 | `03-cmo` | **CMO** | [มาร์ค](03-cmo/SOUL.md) | Marketing, Content, Brand | Active |
+
+## Owner Direct — R&D Lab
+
+> 🔬 **แล็บของ Dr.solodev** — ไม่ผ่าน pipeline, ไม่มี deadline, อยากวิจัยอะไรเมื่อไหร่ก็ได้
+
+| # | Profile | Head | Responsibility | Status |
+|:-:|:--------|:-----|:--------------|:------:|
+| `19-rd-lab` | **R&D Lab** | [Lead Researcher](19-rd-lab/solodev/team/01-lead-researcher.SOUL.md) | Curiosity-driven research, experimental prototypes, special projects | 🟢 Active |
+
+### Specialists — R&D Lab Team
+
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [Lead Researcher](19-rd-lab/solodev/team/01-lead-researcher.SOUL.md) | 🧭 รับไอเดีย → จัดทีม → ลงมือ — ปกป้องทีมจากระบบ | 🟢 Active |
+| 02 | [AI Research Scientist](19-rd-lab/solodev/team/02-ai-research-scientist.SOUL.md) | 🤖 ติดตาม frontier AI — ทดลอง tech ใหม่ๆ ก่อนใคร | 🟢 Active |
+| 03 | [Prototyper / Builder](19-rd-lab/solodev/team/03-prototyper.SOUL.md) | 🏗️ เปลี่ยน idea → prototype เร็วที่สุดเท่าที่จะทำได้ | 🟢 Active |
+| 04 | [Experiment Designer](19-rd-lab/solodev/team/04-experiment-designer.SOUL.md) | 📐 ออกแบบ methodology, metrics, evaluation | 🟢 Active |
+| 05 | [Tool Smith](19-rd-lab/solodev/team/05-tool-smith.SOUL.md) | 🔧 สร้าง tooling — scraper, automation, integration | 🟢 Active |
+| 06 | [Knowledge Curator](19-rd-lab/solodev/team/06-knowledge-curator.SOUL.md) | 📚 บันทึก, จัดระเบียบ, แชร์ความรู้จากแล็บ | 🟢 Active |
+| 07 | [Wild Card](19-rd-lab/solodev/team/07-wild-card.SOUL.md) | 🃏 ทำทุกอย่างที่ไม่มีตำแหน่งรองรับ — special request โดยตรง | 🟢 Active |
 
 ## System Pipeline
 

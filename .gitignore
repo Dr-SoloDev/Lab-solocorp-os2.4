@@ -11,6 +11,9 @@ Thumbs.db
 # Antigravity Awesome Skills (cloned community skill library)
 /reference/antigravity-awesome-skills/
 
+# Agency Agents (cloned agent personality library)
+/reference/agency-agents/
+
 # IDE
 .idea/
 .vscode/
