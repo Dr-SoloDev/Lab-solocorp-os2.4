@@ -8,6 +8,9 @@ Thumbs.db
 # SkillHub reference (cloned repo, not part of SoloCorp OS)
 /reference/skillhub/
 
+# Antigravity Awesome Skills (cloned community skill library)
+/reference/antigravity-awesome-skills/
+
 # IDE
 .idea/
 .vscode/
