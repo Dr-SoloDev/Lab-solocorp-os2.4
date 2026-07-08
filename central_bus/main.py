@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -65,7 +66,7 @@ _STARTED_AT: float = time.time()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: initialise DB schema; shutdown: close resources."""
-    log.info("Central Bus v0.6 starting up (pid=%d)", settings.pid)
+    log.info("Central Bus v0.6 starting up (pid=%d)", os.getpid())
     # DB is lazily initialised on first use via get_db()
     yield
     log.info("Central Bus v0.6 shutting down")
