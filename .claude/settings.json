@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "solocorp": {
+      "command": "python3",
+      "args": ["-m", "solocorp_mcp.server"]
+    },
+    "stealth-browser": {
+      "command": "python3",
+      "args": ["-m", "tools.stealth-browser-mcp.src.server", "--minimal"]
+    }
+  }
+}

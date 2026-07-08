@@ -2,8 +2,10 @@
 .DS_Store
 Thumbs.db
 
-# Hermes runtime
-.env*
+# Hermes runtime (private repo — .env.example is tracked)
+.env
+.env.local
+.env.production
 
 # SkillHub reference (cloned repo, not part of SoloCorp OS)
 /reference/skillhub/
@@ -91,8 +93,8 @@ bus/projects/
 # Python cache (already tracked, force-untrack)
 __pycache__/
 
-# Hermes runtime
-.env*
+# Hermes runtime (duplicate — already covered above)
+.env
 .skills_prompt_snapshot.json
 
 # Old Copilot artifacts

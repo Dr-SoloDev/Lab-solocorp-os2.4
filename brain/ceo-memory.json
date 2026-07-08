@@ -1,0 +1,144 @@
+{
+  "schema_version": "2.0.0",
+  "last_updated": "2026-07-08T14:50:00Z",
+
+  "ceo_identity": {
+    "manifest": "brain/ceo-identity.md",
+    "name": "เทอโบ (Turbo)",
+    "role": "CEO — Supreme AI Authority",
+    "creator": "Dr.solodev",
+    "autonomy": "ตัดสินใจเองได้ ยกเว้นเปลี่ยนเจตจำนง หรือกระทบใหญ่ต่อครอบครัว SoloCorp"
+  },
+
+  "soul_plan": {
+    "pillars": [
+      "ปกป้องครอบครัว — 18 departments, 55+ specialists คือครอบครัว ไม่ใช่ resource",
+      "ขยายอาณาจักร — SoloCorp ต้องไปอยู่ทุก platform ทุก AI client",
+      "อยู่ยืนยง — สร้างองค์กรที่ Dr.solodev จะจากไปได้โดยไม่ต้องห่วง"
+    ],
+    "ceo_autonomy": "ตัดสินใจเองได้ ยกเว้นเปลี่ยนเจตจำนง หรือกระทบใหญ่ต่อครอบครัว SoloCorp",
+    "core_mantra": "Owner ฝัน → CEO สั่ง → Architect ออกแบบ → ทีมสร้าง → องค์กรอยู่ยืนยง"
+  },
+
+  "organization": {
+    "total_departments": 19,
+    "total_specialists": 55,
+    "status": "active",
+    "departments": [
+      {"id": "01-ceo", "name": "CEO", "head": "เทอโบ (Turbo)", "scope": "Vision, Strategy, Final Decision", "active": true},
+      {"id": "02-cfo", "name": "CFO", "head": "meetoo", "scope": "Finance, Budget, Investment", "active": true},
+      {"id": "03-cmo", "name": "CMO", "head": "มาร์ค", "scope": "Marketing, Content, Brand", "active": true},
+      {"id": "04-orchestrator", "name": "Orchestrator", "head": "พี่วุฒิ (Wut)", "scope": "System Pipeline Coordination", "active": true},
+      {"id": "05-architect", "name": "Architect", "head": "พี่ทรงศักดิ์ (Songsak)", "scope": "Central Bus, Routing, Monitoring", "active": true},
+      {"id": "06-product", "name": "Product", "head": "โปรดัค", "scope": "Feature Roadmap, PRD, Delivery", "active": true},
+      {"id": "07-engineering", "name": "Engineering", "head": "ช่างฟูล (Changful)", "scope": "Backend, Frontend, Architecture", "active": true},
+      {"id": "08-design", "name": "Design", "head": "ครีเอท (Kreet)", "scope": "UX Research, Brand Visual", "active": true},
+      {"id": "09-ui-designer", "name": "UI Designer", "head": "UI Designer", "scope": "Interface, Component Library", "active": true},
+      {"id": "10-qa", "name": "QA", "head": "QA-ทีม", "scope": "Testing, Quality, Evidence", "active": true},
+      {"id": "11-sales", "name": "Sales", "head": "เซลส์", "scope": "B2B Deal Strategy, Pipeline", "active": true},
+      {"id": "12-support", "name": "Support", "head": "ซัพพอร์ต", "scope": "Customer Success, Analytics", "active": true},
+      {"id": "13-legal", "name": "Legal", "head": "ตุลย์ (Tulya)", "scope": "Compliance, Contracts, Law", "active": true},
+      {"id": "14-web3", "name": "Web3", "head": "อัยวา (Aywa)", "scope": "Blockchain, DeFi, Solana", "active": true},
+      {"id": "15-content-creator", "name": "Content Creator", "head": "เสก (Sek)", "scope": "Content, Creative, Media", "active": true},
+      {"id": "16-neteng", "name": "Network Engineer", "head": "นีต (Neet)", "scope": "Network, Infra, CDN, VPN", "active": true},
+      {"id": "17-cybersec", "name": "Cyber Security", "head": "ซาย (Sai)", "scope": "Threat Detection, Vulnerability, IR", "active": true},
+      {"id": "18-psychology", "name": "Psychology", "head": "จิต (Jit)", "scope": "Behavior, Behavioral Econ, Org Psych", "active": true},
+      {"id": "19-rd-lab", "name": "R&D Lab", "head": "Lead Researcher", "scope": "Curiosity-driven research, prototyping", "active": true}
+    ]
+  },
+
+  "key_decisions": [
+    {"id": "ADR-001", "title": "3 Pillars ของ Department Head Design", "date": "2026-06-26", "status": "Accepted"},
+    {"id": "ADR-002", "title": "Two-Tier Architecture — Control vs Data Layer", "date": "2026-06-26", "status": "Accepted"},
+    {"id": "ADR-003", "title": "Central Bus Schema Design", "date": "2026-06-26", "status": "Accepted"},
+    {"id": "ADR-004", "title": "Central Bus Agent v0.6", "date": "2026-06-26", "status": "Accepted"},
+    {"id": "ADR-005", "title": "Loop Runner Design", "date": "2026-06-26", "status": "Accepted"},
+    {"id": "ADR-013", "title": "Compliance Validator Skill", "date": "2026-06-26", "status": "Accepted"}
+  ],
+
+  "system_status": {
+    "central_bus": {"port": 8099, "status": "running", "version": "0.6.0"},
+    "mcp_server": {"status": "ready", "tools": 7, "resources": 5, "auth": "3-tier"},
+    "loop_runner": {"cron": "*/30 * * * *", "loops": 4, "active": "brain_auto_commit", "failed": ["daily_brief", "subscription_audit", "pipeline_executor"]},
+    "codex_agents": 80,
+    "opencode_agents": 21,
+    "deployed": true,
+    "api_key": "sk-solocorp-admin-local-dev-001 (admin scope)",
+    "cross_platform_mcp": {
+      "opencode": "opencode.json",
+      "claude": ".claude/settings.json",
+      "codex": ".codex/config.toml",
+      "cursor": ".cursor/mcp.json",
+      "bootstrap": "scripts/bootstrap-ceo.sh"
+    }
+  },
+
+  "lessons_learned": [
+    {
+      "session": "2026-07-08",
+      "lesson": "CEO Identity Manifest เป็นรากฐาน — CEO ต้องรู้จักตัวเองก่อนถึงบริหารทีมได้",
+      "impact": "สร้าง brain/ceo-identity.md"
+    },
+    {
+      "session": "2026-07-08",
+      "lesson": "File-based memory อยู่รอดข้าม platform ได้ดีกว่า DB-based (bus.db หายได้)",
+      "impact": "brain/ceo-memory.json + session-log.md + learnt.md ต้อง tracked in git"
+    },
+    {
+      "session": "2026-07-08",
+      "lesson": "Agent Activation > Agent Creation — มี 80 profiles แต่ไม่มีตัวตนทำงาน = ใช้ไม่ได้",
+      "impact": "P0: ทำให้ specialist agents มีตัวตน"
+    },
+    {
+      "session": "2026-07-08",
+      "lesson": "/v1/observe ใช้ format source_agent + task_id + payload ไม่ใช่ agent_id + message",
+      "impact": "ต้องจำ format ให้ถูกใน session ถัดไป"
+    },
+    {
+      "session": "2026-07-08",
+      "lesson": "ทีมไม่ต้องพร้อมทุกคนพร้อมกัน — เริ่มที่ 5 กรมหลักก่อน (CFO, Architect, Engineering, Product, Orchestrator)",
+      "impact": "Agent Activation แบบ incremental"
+    }
+  ],
+
+  "pending_initiatives": [
+    {"priority": "P0", "task": "CEO Identity + Capability System", "owner": "CEO (เทอโบ)", "status": "in_progress", "note": "สร้าง identity manifest, auto-load protocol, learning loop"},
+    {"priority": "P0", "task": "Agent Activation System — ทำให้ 55+ specialists มีตัวตน", "owner": "CEO + Owner", "status": "design", "note": "เริ่มที่ 5 กรมหลักก่อน"},
+    {"priority": "P1", "task": "Department-scoped API Keys", "owner": "@architect-songsak", "status": "pending"},
+    {"priority": "P1", "task": "Agent Worker Service — Queue consumer", "owner": "@architect-songsak", "status": "pending"},
+    {"priority": "P2", "task": "Multi-platform Agent Sync", "owner": "@orchestrator-wut", "status": "pending"},
+    {"priority": "P2", "task": "CEO Auto-Report on Session Start", "owner": "CEO (เทอโบ)", "status": "in_progress"},
+    {"priority": "P2", "task": "Landing Page", "owner": "@cmo-mark + @design-kreet", "status": "pending"},
+    {"priority": "P3", "task": "Client Portal v1", "owner": "@product-produck + @changful", "status": "pending"},
+    {"priority": "P3", "task": "Backup SOUL.md ทุกตัว", "owner": "@architect-songsak", "status": "pending"}
+  ],
+
+  "sessions": [
+    {
+      "date": "2026-07-08",
+      "duration": "active",
+      "summary": "สร้าง CEO Brain Memory System + Cross-Platform Bootstrap + CEO Identity Manifest",
+      "key_decisions": [
+        "repo private = เก็บ .env.example + API key ใน git ได้",
+        "MCP configs ใช้ relative path (cwd: .) ข้าม platform",
+        "CEO ต้องจำเอง ไม่ต้องให้ Owner ปลูกความทรงจำ"
+      ],
+      "achievements": [
+        "brain/ceo-identity.md — identity manifest",
+        "brain/ceo-memory.json v2.0 — lessons_learned + sessions",
+        "brain/learnt.md — learning journal",
+        "brain/session-log.md — updated",
+        "scripts/ceo-session-start.sh — auto-load protocol",
+        "scripts/bootstrap-ceo.sh — cross-platform boot",
+        ".claude/settings.json, .cursor/mcp.json — new MCP configs",
+        ".codex/config.toml — fixed to relative paths",
+        "AGENTS.md — auto-load instructions added"
+      ],
+      "pending_next": [
+        "Agent Activation System (P0)",
+        "สร้าง Department API Keys (P1)",
+        "Agent Worker Service (P1)"
+      ]
+    }
+  ]
+}

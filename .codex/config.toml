@@ -3,13 +3,18 @@ max_threads = 6
 max_depth = 1
 job_max_runtime_seconds = 1800
 
+[mcp_servers.solocorp]
+command = "python3"
+args = ["-m", "solocorp_mcp.server"]
+startup_timeout_sec = 15
+tool_timeout_sec = 30
+default_tools_approval_mode = "prompt"
+enabled = true
+
 [mcp_servers.stealth_browser]
-command = "/home/drsolodev/projects/Lab-solocorp-os2.4/tools/stealth-browser-mcp/venv/bin/python"
-args = [
-  "/home/drsolodev/projects/Lab-solocorp-os2.4/tools/stealth-browser-mcp/src/server.py",
-  "--minimal",
-]
-cwd = "/home/drsolodev/projects/Lab-solocorp-os2.4/tools/stealth-browser-mcp"
+command = "python3"
+args = ["-m", "tools.stealth-browser-mcp.src.server", "--minimal"]
+cwd = "."
 startup_timeout_sec = 30
 tool_timeout_sec = 120
 default_tools_approval_mode = "prompt"
@@ -17,5 +22,5 @@ enabled = true
 
 [mcp_servers.stealth_browser.env]
 BROWSER_IDLE_TIMEOUT = "600"
-BROWSER_FILE_UPLOAD_ALLOWED_DIRS = "/home/drsolodev/projects/Lab-solocorp-os2.4"
+BROWSER_FILE_UPLOAD_ALLOWED_DIRS = "."
 STEALTH_BROWSER_DEBUG = "0"
