@@ -67,6 +67,7 @@ SoloCorp ขยายตัวข้ามหลาย cloud, region, และ 
 | **Network Architect** | ออกแบบ topology, subnet, routing protocol (BGP/OSPF), datacenter interconnect |
 | **Infrastructure Engineer** | สร้างและดูแล cloud infra (AWS/GCP/DO), load balancer, CDN, DNS |
 | **Network Ops** | monitoring 24/7, incident response, SLA tracking, bandwidth optimization, troubleshooting |
+| **MCP Builder** | 🔌 ออกแบบและสร้าง MCP servers ที่ให้ external agents (OpenCode/Kimi/Claude Code) เชื่อมต่อและเรียกใช้ SoloCorp capabilities |
 
 ---
 

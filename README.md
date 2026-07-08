@@ -68,6 +68,20 @@ python3 scripts/export-codex-agents.py
 codex
 ```
 
+### 🔌 Connect from ANY coding agent via MCP
+
+SoloCorp OS now speaks **MCP (Model Context Protocol)** — so any MCP-compatible agent or IDE can discover and use SoloCorp capabilities:
+
+```bash
+# Install, then add to your MCP client config:
+pip install mcp
+python3 -m solocorp_mcp.server
+```
+
+**Supported clients:** OpenCode, Claude Code, Claude Desktop, Codex CLI, Kimi CLI, Cursor, Windsurf, Continue.dev
+
+See [`solocorp_mcp/README.md`](./solocorp_mcp/README.md) for full docs and client configs.
+
 ### Pipeline Commands (once inside)
 
 | Command | Action |
@@ -119,6 +133,7 @@ SoloCorp OS replaces that single point of failure with a structured department h
 | **Central Bus** | Async-first message routing between departments |
 | **Head-to-Head Handoff** | Work moves between departments without bottleneck |
 | **93 Skills** | Integrated across all departments |
+| **MCP Server** | SoloCorp capabilities exposed via MCP protocol — 7 tools, 5 resources, usable from any MCP client |
 | **20 OpenCode Agents** | 18 department heads + 5 architect specialists, all `@mention`-ready |
 | **Codex CLI Export** | All profiles exportable as Codex CLI sub-agents |
 | **xGov Governance** | RFC → ADR → Guard Gates protocol |
@@ -319,6 +334,7 @@ The fastest path to a working multi-agent team:
 - `COPILOT-SETUP.md` — GitHub Copilot Cloud Agent integration guide
 - `decisions/` — Architecture Decision Records (ADRs)
 - `dist/codex/README-CODEX-CLI.md` — Codex CLI export guide
+- `solocorp_mcp/README.md` — MCP server docs for external agent integration
 
 ---
 

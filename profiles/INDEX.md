@@ -194,6 +194,7 @@ solocorp-mark-workflow, content creation pipeline
 | 01 | [Network Architect](16-neteng/neet/team/01-network-architect.SOUL.md) | Network topology design, BGP/OSPF routing, datacenter interconnects | Design |
 | 02 | [Infrastructure Engineer](16-neteng/neet/team/02-infrastructure-engineer.SOUL.md) | Cloud provisioning (AWS/GCP/DO), load balancer, CDN, DNS via IaC | Design |
 | 03 | [Network Ops](16-neteng/neet/team/03-network-ops.SOUL.md) | 24/7 monitoring, incident response, SLA tracking, bandwidth optimization | Design |
+| 04 | [MCP Builder](16-neteng/neet/team/04-mcp-builder.SOUL.md) | 🔌 MCP server design & implementation — expose SoloCorp OS to external coding agents via MCP protocol | Design |
 
 ## Team — 17-cybersec (ซาย)
 
@@ -232,7 +233,7 @@ solocorp-mark-workflow, content creation pipeline
 | 13 Legal | ตุลย์ | 3 | 4 |
 | 14 Web3 | อัยวา | 4 | 5 |
 | 15 Content Creator | เสก | (10 refs) | 1 |
-| 16 Network Engineer | นีต | 3 | 4 |
+| 16 Network Engineer | นีต | 4 | 5 |
 | 17 Cyber Security | ซาย | 3 | 4 |
 | 18 Psychology | จิต | 3 | 4 |
 | — | Default (Fallback) | — | 1 |
