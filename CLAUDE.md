@@ -42,6 +42,7 @@ Architect Team (specialists under พี่ทรงศักดิ์):
 | เฝ้าสุขภาพ pipeline | `@monitor-watchdog` |
 | จัดการ exception | `@exception-triage` |
 | รัน pipeline ตาม schedule | `@cron-pipeline` |
+| จัดการ SkillHub Registry | `@skillhub-admin` |
 
 ---
 
