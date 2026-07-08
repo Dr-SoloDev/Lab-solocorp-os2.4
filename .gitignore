@@ -17,6 +17,9 @@ Thumbs.db
 # Awesome AI Dev Agents (curated list of AI software dev agents)
 /reference/awesome-ai-dev-agents/
 
+# OmniScientist (AI Scientist Ecosystem — Tsinghua)
+/reference/omniscientist/
+
 # IDE
 .idea/
 .vscode/
