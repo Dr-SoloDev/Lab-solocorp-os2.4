@@ -44,6 +44,14 @@ from workers.agents.design_agent import DesignAgent
 from workers.agents.qa_agent import QAAgent
 from workers.agents.sales_agent import SalesAgent
 from workers.agents.support_agent import SupportAgent
+from workers.agents.legal_agent import LegalAgent
+from workers.agents.web3_agent import Web3Agent
+from workers.agents.content_agent import ContentAgent
+from workers.agents.neteng_agent import NetEngAgent
+from workers.agents.cybersec_agent import CyberSecAgent
+from workers.agents.psychology_agent import PsychologyAgent
+from workers.agents.ui_agent import UIAgent
+from workers.agents.rd_lab_agent import RDLabAgent
 
 
 class AgentWorkerService:
@@ -86,6 +94,16 @@ class AgentWorkerService:
             "qa": QAAgent(bus_url=bus_url, api_key=self.api_key),
             "sales": SalesAgent(bus_url=bus_url, api_key=self.api_key),
             "support": SupportAgent(bus_url=bus_url, api_key=self.api_key),
+            # Phase 3 — กฎหมาย+Web3+คอนเทนต์+เน็ตเวิร์ค+ความปลอดภัย
+            "legal-tulya": LegalAgent(bus_url=bus_url, api_key=self.api_key),
+            "web3-aywa": Web3Agent(bus_url=bus_url, api_key=self.api_key),
+            "content-creator-sek": ContentAgent(bus_url=bus_url, api_key=self.api_key),
+            "neteng-neet": NetEngAgent(bus_url=bus_url, api_key=self.api_key),
+            "cybersec-sai": CyberSecAgent(bus_url=bus_url, api_key=self.api_key),
+            # Phase 4 — จิตวิทยา+UI+R&D
+            "psych-jit": PsychologyAgent(bus_url=bus_url, api_key=self.api_key),
+            "ui-designer": UIAgent(bus_url=bus_url, api_key=self.api_key),
+            "rd-lab": RDLabAgent(bus_url=bus_url, api_key=self.api_key),
         }
 
         log.info(
