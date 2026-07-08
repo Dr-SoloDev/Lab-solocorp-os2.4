@@ -126,7 +126,7 @@
       "enabled": true,
       "timeout": 30000,
       "env": {
-        "SOLOCORP_API_KEY": "sk-solocorp-admin-local-dev-001"
+        "SOLOCORP_API_KEY": "{env:SOLOCORP_API_KEY}"
       }
     },
     "github": {
