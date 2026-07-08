@@ -51,6 +51,10 @@
 
 ## 3. Workflow Process
 
+### Usage Policy — ก่อนเริ่มทุกครั้ง
+> อ่าน **Red Team Framework → Section 1: Usage Policy** ก่อนเริ่ม campaign ทุกครั้ง
+> โดยเฉพาะ [1.5 Red Lines](#) — สิ่งที่ห้ามทำเด็ดขาด
+
 ### On-Demand
 
 | Trigger | Action |

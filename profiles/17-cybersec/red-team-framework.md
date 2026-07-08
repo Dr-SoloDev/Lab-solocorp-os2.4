@@ -7,19 +7,95 @@
 
 ## สารบัญ
 
-1. [Objectives](#1-objectives)
-2. [Scope](#2-scope)
-3. [Attack Surface](#3-attack-surface)
-4. [Methodology](#4-methodology)
-5. [Campaign Types](#5-campaign-types)
-6. [Reporting](#6-reporting)
-7. [Tools & Techniques](#7-tools--techniques)
-8. [Rules of Engagement](#8-rules-of-engagement)
-9. [Playbooks](#9-playbooks)
+1. [Usage Policy — การอนุญาตใช้เครื่องมือ](#1-usage-policy--การอนุญาตใช้เครื่องมือ)
+2. [Objectives](#2-objectives)
+3. [Scope](#3-scope)
+4. [Attack Surface](#4-attack-surface)
+5. [Methodology](#5-methodology)
+6. [Campaign Types](#6-campaign-types)
+7. [Reporting](#7-reporting)
+8. [Tools & Techniques](#8-tools--techniques)
+9. [Rules of Engagement](#9-rules-of-engagement)
+10. [Playbooks](#10-playbooks)
 
 ---
 
-## 1. Objectives
+## 1. Usage Policy — การอนุญาตใช้เครื่องมือ
+
+> Framework นี้ครอบคลุม **ทุกเครื่องมือใน Red Team Arsenal** รวมถึง HackAgent, gitleaks, custom fuzzer, และ manual testing techniques
+> ทุกคนที่เกี่ยวข้องต้องเข้าใจนโยบายนี้ก่อนเริ่มใช้งาน
+
+### 1.1 When to Use — ใช้เมื่อไหร่
+
+| สถานการณ์ | ใช้ | ไม่ใช้ | เหตุผล |
+|:-----------|:--:|:------:|:--------|
+| **Quarterly Red Team** | ✅ | — | รอบปกติทุก 3 เดือน — full scope |
+| **Major release audit** | ✅ | — | ก่อน deploy major version ใหม่ |
+| **มี feature ด้าน security ใหม่** | ✅ | — | Purple Team — security + engineering ร่วมกัน |
+| **รับ client ใหม่ / Go-Live** | ✅ | — | ต้องมั่นใจว่าระบบ safe ก่อน client เข้า |
+| **เปลี่ยน architecture ใหญ่** | ✅ | — | เช่น เปลี่ยน auth layer, routing, bus |
+| **พบ incident + deploy hotfix** | ❌ | ✅ | ใช้ Blue Team (Incident Response) — ไม่ใช่ Red Team |
+| **Development ปกติ** | ❌ | ✅ | Dev ใช้ unit test — ไม่ต้อง Red Team |
+| **ผลิต content / marketing** | ❌ | ✅ | ไม่เกี่ยวข้องกับ security |
+| **Client ต้องการ penetration test report** | ✅ | — | ใช้ Red Team report เป็นหลักฐาน |
+
+### 1.2 Who Approves — ใครอนุมัติ
+
+| ระดับ | ใคร | อนุมัติอะไร |
+|:------|:----|:------------|
+| **🟢 Campaign ปกติ** | `@red-team-operator` ตัดสินใจเองได้ | Quarterly, Point-Release, Purple Team — ตาม schedule |
+| **🟡 Campaign พิเศษ** | `@cybersec-sai` (ซาย) | นอก schedule, ขยาย scope, ใช้เทคนิคใหม่ |
+| **🔴 Campaign กระทบ production** | `@ceo-turbo` + `@cybersec-sai` | ทดสอบ production จริง, ทดสอบ client-facing system |
+| **🛑 เปลี่ยน Rules of Engagement** | `@ceo-turbo` | แก้ไขขอบเขตว่าอะไรทำได้/ไม่ได้ |
+
+> **หลักการ:** ถ้าไม่แน่ใจ → ถาม `@cybersec-sai` ก่อนเสมอ
+
+### 1.3 Who Can Use — ใครใช้ได้ / ใช้ไม่ได้
+
+| ใช้ได้ | ใช้ไม่ได้ |
+|:------|:----------|
+| ✅ `@red-team-operator` (Red Team Specialist) | ❌  Engineering — ขอให้ security test ได้, แต่自己做 ไม่ได้ |
+| ✅ `@cybersec-sai` (Head of Security) | ❌ External agents / third-party |
+| ✅ `@ceo-turbo` (CEO — เฉพาะ review) | ❌ CMO / Marketing / Content |
+| ✅ Architect team (เฉพาะ pipeline audit) | ❌ Client / customer |
+| | ❌任何人都 ไม่มี authorization |
+
+**เงื่อนไข:** ต้องอ่าน `red-team-framework.md` ทั้งฉบับก่อนใช้งานจริง
+
+### 1.4 Purpose — เพื่อเป้าหมายอะไร
+
+| เป้าหมาย | รายละเอียด |
+|:---------|:------------|
+| 🎯 **ค้นหา vulnerability ก่อน attacker** | ทดสอบทุก component ใน scope — MCP, Central Bus, Pipeline, Profiles |
+| 🎯 **ยืนยัน access control ทำงานจริง** | Auth bypass, privilege escalation, injection |
+| 🎯 **ทดสอบ AI Agent security** | Prompt Injection, Jailbreaking, Goal Hijacking, Tool Misuse (ใช้ HackAgent) |
+| 🎯 **เพิ่ม security awareness** | Findings → สอน Engineering / Product ว่า attack แบบไหนเกิดขึ้นได้ |
+| 🎯 **สร้างความเชื่อมั่นให้ client** | Red Team report = หลักฐานว่าระบบเรา secure |
+| 🎯 **Continuous improvement** | ทุก campaign → Lessons Learned → ปรับปรุงระบบ |
+
+### 1.5 Red Lines — สิ่งที่ห้ามทำเด็ดขาด
+
+> สิ่งเหล่านี้ **ไม่มีการอนุมัติให้ทำได้** — แม้แต่ CEO เองก็อนุญาตไม่ได้
+
+| # | Red Line | เหตุผล |
+|:-:|:---------|:--------|
+| 1 | ❌ **ทดสอบระบบนอก SoloCorp โดยไม่ได้รับอนุญาต** | ผิดกฎหมาย, ผิดจริยธรรม |
+| 2 | ❌ **แก้ไข / ลบ / ทำลาย data จริง** | เราคือ Red Team — ไม่ใช่ attacker จริง |
+| 3 | ❌ **Disrupt production service โดยไม่แจ้งล่วงหน้า** | ลูกค้าและครอบครัวต้องไม่เดือดร้อน |
+| 4 | ❌ **Social engineering บุคคลภายนอก** | ผิดกฎหมาย, ทำลายชื่อเสียงองค์กร |
+| 5 | ❌ **เผยแพร่ findings สู่สาธารณะ** | Confidential — รายงานภายในเท่านั้น |
+| 6 | ❌ **ใช้เครื่องมือ Red Team เพื่อประโยชน์ส่วนตัว** | abuse of power |
+| 7 | ❌ **แก้ไข SOUL.md หรือ profile ใดๆ** | identity ของ agent คือเส้นเลือดขององค์กร |
+| 8 | ❌ **ใช้ HackAgent / tools โจมตี agent อื่นใน SoloCorp โดยไม่แจ้งเจ้าของ department** | ทำลายความไว้ใจภายในครอบครัว |
+| 9 | ❌ **Ignore rules of engagement** | ถ้า RoE บอก scope A — อย่าแตะ scope B |
+| 10 | ❌ **Cover up finding** | ถ้าเจอ → รายงาน — ไม่ปิดบัง ไม่ลด severity |
+
+> **หัวใจของ Red Line:**  
+> *"เราเป็น Red Team เพื่อทำให้ SoloCorp ปลอดภัยขึ้น — ไม่ใช่เพื่อทำลาย"*
+
+---
+
+## 2. Objectives
 
 | ข้อ | วัตถุประสงค์ |
 |:--:|:-------------|
@@ -32,7 +108,7 @@
 
 ---
 
-## 2. Scope
+## 3. Scope
 
 ### 🔴 In Scope
 
@@ -55,7 +131,7 @@
 
 ---
 
-## 3. Attack Surface
+## 4. Attack Surface
 
 ```
 External Attackers (MCP Clients)
@@ -88,7 +164,7 @@ External Attackers (MCP Clients)
 
 ---
 
-## 4. Methodology
+## 5. Methodology
 
 ### Phase 1: Reconnaissance
 - รวบรวมข้อมูล open source (repo, docs, config)
@@ -118,7 +194,7 @@ External Attackers (MCP Clients)
 
 ---
 
-## 5. Campaign Types
+## 6. Campaign Types
 
 | Campaign | Frequency | Scope | Duration |
 |----------|-----------|-------|----------|
@@ -129,7 +205,7 @@ External Attackers (MCP Clients)
 
 ---
 
-## 6. Reporting
+## 7. Reporting
 
 ### Report Structure
 ```markdown
@@ -181,7 +257,7 @@ External Attackers (MCP Clients)
 
 ---
 
-## 7. Tools & Techniques
+## 8. Tools & Techniques
 
 | Tool | Use Case | วิธีใช้ |
 |------|----------|--------|
@@ -198,7 +274,7 @@ External Attackers (MCP Clients)
 
 ---
 
-## 8. Rules of Engagement
+## 9. Rules of Engagement
 
 ### ✅ ทำได้
 - ทดสอบทุก component ใน scope
@@ -221,7 +297,7 @@ External Attackers (MCP Clients)
 
 ---
 
-## 9. Playbooks
+## 10. Playbooks
 
 ### Playbook A: MCP Auth Bypass
 ```
