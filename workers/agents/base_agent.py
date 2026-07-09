@@ -56,6 +56,55 @@ class BaseAgent:
                 return line.replace("#", "").strip()
         return self.name
 
+    # ── LLM — ให้ Agent คิดเองได้ ────────────────────────────────────────
+
+    async def think(
+        self,
+        prompt: str,
+        max_tokens: int = 500,
+        temperature: float = 0.7,
+    ) -> str:
+        """ให้ LLM คิดและตอบกลับ ตามบทบาท (role) ของ Agent นี้
+
+        Args:
+            prompt: คำถาม/คำสั่งให้ LLM คิด
+            max_tokens: ความยาวสูงสุดของคำตอบ
+            temperature: 0.0 = ตายตัว, 1.0 = สร้างสรรค์
+
+        Returns:
+            str: คำตอบจาก LLM
+        """
+        from workers.llm_provider import think as llm_think
+
+        # สร้าง system prompt แบบกระชับจาก SOUL.md (ไม่เอาทั้งหมด)
+        soul_lines = self.soul.get("lines", [])
+        # ดึงเฉพาะบรรทัดสำคัญ: name, role, description, keywords
+        key_lines = []
+        for line in soul_lines[:60]:  # แค่ 60 บรรทัดแรก
+            stripped = line.strip()
+            if stripped and not stripped.startswith("#") and not stripped.startswith("---"):
+                key_lines.append(stripped)
+        soul_summary = "\n".join(key_lines[:20])  # สรุปสั้นๆ
+
+        system_prompt = (
+            f"คุณคือ {self.name} (ID: {self.agent_id}) "
+            f"ใน SoloCorp OS\n\n"
+            f"--- บทบาทย่อ ---\n{soul_summary}\n\n"
+            f"--- กฎ ---\n"
+            f"- ตอบเป็นภาษาไทย ยกเว้นคำศัพท์เทคนิค\n"
+            f"- กระชับ ได้ใจความ ภายใน 2-3 ย่อหน้า\n"
+            f"- ถ้าไม่รู้หรือไม่แน่ใจ ให้บอกตรงๆ\n"
+            f"- ใช้ข้อมูลจาก context ที่มี ไม่มโน\n"
+            f"- อย่าใช้ markdown หรือ emoji เกินจำเป็น"
+        )
+
+        return await llm_think(
+            prompt=prompt,
+            system_prompt=system_prompt,
+            max_tokens=max_tokens,
+            temperature=temperature,
+        )
+
     # ── Tools — เครื่องมือที่ Agent ใช้ ──────────────────────────────────
 
     async def read_file(self, path: str) -> str:

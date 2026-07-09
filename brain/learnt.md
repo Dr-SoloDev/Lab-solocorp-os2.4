@@ -28,3 +28,27 @@
 - CEO Auto-Load Protocol — P0
 - Department API Keys — P1
 - Agent Worker Service — P1
+
+---
+
+## Session 2026-07-09 — Agent Activation Go-Live
+
+### ✅ What worked
+- blueprint + ADR = Owner ไว้ใจให้ CEO เดินหน้าได้เอง
+- Command Handoff template — สั่งงานชัด มี deadline มี checkpoint
+- การ delegate ทันทีโดยไม่ลังเล = Decision Velocity ตาม SOUL
+
+### ❌ What didn't
+- ยังไม่ถึง checkpoint — ต้องรอดูว่าแต่ละกรมส่งงานตรง deadline ไหม
+- Agent Worker Service ยังไม่มี spec — critical path สำหรับ Phase 1
+
+### 💡 Insights
+1. **Owner ตัดสินใจเร็วถ้ามี blueprint ชัด** — อย่าให้ Owner ดูเฉพาะปัญหา ให้เสนอทางเลือก + recommendation
+2. **Command Handoff ใช้ template = professional** — delegation ≠ abandonment
+3. **July Pre-Activation = buffer สำคัญ** — ถ้าตกรีบปรับ plan ได้ก่อน August
+
+### 📌 Pending for next session (updated)
+- W1 Checkpoint 2026-07-16
+- Build Agent Worker Service
+- สร้าง OpenCode agent configs 5 กรม
+- Dry Run W4

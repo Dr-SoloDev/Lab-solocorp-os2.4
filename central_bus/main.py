@@ -37,6 +37,7 @@ from fastapi.responses import JSONResponse
 
 from central_bus.aar import AARGenerator
 from central_bus.api_compliance import router as compliance_router
+from central_bus.api_keys import validate_key, hash_key, extract_agent_from_key
 from central_bus.config import settings
 from central_bus.db import DbManager, ensure_db, get_db, new_id, now_iso
 from central_bus.facts import FactsService
@@ -90,6 +91,50 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── API Key Authentication Middleware ──────────────────────────────────
+_ADMIN_KEY = os.environ.get(
+    "SOLOCORP_API_KEY", "sk-solocorp-admin-local-dev-001"
+)
+
+
+@app.middleware("http")
+async def api_key_auth(request: Request, call_next):
+    """ตรวจสอบ API Key ทุก request (ยกเว้น health check)"""
+    # Skip auth for health and docs
+    if request.url.path in ("/v1/health", "/docs", "/openapi.json"):
+        return await call_next(request)
+
+    api_key = request.headers.get("X-API-Key", "")
+
+    # Admin key — ใช้ได้ทุกอย่าง
+    if api_key == _ADMIN_KEY:
+        return await call_next(request)
+
+    # Department key — validate กับ DB
+    if api_key:
+        try:
+            db = await ensure_db()
+            key_data = await validate_key(db, api_key)
+            if key_data:
+                # Attach key info to request state
+                request.state.agent_id = key_data["agent_id"]
+                request.state.key_scope = key_data["scope"]
+                return await call_next(request)
+        except Exception:
+            pass
+
+    # No valid key
+    return JSONResponse(
+        status_code=401,
+        content=_error_response(
+            code="UNAUTHORIZED",
+            message="Invalid or missing API key. Use X-API-Key header.",
+            detail={"hint": "Set header: X-API-Key: sk-{agent_id}-{random}"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ),
+    )
+
 
 # ── Include compliance validator router ───────────────────────────────
 app.include_router(compliance_router)

@@ -134,9 +134,27 @@ CREATE TABLE IF NOT EXISTS ceo_alerts (
     created_at      TEXT DEFAULT (datetime('now'))
 );
 
+-- Department API Keys
+CREATE TABLE IF NOT EXISTS api_keys (
+    id              TEXT PRIMARY KEY,
+    key_prefix      TEXT NOT NULL UNIQUE,
+    key_hash        TEXT NOT NULL,
+    department_id   TEXT NOT NULL,
+    department_name TEXT NOT NULL,
+    agent_id        TEXT NOT NULL,
+    scope           TEXT DEFAULT 'dept',
+    description     TEXT,
+    enabled         INTEGER DEFAULT 1,
+    created_at      TEXT DEFAULT (datetime('now')),
+    expires_at      TEXT,
+    created_by      TEXT
+);
+
 -- ── Indexes ─────────────────────────────────────────────────────────
 -- Composite indexes for common query patterns
 CREATE INDEX IF NOT EXISTS idx_queue_status_created ON queue(status, created_at);
+CREATE INDEX IF NOT EXISTS idx_api_keys_prefix ON api_keys(key_prefix);
+CREATE INDEX IF NOT EXISTS idx_api_keys_dept ON api_keys(department_id);
 CREATE INDEX IF NOT EXISTS idx_queue_agent_status ON queue(agent_id, status);
 CREATE INDEX IF NOT EXISTS idx_audit_entity ON audit_log(entity_type, entity_id);
 

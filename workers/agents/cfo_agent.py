@@ -1,6 +1,8 @@
-"""CFO Agent — @meetoo: Finance, Budget, Investment"""
+"""CFO Agent — @meetoo: Finance, Budget, Investment (พลัง LLM)"""
 
 from __future__ import annotations
+
+import json
 
 from workers.agents.base_agent import BaseAgent
 
@@ -18,50 +20,30 @@ class CFOAgent(BaseAgent):
         )
 
     async def execute(self, task: dict) -> dict:
-        """Execute CFO tasks"""
-        action = task.get("payload", {}).get("action", "")
-
-        if "budget" in action or "plan_budget" in action:
-            return await self._plan_budget(task)
-        elif "report" in action or "financial_report" in action:
-            return await self._financial_report(task)
-        elif "invest" in action or "investment" in action:
-            return await self._investment_analysis(task)
-        else:
-            # Generic: ปฏิบัติตามคำสั่ง
-            return {
-                "status": "completed",
-                "summary": f"CFO รับทราบ: {task.get('payload', {}).get('description', '')}",
-                "details": {"action": action, "note": "กำลังดำเนินการ"},
-            }
-
-    async def _plan_budget(self, task: dict) -> dict:
+        """Execute CFO tasks ด้วยพลัง LLM"""
         payload = task.get("payload", {})
-        tasks = payload.get("tasks", [])
+        action = payload.get("action", "")
+        description = payload.get("description", "")
+        params = payload.get("params", {})
+
+        # ให้ LLM คิดและตอบตามบทบาท
+        prompt_parts = [f"ได้รับงานจาก CEO:"]
+        if description:
+            prompt_parts.append(f"คำอธิบาย: {description}")
+        prompt_parts.append(f"action: {action}")
+        if params:
+            prompt_parts.append(f"parameters: {json.dumps(params, ensure_ascii=False)}")
+        prompt_parts.append(f"\nโปรดดำเนินการและรายงานผล")
+
+        llm_response = await self.think("\n".join(prompt_parts), max_tokens=400)
+
         return {
             "status": "completed",
-            "summary": "✅ วางแผน budget เสร็จสิ้น",
+            "summary": llm_response[:200],
             "details": {
-                "action": "plan_budget",
-                "tasks_processed": tasks,
-                "result": {
-                    "current_q": "ตรวจสอบแล้ว",
-                    "q3_q4_estimated": True,
-                    "allocation": "รอ CEO อนุมัติ",
-                },
+                "action": action,
+                "agent": self.agent_id,
+                "llm_used": True,
+                "full_response": llm_response,
             },
-        }
-
-    async def _financial_report(self, task: dict) -> dict:
-        return {
-            "status": "completed",
-            "summary": "📊 รายงานการเงินพร้อมแล้ว",
-            "details": {"status": "ready", "period": task.get("payload", {}).get("period", "current")},
-        }
-
-    async def _investment_analysis(self, task: dict) -> dict:
-        return {
-            "status": "completed",
-            "summary": "📈 วิเคราะห์การลงทุนเสร็จสิ้น",
-            "details": {"recommendation": "รอ CEO ตัดสินใจ"},
         }

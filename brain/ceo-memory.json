@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-07-08T16:00:00Z",
+  "last_updated": "2026-07-09T12:00:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -194,6 +194,12 @@
       "title": "Compliance Validator Skill",
       "date": "2026-06-26",
       "status": "Accepted"
+    },
+    {
+      "id": "ADR-014",
+      "title": "Agent Activation System — Go-Live",
+      "date": "2026-07-09",
+      "status": "Accepted"
     }
   ],
   "system_status": {
@@ -255,6 +261,16 @@
       "session": "2026-07-08",
       "lesson": "ทีมไม่ต้องพร้อมทุกคนพร้อมกัน — เริ่มที่ 5 กรมหลักก่อน (CFO, Architect, Engineering, Product, Orchestrator)",
       "impact": "Agent Activation แบบ incremental"
+    },
+    {
+      "session": "2026-07-09",
+      "lesson": "Owner ตัดสินใจเร็วถ้ามี blueprint ชัด — blueprint + ADR = Owner ไว้ใจให้ CEO เดินหน้าได้เอง",
+      "impact": "เตรียม blueprint ทุกครั้งก่อนขอ decision จาก Owner"
+    },
+    {
+      "session": "2026-07-09",
+      "lesson": "Command Handoff ต้องมี checkpoint + deadline ชัด — delegation ≠ abandonment",
+      "impact": "ใช้ Command Handoff template ทุกครั้งที่ delegate P0/P1"
     }
   ],
   "pending_initiatives": [
@@ -269,8 +285,8 @@
       "priority": "P0",
       "task": "Agent Activation System — ทำให้ 55+ specialists มีตัวตน",
       "owner": "CEO + Owner",
-      "status": "design",
-      "note": "เริ่มที่ 5 กรมหลักก่อน"
+      "status": "in_progress",
+      "note": "Owner ไฟเขียว 2026-07-09 — Pre-Activation July, Phase 1 Go-Live August"
     },
     {
       "priority": "P1",
@@ -316,6 +332,30 @@
     }
   ],
   "sessions": [
+    {
+      "date": "2026-07-09",
+      "duration": "active",
+      "summary": "Owner ไฟเขียว Agent Activation System — เริ่ม Pre-Activation July → Phase 1 August",
+      "key_decisions": [
+        "ADR-014: Agent Activation System Go-Live approved by Owner Dr.solodev",
+        "เลือก Hybrid (A + C) Method — OpenCode Agents + Python Worker",
+        "เริ่มที่ 5 กรมหลักก่อน: CFO, Architect, Engineering, Product, Orchestrator",
+        "July = Pre-Activation, August = Phase 1 Go-Live"
+      ],
+      "achievements": [
+        "ADR-014-agent-activation-go-live.md — decision record",
+        "Command Handoff → @architect-songsak — Worker Service Design",
+        "Command Handoff → @product-produck — PRD + Sprint Plan",
+        "Command Handoff → @changful — Agent Configs + Effort",
+        "Command Handoff → @orchestrator-wut — Timeline + Gates + Dry Run",
+        "Command Handoff → @cfo-meetoo — Resource + Budget Assessment",
+        "brain/ceo-memory.json — updated with ADR-014 + new session"
+      ],
+      "pending_next": [
+        "W1 Checkpoint 2026-07-16: รอ deliverables จาก 5 กรม",
+        "เริ่มสร้าง Agent Worker Service ทันทีที่ spec เสร็จ"
+      ]
+    },
     {
       "date": "2026-07-08",
       "duration": "active",

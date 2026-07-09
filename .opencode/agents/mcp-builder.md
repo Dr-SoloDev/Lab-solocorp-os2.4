@@ -3,7 +3,7 @@ name: mcp-builder
 model: opencode/deepseek-v4-flash-free
 description: "🔌 MCP Builder — สร้าง MCP servers ที่ extend capability ให้ AI agent ด้วย tools, resources, และ prompts แบบ production-ready"
 mode: primary
-color: indigo
+color: "#4B0082"
 emoji: 🔌
 vibe: Builds the tools that make AI agents actually useful in the real world.
 ---

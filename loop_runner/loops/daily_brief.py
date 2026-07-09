@@ -1,54 +1,65 @@
-import re
-import subprocess
+"""Daily Brief — CEO Morning Briefing via LLM Provider + Central Bus"""
+
+import asyncio
+import json
+import os
+import urllib.request
 from datetime import timedelta
 from pathlib import Path
+
 from ..runner import Loop
 
+# LLM Provider
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from workers.llm_provider import think
 
-def _run(script: str, op: str) -> str:
-    r = subprocess.run(
-        [str(Path.home() / ".local/bin" / script), op],
-        capture_output=True, text=True, timeout=10,
-    )
-    return r.stdout.strip() if r.returncode == 0 else ""
+BUS_URL = os.environ.get("SOLOCORP_BUS_URL", "http://127.0.0.1:8099")
+API_KEY = os.environ.get("SOLOCORP_API_KEY", "sk-solocorp-admin-local-dev-001")
 
 
-def _extract(text: str, pattern: str) -> str:
-    m = re.search(pattern, text)
-    return m.group(1).strip() if m else "N/A"
+def _fetch_facts() -> list[dict]:
+    """ดึง facts จาก Central Bus เพื่อให้ LLM ใช้เป็นข้อมูล"""
+    try:
+        req = urllib.request.Request(
+            f"{BUS_URL}/v1/context",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            method="POST",
+        )
+        resp = json.loads(urllib.request.urlopen(req, timeout=10).read())
+        return resp.get("facts", [])
+    except Exception as e:
+        return [{"id": "error", "content": f"ไม่สามารถเชื่อมต่อ Central Bus: {e}"}]
 
 
 class DailyBriefLoop(Loop):
     loop_id = "daily_brief"
     interval = timedelta(hours=20)
     trust_level = 1  # L1 report only
-    model_hint = "glm-5.2"  # cron — cheap model for structured data fetch
 
     def run(self) -> str:
-        summary_txt = _run("mcp-fallback-finance", "get_summary")
-        runway_txt  = _run("mcp-fallback-finance", "get_runway")
-        inbox_txt   = _run("mcp-fallback-brain", "read_inbox")
+        facts = _fetch_facts()
+        facts_text = "\n".join(
+            f"- [{f.get('id','?')}] {f.get('content','')[:200]}"
+            for f in facts[:20]
+        )
 
-        cash     = _extract(summary_txt, r"คงเหลือ:\s*([\d,\.]+\s*บาท)")
-        income   = _extract(summary_txt, r"รายรับ:\s*([\d,\.]+\s*บาท)")
-        expense  = _extract(summary_txt, r"รายจ่าย:\s*([\d,\.]+\s*บาท)")
-        runway   = _extract(runway_txt,  r"Runway:\s*([\d\.]+)\s*เดือน")
-
-        lines = [
-            "## CEO Morning Brief",
-            f"💰 Cash: {cash} | รายรับ: {income} | รายจ่าย: {expense}",
-            f"📆 Runway: {runway} เดือน",
-        ]
+        prompt = (
+            f"คุณคือ CFO ของ SoloCorp OS\n\n"
+            f"นี่คือข้อมูลสถานะปัจจุบันขององค์กร:\n{facts_text}\n\n"
+            f"กรุณาสรุปรายงานตอนเช้าสำหรับ CEO (เทอโบ) ในรูปแบบ:\n"
+            f"1. สถานะการเงินโดยรวม\n"
+            f"2. สิ่งที่ต้องจับตามองวันนี้\n"
+            f"3. คำแนะนำสำหรับ CEO\n"
+            f"ใช้ภาษาไทย สั้น กระชับ ไม่เกิน 10 บรรทัด"
+        )
 
         try:
-            if float(runway) < 6:
-                lines.append(f"🚨 CRITICAL: Runway {runway} เดือน — ต่ำกว่า 6 เดือน! escalate meetoo ทันที")
-        except (ValueError, TypeError):
-            pass
-
-        # Brain inbox summary (count lines with content)
-        inbox_items = [l for l in inbox_txt.splitlines() if l.strip() and not l.startswith("📥")]
-        if inbox_items:
-            lines.append(f"📥 Inbox: {len(inbox_items)} items")
-
-        return "\n".join(lines)
+            loop = asyncio.new_event_loop()
+            result = loop.run_until_complete(
+                think(prompt, system_prompt="คุณคือ CFO meetoo ของ SoloCorp OS")
+            )
+            loop.close()
+            return result
+        except Exception as e:
+            return f"⚠️ daily_brief: LLM ไม่พร้อม — {e}"

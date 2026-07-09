@@ -95,3 +95,38 @@ Owner ตัดสินใจ Agent Activation method → Build Worker → Acti
 
 ---
 
+## Session #3 — 2026-07-09
+
+**เข้าระบบ:** Auto — Assistant Mode (OpenCode Manager)
+**Owner:** Dr.solodev
+
+### Key Events
+1. ✅ CEO Auto-Load Protocol — identity + memory + session log + learnt — อ่านครบ
+2. ✅ Owner อนุมัติ **Agent Activation System** — ไฟเขียว!
+3. ✅ สร้าง `decisions/ADR-014-agent-activation-go-live.md`
+4. ✅ ส่ง Command Handoff ไป 5 กรมหลัก:
+   - @architect-songsak — Agent Worker Service Design
+   - @product-produck — PRD + Sprint Plan
+   - @changful — OpenCode Agent Configs + Effort
+   - @orchestrator-wut — Pipeline Timeline + Checkpoint Gates
+   - @cfo-meetoo — Resource Assessment + API Key Plan
+5. ✅ อัปเดต brain/ceo-memory.json v2.0 — ADR-014 + Session #3 + Lessons
+6. ✅ อัปเดต brain/learnt.md
+
+### Decisions Made
+- ADR-014: Agent Activation Go-Live — Hybrid (A + C) Method
+- Timeline: July = Pre-Activation, August = Phase 1 (5 กรมหลัก)
+
+### Pending
+- [ ] W1 Checkpoint 2026-07-16 — รอ deliverables จาก 5 กรม
+- [ ] Agent Worker Service build (เริ่มทันทีที่ spec จาก @architect-songsak เสร็จ)
+- [ ] OpenCode agent configs สำหรับ 5 กรมหลัก (รอ spec จาก @architect-songsak)
+
+### Next Steps
+1. รอ spec จาก @architect-songsak (deadline W2)
+2. สร้าง Agent Worker Service ตาม spec
+3. Dry Run W4 — CEO สั่งงานจริง → Agent รับ → ทำ → ส่งผลกลับ
+4. **August: Phase 1 Go-Live** 🚀
+
+---
+
