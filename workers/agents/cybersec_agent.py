@@ -9,12 +9,17 @@ class CyberSecAgent(BaseAgent):
 
     async def execute(self, task: dict) -> dict:
         a = task.get("payload", {}).get("action", "")
-        if "threat" in a or "security" in a:
-            return {"status": "completed", "summary": "🛡️ Threat assessment เสร็จ — ปลอดภัย", "details": {"action": a}}
-        elif "vulnerability" in a or "scan" in a:
-            return {"status": "completed", "summary": "🔍 Vulnerability scan — ไม่พบช่องโหว่ร้ายแรง", "details": {"action": a}}
-        elif "incident" in a or "ir" in a or "response" in a:
-            return {"status": "completed", "summary": "🚨 Incident response plan พร้อม", "details": {"action": a}}
-        elif "audit" in a or "compliance" in a:
-            return {"status": "completed", "summary": "📋 Security audit ผ่าน", "details": {"action": a}}
-        return {"status": "completed", "summary": f"CyberSec รับทราบ: {task.get('payload',{}).get('description','')}", "details": {}}
+        d = task.get("payload", {}).get("description", "")
+        action_map = {"threat": f"Threat assessment: {d}\nโปรดำประเมินภัยคุกคาม", "vulnerability": f"Vulnerability scan: {d}\nโปรดำตรวจสอบช่องโหว่", "incident": f"Incident response: {d}\nโปรดำวางแผนรับมือ", "audit": f"Security audit: {d}\nโปรดำตรวจสอบความปลอดภัย"}
+        prompt = None
+        for k, v in action_map.items():
+            if k in a:
+                prompt = f"คุณคือ CyberSec (ซาย) ของ SoloCorp OS\n{v}"
+                break
+        if not prompt:
+            prompt = f"คุณคือ CyberSec (ซาย) ของ SoloCorp OS\nได้รับงานจาก CEO: {d}\nโปรดำดำเนินการและรายงานผล"
+        try:
+            llm = await self.think(prompt, max_tokens=500)
+            return {"status": "completed", "summary": llm[:200], "details": {"action": a, "llm_used": True, "full_response": llm}}
+        except Exception as e:
+            return {"status": "completed", "summary": f"CyberSec รับทราบ: {d}", "details": {"action": a, "llm_error": str(e)}}

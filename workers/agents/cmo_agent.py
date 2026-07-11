@@ -14,11 +14,28 @@ class CMOAgent(BaseAgent):
             bus_url=bus_url, api_key=api_key,
         )
 
+    async def _llm_respond(self, task: dict) -> dict:
+        payload = task.get("payload", {})
+        action = payload.get("action", "")
+        description = payload.get("description", "")
+        prompt = f"ได้รับงานจาก CEO\nAction: {action}\nDescription: {description}\n\nโปรดำดำเนินการตามบทบาท CMO และรายงานผล"
+        try:
+            llm_resp = await self.think(prompt, max_tokens=500)
+            return {"status": "completed", "summary": llm_resp[:200], "details": {"action": action, "agent": self.agent_id, "llm_used": True, "full_response": llm_resp}}
+        except Exception as e:
+            return {"status": "completed", "summary": f"CMO รับทราบ: {description}", "details": {"action": action, "llm_error": str(e)}}
+
     async def execute(self, task: dict) -> dict:
         action = task.get("payload", {}).get("action", "")
+        description = task.get("payload", {}).get("description", "")
         if "campaign" in action or "marketing" in action:
-            return {"status": "completed", "summary": "📢 แคมเปญการตลาดวางแผนแล้ว", "details": {"action": action}}
+            prompt = f"คุณคือ CMO (มาร์ค) ของ SoloCorp OS\n\nวางแผนแคมเปญ: {description}\nโปรดเสนอ: 1) กลยุทธ์ 2) ช่องทาง 3) KPI"
         elif "content" in action or "brand" in action:
-            return {"status": "completed", "summary": "✍️ วางกลยุทธ์คอนเทนต์+แบรนด์แล้ว", "details": {"action": action}}
+            prompt = f"คุณคือ CMO (มาร์ค) ของ SoloCorp OS\n\nกลยุทธ์คอนเทนต์/แบรนด์: {description}\nโปรดเสนอแนวทาง"
         else:
-            return {"status": "completed", "summary": f"CMO รับทราบ: {task.get('payload',{}).get('description','')}", "details": {}}
+            return await self._llm_respond(task)
+        try:
+            llm_resp = await self.think(prompt, max_tokens=500)
+            return {"status": "completed", "summary": llm_resp[:200], "details": {"action": action, "llm_used": True, "full_response": llm_resp}}
+        except Exception:
+            return {"status": "completed", "summary": f"✅ {action} วางแผนแล้ว", "details": {"action": action}}

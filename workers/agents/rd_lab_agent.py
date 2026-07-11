@@ -12,10 +12,17 @@ class RDLabAgent(BaseAgent):
 
     async def execute(self, task: dict) -> dict:
         a = task.get("payload", {}).get("action", "")
-        if "research" in a or "explore" in a:
-            return {"status": "completed", "summary": "🔬 Research findings สรุปแล้ว", "details": {"action": a, "mode": "exploration"}}
-        elif "prototype" in a or "proof" in a or "poc" in a:
-            return {"status": "completed", "summary": "🧪 Proof of concept พร้อม", "details": {"action": a, "mode": "prototyping"}}
-        elif "experiment" in a or "test" in a:
-            return {"status": "completed", "summary": "⚗️ Experiment results  recorded", "details": {"action": a}}
-        return {"status": "completed", "summary": f"R&D Lab รับทราบ: Owner-direct research — no pipeline", "details": {"mode": "owner-direct"}}
+        d = task.get("payload", {}).get("description", "")
+        action_map = {"research": f"Research: {d}\nโปรดำวิจัยและสรุป findings", "prototype": f"Proof of concept: {d}\nโปรดำวางแผน POC", "experiment": f"Experiment: {d}\nโปรดำออกแบบการทดลอง"}
+        prompt = None
+        for k, v in action_map.items():
+            if k in a:
+                prompt = f"คุณคือ R&D Lab ของ SoloCorp OS (Owner-direct)\n{v}"
+                break
+        if not prompt:
+            prompt = f"คุณคือ R&D Lab ของ SoloCorp OS (Owner-direct)\nได้รับงานจาก CEO: {d}\nโปรดำดำเนินการและรายงานผล"
+        try:
+            llm = await self.think(prompt, max_tokens=500)
+            return {"status": "completed", "summary": llm[:200], "details": {"action": a, "llm_used": True, "full_response": llm}}
+        except Exception as e:
+            return {"status": "completed", "summary": f"R&D Lab รับทราบ: {d}", "details": {"action": a, "llm_error": str(e)}}

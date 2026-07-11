@@ -9,12 +9,17 @@ class UIAgent(BaseAgent):
 
     async def execute(self, task: dict) -> dict:
         a = task.get("payload", {}).get("action", "")
-        if "ui" in a or "interface" in a:
-            return {"status": "completed", "summary": "🖥️ UI design เสร็จสิ้น", "details": {"action": a}}
-        elif "component" in a or "library" in a:
-            return {"status": "completed", "summary": "🧩 Component library อัปเดตแล้ว", "details": {"action": a}}
-        elif "prototype" in a or "mockup" in a or "wireframe" in a:
-            return {"status": "completed", "summary": "📱 Prototype/Mockup พร้อม", "details": {"action": a}}
-        elif "responsive" in a or "mobile" in a:
-            return {"status": "completed", "summary": "📲 Responsive design เรียบร้อย", "details": {"action": a}}
-        return {"status": "completed", "summary": f"UI รับทราบ: {task.get('payload',{}).get('description','')}", "details": {}}
+        d = task.get("payload", {}).get("description", "")
+        action_map = {"ui": f"UI design: {d}\nโปรดำออกแบบ UI และรายงาน", "component": f"Component library: {d}\nโปรดำอัปเดต component", "prototype": f"Prototype: {d}\nโปรดำสร้าง prototype", "responsive": f"Responsive: {d}\nโปรดำออกแบบ responsive"}
+        prompt = None
+        for k, v in action_map.items():
+            if k in a:
+                prompt = f"คุณคือ UI Designer ของ SoloCorp OS\n{v}"
+                break
+        if not prompt:
+            prompt = f"คุณคือ UI Designer ของ SoloCorp OS\nได้รับงานจาก CEO: {d}\nโปรดำดำเนินการและรายงานผล"
+        try:
+            llm = await self.think(prompt, max_tokens=500)
+            return {"status": "completed", "summary": llm[:200], "details": {"action": a, "llm_used": True, "full_response": llm}}
+        except Exception as e:
+            return {"status": "completed", "summary": f"UI รับทราบ: {d}", "details": {"action": a, "llm_error": str(e)}}

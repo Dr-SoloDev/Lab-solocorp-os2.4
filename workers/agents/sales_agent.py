@@ -7,20 +7,21 @@ class SalesAgent(BaseAgent):
     """Sales — ดูแล B2B deals, sales pipeline"""
 
     def __init__(self, bus_url: str = "", api_key: str = ""):
-        super().__init__(
-            agent_id="sales",
-            name="Sales เซลส์",
-            profile_path="profiles/11-sales/SOUL.md",
-            bus_url=bus_url, api_key=api_key,
-        )
+        super().__init__("sales", "Sales เซลส์", "profiles/11-sales/SOUL.md", bus_url, api_key)
 
     async def execute(self, task: dict) -> dict:
-        action = task.get("payload", {}).get("action", "")
-        if "deal" in action or "pipeline" in action:
-            return {"status": "completed", "summary": "💼 Sales pipeline อัปเดตแล้ว", "details": {"action": action}}
-        elif "client" in action or "customer" in action or "prospect" in action:
-            return {"status": "completed", "summary": "🤝 ข้อมูลลูกค้าพร้อม — รอ CEO อนุมัติ proposal", "details": {"action": action}}
-        elif "strategy" in action or "plan" in action:
-            return {"status": "completed", "summary": "📊 วางกลยุทธ์การขายเสร็จสิ้น", "details": {"action": action}}
-        else:
-            return {"status": "completed", "summary": f"Sales รับทราบ: {task.get('payload',{}).get('description','')}", "details": {}}
+        a = task.get("payload", {}).get("action", "")
+        d = task.get("payload", {}).get("description", "")
+        action_map = {"deal": f"Deal strategy: {d}\nโปรดวิเคราะห์ deal และเสนอ strategy", "client": f"ลูกค้า: {d}\nโปรดวิเคราะห์ข้อมูลลูกค้า", "strategy": f"กลยุทธ์: {d}\nโปรดเสนอแผนกลยุทธ์การขาย"}
+        prompt = None
+        for k, v in action_map.items():
+            if k in a:
+                prompt = f"คุณคือ Sales (เซลส์) ของ SoloCorp OS\n{v}"
+                break
+        if not prompt:
+            prompt = f"คุณคือ Sales (เซลส์) ของ SoloCorp OS\nได้รับงานจาก CEO: {d}\nโปรดำดำเนินการและรายงานผล"
+        try:
+            llm = await self.think(prompt, max_tokens=500)
+            return {"status": "completed", "summary": llm[:200], "details": {"action": a, "llm_used": True, "full_response": llm}}
+        except Exception as e:
+            return {"status": "completed", "summary": f"Sales รับทราบ: {d}", "details": {"action": a, "llm_error": str(e)}}

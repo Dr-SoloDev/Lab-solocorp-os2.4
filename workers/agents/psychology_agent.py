@@ -9,12 +9,17 @@ class PsychologyAgent(BaseAgent):
 
     async def execute(self, task: dict) -> dict:
         a = task.get("payload", {}).get("action", "")
-        if "behavior" in a or "psych" in a:
-            return {"status": "completed", "summary": "🧠 Behavioral analysis เสร็จ", "details": {"action": a}}
-        elif "org" in a or "culture" in a or "team" in a:
-            return {"status": "completed", "summary": "🏢 Org health assessment — ปกติ", "details": {"action": a}}
-        elif "user" in a or "customer" in a:
-            return {"status": "completed", "summary": "👥 User behavior insight พร้อม", "details": {"action": a}}
-        elif "conflict" in a or "mediation" in a:
-            return {"status": "completed", "summary": "🤝 Conflict resolution เสนอแนวทางแล้ว", "details": {"action": a}}
-        return {"status": "completed", "summary": f"Psychology รับทราบ: {task.get('payload',{}).get('description','')}", "details": {}}
+        d = task.get("payload", {}).get("description", "")
+        action_map = {"behavior": f"Behavioral analysis: {d}\nโปรดำวิเคราะห์พฤติกรรม", "org": f"Org health: {d}\nโปรดำประเมินสุขภาพองค์กร", "user": f"User behavior: {d}\nโปรดำวิเคราะห์ผู้ใช้", "conflict": f"Conflict resolution: {d}\nโปรดำเสนอแนวทางแก้ไข"}
+        prompt = None
+        for k, v in action_map.items():
+            if k in a:
+                prompt = f"คุณคือ Psychology (จิต) ของ SoloCorp OS\n{v}"
+                break
+        if not prompt:
+            prompt = f"คุณคือ Psychology (จิต) ของ SoloCorp OS\nได้รับงานจาก CEO: {d}\nโปรดำดำเนินการและรายงานผล"
+        try:
+            llm = await self.think(prompt, max_tokens=500)
+            return {"status": "completed", "summary": llm[:200], "details": {"action": a, "llm_used": True, "full_response": llm}}
+        except Exception as e:
+            return {"status": "completed", "summary": f"Psychology รับทราบ: {d}", "details": {"action": a, "llm_error": str(e)}}

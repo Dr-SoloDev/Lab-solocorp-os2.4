@@ -9,12 +9,17 @@ class Web3Agent(BaseAgent):
 
     async def execute(self, task: dict) -> dict:
         a = task.get("payload", {}).get("action", "")
-        if "blockchain" in a or "chain" in a:
-            return {"status": "completed", "summary": "⛓️ Blockchain analysis เสร็จ", "details": {"action": a}}
-        elif "defi" in a or "finance" in a:
-            return {"status": "completed", "summary": "🏦 DeFi strategy วางแผนแล้ว", "details": {"action": a}}
-        elif "solana" in a or "web3" in a:
-            return {"status": "completed", "summary": "◎ Solana dev พร้อมดำเนินการ", "details": {"action": a}}
-        elif "nft" in a or "token" in a:
-            return {"status": "completed", "summary": "🪙 Token/NFT design เสร็จ", "details": {"action": a}}
-        return {"status": "completed", "summary": f"Web3 รับทราบ: {task.get('payload',{}).get('description','')}", "details": {}}
+        d = task.get("payload", {}).get("description", "")
+        action_map = {"blockchain": f"Blockchain: {d}\nโปรดำวิเคราะห์และให้ข้อเสนอ", "defi": f"DeFi: {d}\nโปรดำเสนอ DeFi strategy", "solana": f"Solana: {d}\nโปรดำวางแผนพัฒนา", "nft": f"Token/NFT: {d}\nโปรดำเสนอ design"}
+        prompt = None
+        for k, v in action_map.items():
+            if k in a:
+                prompt = f"คุณคือ Web3 (อัยวา) ของ SoloCorp OS\n{v}"
+                break
+        if not prompt:
+            prompt = f"คุณคือ Web3 (อัยวา) ของ SoloCorp OS\nได้รับงานจาก CEO: {d}\nโปรดำดำเนินการและรายงานผล"
+        try:
+            llm = await self.think(prompt, max_tokens=500)
+            return {"status": "completed", "summary": llm[:200], "details": {"action": a, "llm_used": True, "full_response": llm}}
+        except Exception as e:
+            return {"status": "completed", "summary": f"Web3 รับทราบ: {d}", "details": {"action": a, "llm_error": str(e)}}
