@@ -1,43 +1,62 @@
 # SoloCorp OS — Operations Runbook
 
-> **Version:** 0.1.0  
-> **Last Updated:** 2026-07-05  
-> **Service:** `govctl` — Governance CLI + FastAPI Dashboard Backend  
-> **Port:** 8765 (default)
+> **Version:** 0.2.0  
+> **Last Updated:** 2026-07-12  
+> **Service:** Central Bus — Core Event Bus  
+> **Port:** 8099 (default)
 
 ---
 
 ## Architecture Overview
 
-SoloCorp OS is a governance-driven orchestration platform. The `govctl` CLI manages
-governance artifacts (ADRs, RFCs, Guards) as TOML files in `gov/`, publishes them
-to the Central Bus (file-based queue at `bus/queue/`), and tracks project pipeline
-state in `bus/projects/`. The Dashboard serves a FastAPI REST API at port 8765
-with a dark-themed SPA for monitoring governance, agents, pipeline progress, and
-system metrics — plus a terminal-based dashboard via `govctl dashboard`.
+SoloCorp OS is a multi-agent orchestration platform. The **Central Bus** (FastAPI
+on port 8099) is the core event bus — it accepts governance artifacts, manages a
+file-based priority queue at `bus/queue/`, and tracks project pipeline state in
+`bus/projects/`. The **Agent Worker Service** polls the Central Bus queue,
+routes messages to the appropriate agent (CFO, Architect, Engineering, Product,
+QA, etc.), and reports results back. The **Loop Runner** (cron every 30 min)
+executes recurring governance loops. The **MCP Server** exposes SoloCorp
+capabilities to external coding agents via the Model Context Protocol.
 
 ```
-User
- ├── govctl CLI (terminal)
- │    ├── adr/rfc/guard CRUD
- │    ├── threshold assessment
- │    ├── bridge daemon (watch + publish)
- │    ├── ao agent orchestration
- │    ├── api start/stop
- │    └── dashboard (terminal UI)
- ├── Web Dashboard (http://localhost:8765)
- └── REST API (port 8765)
-      ├── GET  /api/v1/health
-      ├── GET  /api/v1/gov/*
-      ├── GET  /api/v1/agents
-      ├── POST /api/v1/agents/{id}/run
-      ├── GET  /api/v1/pipeline/status
-      └── GET  /api/v1/metrics
+                  ┌──────────────────────┐
+                  │   External Agents     │
+                  │  (OpenCode, Claude    │
+                  │   Code, Codex, etc.)  │
+                  └──────┬───────────────┘
+                         │ MCP
+                  ┌──────▼───────────────┐
+                  │  solocorp_mcp.server │
+                  └──────┬───────────────┘
+                         │
+                  ┌──────▼───────────────┐
+                  │   Central Bus        │
+                  │  (port 8099)         │
+                  │  bus/queue/          │
+                  └──────┬───────────────┘
+                         │ poll
+                  ┌──────▼───────────────┐
+                  │  Agent Worker        │
+                  │  (agent_worker_      │
+                  │   service.py)        │
+                  └──────┬───────────────┘
+                         │
+            ┌────────────┼────────────┐
+            ▼            ▼            ▼
+       CFO Agent   Architect    Engineering
+       Product     QA           ...
+                         
+┌──────────────────────────────────────┐
+│  Loop Runner (cron */30)             │
+│  loop_runner.main                    │
+└──────────────────────────────────────┘
 ```
 
 ---
 
-## Commands Reference
+> **Note:** `govctl` is a legacy/optional CLI. The primary services are Central Bus (port 8099), Agent Worker, Loop Runner, and MCP Server. See sections below for those.
+
+## Commands Reference (Legacy)
 
 ### govctl CLI
 
@@ -85,189 +104,325 @@ User
 
 ## Startup Sequence
 
-### 1. Ensure Central Bus directories exist
+### 1. Prepare environment
 
 ```bash
-ls bus/    # Should show: governance/  projects/  queue/
+cp .env.example .env
+# Edit .env with your API keys if needed
+```
 
-# If empty, initialize a test project:
-python -c "
-from central_bus.state import init_project
-init_project('example', name='Example Project')
+### 2. Bootstrap CEO memory
+
+```bash
+bash scripts/bootstrap-ceo.sh
+```
+
+This copies `.env.example` → `.env` (if not present), initializes Central Bus
+directories, restores CEO memory from `brain/ceo-memory.json`, and configures
+MCP for all supported coding agents (OpenCode, Claude Code, Codex, Cursor).
+
+### 3. Start all services
+
+```bash
+bash scripts/start-services.sh
+```
+
+This launches (in order):
+| Service | Command | Log |
+|---------|---------|-----|
+| Central Bus | `uvicorn central_bus.main:app --host 127.0.0.1 --port 8099` | `/tmp/central_bus.log` |
+| Agent Worker | `python3 -m workers.agent_worker_service` | `/tmp/agent_worker.log` |
+
+### 4. (Optional) Start Loop Runner
+
+The Loop Runner runs via cron every 30 minutes. To run it manually:
+
+```bash
+python3 -m loop_runner.main
+```
+
+To install the cron job:
+
+```bash
+crontab -l 2>/dev/null; echo "*/30 * * * * cd $(pwd) && python3 -m loop_runner.main >> /tmp/loop_runner.log 2>&1" | crontab -
+```
+
+### 5. (Optional) Start MCP Server
+
+```bash
+python3 -m solocorp_mcp.server
+```
+
+The MCP server is also auto-configured in `opencode.json` and
+`.claude/settings.json` by `bootstrap-ceo.sh`.
+
+### 6. Import routing rules (one-time)
+
+Routing rules in `bus/system/routing_rules.json` must be imported into SQLite:
+
+```bash
+source .venv/bin/activate
+python3 -c "
+import json, sqlite3, uuid
+db = sqlite3.connect('central_bus/bus.db')
+rules = json.load(open('bus/system/routing_rules.json'))['rules']
+route_map = {
+    'cfo':'cfo-meetoo','cmo':'cmo-mark','architect':'architect-songsak',
+    'product':'product-produck','engineering':'changful','design':'design-kreet',
+    'ui_designer':'ui-designer','qa':'qa','sales':'sales','support':'support',
+    'web3':'web3-aywa','legal':'legal-tulya','orchestrator':'orchestrator-wut',
+    'ceo':'ceo-turbo',
+}
+priority_map = {'critical':0,'high':1,'normal':2,'low':3}
+db.execute('DELETE FROM routing_rules')
+for r in rules:
+    db.execute('INSERT INTO routing_rules (id,name,description,source_agent,target_department,condition,priority,enabled,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,datetime(\"now\"),datetime(\"now\"))',
+        (str(uuid.uuid4()), r['rule_id'], 'Route '+str(r['trigger']['keywords'])+' to '+route_map.get(r['route_to'],r['route_to']), '*', route_map.get(r['route_to'],r['route_to']+'-unknown'), json.dumps({'keywords':r['trigger']['keywords']}), priority_map.get(r.get('priority','normal'),2), 1))
+db.commit()
+print('✅ Imported', len(rules), 'routing rules')
 "
 ```
 
-### 2. Start the bridge daemon (optional — watches gov/ for changes)
+### 8. Verify services
 
 ```bash
-govctl bridge start
-# → Bridge daemon started (PID 12345)
+# Central Bus health check
+curl http://127.0.0.1:8099/health
 
-# Verify:
-govctl bridge status
-# → Bridge is running (PID 12345)
+# Check running processes
+ps aux | grep -E 'central_bus|agent_worker|loop_runner|solocorp_mcp'
+
+# View logs
+tail -f /tmp/central_bus.log
+tail -f /tmp/agent_worker.log
 ```
 
-### 3. Publish existing governance artifacts (one-time)
+---
+
+## Agent Worker Service
+
+The Agent Worker Service polls Central Bus queue, routes messages to the
+appropriate agent, and reports results back. It uses `workers/llm_provider.py`
+for LLM inference and supports 15+ agents defined in `workers/agents/`.
+
+### Start
 
 ```bash
-govctl bridge publish gov/adr/ADR-001.toml
-govctl bridge publish gov/adr/ADR-002.toml
-# ... or publish all at once via the bridge watcher (step 2 does this automatically)
+python3 -m workers.agent_worker_service
 ```
 
-### 4. Start the API server
+Or as a background daemon (recommended with `-u` for unbuffered stdout):
 
 ```bash
-govctl api start
-# → API server started (PID 12346) on http://0.0.0.0:8765
+nohup python3 -u -m workers.agent_worker_service > /tmp/agent_worker.log 2>&1 &
 ```
 
-### 5. Open the web dashboard
-
-```
-http://localhost:8765
-
-Expected: Dark-themed SoloCorp OS dashboard with:
-  - Green "Online" health indicator
-  - Governance artifact counts (ADRs, RFCs, Guards)
-  - Agent cards with Run buttons
-  - Pipeline project progress bars
-  - Monitoring stats + event log
-```
-
-### 6. (Optional) Start AO bridge
+### Stop
 
 ```bash
-govctl bridge ao-start
-# Requires AO CLI installed and gov/ao_config.toml with [ao].enabled = true
+pkill -f workers.agent_worker_service
 ```
+
+### Status
+
+```bash
+ps aux | grep agent_worker_service
+
+# View recent activity
+tail -20 /tmp/agent_worker.log
+```
+
+### Logs
+
+```
+/tmp/agent_worker.log
+```
+
+---
+
+## Loop Runner
+
+The Loop Runner executes recurring governance loops (strategy review, market
+scan, risk assessment, etc.) defined in `loop_runner/loops/`.
+
+### Run manually
+
+```bash
+python3 -m loop_runner.main
+```
+
+### Cron schedule
+
+Runs every 30 minutes. To set up:
+
+```bash
+crontab -l 2>/dev/null
+echo "*/30 * * * * cd /path/to/repo && python3 -m loop_runner.main >> /tmp/loop_runner.log 2>&1" | crontab -
+```
+
+### Logs
+
+```
+/tmp/loop_runner.log
+```
+
+---
+
+## MCP Server
+
+Exposes SoloCorp capabilities (departments, routing, commands) to external
+coding agents via Model Context Protocol.
+
+### Start
+
+```bash
+python3 -m solocorp_mcp.server
+```
+
+### Configured by
+
+`bootstrap-ceo.sh` writes MCP configs for:
+- OpenCode: `opencode.json`
+- Claude Code: `.claude/settings.json`
+- Codex CLI: `.codex/config.toml`
+- Cursor: `.cursor/mcp.json`
 
 ---
 
 ## Monitoring
 
-### Health Check
+### Central Bus Health Check
 
 ```bash
-curl http://localhost:8765/api/v1/health
-# → {"status":"ok","service":"govctl-api","version":"0.1.0"}
+curl http://127.0.0.1:8099/health
+# → {"status":"ok","service":"central-bus"}
 ```
 
-### Metrics
+### Queue Metrics
 
 ```bash
-curl http://localhost:8765/api/v1/metrics | python -m json.tool
-# → {
-#     "timestamp": "2026-07-05T...",
-#     "active_projects": 3,
-#     "queued_messages": {"critical": 0, "high": 0, "normal": 12, "low": 0},
-#     "total_queued": 12,
-#     "adr_count": 6,
-#     "rfc_count": 1,
-#     "guard_count": 1,
-#     "agent_count": 5,
-#     "recent_events": [...]
-#   }
+# Check queue file sizes
+wc -l bus/queue/*.jsonl
+
+# Inspect dead letters
+python -c "
+from central_bus.queue import list_dead_letters
+for dl in list_dead_letters():
+    print(dl['message']['id'], dl['reason'])
+"
 ```
 
-### Terminal Dashboard
+### Process Health
 
 ```bash
-# One-shot view
-govctl dashboard
+ps aux | grep -E 'central_bus|agent_worker|loop_runner|solocorp_mcp'
+```
 
-# Live-updating (every 5s)
-govctl dashboard --watch
+### Logs
 
-# Custom refresh rate
-govctl dashboard --watch --interval 2
+```bash
+# Central Bus
+tail -f /tmp/central_bus.log
+
+# Agent Worker
+tail -f /tmp/agent_worker.log
+
+# Loop Runner
+tail -f /tmp/loop_runner.log
 ```
 
 ---
 
 ## Restart Procedure
 
-Use this procedure to cleanly restart the govctl API server.
+Use this procedure to cleanly restart all services.
 
-### 1. Stop the API server
+### 1. Stop all services
 
 ```bash
-govctl api stop
-# → API server stopped
+# Stop Agent Worker
+pkill -f workers.agent_worker_service
+
+# Stop Central Bus
+pkill -f central_bus.main
+
+# Stop Loop Runner (if running)
+pkill -f loop_runner.main
+
+# Stop MCP Server (if running)
+pkill -f solocorp_mcp.server
 ```
 
-### 2. Start the API server
+### 2. Start all services
 
 ```bash
-govctl api start
-# → API server started (PID ...) on http://0.0.0.0:8765
+bash scripts/start-services.sh
 ```
 
-### 3. Verify the server is running
+### 3. Verify
 
 ```bash
-govctl api status
-# → API server is running (PID ...) on port 8765
+# Central Bus health check
+curl http://127.0.0.1:8099/health
 
-# Optional: confirm via health endpoint
-curl http://localhost:8765/api/v1/health
-# → {"status":"ok","service":"govctl-api","version":"0.1.0"}
+# Check running processes
+ps aux | grep -E 'central_bus|agent_worker|loop_runner|solocorp_mcp'
 ```
 
 ---
 
 ## Troubleshooting
 
-### Bridge won't start
+### Central Bus won't start
 
 ```
-Symptom:  "Bridge is already running"
-Fix:      govctl bridge stop    (kills stale PID)
-Confirm:  govctl bridge status  → "Bridge is not running"
-Restart:  govctl bridge start
-```
-
-If `PID_FILE` (`~/.govctl/bridge.pid`) points to a dead process:
-
-```bash
-rm ~/.govctl/bridge.pid
-govctl bridge start
-```
-
-### API won't start
-
-```
-Symptom:  "Port 8765 already in use"
-Fix:      govctl api stop
+Symptom:  "Port 8099 already in use"
+Fix:      pkill -f central_bus.main
           # or kill manually:
-          kill $(lsof -t -i:8765)
-          govctl api start
+          kill $(lsof -t -i:8099)
+Restart:  bash scripts/start-services.sh
 
 Symptom:  "uvicorn is not installed"
 Fix:      pip install uvicorn[standard]
 ```
 
-### Dashboard shows "Offline" / errors
+### Agent Worker won't start
 
 ```
-1. Check API server:     govctl api status
-2. Check health:         curl http://localhost:8765/api/v1/health
-3. Restart API:          govctl api stop && govctl api start
-4. Check logs:           cat ~/.govctl/api.log
+Symptom:  Worker exits immediately
+Fix 1:    Check Central Bus is running on port 8099
+Fix 2:    Check logs:  tail -20 /tmp/agent_worker.log
+Fix 3:    Verify .env has valid API keys for LLM provider
+          (workers/llm_provider.py reads LLM_API_KEY from .env)
+
+Symptom:  Queue poll failed: "No module named 'pydantic_settings'"
+Fix:      pip install pydantic_settings  (add to central_bus/requirements.txt)
+
+Symptom:  Worker starts but doesn't log poll results
+Fix:      Use python -u flag for unbuffered output:
+          nohup python3 -u -m workers.agent_worker_service > /tmp/agent_worker.log 2>&1 &
+
+Symptom:  "TypeError: Router.__init__() got an unexpected keyword argument 'on_startup'"
+          (Central Bus fails to start or tests fail)
+Fix:      Starlette v1.x removed on_startup param. Pin to <0.39.0:
+          pip install "starlette>=0.37.2,<0.39.0"
 ```
 
-### AO agent fails
+### Loop Runner errors
 
 ```
-Symptom:  "AO CLI 'agent_orchestrator' is not available"
-Fix 1:    Install AO CLI and ensure it's on PATH
-Fix 2:    Set custom path:  export AO_CLI_PATH=/path/to/agent_orchestrator
-Fix 3:    Update config:    vi gov/ao_config.toml
-                             → set [ao].cli_path
-Symptom:  "AO bridge disabled in config"
-Fix:      vi gov/ao_config.toml
-           → set [ao].enabled = true
+Symptom:  "No module named loop_runner"
+Fix:      Run from repo root:  python3 -m loop_runner.main
+Confirm:  python3 -c "import loop_runner; print('OK')"
+```
+
+### MCP Server errors
+
+```
+Symptom:  Connection refused from coding agent
+Fix 1:    Ensure server is running: python3 -m solocorp_mcp.server
+Fix 2:    Check opencode.json or .claude/settings.json for correct path
+Fix 3:    Re-run bootstrap:  bash scripts/bootstrap-ceo.sh
 ```
 
 ### Queue messages accumulating
@@ -320,6 +475,9 @@ init_project('<project_id>', name='Recovered Project')
 │       ├── normal.jsonl
 │       ├── low.jsonl
 │       └── dead_letter/      # Failed messages after max retries
+├── brain/
+│   ├── ceo-memory.json       # CEO persistent memory
+│   └── session-log.md        # Session history
 ├── gov/
 │   ├── adr/                  # Architecture Decision Records (TOML)
 │   ├── rfc/                  # Request for Comments (TOML)
@@ -327,5 +485,17 @@ init_project('<project_id>', name='Recovered Project')
 │   ├── config/               # govctl configuration
 │   ├── config.toml           # System config
 │   └── ao_config.toml        # Agent Orchestrator config
+├── loop_runner/
+│   ├── main.py               # Entry point (cron every 30min)
+│   └── loops/                # Loop definitions
+├── workers/
+│   ├── agent_worker_service.py  # Central Bus queue consumer
+│   ├── llm_provider.py          # LLM inference provider
+│   └── agents/                  # Agent implementations
+├── solocorp_mcp/
+│   └── server.py             # MCP protocol server
+├── scripts/
+│   ├── bootstrap-ceo.sh      # First-time setup
+│   └── start-services.sh     # Launch Central Bus + Agent Worker
 └── logs/                     # Runtime logs
 ```

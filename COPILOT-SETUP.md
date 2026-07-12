@@ -12,7 +12,7 @@ This guide explains how to set up and use GitHub Copilot cloud agent (and relate
 |:---------|:------:|:----:|:------|
 | **Copilot Cloud Agent** | ✅ Ready | Auto | `copilot-setup-steps.yml` configured |
 | **OpenCode** | ✅ Ready | Manual | 18 department profiles (`@mention` routing) |
-| **Hermes Skill Library** | ✅ Ready | Manual | 93 skills symlinked to `/skills/` |
+| **Hermes Skill Library** | ✅ Ready | Manual | Skill library at `/skills/` (see `skills/REGISTRY.md`) |
 | **Codex CLI** | ✅ Ready | Script | Export via `export-codex-agents.py` |
 | **Claude Code / Claude Desktop** | ✅ Ready | Manual | `.claude/` profile available |
 
@@ -55,7 +55,7 @@ Expected output:
 
 Once the workflow passes, Copilot can:
 
-1. **Explore the codebase** — understands all 18 departments and 93 skills
+1. **Explore the codebase** — understands all 18 departments and the skill library (`skills/REGISTRY.md`)
 2. **Run tests and builds** — FastAPI, async handlers, Central Bus tests
 3. **Make changes** — creates PRs with full context of SoloCorp OS structure
 4. **Route intelligently** — recognizes department boundaries and specialist roles
@@ -78,7 +78,7 @@ Once the workflow passes, Copilot can:
 ```
 Lab-solocorp-os2.4/
 ├── profiles/              # 18 department heads + specialists
-├── skills/                # 93 integration skills
+├── skills/                # Skill library (see REGISTRY.md)
 ├── central_bus/           # FastAPI daemon, routing engine
 ├── legal_vault/           # MCP server + compliance storage
 ├── decisions/             # Architecture Decision Records
@@ -91,7 +91,7 @@ Lab-solocorp-os2.4/
 
 ### How Copilot Understands SoloCorp
 
-1. **README.md** — Total context (org structure, 18 departments, 93 skills)
+1. **README.md** — Total context (org structure, 18 departments, skill library)
 2. **profiles/INDEX.md** — Department index with every agent's role
 3. **ARCHITECTURE.md** — System design and data flow
 4. **decisions/** — Why each decision was made (ADRs)
@@ -116,7 +116,7 @@ To give Copilot access to credentials, set up GitHub environment variables:
 | `SOLANA_RPC` | Secret | Web3 operations | `https://api.mainnet-beta.solana.com` |
 | `FASTAPI_ENV` | Variable | Server environment | `test` or `production` |
 | `LOG_LEVEL` | Variable | Logging verbosity | `INFO` |
-| `CENTRAL_BUS_HOST` | Variable | Bus endpoint | `http://localhost:8000` |
+| `CENTRAL_BUS_HOST` | Variable | Bus endpoint | `http://127.0.0.1:8099` |
 
 **To add:**
 ```bash
@@ -212,7 +212,7 @@ Copilot will:
 | Component | Copilot Support | Notes |
 |:----------|:---------------:|:------|
 | **Profiles** | ✅ Full read | Understands all 18 departments |
-| **Skills** | ✅ Full read | 93 skills analyzed for dependencies |
+| **Skills** | ✅ Full read | Skill library analyzed for dependencies (`skills/REGISTRY.md`) |
 | **Central Bus** | ✅ Full read/write | Can modify async queue and routing |
 | **Decisions (ADRs)** | ✅ Full read/write | Can create new ADRs |
 | **Tests** | ✅ Full run | FastAPI, unittest, pytest all work |

@@ -4,6 +4,7 @@
 **Status:** ACTIVE — Organization-Wide Standard  
 **Updated:** 2026-07-06  
 **Scope:** ทุกแผนก · ทุกเครื่องมือ · ทุกอำนาจ · ทุก Output
+**Implementation:** `workers/agent_worker_service.py` · `central_bus/main.py` (port 8099) · `.opencode/agents/` · pipeline commands in `opencode.json`
 
 > ไม่มีงานไหนตกหล่น ไม่มี handoff ที่ขาดตอน ไม่มีอำนาจที่คลุมเครือ
 

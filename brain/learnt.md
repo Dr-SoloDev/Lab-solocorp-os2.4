@@ -52,3 +52,38 @@
 - Build Agent Worker Service
 - สร้าง OpenCode agent configs 5 กรม
 - Dry Run W4
+
+---
+
+## Session 2026-07-12 — Full System Audit + CEO Revied
+
+### ✅ What worked
+- ระบบจริง robust กว่าที่คิด — Central Bus อืด 3.9 วัน, Loop Runner ทำงานต่อเนื่อง
+- Agent Activation **ทำแล้ว** — 19 agents มี business logic, LLM capability ผ่าน `opencode run --pure --model`
+- Tests 457/460 — เข้มข้นจริง ครอบคลุมทั้ง profile, bus, build, export
+- `AGENTS.md` optimization — 180→129 บรรทัด โดยไม่เสีย signal
+
+### ❌ What didn't
+- **CEO Round 1 ประเมินต่ำเกินไป** — บอก "30%" แต่ความจริง Agent Readiness 75% (ไม่ได้ตรวจ git log)
+- Central Bus DB `routing_rules` ว่าง — 16 rules ใน JSON แต่ไม่ถูก import → ทุก message fallback CEO
+- Agent Worker เป็น zombie process — 18 agents โหลดได้แต่ runtime ไม่มี
+- 3 tests error หลัง fix 3 ตัวแรก — การ fix routing_rules อาจมีผลข้างเคียงกับ integration tests
+- 7 agents ยัง logic จิ๋ว (25-28 บรรทัด) — ต้องเพิ่ม business logic
+
+### 💡 Insights
+1. **Git log ไม่เคยโกหก** — เช็ก `git log` + `git diff` ก่อนประเมินสถานะเสมอ
+2. **JSON ↔ SQLite sync gap** — routing_rules.json มี 16 rules แต่ DB ว่าง = design flaw (หรือ intentional แต่ไม่มี migration)
+3. **Agent Worker = หัวใจของ autonomous system** — ถ้า process zombie = ทั้งระบบเป็นหุ่นยนต์นอนหลับ
+4. **460 tests = safety net ที่ดี** — แต่ต้องตรวจสอบให้ 460/460 ก่อน уверенной go-live
+5. **Files ไม่ใช่คน** — การ fix tests 1 ตัวอาจพังอีก 3 ตัว — ทดสอบทั้ง suite ทุกครั้ง
+
+### 🔧 KEY LEARN: Fixing things in time
+- Owner เรียกเช็กของที่ไม่สมบูรณ์ → ตรวจเจอ 3 gaps จริง → **ลงมือแก้ทั้งหมดใน session เดียวกัน!**
+- **Critical fix:** Starlette 1.3.1 broke FastAPI 0.115.0 (APIRouter.__init__) → downgrade 0.38.6
+- **Routing rules:** import JSON → SQLite with correct agent ID mapping (short names != full IDs)
+- **Agent Worker:** missing pydantic_settings + Python buffering issue → now stable with `-u`
+
+### 📌 Remaining for next session
+- [🟡] เพิ่ม business logic 7 thin agents (25-28 บรรทัด)
+- [🟡] Agent Worker daemon auto-restart
+- [🟡] Starlette version pin

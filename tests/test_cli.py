@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 
 from typer.testing import CliRunner
@@ -17,12 +19,23 @@ from govctl_cli.cli import app
 runner = CliRunner()
 
 
+@contextmanager
+def _working_dir(path: Path):
+    """Context manager that temporarily changes to *path*."""
+    old = os.getcwd()
+    os.chdir(path)
+    try:
+        yield path
+    finally:
+        os.chdir(old)
+
+
 class TestInit:
     """Tests for the ``init`` command."""
 
     def test_init_default_dir(self, tmp_path: Path) -> None:
         """Default ``--dir=gov`` creates the standard governance structure."""
-        with runner.isolated_filesystem(tmp_path) as td:
+        with _working_dir(tmp_path) as td:
             result = runner.invoke(app, ["init"])
             assert result.exit_code == 0
             assert "Initialized governance structure" in result.stdout
@@ -36,7 +49,7 @@ class TestInit:
 
     def test_init_custom_dir(self, tmp_path: Path) -> None:
         """``--dir`` creates the structure at a user-specified location."""
-        with runner.isolated_filesystem(tmp_path) as td:
+        with _working_dir(tmp_path) as td:
             result = runner.invoke(app, ["init", "--dir", "custom-gov"])
             assert result.exit_code == 0
 
@@ -56,7 +69,7 @@ class TestStatus:
 
     def test_status_after_init(self, tmp_path: Path) -> None:
         """status after init displays the governance overview header and labels."""
-        with runner.isolated_filesystem(tmp_path):
+        with _working_dir(tmp_path):
             runner.invoke(app, ["init"])
             result = runner.invoke(app, ["status"])
             assert result.exit_code == 0
@@ -67,7 +80,7 @@ class TestStatus:
 
     def test_status_no_artifacts(self, tmp_path: Path) -> None:
         """status without prior init warns the user."""
-        with runner.isolated_filesystem(tmp_path):
+        with _working_dir(tmp_path):
             result = runner.invoke(app, ["status"])
             assert result.exit_code == 0
             assert "No artifacts found" in result.stdout

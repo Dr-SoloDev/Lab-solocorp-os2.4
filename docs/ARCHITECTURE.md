@@ -1,7 +1,7 @@
 # Lab-solocorp-os2.4 — Architecture Overview
 
 > System Architecture for SoloCorp OS
-> Designed: 2026-06-26 | Last Updated: 2026-07-05 | Version: 2.4
+> Designed: 2026-06-26 | Last Updated: 2026-07-12 | Version: 2.4
 
 ---
 
@@ -11,12 +11,14 @@
 2. [Three Pillars of Department Head Design](#three-pillars-of-department-head-design)
 3. [Two-Tier Architecture](#two-tier-architecture)
 4. [Hierarchy & Chain of Command](#hierarchy--chain-of-command)
-5. [Department Profiles (18)](#department-profiles)
-6. [Specialist Sub-Agents (55+)](#specialist-sub-agents)
+5. [Department Profiles (19)](#department-profiles)
+6. [Specialist Sub-Agents (62+)](#specialist-sub-agents)
 7. [Communication Protocols](#communication-protocols)
-8. [Loop Runner](#loop-runner)
-9. [Open Design Integration](#open-design-integration)
-10. [Key Design Decisions](#key-design-decisions)
+8. [Loop Runner](#loop-runner) (4 Loops)
+9. [Agent Worker Service](#agent-worker-service)
+10. [LLM Provider](#llm-provider)
+11. [Open Design Integration](#open-design-integration) (Deprecated)
+12. [Key Design Decisions](#key-design-decisions)
 
 ---
 
@@ -180,8 +182,8 @@ It flows autonomously through the Central Bus — Heads never pass files.
          ├── CFO (meetoo — Finance / Budget)
          ├── CMO (มาร์ค — Marketing / Content / Brand)
          └── Orchestrator (พี่วุฒิ — System Pipeline Coordination)
-               └── Department Heads (05-18)
-                    ├── 05-Architect (พี่ทรงศักดิ์)
+               └── Department Heads (05-19)
+                     ├── 05-Architect (พี่ทรงศักดิ์)
                     ├── 06-Product (โปรดัค)
                     ├── 07-Engineering (ช่างฟูล)
                     ├── 08-Design (ครีเอท)
@@ -193,8 +195,9 @@ It flows autonomously through the Central Bus — Heads never pass files.
                     ├── 14-Web3 (อัยวา)
                     ├── 15-Content Creator (เสก)
                     ├── 16-Network Engineer (นีต)
-                    ├── 17-Cyber Security (ซาย)
-                    └── 18-Psychology (จิต)
+                     ├── 17-Cyber Security (ซาย)
+                     ├── 18-Psychology (จิต)
+                     └── 19-R&D Lab (Lead Researcher)
 ```
 
 **Communication Flow Rules:**
@@ -222,7 +225,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 03 | CMO | มาร์ค | Marketing, Content, Brand | Active |
 | 04 | Orchestrator | พี่วุฒิ (Wut) | System Pipeline Coordination | Active |
 
-### Department Heads (05-18)
+### Department Heads (05-19)
 
 | # | Profile | Head | Responsibility | Status |
 |:-:|:--------|:-----|:--------------|:------:|
@@ -240,6 +243,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 16 | Network Engineer | นีต | Network, Infrastructure, VPN, CDN, DNS | Active |
 | 17 | Cyber Security | ซาย | Threat Detection, Incident Response | Active |
 | 18 | Psychology | จิต | User Behavior, Cognitive Bias, Org Health | Active |
+| 19 | R&D Lab | Lead Researcher | Curiosity-driven research, experimental prototypes | Active |
 
 ### Base Profile
 
@@ -369,29 +373,41 @@ It flows autonomously through the Central Bus — Heads never pass files.
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
-| 01 | Infrastructure Maintainer | Network design, VPN, CDN, DNS, load balancing, system reliability | Active |
-| 02 | DevOps Automator | CI/CD pipeline, cloud operations, infrastructure automation | Active |
-| 03 | SRE | SLOs, error budgets, observability, toil reduction | Active |
+| 01 | Network Architect | Network topology design, BGP/OSPF routing, datacenter interconnects | Design |
+| 02 | Infrastructure Engineer | Cloud provisioning (AWS/GCP/DO), load balancer, CDN, DNS via IaC | Design |
+| 03 | Network Ops | 24/7 monitoring, incident response, SLA tracking, bandwidth optimization | Design |
+| 04 | MCP Builder | MCP server design & implementation — expose SoloCorp OS to external coding agents | Design |
 
 ### 17 — Cyber Security Department (Team of ซาย)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
-| 01 | Security Engineer | Threat modeling, vulnerability assessment, secure code review | Active |
-| 02 | Threat Detection Engineer | SIEM rule development, MITRE ATT&CK mapping, threat hunting | Active |
-| 03 | Incident Response Commander | Production incident management, post-mortem facilitation | Active |
-| 04 | Compliance Auditor | SOC 2, ISO 27001, HIPAA, PCI-DSS audits | Active |
+| 01 | Threat Analyst | SIEM monitoring, threat hunting, IOC classification, threat intel reports | Design |
+| 02 | Vulnerability Assessor | Vulnerability scans, CVSS scoring, OWASP compliance, patch prioritization | Design |
+| 03 | Incident Responder | Full IR lifecycle, containment, forensics, RCA, playbooks | Design |
+| 04 | Red Team Operator | Offensive security — MCP auth bypass, Central Bus abuse, SOUL.md integrity, HackAgent campaigns | Design |
 
 ### 18 — Psychology Department (Team of จิต)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
-| 01 | Behavioral Nudge Engine | Adapts interaction cadences to user motivation | Active |
-| 02 | Cultural Intelligence Strategist | CQ specialist, inclusive design, cross-cultural resonance | Active |
-| 03 | Whimsy Injector | Playful elements, personality, brand delight | Active |
-| 04 | Psychologist | Human behavior, personality theory, cognitive patterns | Active |
+| 01 | User Behavior Analyst | Cognitive bias mapping, UX psychology, heatmap/session analysis, behavioral segmentation | Design |
+| 02 | Behavioral Economist | Nudge theory, prospect theory, pricing psychology, choice architecture | Design |
+| 03 | Organizational Psychologist | AI agent team health, communication patterns, conflict resolution, motivation systems | Design |
 
-**Total: 18 Department Heads + 55+ Specialist Sub-Agents = 68+ Active Members**
+### 19 — R&D Lab (Team of Lead Researcher)
+
+| # | Agent | Role | Status |
+|:-:|:------|:-----|:------:|
+| 01 | Lead Researcher | รับไอเดีย → จัดทีม → ลงมือ — ปกป้องทีมจากระบบ | Active |
+| 02 | AI Research Scientist | ติดตาม frontier AI — ทดลอง tech ใหม่ๆ ก่อนใคร | Active |
+| 03 | Prototyper / Builder | เปลี่ยน idea → prototype เร็วที่สุดเท่าที่จะทำได้ | Active |
+| 04 | Experiment Designer | ออกแบบ methodology, metrics, evaluation | Active |
+| 05 | Tool Smith | สร้าง tooling — scraper, automation, integration | Active |
+| 06 | Knowledge Curator | บันทึก, จัดระเบียบ, แชร์ความรู้จากแล็บ | Active |
+| 07 | Wild Card | ทำทุกอย่างที่ไม่มีตำแหน่งรองรับ — special request โดยตรง | Active |
+
+**Total: 19 Department Heads + 62+ Specialist Sub-Agents = 81+ Active Members**
 
 ---
 
@@ -468,7 +484,8 @@ without human intervention.
   └── loops/
       ├── daily_brief.py         L1 — CEO morning report (finance+brain)
       ├── subscription_audit.py  L4 — CFO monthly subscription scan
-      └── brain_auto_commit.py   L4 — Auto-commit brain/memory files
+      ├── brain_auto_commit.py   L4 — Auto-commit brain/memory files
+      └── pipeline_executor.py   L4 — Pull queue → LLM execute → update status
 ```
 
 **Cron:** `*/30 * * * * python3 -m loop_runner.main`
@@ -478,14 +495,90 @@ without human intervention.
 | daily_brief | L1 | 20h | Finance + brain data → stdout report |
 | subscription_audit | L4 | 30d | Scan recurring charges and subscriptions |
 | brain_auto_commit | L4 | 1h | Git commit brain files when changes detected |
+| pipeline_executor | L4 | 30m | Pull queue → LLM execute → update status |
 
 > ADR: `decisions/ADR-005-loop-runner.md`
 
 ---
 
-## Open Design Integration
+## Agent Worker Service
 
-A read-only bridge from Central Bus to Open Design daemon (port 41551).
+The Agent Worker Service (`workers/agent_worker_service.py`) is the runtime
+engine that activates agents. It polls the Central Bus queue, routes tasks
+to the correct agent worker, executes the task, and reports results back.
+
+```
+  1. Poll ───→ Central Bus queue (/v1/context) ───→ 2. Route to Agent
+                                                          ↓
+  4. Report ←── Mark queue status + notify CEO  ←── 3. Execute task
+```
+
+### Architecture
+
+| Step | Component | Description |
+|:-----|:----------|:------------|
+| Poll | `poll_queue()` | Fetch pending (routed) tasks from Central Bus, max 3 per cycle |
+| Route | `self.agents` dict | 18 registered agents covering all departments + R&D Lab |
+| Execute | `agent.execute()` | Each agent processes the task via its domain-specific logic |
+| Report | `mark_completed()` / `report_to_ceo()` | Update queue status + notify CEO on completion/failure |
+
+**Key properties:**
+- Poll interval: 5s (configurable)
+- Max concurrent tasks: 3 (asyncio.Semaphore)
+- Stale recovery: processing tasks >5min reset to routed (crash tolerance)
+- All agents run in-process via asyncio
+
+### Files
+
+- `workers/agent_worker_service.py` — Main service daemon
+- `workers/agents/` — Individual agent implementations (18 agents)
+- `workers/__init__.py` — Package init
+
+---
+
+## LLM Provider
+
+All agent workers use `workers/llm_provider.py` for LLM inference.
+
+### Configuration
+
+| Parameter | Value |
+|:----------|:------|
+| CLI | `opencode run --pure --model <model>` |
+| Default model | `opencode/deepseek-v4-flash-free` |
+| Max concurrent | 3 (asyncio.Semaphore) |
+| Timeout | 30s per call |
+| Max retries | 2 (exponential backoff) |
+| Prompt transport | stdin (prevents shell injection) |
+
+### Usage
+
+```python
+from workers.llm_provider import think
+
+result = await think(
+    prompt="Write a PRD for billing v2",
+    system_prompt="คุณคือ Product Manager ของ SoloCorp",
+    max_tokens=800,
+)
+```
+
+### Cross-Reference
+
+- `workers/llm_provider.py` — LLM inference wrapper
+- `loop_runner/loops/pipeline_executor.py` — Uses `think()` for queue tasks
+
+---
+
+## Open Design Integration (Deprecated)
+
+> ⚠️ **DEPRECATED** — This bridge was never connected to a live daemon. The
+> port 41551 bridge is inactive and should not be relied upon. The Agent
+> Worker Service (`workers/agent_worker_service.py`) is the replacement for
+> task execution.
+
+A read-only bridge from Central Bus to Open Design daemon (port 41551) — never
+operational.
 
 **Permission Model:**
 
@@ -519,9 +612,10 @@ Decision Records (ADRs) in the `decisions/` directory:
 ## Sources & References
 
 - **Repository:** `Lab-solocorp-os2.4` (Private — Dr-SoloDev)
-- **Hermes Profiles:** `~/.hermes/profiles/<NN-name>/`
+- **OpenCode Profiles:** `profiles/` — Department Heads + Specialist agents
+- **Worker Service:** `workers/agent_worker_service.py` — Queue-to-agent runtime
+- **LLM Provider:** `workers/llm_provider.py` — OpenCode run inference
 - **Agent Templates:** `agency-agents` library (411 templates, 18 categories)
-- **Skills:** 93 skills in Hermes system
 - **Versioning:** SemVer via CHANGELOG.md + Git tags
 
 ---

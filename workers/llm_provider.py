@@ -22,8 +22,8 @@ log = logging.getLogger(__name__)
 DEFAULT_MODEL = "opencode/deepseek-v4-flash-free"
 _CMD = "/usr/local/bin/opencode"
 _MAX_CONCURRENT = 3
-_LLM_TIMEOUT = 30
-_MAX_RETRIES = 2
+_LLM_TIMEOUT = 60
+_MAX_RETRIES = 3
 _CWD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # จะได้ reuse context ทุกครั้ง (ไม่ต้อง search path ใหม่)

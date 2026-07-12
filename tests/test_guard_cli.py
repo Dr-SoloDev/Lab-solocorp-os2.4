@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -12,6 +14,17 @@ import pytest
 from typer.testing import CliRunner
 
 import govctl_cli.guard as guard_mod
+
+
+@contextmanager
+def _working_dir(path: Path):
+    """Context manager that temporarily changes to *path*."""
+    old = os.getcwd()
+    os.chdir(path)
+    try:
+        yield path
+    finally:
+        os.chdir(old)
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────
@@ -211,18 +224,16 @@ class TestGuardList:
         assert "GUARD-001" in result.stdout
         assert "GUARD-007" in result.stdout
 
-    def test_list_no_guards_dir(self, runner, app):
+    def test_list_no_guards_dir(self, runner, app, tmp_path):
         """When guards dir does NOT exist → 'No guards directory found'."""
-        # Use a fresh isolated tmp — no guard env setup so GOV_DIR is relative
-        # and won't exist in the fs.
-        with runner.isolated_filesystem():
+        with _working_dir(tmp_path):
             result = runner.invoke(app, ["guard", "list"])
             assert result.exit_code == 0
             assert "No guards directory found" in result.stdout
 
-    def test_list_empty_guards_dir(self, runner, app):
+    def test_list_empty_guards_dir(self, runner, app, tmp_path):
         """When guards dir exists but empty → 'No guard profiles found'."""
-        with runner.isolated_filesystem():
+        with _working_dir(tmp_path):
             # Create an empty guards directory
             Path("gov/guards").mkdir(parents=True)
             result = runner.invoke(app, ["guard", "list"])

@@ -5,6 +5,54 @@
 
 ---
 
+## v0.7.0 (2026-07-12)
+
+### Added
+- **Agent Activation System — 18 agents with `self.think()`** — ทุก Department Head Agent ใน `workers/agents/` มี `base_agent.think()` เรียก LLM ได้
+  - `workers/agents/base_agent.py` — `think()` method อ่าน SOUL.md → สร้าง system prompt → เรียก `llm_provider.think()`
+  - `workers/agents/` — 19 agents (18 departments + R&D Lab)
+  - `workers/llm_provider.py` — LLM provider ผ่าน `opencode run --pure --model` CLI (semaphore 3, timeout 30s, retry 2x)
+  - Agent Worker Service `workers/agent_worker_service.py` — Poll Central Bus queue → route → execute → report
+  - QA agent E2E test: `llm_used=True`, ตอบกลับภาษาไทย ~9s
+  - กำลังรัน agents: CFO, Architect, Engineering, Product, Orchestrator, CMO, Design, QA, Sales, Support, Legal, Web3, Content, NetEng, CyberSec, Psychology, UI, R&D Lab
+- **R&D Lab (#19)** — 7 specialist agents: Lead Researcher, AI Research Scientist, Prototyper, Experiment Designer, Tool Smith, Knowledge Curator, Wild Card
+- **UI Designer enhancement** — Animation Decision Framework จาก Emil Kowalski principles
+  - `profiles/09-ui-designer/SOUL.md` — 10 Non-Negotiables, component rules, performance rules, accessibility
+  - `.opencode/skills/ui-animation-review/SKILL.md` — review format + audit checklist
+  - `workers/agents/ui_agent.py` — animation review first-class action
+- **Product Packs (v2.4.0 pre-release)** — CFO, Legal, Content Creator standalone packs
+- **Routing Rules Import** — `bus/system/routing_rules.json` → SQLite `routing_rules` table (16 rules)
+  - Map short names → full agent IDs (e.g. `"cfo"` → `"cfo-meetoo"`)
+  - Fallback route → CEO (`ceo-turbo`)
+
+### Changed
+- **LLM provider rewrite** (commit `30e373a`):
+  - Removed all ACP dead code (port 5200/8099 — ไม่มี HTTP API endpoint)
+  - ใช้ `opencode run --pure --model` CLI ผ่าน subprocess เท่านั้น
+  - `asyncio.Semaphore(3)` จำกัด concurrent calls
+  - Retry 2 ครั้ง + exponential backoff
+  - Timeout 45s → 30s
+  - `_safe_wait`/`_safe_kill` ป้องกัน zombie process
+  - Output parsing ใหม่ (ลบ `> ` prefix logic ที่พัง)
+- **Agent Worker**: max_concurrent=3, poll interval 5s, auto-recover stale processing tasks (>5min)
+- **OpenCode agents**: 21 agents (18 department heads + 5 architect specialists - overlap) พร้อม YAML frontmatter
+- **ALL 18 Department Heads** สื่อสารภาษาไทย + English สำหรับ technical terms
+- **Central Bus API**: 5 endpoints (health, observe, context, update, AAR) — running on port 8099 with X-API-Key auth
+- **Starlette version pinned** (0.38.6) — 1.3.1 incompatible with FastAPI 0.115.0 `APIRouter.__init__()`
+
+### Fixed
+- Zombie process management: `_safe_wait` + `_safe_kill` ป้องกัน ProcessLookupError
+- QA agent: `llm_used=True` เสมอ ไม่ fallback ไป static response
+- **Central Bus tests (3 errors)** — Starlette 1.3.1 removed `on_startup` param → downgrade to 0.38.6 → 74/74 passed
+- **Routing Rules (0 in DB)** — Imported 16 rules from `bus/system/routing_rules.json` → SQLite with correct agent ID mapping
+- **Agent Worker zombie process** — Missing `pydantic_settings` dep (queue poll failed) + Python buffering (`-u` flag fix)
+- **Integration tests 401** — Added `X-API-Key` header  
+- **`tomli_w` missing** — API `.toml` write failed  
+- **`typer.CliRunner.isolated_filesystem` removed** — Changed to `_working_dir()` context manager  
+- **Full test suite** — 460/460 passed (386 main + 74 central_bus)
+
+---
+
 ## v0.6.1 (2026-06-30)
 
 ### Changed
@@ -211,7 +259,7 @@
 | v0.5.2 | Free Pool Migration + Model Optimization | Complete |
 | v0.6.0 | Content Creator Department (15th profile) | Complete |
 | v0.6.1 | Thai Language Alignment + MoA Presets | Complete |
-| **v0.6** | **Central Bus Agent + Context Optimizer** | **Next** |
+| **v0.7.0** | **Agent Activation (18 agents) + LLM Provider + UI Animation** | **Complete** |
 | **v0.7** | **Pipeline Dashboard + Compliance Gate** | **Planned** |
 | **v1.0** | **Production-ready Release** | **Planned** |
 

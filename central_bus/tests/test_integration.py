@@ -33,6 +33,7 @@ async def _setup_db():
 
 
 client = TestClient(app)
+client.headers.setdefault("X-API-Key", "sk-solocorp-admin-local-dev-001")
 
 
 # ── Health check ─────────────────────────────────────────────────

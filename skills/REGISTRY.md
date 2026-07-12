@@ -2,7 +2,7 @@
 
 > Single source of truth for all skills. Every platform config must reference or be generated from this registry.
 
-**Version:** 1.0 | **Updated:** 2026-07-06
+**Version:** 1.1 | **Updated:** 2026-07-12
 
 ---
 
@@ -36,12 +36,17 @@ Think of them as "slash commands with memory."
 | `exception-triage` | architect | `team-architect/04-exception-triage-agent.md` | opencode | Active |
 | `cron-pipeline` | architect | `team-architect/05-cron-pipeline-agent.md` | opencode | Active |
 | `dispatching-parallel-agents` | superpowers | `superpowers/dispatching-parallel-agents.md` | all | Active |
+| `ui-animation-review` | ui-designer | `.opencode/skills/ui-animation-review/SKILL.md` | opencode | Active |
 | `eng-deploy` | engineering | _(proposed)_ | all | Planned |
 | `cfo-budget-check` | cfo | _(proposed)_ | all | Planned |
 | `qa-smoke-test` | qa | _(proposed)_ | all | Planned |
 | `gov-adr-new` | governance | _(proposed)_ | all | Planned |
 | `gov-rfc-new` | governance | _(proposed)_ | all | Planned |
 | `pipeline-full-cycle` | pipeline | _(proposed)_ | all | Planned |
+
+---
+
+> **Note:** This registry is actively growing as new skills are authored and refined. The "93 skills" figure referenced in the project README is an aspirational target — not a count of currently registered skills. New skills are added as workflows are formalized and tested.
 
 ---
 

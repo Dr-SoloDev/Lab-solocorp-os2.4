@@ -68,7 +68,7 @@ Expected output:
 Variables to configure:
 - `FASTAPI_ENV` → `test` or `production`
 - `LOG_LEVEL` → `INFO` (or `DEBUG`)
-- `CENTRAL_BUS_HOST` → `http://localhost:8000`
+- `CENTRAL_BUS_HOST` → `http://127.0.0.1:8099`
 - `SOLANA_NETWORK` → `mainnet-beta`
 
 Secrets (optional):
@@ -111,7 +111,7 @@ Lab-solocorp-os2.4/
 
 | Task | Capability |
 |:-----|:-----------|
-| **Explore** | Read all 18 department profiles, 93 skills, Central Bus routing |
+| **Explore** | Read all 18 department profiles, the skill library (`skills/REGISTRY.md`), Central Bus routing |
 | **Understand** | Knows SoloCorp architecture, xGov governance, handoff patterns |
 | **Build** | Create new features respecting department boundaries |
 | **Test** | Run FastAPI tests, integration tests, compliance checks |
@@ -153,7 +153,7 @@ Lab-solocorp-os2.4/
 ```
 ✅ Copilot Cloud Agent ready to operate
 ✅ All 18 departments accessible
-✅ 93 skills available
+✅ Skill library available (see `skills/REGISTRY.md`)
 ✅ Central Bus + async messaging working
 ✅ xGov governance enforced
 ✅ Audit trail enabled
