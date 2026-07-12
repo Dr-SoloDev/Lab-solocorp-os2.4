@@ -100,7 +100,7 @@ async def _call_acp(
     loop = asyncio.get_event_loop()
     resp = await loop.run_in_executor(
         None, lambda: json.loads(
-            urllib.request.urlopen(req, timeout=30).read()
+            urllib.request.urlopen(req, timeout=5).read()
         )
     )
 
@@ -110,18 +110,23 @@ async def _call_acp(
 async def _call_opencode_run(
     prompt: str, system_prompt: str, model: str, max_tokens: int,
 ) -> str:
-    """เรียก LLM ผ่าน opencode run CLI (fallback)"""
+    """เรียก LLM ผ่าน opencode run CLI (fallback)
+
+    ส่ง prompt ผ่าน stdin เพื่อป้องกัน shell injection และ long-arg issues
+    ใช้ --pure เพื่อลด overhead จาก plugins
+    """
     full_prompt = system_prompt + "\n\n" + prompt if system_prompt else prompt
 
     cmd = [
         "/usr/local/bin/opencode", "run",
         "--model", model,
-        "--", full_prompt,
+        "--pure",
     ]
 
     loop = asyncio.get_event_loop()
     proc = await asyncio.create_subprocess_exec(
         *cmd,
+        stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         cwd="/workspace/repos/Lab-solocorp-os2.4",
@@ -129,14 +134,22 @@ async def _call_opencode_run(
 
     try:
         stdout, stderr = await asyncio.wait_for(
-            proc.communicate(), timeout=45
+            proc.communicate(input=full_prompt.encode("utf-8")), timeout=45
         )
     except asyncio.TimeoutError:
-        proc.kill()
+        try:
+            proc.kill()
+        except ProcessLookupError:
+            pass
         return "⚠️ LLM timeout (45s)"
 
+    try:
+        await proc.wait()  # reap zombie
+    except ProcessLookupError:
+        pass
+
     result = stdout.decode("utf-8", errors="replace").strip()
-    if proc.returncode != 0:
+    if proc.returncode and proc.returncode != 0:
         err = stderr.decode("utf-8", errors="replace")[:200]
         log.warning(f"opencode run exit {proc.returncode}: {err}")
 
