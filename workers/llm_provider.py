@@ -32,6 +32,8 @@ DEFAULT_MODEL = "opencode/deepseek-v4-flash-free"
 # ACP endpoint (ถ้าเปิด)
 _ACP_URL = os.environ.get("ACP_URL", "http://127.0.0.1:5200/v1/chat/completions")
 
+
+
 # ── Provider Functions ─────────────────────────────────────────────────
 
 
