@@ -1,37 +1,36 @@
 """🤖 SoloCorp OS — LLM Provider
 
-เชื่อมต่อ Agent กับ LLM (OpenCode cloud ผ่าน CLI หรือ API)
+เชื่อมต่อ Agent กับ LLM (OpenCode ผ่าน opencode run CLI)
 
-รองรับ:
-- `opencode run` CLI (backup)
-- OpenAI-compatible API (เมื่อ ACP server พร้อม)
+ใช้ opencode run CLI โดยตรง — stable, official, tested.
+- ส่ง prompt ผ่าน stdin ป้องกัน shell injection
+- --pure ลด overhead plugins
+- retry + timeout + semaphore concurrency control
 """
 
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 import os
 import subprocess
-from typing import Optional
 
 log = logging.getLogger(__name__)
 
 # ── Configuration ──────────────────────────────────────────────────────
 
-# OpenCode API Key จาก Owner
-_OPENCODE_API_KEY = os.environ.get(
-    "OPENCODE_API_KEY",
-    "sk-gDFLCDp1p10Gg0aygn9HUw1we5hogFUfOqkssrCxqG3TxvhAcDVG2etcT1t4mIeD"
-)
-
-# Model ที่ใช้ — ตรงกับที่ opencode models มี
 DEFAULT_MODEL = "opencode/deepseek-v4-flash-free"
+_CMD = "/usr/local/bin/opencode"
+_MAX_CONCURRENT = 3
+_LLM_TIMEOUT = 30
+_MAX_RETRIES = 2
+_CWD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# ACP endpoint (ถ้าเปิด)
-_ACP_URL = os.environ.get("ACP_URL", "http://127.0.0.1:5200/v1/chat/completions")
+# จะได้ reuse context ทุกครั้ง (ไม่ต้อง search path ใหม่)
+_CMD_WITH_FLAGS = [_CMD, "run", "--pure"]
 
+# Concurrency control
+_semaphore = asyncio.Semaphore(_MAX_CONCURRENT)
 
 
 # ── Provider Functions ─────────────────────────────────────────────────
@@ -51,129 +50,95 @@ async def think(
         system_prompt: context/brief เพิ่มเติม (เช่น บทบาท agent)
         model: ชื่อ model (default: deepseek-v4-flash-free)
         max_tokens: ความยาวสูงสุดของคำตอบ
-        temperature: ความคิดสร้างสรรค์ (0.0 = ตายตัว, 1.0 = สร้างสรรค์)
+        temperature: (reserved) ไม่ได้ส่งไป opencode run โดยตรง
 
     Returns:
-        str: ข้อความตอบกลับจาก LLM
+        str: ข้อความตอบกลับจาก LLM (ตัด max_tokens แล้ว)
     """
-    # ลองใช้ ACP API ก่อน
-    try:
-        return await _call_acp(prompt, system_prompt, model, max_tokens, temperature)
-    except Exception as e:
-        log.debug(f"ACP ไม่พร้อม ({e}), ใช้ opencode run แทน")
+    full_prompt = f"{system_prompt}\n\n{prompt}" if system_prompt else prompt
+    last_error = ""
 
-    # Fallback: opencode run CLI
-    try:
-        return await _call_opencode_run(prompt, system_prompt, model, max_tokens)
-    except Exception as e:
-        log.error(f"LLM ทั้งสองช่องทางล้มเหลว: {e}")
-        return f"⚠️ LLM ไม่พร้อม: {e}"
+    for attempt in range(1, _MAX_RETRIES + 1):
+        try:
+            async with _semaphore:
+                result = await _run_opencode(full_prompt, model)
 
+            if not result:
+                log.warning(f"LLM เปล่า (attempt {attempt})")
+                last_error = "empty response"
+                continue
 
-async def _call_acp(
-    prompt: str, system_prompt: str, model: str,
-    max_tokens: int, temperature: float,
-) -> str:
-    """เรียก LLM ผ่าน ACP (OpenAI-compatible API)"""
-    import urllib.request
+            return result[:max_tokens]
 
-    messages = []
-    if system_prompt:
-        messages.append({"role": "system", "content": system_prompt})
-    messages.append({"role": "user", "content": prompt})
+        except asyncio.TimeoutError:
+            log.warning(f"LLM timeout attempt {attempt}/{_MAX_RETRIES}")
+            last_error = f"timeout ({_LLM_TIMEOUT}s)"
+            continue
 
-    payload = json.dumps({
-        "model": model,
-        "messages": messages,
-        "max_tokens": max_tokens,
-        "temperature": temperature,
-    }).encode()
+        except Exception as e:
+            log.warning(f"LLM error attempt {attempt}/{_MAX_RETRIES}: {e}")
+            last_error = str(e)
+            if attempt < _MAX_RETRIES:
+                await asyncio.sleep(attempt * 2)
+            continue
 
-    req = urllib.request.Request(
-        _ACP_URL,
-        data=payload,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {_OPENCODE_API_KEY}",
-        },
-        method="POST",
-    )
-
-    loop = asyncio.get_event_loop()
-    resp = await loop.run_in_executor(
-        None, lambda: json.loads(
-            urllib.request.urlopen(req, timeout=5).read()
-        )
-    )
-
-    return resp["choices"][0]["message"]["content"]
+    log.error(f"LLM หมดโอกาส ({_MAX_RETRIES} attempts): {last_error}")
+    return f"⚠️ LLM ไม่พร้อม: {last_error}"
 
 
-async def _call_opencode_run(
-    prompt: str, system_prompt: str, model: str, max_tokens: int,
-) -> str:
-    """เรียก LLM ผ่าน opencode run CLI (fallback)
+async def _run_opencode(full_prompt: str, model: str) -> str:
+    """เรียก LLM ผ่าน opencode run CLI (core)
 
-    ส่ง prompt ผ่าน stdin เพื่อป้องกัน shell injection และ long-arg issues
-    ใช้ --pure เพื่อลด overhead จาก plugins
+    spawn subprocess → ส่ง prompt ผ่าน stdin → อ่าน stdout
+    ใช้ --model + --pure เพื่อลด overhead
     """
-    full_prompt = system_prompt + "\n\n" + prompt if system_prompt else prompt
+    cmd = [*_CMD_WITH_FLAGS, "--model", model]
 
-    cmd = [
-        "/usr/local/bin/opencode", "run",
-        "--model", model,
-        "--pure",
-    ]
-
-    loop = asyncio.get_event_loop()
     proc = await asyncio.create_subprocess_exec(
         *cmd,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        cwd="/workspace/repos/Lab-solocorp-os2.4",
+        cwd=_CWD,
     )
 
     try:
         stdout, stderr = await asyncio.wait_for(
-            proc.communicate(input=full_prompt.encode("utf-8")), timeout=45
+            proc.communicate(input=full_prompt.encode("utf-8")),
+            timeout=_LLM_TIMEOUT,
         )
     except asyncio.TimeoutError:
-        try:
-            proc.kill()
-        except ProcessLookupError:
-            pass
-        return "⚠️ LLM timeout (45s)"
+        _safe_kill(proc)
+        raise
 
+    exit_code = await _safe_wait(proc)
+    result = stdout.decode("utf-8", errors="replace").strip()
+
+    if exit_code and exit_code != 0:
+        err = stderr.decode("utf-8", errors="replace")[:200]
+        raise RuntimeError(f"opencode run exit {exit_code}: {err}")
+
+    return result
+
+
+def _safe_kill(proc: asyncio.subprocess.Process) -> None:
+    """ฆ่า process + ป้องกัน ProcessLookupError"""
     try:
-        await proc.wait()  # reap zombie
+        proc.kill()
     except ProcessLookupError:
         pass
+    except OSError:
+        pass
 
-    result = stdout.decode("utf-8", errors="replace").strip()
-    if proc.returncode and proc.returncode != 0:
-        err = stderr.decode("utf-8", errors="replace")[:200]
-        log.warning(f"opencode run exit {proc.returncode}: {err}")
 
-    # opencode run output format:
-    #   > assistant · model-name
-    #   <actual response>
-    # ตัดเฉพาะส่วนที่ LLM ตอบ (หลังบรรทัด >)
-    lines = result.split("\n")
-    response_lines = []
-    capture = False
-    for line in lines:
-        if line.startswith(">"):
-            capture = True  # เริ่ม capture หลังจากบรรทัด >
-            continue
-        if capture and line.strip():
-            response_lines.append(line)
-
-    response = "\n".join(response_lines).strip()
-    # ถ้าไม่เจอ pattern > ให้ใช้ result ทั้งหมด
-    if not response:
-        response = result
-    return response[:max_tokens]
+async def _safe_wait(proc: asyncio.subprocess.Process) -> int:
+    """รอเก็บ zombie + คืน returncode"""
+    try:
+        return await proc.wait()
+    except ProcessLookupError:
+        return proc.returncode or -1
+    except OSError:
+        return proc.returncode or -1
 
 
 # ── Utility ────────────────────────────────────────────────────────────
@@ -181,8 +146,6 @@ async def _call_opencode_run(
 def count_tokens(text: str) -> int:
     """นับจำนวน token โดยประมาณ (ไทย + อังกฤษ)"""
     import re
-    # นับคำไทย (1 คำ ≈ 2 tokens)
     thai_chars = len(re.findall(r'[\u0E00-\u0E7F]', text))
-    # นับคำอังกฤษ (5 ตัวอักษร ≈ 1 token)
     eng_words = len(re.findall(r'[a-zA-Z]+', text))
     return thai_chars + eng_words + len(text.split())
