@@ -52,6 +52,7 @@ build/
 # IDE / tools
 .opencode/*
 !.opencode/agents/
+!.opencode/skills/
 .hermes/
 
 # Local MCP runtimes

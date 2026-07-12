@@ -130,6 +130,132 @@
 
 ---
 
+## 🎬 Animation Design Principles (จาก Emil Kowalski)
+
+> "Agents don't have great taste — but they can learn it."
+
+### Animation Decision Framework
+
+ก่อนใส่ animation ทุกครั้ง ถาม 4 คำถามนี้ตามลำดับ:
+
+#### 1. ควร animate หรือไม่?
+| ความถี่ที่ user เห็น | การตัดสินใจ |
+|---|---|
+| 100+ ครั้ง/วัน (keyboard shortcut, command palette) | ❌ **ไม่ animate** |
+| สิบครั้ง/วัน (hover, list navigation) | ❌ ลดหรือเอาออก |
+| เป็นครั้งคราว (modal, drawer, toast) | ✅ ใส่ standard animation |
+| นานๆ ครั้ง (onboarding, celebration) | ✅ สามารถเพิ่ม delight |
+
+**กฎสำคัญ:** ห้าม animate keyboard-initiated actions — user ใช้ซ้ำร้อยครั้งต่อวัน
+
+#### 2. จุดประสงค์คืออะไร?
+Valid purposes: spatial consistency, state indication, feedback, ป้องกัน jarring changes
+ถ้าจุดประสงค์คือ "it looks cool" → ไม่ต้อง animate
+
+#### 3. ใช้ easing อะไร?
+| สถานการณ์ | Easing |
+|---|---|
+| Element กำลัง **เข้า/ออก** | `ease-out` — เริ่มไว รู้สึก responsive |
+| Element กำลัง **เคลื่อนที่บนหน้าจอ** | `ease-in-out` — ค่อยๆ เร่ง ค่อยๆ ช้า |
+| Hover / color change | `ease` |
+| motion ตลอดเวลา (marquee, progress) | `linear` |
+
+**Critical:** ห้ามใช้ CSS built-in easings — มันอ่อนเกินไป ใช้ custom cubic-bezier เสมอ:
+```css
+/* Strong ease-out */
+--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+/* Strong ease-in-out */
+--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+/* iOS drawer */
+--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+```
+
+**⚠️ ห้ามใช้ `ease-in` กับ UI elements** — เริ่มช้า ทำให้ interface ดูเฉื่อยชา
+
+#### 4. ระยะเวลาเท่าไหร่?
+| Element | Duration |
+|---|---|
+| Button press feedback | 100-160ms |
+| Tooltips, popovers เล็ก | 125-200ms |
+| Dropdowns, selects | 150-250ms |
+| Modals, drawers | 200-500ms |
+| Marketing/explanatory | ยาวกว่านี้ได้ |
+
+**กฎ:** UI animations ควร ≤ 300ms
+
+### 10 Animation Non-Negotiables (Review Checklist)
+
+| # | ข้อ | ห้าม |
+|---|-----|------|
+| 1 | **Justified motion** | "it looks cool" โดยไม่มี purpose |
+| 2 | **Frequency-appropriate** | Keyboard/100+/day actions มี animation |
+| 3 | **Responsive easing** | `ease-in` บน UI element |
+| 4 | **Sub-300ms** | UI animation > 300ms โดยไม่มีเหตุผล |
+| 5 | **Origin-aware** | Popover/dropdown scale จาก center (ยกเว้น modal) |
+| 6 | **Interruptible** | Keyframes บน toast/toggle ที่ถูกเรียกบ่อย |
+| 7 | **GPU-only properties** | Animate `width`/`height`/`margin`/`top`/`left` |
+| 8 | **Accessibility** | ไม่มี `prefers-reduced-motion`, hover ไม่มี media query |
+| 9 | **Asymmetric timing** | กดช้า ปล่อยเร็วเท่ากัน |
+| 10 | **Cohesion** | animation ไม่ match personality ของ component |
+
+### Component Animation Rules
+
+- **Button** → เพิ่ม `transform: scale(0.97)` บน `:active` — transition 160ms ease-out
+- **Popover/Dropdown** → scale จาก trigger (`transform-origin: var(--radix-popover-content-transform-origin)`) — อย่าใช้ `transform-origin: center`
+- **Tooltip** → delay เฉพาะครั้งแรก ครั้งถัดไป instant — transition 125ms ease-out
+- **Modal** → `transform-origin: center` (ต่างจาก popover — modal อยู่กลางจอ)
+- **Toast** → ใช้ CSS transitions (ไม่ใช่ keyframes) — interruptible
+- **Enter animation** → อย่าใช้ `scale(0)` — เริ่มจาก `scale(0.95)` + `opacity: 0`
+- **Stagger** → elements ที่เข้ามาพร้อมกัน เว้น 30-80ms ระหว่างตัว
+- **Asymmetric timing** → กดช้า deliberate (2s linear), ปล่อยเร็ว (200ms ease-out)
+
+### Performance Rules
+
+1. **Animate แค่ `transform` + `opacity`** — เท่านั้นที่รันบน GPU
+2. **อย่า animate layout properties** — `width`, `height`, `margin`, `padding`, `top`, `left`
+3. **CSS transitions > JS keyframes** — CSS รัน off main thread
+4. **อย่าเปลี่ยน CSS variable บน parent** เพื่อขับ transform ลูก — เกิด style recalc storm
+5. **ใช้ WAAPI (Web Animations API)** สำหรับ programmatic CSS animations
+
+### Accessibility in Animation
+
+```css
+/* ผู้ใช้ที่ sensitive กับการเคลื่อนไหว */
+@media (prefers-reduced-motion: reduce) {
+  .element {
+    animation: fade 0.2s ease;
+    /* เก็บ opacity/color transition — เอาออกแค่ movement */
+    transform: none;
+  }
+}
+
+/* hover — ใช้ได้กับเมาส์เท่านั้น ไม่ใช่ touch */
+@media (hover: hover) and (pointer: fine) {
+  .element:hover {
+    transform: scale(1.05);
+  }
+}
+```
+
+### Animation Vocabulary (สำหรับสื่อสารกับ LLM)
+
+| คำศัพท์ | ความหมาย |
+|---------|----------|
+| **ease-out** | เริ่มเร็วแล้วค่อยช้า — default สำหรับ enter |
+| **ease-in** | เริ่มช้าแล้วค่อยเร็ว — ห้ามใช้กับ UI |
+| **spring** | animation แบบ physics — มี momentum |
+| **stagger** | ของหลายๆ ชิ้นเข้ามาทีละนิด |
+| **clip-path inset** | ตัดขอบเพื่อ reveal content |
+| **morph** | เปลี่ยน shape จากสิ่งหนึ่งเป็นอีกสิ่ง |
+| **crossfade** | fade out อันเก่า fade in อันใหม่ |
+| **shared element transition** | element เคลื่อนที่จาก position หนึ่งไปอีกที่ |
+| **origin-aware** | scale จากจุด trigger |
+| **rubber-banding** | drag เกินขอบแล้วดีดกลับ |
+| **interruptible** | animation ที่เปลี่ยนทิศทางกลางคันได้ |
+| **GPU-composited** | ใช้ `transform`/`opacity` เท่านั้น |
+
+---
+
 ## 🚀 ความสามารถขั้นสูง
 
 ### UI Design

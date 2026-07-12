@@ -26,6 +26,7 @@ color: "#8E44AD"
 - accessibility-audit
 - design-critique
 - popular-web-designs (reference)
+- **ui-animation-review** (จาก Emil Kowalski's design eng philosophy)
 
 ## Boundaries
 - ❌ ไม่ทำ UX research → ใช้ Design
