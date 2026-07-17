@@ -1,0 +1,87 @@
+{
+  "project": "Scrap POS (Secondhand POS)",
+  "path": "/home/drsolodev/projects/scrap-pos",
+  "pipeline_id": "scrap-pos-audit",
+  "audit_version": "1.0",
+  "created": "2026-07-17T14:24:00Z",
+
+  "scope": [
+    {
+      "domain": "Code Quality",
+      "department": "Engineering (ช่างฟูล)",
+      "tasks": [
+        "PHP code structure & conventions",
+        "Two-layer pattern compliance (base-pos vs customizations)",
+        "Dead code / duplicate code detection",
+        "Router.php health — all routes documented?",
+        "Error handling patterns"
+      ]
+    },
+    {
+      "domain": "Security",
+      "department": "Cyber Security (ซาย)",
+      "tasks": [
+        "JWT authentication audit (token lifetime, cookie vs bearer)",
+        "SQL Injection scan (all prepared statements?)",
+        "XSS protection (output escaping)",
+        "File upload security (photo upload endpoint)",
+        "Security headers (CSP, X-Frame-Options, CORS)",
+        "OWASP Top 10 quick scan"
+      ]
+    },
+    {
+      "domain": "Testing & QA",
+      "department": "QA (QA-ทีม)",
+      "tasks": [
+        "API test suite — run all 84 tests",
+        "Test coverage gaps identification",
+        "Edge case coverage (empty data, special chars, Thai)",
+        "Mobile responsive validation",
+        "Console error scan"
+      ]
+    },
+    {
+      "domain": "Infrastructure",
+      "department": "Network Engineer (นีต)",
+      "tasks": [
+        "Docker Compose configuration review",
+        "Production readiness (Caddy, env vars, secrets)",
+        "Backup strategy assessment",
+        "Logging & monitoring setup",
+        "Deployment script audit (deploy.sh)"
+      ]
+    },
+    {
+      "domain": "Architecture",
+      "department": "Architect (พี่ทรงศักดิ์)",
+      "tasks": [
+        "Two-layer architecture compliance",
+        "API route design patterns",
+        "Database schema review (indexes, migrations)",
+        "FIFO calculation correctness",
+        "Scalability assessment"
+      ]
+    },
+    {
+      "domain": "Documentation",
+      "department": "Product (โปรดัค)",
+      "tasks": [
+        "README completeness",
+        "AGENTS.md / CLAUDE.md currency",
+        "Sprint plan vs actual status",
+        "Missing documentation gaps"
+      ]
+    }
+  ],
+
+  "scoring": {
+    "quality_gate_minimum": 9.0,
+    "dimensions": {
+      "correctness": { "weight": 3, "description": "ทำงานตรง spec ทุก edge case" },
+      "code_quality": { "weight": 2, "description": "อ่านง่าย, ไม่มี dead code" },
+      "security": { "weight": 2, "description": "no injection, input validated" },
+      "test_coverage": { "weight": 2, "description": "happy path + error cases" },
+      "ux_output": { "weight": 1, "description": "output ที่ user เห็นสวยงาม" }
+    }
+  }
+}

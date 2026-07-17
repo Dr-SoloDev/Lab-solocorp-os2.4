@@ -1,0 +1,3 @@
+Error: HTTP 403: This API key is not bound to the required pool for this endpoint. Switch the key in your dashboard or use /v1/chat/completions or /v1/responses with a compatible pool-bound key.
+
+session_id: 20260717_211939_8bb88d

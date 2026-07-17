@@ -1,0 +1,42 @@
+{
+  "project_id": "scrap-pos-audit",
+  "name": "Scrap POS Full Audit + Quality Gate",
+  "status": "done",
+  "phase": "deploy",
+  "phases": {
+    "spec": {
+      "status": "done",
+      "owner": "ceo-turbo"
+    },
+    "design": {
+      "status": "done",
+      "owner": "ceo-turbo"
+    },
+    "arch": {
+      "status": "done",
+      "owner": "ceo-turbo"
+    },
+    "dev": {
+      "status": "done",
+      "owner": "ceo-turbo"
+    },
+    "qa": {
+      "status": "done",
+      "owner": "ceo-turbo"
+    },
+    "deploy": {
+      "status": "done",
+      "owner": "ceo-turbo"
+    }
+  },
+  "blockers": [],
+  "governance": {
+    "rfcs": [],
+    "adrs": [],
+    "active_guards": [],
+    "guard_status": "passed",
+    "complexity_score": 0,
+    "threshold": "auto"
+  },
+  "updated_at": "2026-07-17T14:33:25.272933+00:00"
+}
