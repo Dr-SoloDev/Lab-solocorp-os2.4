@@ -119,3 +119,23 @@ Architect Team (specialists under พี่ทรงศักดิ์):
 - ดู `opencode.json` สำหรับ full config (MCP, permissions, commands, references)
 - หัวหน้าแผนกไม่ทำงานเอง — ใช้ `delegate_task` ส่งให้ specialist agent
 - ถ้า request ไม่อยู่ใน scope ของ department ใด ให้ route กลับไป CEO (เทอโบ)
+
+---
+
+## deja-vu Memory Recall
+
+เครื่องมือนี้ใช้ deja-vu เพื่อขุดความจำจาก sessions ก่อนหน้า
+
+### Auto Mode (plugin)
+- ทุกครั้งที่เปิด session ใหม่ deja-vu จะ inject context เก่าของโปรเจกต์นี้ให้อัตโนมัติผ่าน opencode plugin (`~/.config/opencode/plugins/deja.js`)
+- ไม่ต้องทำอะไร — ความจำมากับระบบ
+
+### การใช้งานด้วยตัวเอง
+- ค้นหา: `deja "คำที่อยากค้น"` — ค้นทุก agent ทุกโปรเจกต์
+- ดู session: `deja show <id>` — เปิดอ่านเต็มๆ
+- กลับเข้า session เก่า: `deja resume <id>`
+- สถิติ: `deja stats` — ดูภาพรวมความจำทั้งหมด
+- แชร์: `deja share <id>` — แชร์ digest ที่ sanitized แล้ว
+
+### ก่อนไล่บั๊ก
+ให้ลองค้นความจำด้วย `deja "bug description"` ก่อนทุกครั้ง — ปัญหานี้อาจเคยแก้ไปแล้ว
