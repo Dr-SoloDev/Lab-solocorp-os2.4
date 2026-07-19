@@ -5,7 +5,8 @@ import uuid
 
 Department = Literal[
     "ceo","cfo","cmo","orchestrator","architect","product",
-    "engineering","design","ui_designer","qa","sales","support","legal","web3"
+    "engineering","design","ui_designer","qa","sales","support",
+    "legal","web3","content_creator","neteng","cybersec","psychology",
 ]
 Priority = Literal["critical","high","normal","low"]
 MessageType = Literal[
