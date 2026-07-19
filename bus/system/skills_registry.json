@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-07-20",
+  "description": "Skill Registry — เชื่อมต่อ skills กับ Central Bus routing",
+  "skills": [
+    {
+      "name": "@solocorp/cross-dept/pipeline-bridge",
+      "version": "0.1.0",
+      "endpoint": "/v1/skills/cross-dept/pipeline-bridge",
+      "owner": "architect",
+      "consumers": ["architect", "engineering", "product", "cfo", "cmo"],
+      "mirror_level": "L3",
+      "status": "active"
+    },
+    {
+      "name": "@solocorp/cross-dept/mirror-check",
+      "version": "0.1.0",
+      "endpoint": "/v1/skills/cross-dept/mirror-check",
+      "owner": "ceo",
+      "consumers": ["architect", "engineering", "cfo", "product", "cmo", "qa", "legal", "web3"],
+      "mirror_level": "L2",
+      "status": "active"
+    },
+    {
+      "name": "team-pipeline-auditor",
+      "version": "1.0.0",
+      "endpoint": "/v1/skills/architect/pipeline-auditor",
+      "owner": "architect",
+      "consumers": ["architect"],
+      "mirror_level": "L4",
+      "status": "active"
+    },
+    {
+      "name": "team-routing-config",
+      "version": "1.0.0",
+      "endpoint": "/v1/skills/architect/routing-config",
+      "owner": "architect",
+      "consumers": ["architect"],
+      "mirror_level": "L4",
+      "status": "active"
+    }
+  ]
+}

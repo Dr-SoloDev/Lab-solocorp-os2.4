@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "description": "Skill Route Registration — map skills ไปยัง Central Bus endpoints",
+  "routes": [
+    {
+      "skill": "@solocorp/cross-dept/pipeline-bridge",
+      "method": "POST",
+      "path": "/v1/skills/cross-dept/pipeline-bridge",
+      "target_department": "architect",
+      "queue_topic": "skill.invoke",
+      "mirror_check": true,
+      "min_mirror_level": "L3",
+      "status": "registered"
+    },
+    {
+      "skill": "@solocorp/cross-dept/mirror-check",
+      "method": "POST",
+      "path": "/v1/skills/cross-dept/mirror-check",
+      "target_department": "ceo",
+      "queue_topic": "governance.mirror",
+      "mirror_check": false,
+      "min_mirror_level": "L2",
+      "status": "registered"
+    }
+  ],
+  "middleware": {
+    "mirror_check": {
+      "enabled": true,
+      "reject_on_fail": true,
+      "audit_on_pass": true
+    },
+    "rate_limit": {
+      "enabled": true,
+      "max_per_minute": 30
+    },
+    "auth": {
+      "type": "department_token",
+      "enabled": false
+    }
+  }
+}

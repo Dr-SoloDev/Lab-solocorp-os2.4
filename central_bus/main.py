@@ -102,7 +102,10 @@ _ADMIN_KEY = os.environ.get(
 async def api_key_auth(request: Request, call_next):
     """ตรวจสอบ API Key ทุก request (ยกเว้น health check)"""
     # Skip auth for health and docs
-    if request.url.path in ("/v1/health", "/docs", "/openapi.json"):
+    if request.url.path in (
+        "/v1/health", "/docs", "/openapi.json",
+        "/v1/skills",  # skills list (public)
+    ) or request.url.path.startswith("/v1/skills/"):
         return await call_next(request)
 
     api_key = request.headers.get("X-API-Key", "")
@@ -138,6 +141,11 @@ async def api_key_auth(request: Request, call_next):
 
 # ── Include compliance validator router ───────────────────────────────
 app.include_router(compliance_router)
+
+# ── Include skills router ────────────────────────────────────────────
+from central_bus.skills_router import router as skills_router
+
+app.include_router(skills_router)
 
 
 # ═══════════════════════════════════════════════════════════════════════
