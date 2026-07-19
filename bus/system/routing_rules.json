@@ -16,7 +16,11 @@
     {"rule_id": "r_to_orch",     "trigger": {"keywords": ["orchestrat","pipeline status","cross-dept"]},         "route_to": "orchestrator","priority": "normal"},
     {"rule_id": "r_to_governance","trigger": {"keywords": ["governance","rfc","adr","guard check","complexity","xgov"]}, "route_to": "architect",  "priority": "high"},
     {"rule_id": "r_to_guard",    "trigger": {"keywords": ["guard failed","guard failure","guard escalate"]},         "route_to": "orchestrator","priority": "critical"},
-    {"rule_id": "r_fallback",    "trigger": {"keywords": []},                                             "route_to": "ceo",         "priority": "normal", "is_fallback": true}
+    {"rule_id": "r_fallback",    "trigger": {"keywords": []},                                             "route_to": "ceo",         "priority": "normal", "is_fallback": true},
+    {"rule_id": "r_mirror_ceo",       "trigger": {"keywords": ["mirror","identity","digital twin","สะท้อน","ตัวตน","owner mode"]},           "route_to": "ceo",         "priority": "critical", "mirror_check": true, "note": "Mirror CEO — ทุก decision ผ่าน mirror check เสมอ"},
+    {"rule_id": "r_mirror_architect", "trigger": {"keywords": ["mirror architecture","mirror architect","mirror design","mirror pipeline"]},  "route_to": "architect",   "priority": "high",    "mirror_check": true, "note": "Mirror Architect — เฉพาะ decision ที่ impact 2+ departments"},
+    {"rule_id": "r_mirror_cfo",       "trigger": {"keywords": ["mirror finance","mirror cfo","mirror budget","mirror risk"]},                "route_to": "cfo",         "priority": "high",    "mirror_check": true, "note": "Mirror CFO — เฉพาะ budget > 3,000 บาท"},
+    {"rule_id": "r_mirror_eng",       "trigger": {"keywords": ["mirror code","mirror engineering","mirror quality","mirror refactor"]},     "route_to": "engineering", "priority": "normal",  "mirror_check": true, "note": "Mirror Engineering — เฉพาะ major refactor และ API design"}
   ],
   "sla_minutes": {
     "critical": 30,
