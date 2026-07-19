@@ -1,5 +1,5 @@
 # SoloCorp Routing Manifest — Product
-# version: 1.0.0
+# version: 2.0.0 — Added Behavior-Centric Routing tasks
 
 tasks:
   - id: requirement
@@ -40,3 +40,40 @@ tasks:
       - market analysis
     route_to: product
     skills_hint: niche-research, blogwatcher
+
+  # ── Behavior-Centric Routing (new in v2.0) ──────────────────────
+
+  - id: behavior-taxonomy
+    label: กำหนดพฤติกรรม (Behavior Taxonomy)
+    route: Product — define 26 behaviors + department mapping
+    trigger_examples:
+      - behavior taxonomy
+      - behavior classification
+      - user intent
+      - พฤติกรรมผู้ใช้
+      - intent classification
+    route_to: product
+    skills_hint: plan, ai-product-canvas
+
+  - id: behavior-classifier-spec
+    label: Spec ระบบ Behavior Classifier
+    route: Product — PRD for classifier model, threshold, training data
+    trigger_examples:
+      - behavior classifier
+      - confidence threshold
+      - classifier spec
+      - intent classifier
+      - classifier model
+    route_to: product
+    skills_hint: ai-product-canvas, technical-spec-template
+
+  - id: routing-metrics
+    label: กำหนด success metrics สำหรับ routing
+    route: Product — accuracy, false positive, CEO review volume
+    trigger_examples:
+      - routing accuracy
+      - false positive rate
+      - CEO review volume
+      - behavior routing metrics
+      - routing success metrics
+    route_to: product
