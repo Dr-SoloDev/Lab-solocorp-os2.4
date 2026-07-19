@@ -150,6 +150,55 @@ CREATE TABLE IF NOT EXISTS api_keys (
     created_by      TEXT
 );
 
+-- ── Behavior Taxonomy (v1.0 — 26 behaviors) ───────────────────────────
+-- Behavior-Centric Routing: classify user intent BEFORE keyword matching.
+-- CEO Order: 2026-07-20 — Add-on layer, non-destructive.
+--
+-- domain: high-level category (e.g. "finance", "engineering", "leadership")
+-- behavior_name: unique intent identifier (e.g. "budget_approval")
+-- keywords: JSON array of trigger keywords/phrases for ML training
+-- confidence_threshold: minimum score to auto-route (0.0-1.0)
+
+CREATE TABLE IF NOT EXISTS behavior_taxonomy (
+    id              TEXT PRIMARY KEY,
+    domain          TEXT NOT NULL,              -- e.g. "finance", "engineering"
+    behavior_name   TEXT NOT NULL UNIQUE,       -- e.g. "budget_approval"
+    description     TEXT NOT NULL,              -- human-readable intent description
+    keywords        TEXT NOT NULL DEFAULT '[]', -- JSON array of trigger keywords
+    confidence_threshold REAL DEFAULT 0.9,      -- ≥90% → auto-route, <90% → CEO review
+    is_active       INTEGER DEFAULT 1,
+    created_at      TEXT DEFAULT (datetime('now')),
+    updated_at      TEXT DEFAULT (datetime('now'))
+);
+
+-- Behavior → Department Routing Map
+-- primary_dept: main department that handles this behavior
+-- secondary_depts: JSON array of backup departments
+-- routing_logic: "direct" | "orchestrator" | "ceo_review" | "round_robin"
+-- priority_boost: priority adjustment (0=normal, +1=high, +2=critical)
+
+CREATE TABLE IF NOT EXISTS behavior_route_map (
+    id              TEXT PRIMARY KEY,
+    behavior_id     TEXT NOT NULL REFERENCES behavior_taxonomy(id),
+    primary_dept    TEXT NOT NULL,              -- main routing target
+    secondary_depts TEXT NOT NULL DEFAULT '[]', -- JSON array of fallback depts
+    routing_logic   TEXT NOT NULL DEFAULT 'direct',
+    priority_boost  INTEGER DEFAULT 0,
+    created_at      TEXT DEFAULT (datetime('now')),
+    updated_at      TEXT DEFAULT (datetime('now'))
+);
+
+-- ── Migration Tracking ────────────────────────────────────────────────
+-- Tracks which migrations have been applied (idempotent runs)
+
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    id              TEXT PRIMARY KEY,
+    name            TEXT NOT NULL UNIQUE,
+    applied_at      TEXT DEFAULT (datetime('now')),
+    checksum        TEXT,
+    description     TEXT
+);
+
 -- ── Indexes ─────────────────────────────────────────────────────────
 -- Composite indexes for common query patterns
 CREATE INDEX IF NOT EXISTS idx_queue_status_created ON queue(status, created_at);
@@ -168,6 +217,12 @@ CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_log(action);
 CREATE INDEX IF NOT EXISTS idx_audit_agent ON audit_log(agent_id);
 CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at);
 CREATE INDEX IF NOT EXISTS idx_facts_key ON facts(key);
+
+-- Behavior taxonomy indexes
+CREATE INDEX IF NOT EXISTS idx_behavior_taxonomy_domain ON behavior_taxonomy(domain);
+CREATE INDEX IF NOT EXISTS idx_behavior_taxonomy_name ON behavior_taxonomy(behavior_name);
+CREATE INDEX IF NOT EXISTS idx_behavior_route_map_behavior ON behavior_route_map(behavior_id);
+CREATE INDEX IF NOT EXISTS idx_behavior_route_map_dept ON behavior_route_map(primary_dept);
 """
 
 
