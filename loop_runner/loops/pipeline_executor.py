@@ -48,6 +48,12 @@ class PipelineExecutorLoop(Loop):
                 msg = queue.dequeue(priority)
                 if not msg:
                     break
+                # skip non-task messages (HANDOFF, GOVERNANCE, etc.)
+                if getattr(msg, 'type', '') != 'task':
+                    continue
+                desc = msg.payload.get("description", "").strip()
+                if not desc:
+                    continue
                 result = self._dispatch(msg)
                 executed.append(f"[{msg.to_dept}] {msg.payload.get('task_id', '?')}: {result[:120]}")
 
@@ -75,6 +81,7 @@ class PipelineExecutorLoop(Loop):
         hermes = shutil.which("hermes")
         claude = shutil.which("claude") or "/home/drsolodev/.nvm/versions/node/v24.14.1/bin/claude"
 
+        output = None
         if hermes:
             r = subprocess.run(
                 [hermes, "chat", "-q", prompt, "-Q", "--yolo",
@@ -82,16 +89,20 @@ class PipelineExecutorLoop(Loop):
                 capture_output=True, text=True, timeout=300,
                 cwd=proj_path,
             )
-            output = (r.stdout or r.stderr or "no output").strip()
-        elif Path(claude).exists():
+            raw = (r.stdout or r.stderr or "").strip()
+            if r.returncode == 0 and not raw.startswith("Error:"):
+                output = raw
+
+        if output is None and Path(claude).exists():
             r = subprocess.run(
                 [claude, "--dangerously-skip-permissions", "-p", prompt],
-                capture_output=True, text=True, timeout=300,
+                capture_output=True, text=True, timeout=120,
                 cwd=proj_path,
             )
             output = (r.stdout or r.stderr or "no output").strip()
-        else:
-            output = f"ERROR: no CLI runner found (hermes={hermes}, claude={claude})"
+
+        if output is None:
+            output = f"ERROR: no CLI runner available (hermes={hermes}, claude={claude})"
 
         # Persist artifact
         artifact_dir = (
