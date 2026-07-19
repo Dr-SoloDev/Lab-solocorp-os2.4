@@ -1,5 +1,9 @@
 # SoloCorp OS Routing Manifest — Head of Architect
-# version: 2.0.0 — Pipeline-Based Routing
+# version: 2.1.0 — Behavior-Centric Routing (Add-on Layer)
+#
+# Changelog:
+#   v2.1.0 — Added behavior taxonomy tasks (2026-07-20)
+#   v2.0.0 — Pipeline-Based Routing
 
 always_read:
   - README.md
@@ -8,6 +12,7 @@ always_read:
   - rules/
 
 tasks:
+  # ── Pipeline Design (v2.0) ──────────────────────────────────────
   - id: pipeline-design
     label: ออกแบบ Pipeline Layout
     route: Architect — แตก Goal เป็น Pipeline Sequence
@@ -73,3 +78,48 @@ tasks:
       - ทุกวัน
     route_to: architect
     skills_hint: team-cron-pipeline
+
+  # ── Behavior Taxonomy (v2.1 — New) ──────────────────────────────
+  - id: behavior-migration
+    label: รัน Behavior Taxonomy Migration
+    route: Architect — seed 26 behaviors + route map
+    trigger_examples:
+      - behavior migration
+      - taxonomy seed
+      - 26 behaviors
+      - seed behaviors
+    route_to: architect
+    skills_hint: python, central_bus.behavior_migration
+
+  - id: behavior-classifier
+    label: Behavior Classification
+    route: Architect — classify user intent before keyword routing
+    trigger_examples:
+      - behavior classify
+      - intent routing
+      - behavior match
+      - classify intent
+    route_to: architect
+    skills_hint: ml, classifier, tfidf
+
+  - id: behavior-config
+    label: กำหนดค่า Behavior
+    route: Routing Config Agent — ปรับ confidence threshold, routing logic
+    trigger_examples:
+      - ปรับ behavior
+      - behavior config
+      - threshold
+      - routing logic
+    route_to: architect
+    skills_hint: team-routing-config
+
+  - id: behavior-audit
+    label: ตรวจสอบ Behavior Accuracy
+    route: Pipeline Auditor — audit classification accuracy
+    trigger_examples:
+      - behavior audit
+      - classification accuracy
+      - misclassify
+      - false positive
+    route_to: architect
+    skills_hint: team-pipeline-auditor
