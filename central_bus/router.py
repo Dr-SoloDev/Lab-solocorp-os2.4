@@ -7,6 +7,12 @@ Architecture
 * New ``RoutingEngine`` class loads rules from SQLite with 60s TTL cache.
 * The module-level ``route()`` function delegates to the engine when
   ``USE_SQLITE=True`` is set.  Otherwise falls back to JSONL.
+
+v0.6.1 — Behavior-Centric Routing (ADR-016)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* NEW ``BehaviorRouter`` class wraps the ``BehaviorClassifier`` as Tier 0.
+* NEW ``route_v2()`` — non-destructive: Tier 0 Behavior → fallback to route().
+* Existing ``route()``, ``RoutingEngine``, ``priority_for()`` untouched.
 """
 
 from __future__ import annotations
@@ -19,7 +25,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from central_bus.config import settings
-from central_bus.db import DbManager
+from central_bus.db import DbManager, new_id, now_iso
 from central_bus.models import BusMessage, Department, Priority
 from central_bus.semantic import TfidfRouter
 
@@ -91,7 +97,7 @@ def _governance_priority(msg: BusMessage) -> Priority | None:
     return None
 
 
-# ── Main route function (JSONL) ─────────────────────────────────────
+# ── Main route function (JSONL) — UNTOUCHED ────────────────────────
 
 
 def route(msg: BusMessage) -> Department:
@@ -149,7 +155,7 @@ def priority_for(dept: Department, msg: BusMessage | None = None) -> Priority:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# SQLite Routing Engine — the v0.6 default
+# SQLite Routing Engine — the v0.6 default (UNTOUCHED)
 # ═══════════════════════════════════════════════════════════════════════
 
 
@@ -276,12 +282,274 @@ class RoutingEngine:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# Module-level convenience: auto-select JSONL vs SQLite
+# v0.6.1 — BehaviorRouter (Tier 0) — ADD-ON, NOT DESTRUCTIVE
+# ═══════════════════════════════════════════════════════════════════════
+# Sits BEFORE existing route() — classifies intent into behavior,
+# then routes to the matching department.
+#
+# Flow:
+#   route_v2(msg):
+#     1. AO/GOVERNANCE bypass → existing route()
+#     2. BehaviorClassifier.classify(payload_text)
+#        → confidence >= 0.9 → route to behavior's primary_dept
+#        → confidence < 0.9 → fallback to route()
+# ═══════════════════════════════════════════════════════════════════════
+
+
+class BehaviorRouter:
+    """Behavior-Centric Router — Tier 0 wrapper around BehaviorClassifier.
+
+    Adds behavior classification BEFORE the existing keyword/semantic/CEO
+    routing pipeline.  Uses the centralized ``behavior_classifier`` module
+    and DB-backed route mapping.
+
+    Usage::
+
+        router = BehaviorRouter(db=db, classifier=classifier)
+        dept = await router.route_v2(msg)          # async
+        dept = router.route_v2_sync(payload_text)   # sync
+    """
+
+    def __init__(
+        self,
+        db: DbManager | None = None,
+        classifier=None,
+    ) -> None:
+        self._db = db
+        self._classifier = classifier
+        self._route_cache: dict[str, str] = {}  # behavior_name -> dept
+        self._cache_ts: float = 0.0
+        self._cache_ttl: float = 120.0
+
+    # ── Route cache ──────────────────────────────────────────────
+
+    async def _load_route_map(self) -> dict[str, str]:
+        """Load behavior_name -> primary_dept from DB, with cache."""
+        now = time.monotonic()
+        if self._route_cache and (now - self._cache_ts) < self._cache_ttl:
+            return self._route_cache
+
+        if self._db is None:
+            # Fallback to static BEHAVIOR_DEPT_MAP
+            from central_bus.behavior_classifier import BEHAVIOR_DEPT_MAP
+            self._route_cache = BEHAVIOR_DEPT_MAP
+            return self._route_cache
+
+        try:
+            rows = await self._db.fetch_all(
+                """
+                SELECT bt.behavior_name, brm.primary_dept
+                FROM behavior_route_map brm
+                JOIN behavior_taxonomy bt ON bt.id = brm.behavior_id
+                WHERE bt.is_active = 1
+                """
+            )
+            self._route_cache = {r["behavior_name"]: r["primary_dept"] for r in rows}
+            self._cache_ts = now
+            log.debug("BehaviorRouter: loaded %d route mappings", len(self._route_cache))
+        except Exception:
+            log.warning("Failed to load route map from DB — using static map")
+            from central_bus.behavior_classifier import BEHAVIOR_DEPT_MAP
+            self._route_cache = BEHAVIOR_DEPT_MAP
+
+        return self._route_cache
+
+    async def invalidate_route_cache(self) -> None:
+        """Force refresh of route map cache."""
+        self._cache_ts = 0.0
+
+    # ── Getters for classifier ───────────────────────────────────
+
+    @property
+    def classifier(self):
+        """Lazy-load the BehaviorClassifier singleton."""
+        if self._classifier is None:
+            from central_bus.behavior_classifier import get_classifier
+            self._classifier = get_classifier()
+        return self._classifier
+
+    # ── Async route_v2 (for SQLite RoutingEngine consumers) ──────
+
+    async def route_v2(
+        self,
+        msg: BusMessage,
+        *,
+        fallback_department: str = "ceo",
+        audit: bool = False,
+    ) -> Department:
+        """Full routing pipeline: Tier 0 (Behavior) → existing route().
+
+        Args:
+            msg: The BusMessage to route
+            fallback_department: Fallback if nothing matches
+            audit: If True, logs classification result to DB audit_log
+
+        Returns:
+            Department name (string)
+        """
+        # Bypass: AO/GOVERNANCE messages skip behavior classifier
+        if msg.type in ("AO_REQUEST", "AO_RESPONSE", "GOVERNANCE"):
+            return route(msg)
+
+        # Extract text from payload for classification
+        payload_text = self._extract_text(msg)
+        if not payload_text:
+            return route(msg)
+
+        # Tier 0: Behavior Classification
+        behavior_id, confidence = self.classifier.classify(payload_text)
+
+        if confidence >= 0.9:
+            # High confidence — route directly
+            route_map = await self._load_route_map()
+            dept = route_map.get(behavior_id, fallback_department)
+
+            if audit and self._db:
+                await self._audit_classification(msg, behavior_id, dept, confidence)
+
+            log.debug(
+                "BehaviorRouter: classified '%s' as '%s' (%.3f) → %s",
+                payload_text[:60], behavior_id, confidence, dept,
+            )
+            return dept
+
+        # Confidence < 0.9 — fallback to existing route()
+        if audit and self._db:
+            await self._audit_classification(
+                msg, behavior_id, "fallback", confidence
+            )
+
+        log.debug(
+            "BehaviorRouter: low confidence (%.3f) — falling back to route()",
+            confidence,
+        )
+        return route(msg)
+
+    # ── Sync route_v2 (for JSONL consumers) ──────────────────────
+
+    def route_v2_sync(
+        self,
+        payload_text: str,
+        *,
+        fallback_department: str = "ceo",
+    ) -> str:
+        """Sync version: classify payload text → department.
+
+        For use in synchronous code paths (e.g., test assertions).
+        Falls back to a static department map (no DB dependency).
+        """
+        if not payload_text:
+            return fallback_department
+
+        behavior_id, confidence = self.classifier.classify(payload_text)
+
+        if confidence >= 0.9:
+            from central_bus.behavior_classifier import BEHAVIOR_DEPT_MAP
+            return BEHAVIOR_DEPT_MAP.get(behavior_id, fallback_department)
+
+        return fallback_department
+
+    # ── Helpers ─────────────────────────────────────────────────
+
+    @staticmethod
+    def _extract_text(msg: BusMessage) -> str:
+        """Extract plain text from a BusMessage payload for classification."""
+        parts = []
+
+        # Common fields to include
+        for key in ("text", "message", "description", "title", "detail", "content", "query", "request"):
+            val = msg.payload.get(key)
+            if isinstance(val, str):
+                parts.append(val)
+
+        # If no structured text, serialize all payload values
+        if not parts:
+            parts = [str(v) for v in msg.payload.values() if isinstance(v, (str, int, float))]
+
+        return " ".join(parts) if parts else ""
+
+    async def _audit_classification(
+        self,
+        msg: BusMessage,
+        behavior: str,
+        dept: str,
+        confidence: float,
+    ) -> None:
+        """Log behavior classification result to audit trail."""
+        if not self._db:
+            return
+        try:
+            await self._db.execute(
+                """
+                INSERT INTO audit_log (id, trace_id, action, agent_id, entity_type, entity_id, payload, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    new_id(),
+                    msg.trace_id,
+                    "behavior.classify",
+                    msg.from_dept,
+                    "behavior",
+                    behavior,
+                    json.dumps({
+                        "behavior": behavior,
+                        "route_to": dept,
+                        "confidence": confidence,
+                        "auto_routed": confidence >= 0.9,
+                    }),
+                    now_iso(),
+                ),
+            )
+        except Exception as e:
+            log.warning("Failed to audit behavior classification: %s", e)
+
+
+# ── Module-level convenience: route_v2 ──────────────────────────────
+
+_behavior_router: BehaviorRouter | None = None
+
+
+def get_behavior_router(
+    db: DbManager | None = None,
+    classifier=None,
+) -> BehaviorRouter:
+    """Get or create the BehaviorRouter singleton."""
+    global _behavior_router
+    if _behavior_router is None:
+        _behavior_router = BehaviorRouter(db=db, classifier=classifier)
+    return _behavior_router
+
+
+def route_v2(
+    msg: BusMessage,
+    *,
+    fallback_department: str = "ceo",
+    audit: bool = False,
+    db: DbManager | None = None,
+) -> Department:
+    """Convenience: route with Behavior Tier 0 (sync wrapper).
+
+    Uses default BehaviorRouter singleton.
+    For async callers, use BehaviorRouter.route_v2() directly.
+    """
+    router = get_behavior_router(db=db)
+    # Note: the audit log uses the sync path — no DB write in sync mode
+    return router.route_v2_sync(
+        BehaviorRouter._extract_text(msg),
+        fallback_department=fallback_department,
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Module-level exports
 # ═══════════════════════════════════════════════════════════════════════
 
 __all__ = [
     "USE_SQLITE",
     "RoutingEngine",
-    # backward-compat JSONL functions
+    "BehaviorRouter",
+    # backward-compat JSONL functions (untouched)
     "route", "priority_for", "_load_rules",
+    # v0.6.1 Behavior-Centric Routing
+    "route_v2", "get_behavior_router",
 ]
