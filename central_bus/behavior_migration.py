@@ -16,11 +16,11 @@ Usage::
 
 Design
 ~~~~~~
-26 behaviors organised across 17 domains, covering all 18 SoloCorp departments.
+26 behaviours organised across 17 domains, covering all 18 SoloCorp departments.
 Each behavior has:
   - A unique ``behavior_name`` (snake_case)
   - ``keywords`` for classifier training (JSON array)
-  - ``confidence_threshold`` — ≥0.9 auto-route, <0.9 → CEO review
+  - ``confidence_threshold`` — >=0.9 auto-route, <0.9 -> CEO review
   - ``routing_logic`` — direct | orchestrator | ceo_review | round_robin
 
 Migration Strategy
@@ -54,15 +54,17 @@ log = logging.getLogger(__name__)
 MIGRATION_NAME = "v001_seed_26_behaviors"
 MIGRATION_DESC = "Seed 26 behavior intents + route map for Behavior-Centric Routing"
 
+
+def _j(data: list[str]) -> str:
+    """Shortcut: list[str] -> JSON array string."""
+    return json.dumps(data, ensure_ascii=False)
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # 26 Behaviors — Seed Data
 # ═══════════════════════════════════════════════════════════════════════
 # Organised by domain. Each entry:
-#   id:          UUID (auto-generated at runtime for idempotency)
-#   domain:      high-level category
-#   behavior_name: unique identifier (snake_case)
-#   description: human-readable intent description
-#   keywords:    trigger phrases for classifier training
+#   keywords:    JSON string of trigger phrases for classifier training
 #   threshold:   confidence threshold (0.0-1.0)
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -72,7 +74,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "leadership",
         "behavior_name": "vision_strategy",
         "description": "กำหนดวิสัยทัศน์ กลยุทธ์ ทิศทางองค์กร — vision, mission, strategic direction",
-        "keywords": json.dump(["vision", "strategy", "mission", "direction", "goal", "objective", "roadmap", "vision", "กลยุทธ์", "วิสัยทัศน์", "เป้าหมาย", "ทิศทาง"], ensure_ascii=False),
+        "keywords": _j(["vision", "strategy", "mission", "direction", "goal", "objective", "กลยุทธ์", "วิสัยทัศน์", "เป้าหมาย", "ทิศทาง"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -80,7 +82,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "leadership",
         "behavior_name": "owner_decision",
         "description": "การตัดสินใจระดับสูง — final call, escalation, approval gate, executive decision",
-        "keywords": json.dump(["final decision", "approve", "escalate", "owner decision", "executive", "decide", "อนุมัติ", "ตัดสินใจ", " escalate", "owner"], ensure_ascii=False),
+        "keywords": _j(["final decision", "approve", "escalate", "owner decision", "executive", "decide", "อนุมัติ", "ตัดสินใจ", "owner"]),
         "confidence_threshold": 0.95,
         "is_active": 1,
     },
@@ -89,7 +91,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "finance",
         "behavior_name": "budget_approval",
         "description": "อนุมัติงบประมาณ จัดสรรทรัพยากรทางการเงิน — budget planning, resource allocation",
-        "keywords": json.dump(["budget", "approve budget", "funding", "allocate", "resource", "งบประมาณ", "งบ", "จัดสรร", "ทุน"], ensure_ascii=False),
+        "keywords": _j(["budget", "approve budget", "funding", "allocate", "resource", "งบประมาณ", "งบ", "จัดสรร", "ทุน"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -97,7 +99,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "finance",
         "behavior_name": "cost_analysis",
         "description": "วิเคราะห์ต้นทุน ROI financial modeling — cost, profit, investment analysis",
-        "keywords": json.dump(["cost", "roi", "profit", "revenue", "financial model", "forecast", "ต้นทุน", "กำไร", "รายได้", "วิเคราะห์การเงิน"], ensure_ascii=False),
+        "keywords": _j(["cost", "roi", "profit", "revenue", "financial model", "forecast", "ต้นทุน", "กำไร", "รายได้", "วิเคราะห์การเงิน"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -106,7 +108,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "marketing",
         "behavior_name": "campaign_management",
         "description": "วางแผนแคมเปญ ดำเนินการวัดผล — campaign planning, execution, measurement",
-        "keywords": json.dump(["campaign", "marketing", "promotion", "advertise", "แคมเปญ", "การตลาด", "โปรโมท", "โฆษณา"], ensure_ascii=False),
+        "keywords": _j(["campaign", "marketing", "promotion", "advertise", "แคมเปญ", "การตลาด", "โปรโมท", "โฆษณา"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -114,7 +116,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "marketing",
         "behavior_name": "brand_strategy",
         "description": "กำหนดแบรนด์ positioning เอกลักษณ์ — brand identity, positioning, messaging",
-        "keywords": json.dump(["brand", "positioning", "brand identity", "messaging", "แบรนด์", "positioning", "เอกลักษณ์"], ensure_ascii=False),
+        "keywords": _j(["brand", "positioning", "brand identity", "messaging", "แบรนด์", "เอกลักษณ์"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -123,7 +125,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "content",
         "behavior_name": "content_production",
         "description": "สร้างเนื้อหา caption video copy — content creation, copywriting, media production",
-        "keywords": json.dump(["content", "write", "caption", "copy", "video", "script", "คอนเทนต์", "เขียน", "แคปชั่น", "บทความ"], ensure_ascii=False),
+        "keywords": _j(["content", "write", "caption", "copy", "video", "script", "คอนเทนต์", "เขียน", "แคปชั่น", "บทความ"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -132,7 +134,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "operations",
         "behavior_name": "pipeline_coordination",
         "description": "ประสานงานข้ามแผนก จัดการ workflow — cross-dept coordination, workflow orchestration",
-        "keywords": json.dump(["pipeline", "workflow", "orchestrate", "coordinate", "cross", "handoff", "pipeline status", "ประสานงาน", " workflow", "ส่งต่อ"], ensure_ascii=False),
+        "keywords": _j(["pipeline", "workflow", "orchestrate", "coordinate", "cross", "handoff", "pipeline status", "ประสานงาน", "ส่งต่อ"]),
         "confidence_threshold": 0.85,
         "is_active": 1,
     },
@@ -141,7 +143,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "architecture",
         "behavior_name": "architecture_design",
         "description": "ออกแบบระบบ bus schema — system design, central bus, architecture decision",
-        "keywords": json.dump(["architecture", "system design", "schema", "central bus", "architecture decision", "adr", "สถาปัตยกรรม", "ออกแบบระบบ"], ensure_ascii=False),
+        "keywords": _j(["architecture", "system design", "schema", "central bus", "architecture decision", "adr", "สถาปัตยกรรม", "ออกแบบระบบ"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -149,7 +151,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "architecture",
         "behavior_name": "routing_monitoring",
         "description": "ตั้งค่า routing เฝ้าระบบ — routing rules, monitoring, circuit breaker, health check",
-        "keywords": json.dump(["routing", "route", "monitor", "health check", "watchdog", "circuit breaker", "เส้นทาง", "route", "มอนิเตอร์", "เฝ้าระวัง"], ensure_ascii=False),
+        "keywords": _j(["routing", "route", "monitor", "health check", "watchdog", "circuit breaker", "เส้นทาง", "มอนิเตอร์", "เฝ้าระวัง"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -158,7 +160,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "product",
         "behavior_name": "feature_definition",
         "description": "กำหนด features PRD requirements — feature spec, product requirements, user stories",
-        "keywords": json.dump(["feature", "prd", "requirement", "user story", "product", "spec", "feature request", "ฟีเจอร์", "ความต้องการ"], ensure_ascii=False),
+        "keywords": _j(["feature", "prd", "requirement", "user story", "product", "spec", "feature request", "ฟีเจอร์", "ความต้องการ"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -166,7 +168,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "product",
         "behavior_name": "roadmap_planning",
         "description": "วางแผน roadmap จัดลำดับความสำคัญ — prioritization, release planning, backlog",
-        "keywords": json.dump(["roadmap", "prioritize", "backlog", "release", "planning", "sprint", "โรดแมพ", "ลำดับความสำคัญ"], ensure_ascii=False),
+        "keywords": _j(["roadmap", "prioritize", "backlog", "release", "planning", "sprint", "โรดแมพ", "ลำดับความสำคัญ"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -175,7 +177,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "engineering",
         "behavior_name": "backend_development",
         "description": "พัฒนา backend API database — server-side, API, database, microservice",
-        "keywords": json.dump(["backend", "api", "database", "server", "microservice", "endpoint", "แบ็กเอนด์", "api", "ฐานข้อมูล", "เซิร์ฟเวอร์"], ensure_ascii=False),
+        "keywords": _j(["backend", "api", "database", "server", "microservice", "endpoint", "แบ็กเอนด์", "ฐานข้อมูล", "เซิร์ฟเวอร์"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -183,7 +185,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "engineering",
         "behavior_name": "frontend_development",
         "description": "พัฒนา frontend UI component — client-side, UI code, Tailwind, React, Vue",
-        "keywords": json.dump(["frontend", "ui code", "component", "tailwind", "react", "vue", "html", "css", "ฟร้อนท์", "ui component"], ensure_ascii=False),
+        "keywords": _j(["frontend", "ui code", "component", "tailwind", "react", "vue", "html", "css", "ui component"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -191,7 +193,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "engineering",
         "behavior_name": "bug_fixing",
         "description": "แก้บั๊ก ซ่อมระบบ debug — bug report, defect, fix, error, regression",
-        "keywords": json.dump(["bug", "fix", "error", "crash", "defect", "regression", "broken", "บั๊ก", "แก้", "พัง", "error", "crash"], ensure_ascii=False),
+        "keywords": _j(["bug", "fix", "error", "crash", "defect", "regression", "broken", "บั๊ก", "แก้", "พัง"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -200,7 +202,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "design",
         "behavior_name": "visual_design",
         "description": "ออกแบบ visual design system — design system, visual identity, brand visual, component library",
-        "keywords": json.dump(["design system", "visual", "component library", "style guide", "figma", "ออกแบบ", "visual", "component"], ensure_ascii=False),
+        "keywords": _j(["design system", "visual", "component library", "style guide", "figma", "ออกแบบ", "component"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -208,7 +210,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "design",
         "behavior_name": "ux_research",
         "description": "วิจัย UX wireframe — user research, usability, wireframe, information architecture",
-        "keywords": json.dump(["ux", "user research", "usability", "wireframe", "user experience", "research", "ux research", "วิจัย", "ผู้ใช้"], ensure_ascii=False),
+        "keywords": _j(["ux", "user research", "usability", "wireframe", "user experience", "research", "ux research", "วิจัย", "ผู้ใช้"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -217,7 +219,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "quality",
         "behavior_name": "qa_testing",
         "description": "ทดสอบ ตรวจสอบคุณภาพ — testing, QA, test case, automation test, quality check",
-        "keywords": json.dump(["test", "qa", "quality", "test case", "automation test", "testing", "ทดสอบ", "qa", "คุณภาพ", "เทส"], ensure_ascii=False),
+        "keywords": _j(["test", "qa", "quality", "test case", "automation test", "testing", "ทดสอบ", "คุณภาพ"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -226,7 +228,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "sales",
         "behavior_name": "sales_deal",
         "description": "จัดการดีล ขาย proposal — deal management, sales pipeline, proposal, closing",
-        "keywords": json.dump(["sales", "deal", "proposal", "pipeline deal", "close", "prospect", "ขาย", "ดีล", "เซลส์"], ensure_ascii=False),
+        "keywords": _j(["sales", "deal", "proposal", "pipeline deal", "close", "prospect", "ขาย", "ดีล", "เซลส์"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -235,7 +237,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "support",
         "behavior_name": "customer_support",
         "description": "ให้บริการลูกค้า ticket — customer service, ticket, issue resolution, help",
-        "keywords": json.dump(["support", "customer", "ticket", "help", "issue", "service", "ซัพพอร์ต", "ลูกค้า", "ช่วย"], ensure_ascii=False),
+        "keywords": _j(["support", "customer", "ticket", "help", "issue", "service", "ซัพพอร์ต", "ลูกค้า", "ช่วย"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -244,7 +246,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "legal",
         "behavior_name": "legal_compliance",
         "description": "ติดตาม compliance กฎระเบียบ — regulatory compliance, PDPA, GDPR, audit readiness",
-        "keywords": json.dump(["compliance", "regulatory", "pdpa", "gdpr", "regulation", "กฎหมาย", "compliant", "ปฏิบัติตาม"], ensure_ascii=False),
+        "keywords": _j(["compliance", "regulatory", "pdpa", "gdpr", "regulation", "กฎหมาย", "compliant", "ปฏิบัติตาม"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -252,7 +254,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "legal",
         "behavior_name": "contract_management",
         "description": "จัดการสัญญา นิติกรรม — contract review, agreement, NDA, MOU, legal document",
-        "keywords": json.dump(["contract", "agreement", "nda", "mou", "legal", "document", "สัญญา", "นิติกรรม", "ข้อตกลง"], ensure_ascii=False),
+        "keywords": _j(["contract", "agreement", "nda", "mou", "legal", "document", "สัญญา", "นิติกรรม", "ข้อตกลง"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -261,7 +263,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "web3",
         "behavior_name": "smart_contract_defi",
         "description": "พัฒนา smart contract DeFi Solana — blockchain, Solidity, Anchor, tokenomics",
-        "keywords": json.dump(["smart contract", "defi", "solana", "blockchain", "solidity", "anchor", "token", "crypto", "web3"], ensure_ascii=False),
+        "keywords": _j(["smart contract", "defi", "solana", "blockchain", "solidity", "anchor", "token", "crypto", "web3"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -270,7 +272,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "network",
         "behavior_name": "network_operations",
         "description": "จัดการเครือข่าย CDN DNS VPN — network infrastructure, load balancing, connectivity",
-        "keywords": json.dump(["network", "cdn", "dns", "vpn", "load balancer", "bandwidth", "network infra", "เครือข่าย"], ensure_ascii=False),
+        "keywords": _j(["network", "cdn", "dns", "vpn", "load balancer", "bandwidth", "network infra", "เครือข่าย"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -279,7 +281,7 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "security",
         "behavior_name": "security_incident",
         "description": "จัดการภัยคุกคามความปลอดภัย — threat detection, vulnerability, incident response",
-        "keywords": json.dump(["security", "threat", "vulnerability", "incident", "breach", "attack", "cyber", "ความปลอดภัย", "ภัยคุกคาม"], ensure_ascii=False),
+        "keywords": _j(["security", "threat", "vulnerability", "incident", "breach", "attack", "cyber", "ความปลอดภัย", "ภัยคุกคาม"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
@@ -288,23 +290,19 @@ BEHAVIORS: list[dict[str, Any]] = [
         "domain": "psychology",
         "behavior_name": "behavioral_research",
         "description": "วิเคราะห์พฤติกรรม จิตวิทยา — user behavior, cognitive bias, behavioral economics",
-        "keywords": json.dump(["psychology", "behavior", "cognitive bias", "user behavior", "behavioral", "จิตวิทยา", "พฤติกรรม", "bias"], ensure_ascii=False),
+        "keywords": _j(["psychology", "behavior", "cognitive bias", "user behavior", "behavioral", "จิตวิทยา", "พฤติกรรม", "bias"]),
         "confidence_threshold": 0.9,
         "is_active": 1,
     },
 ]
 
 # ═══════════════════════════════════════════════════════════════════════
-# Behavior → Department Route Map
+# Behavior -> Department Route Map
 # ═══════════════════════════════════════════════════════════════════════
 # Maps each behavior_name to:
 #   primary_dept:     main department that handles this intent
 #   secondary_depts:  fallback depts when primary isn't available
-#   routing_logic:    how to route:
-#                     "direct"       → send straight to primary_dept
-#                     "orchestrator" → send via orchestrator for coordination
-#                     "ceo_review"   → send to CEO for decision first
-#                     "round_robin"  → distribute among departments
+#   routing_logic:    "direct" | "orchestrator" | "ceo_review" | "round_robin"
 #   priority_boost:   0=normal, 1=high, 2=critical
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -312,173 +310,173 @@ ROUTE_MAP: dict[str, dict[str, Any]] = {
     # ── Leadership ────────────────────────────────────────────────
     "vision_strategy": {
         "primary_dept": "ceo",
-        "secondary_depts": json.dump(["architect"], ensure_ascii=False),
+        "secondary_depts": _j(["architect"]),
         "routing_logic": "direct",
         "priority_boost": 1,
     },
     "owner_decision": {
         "primary_dept": "ceo",
-        "secondary_depts": json.dump(["orchestrator"], ensure_ascii=False),
+        "secondary_depts": _j(["orchestrator"]),
         "routing_logic": "ceo_review",
         "priority_boost": 2,
     },
     # ── Finance ───────────────────────────────────────────────────
     "budget_approval": {
         "primary_dept": "cfo",
-        "secondary_depts": json.dump(["ceo"], ensure_ascii=False),
+        "secondary_depts": _j(["ceo"]),
         "routing_logic": "direct",
         "priority_boost": 1,
     },
     "cost_analysis": {
         "primary_dept": "cfo",
-        "secondary_depts": json.dump(["ceo"], ensure_ascii=False),
+        "secondary_depts": _j(["ceo"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     # ── Marketing ─────────────────────────────────────────────────
     "campaign_management": {
         "primary_dept": "cmo",
-        "secondary_depts": json.dump(["content_creator", "design"], ensure_ascii=False),
+        "secondary_depts": _j(["content_creator", "design"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     "brand_strategy": {
         "primary_dept": "cmo",
-        "secondary_depts": json.dump(["design"], ensure_ascii=False),
+        "secondary_depts": _j(["design"]),
         "routing_logic": "direct",
         "priority_boost": 1,
     },
     # ── Content ───────────────────────────────────────────────────
     "content_production": {
         "primary_dept": "content_creator",
-        "secondary_depts": json.dump(["cmo"], ensure_ascii=False),
+        "secondary_depts": _j(["cmo"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     # ── Operations ────────────────────────────────────────────────
     "pipeline_coordination": {
         "primary_dept": "orchestrator",
-        "secondary_depts": json.dump(["architect"], ensure_ascii=False),
+        "secondary_depts": _j(["architect"]),
         "routing_logic": "orchestrator",
         "priority_boost": 1,
     },
     # ── Architecture ──────────────────────────────────────────────
     "architecture_design": {
         "primary_dept": "architect",
-        "secondary_depts": json.dump(["engineering", "orchestrator"], ensure_ascii=False),
+        "secondary_depts": _j(["engineering", "orchestrator"]),
         "routing_logic": "direct",
         "priority_boost": 1,
     },
     "routing_monitoring": {
         "primary_dept": "architect",
-        "secondary_depts": json.dump(["orchestrator"], ensure_ascii=False),
+        "secondary_depts": _j(["orchestrator"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     # ── Product ───────────────────────────────────────────────────
     "feature_definition": {
         "primary_dept": "product",
-        "secondary_depts": json.dump(["engineering", "design"], ensure_ascii=False),
+        "secondary_depts": _j(["engineering", "design"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     "roadmap_planning": {
         "primary_dept": "product",
-        "secondary_depts": json.dump(["ceo", "engineering"], ensure_ascii=False),
+        "secondary_depts": _j(["ceo", "engineering"]),
         "routing_logic": "direct",
         "priority_boost": 1,
     },
     # ── Engineering ───────────────────────────────────────────────
     "backend_development": {
         "primary_dept": "engineering",
-        "secondary_depts": json.dump(["architect"], ensure_ascii=False),
+        "secondary_depts": _j(["architect"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     "frontend_development": {
         "primary_dept": "engineering",
-        "secondary_depts": json.dump(["ui_designer", "design"], ensure_ascii=False),
+        "secondary_depts": _j(["ui_designer", "design"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     "bug_fixing": {
         "primary_dept": "engineering",
-        "secondary_depts": json.dump(["qa"], ensure_ascii=False),
+        "secondary_depts": _j(["qa"]),
         "routing_logic": "direct",
         "priority_boost": 1,
     },
     # ── Design ───────────────────────────────────────────────────
     "visual_design": {
         "primary_dept": "design",
-        "secondary_depts": json.dump(["ui_designer"], ensure_ascii=False),
+        "secondary_depts": _j(["ui_designer"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     "ux_research": {
         "primary_dept": "design",
-        "secondary_depts": json.dump(["product", "psychology"], ensure_ascii=False),
+        "secondary_depts": _j(["product", "psychology"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     # ── Quality ───────────────────────────────────────────────────
     "qa_testing": {
         "primary_dept": "qa",
-        "secondary_depts": json.dump(["engineering"], ensure_ascii=False),
+        "secondary_depts": _j(["engineering"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     # ── Sales ────────────────────────────────────────────────────
     "sales_deal": {
         "primary_dept": "sales",
-        "secondary_depts": json.dump(["cmo"], ensure_ascii=False),
+        "secondary_depts": _j(["cmo"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     # ── Support ──────────────────────────────────────────────────
     "customer_support": {
         "primary_dept": "support",
-        "secondary_depts": json.dump(["engineering", "sales"], ensure_ascii=False),
+        "secondary_depts": _j(["engineering", "sales"]),
         "routing_logic": "direct",
         "priority_boost": 1,
     },
     # ── Legal ────────────────────────────────────────────────────
     "legal_compliance": {
         "primary_dept": "legal",
-        "secondary_depts": json.dump(["ceo"], ensure_ascii=False),
+        "secondary_depts": _j(["ceo"]),
         "routing_logic": "direct",
         "priority_boost": 1,
     },
     "contract_management": {
         "primary_dept": "legal",
-        "secondary_depts": json.dump(["cfo"], ensure_ascii=False),
+        "secondary_depts": _j(["cfo"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     # ── Web3 ─────────────────────────────────────────────────────
     "smart_contract_defi": {
         "primary_dept": "web3",
-        "secondary_depts": json.dump(["engineering", "legal"], ensure_ascii=False),
+        "secondary_depts": _j(["engineering", "legal"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
     # ── Network ──────────────────────────────────────────────────
     "network_operations": {
         "primary_dept": "neteng",
-        "secondary_depts": json.dump(["architect"], ensure_ascii=False),
+        "secondary_depts": _j(["architect"]),
         "routing_logic": "direct",
         "priority_boost": 1,
     },
     # ── Security ─────────────────────────────────────────────────
     "security_incident": {
         "primary_dept": "cybersec",
-        "secondary_depts": json.dump(["architect", "engineering"], ensure_ascii=False),
+        "secondary_depts": _j(["architect", "engineering"]),
         "routing_logic": "direct",
         "priority_boost": 2,
     },
     # ── Psychology ───────────────────────────────────────────────
     "behavioral_research": {
         "primary_dept": "psychology",
-        "secondary_depts": json.dump(["design", "product"], ensure_ascii=False),
+        "secondary_depts": _j(["design", "product"]),
         "routing_logic": "direct",
         "priority_boost": 0,
     },
@@ -575,7 +573,7 @@ class BehaviorMigration:
             self.stats["behaviors_inserted"] += 1
 
     async def _seed_route_map(self) -> None:
-        """Insert behavior → department routes into behavior_route_map."""
+        """Insert behavior -> department routes into behavior_route_map."""
         # Fetch all behavior IDs
         behavior_rows = await self._db.fetch_all(
             "SELECT id, behavior_name FROM behavior_taxonomy"
@@ -635,7 +633,7 @@ class BehaviorMigration:
         ))["cnt"]
         log.info("Behavior Taxonomy: %d rows (expected %d)", bhv_count, len(BEHAVIORS))
         if bhv_count < len(BEHAVIORS):
-            log.warning("⚠️  Some behaviors missing: %d < %d", bhv_count, len(BEHAVIORS))
+            log.warning("Some behaviors missing: %d < %d", bhv_count, len(BEHAVIORS))
             all_ok = False
 
         # Check route map count
@@ -644,7 +642,7 @@ class BehaviorMigration:
         ))["cnt"]
         log.info("Behavior Route Map:  %d rows (expected %d)", route_count, len(ROUTE_MAP))
         if route_count < len(ROUTE_MAP):
-            log.warning("⚠️  Some routes missing: %d < %d", route_count, len(ROUTE_MAP))
+            log.warning("Some routes missing: %d < %d", route_count, len(ROUTE_MAP))
             all_ok = False
 
         # Show domain breakdown
@@ -664,12 +662,12 @@ class BehaviorMigration:
             log.info("Migration record: %s (checksum: %s, applied: %s)",
                      mig["name"], mig["checksum"], mig["applied_at"])
         else:
-            log.warning("⚠️  No migration record found (dry run or not applied)")
+            log.warning("No migration record found (dry run or not applied)")
 
         if all_ok:
-            log.info("✅ All seeds verified!")
+            log.info("All seeds verified!")
         else:
-            log.warning("⚠️  Some counts mismatch — investigate before cutover")
+            log.warning("Some counts mismatch — investigate before cutover")
 
         return all_ok
 
