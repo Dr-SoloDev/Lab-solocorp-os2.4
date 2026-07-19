@@ -66,6 +66,7 @@ def _write_pid(pid: int) -> None:
 
 def _start_server(port: int = DEFAULT_PORT, reload: bool = False) -> None:
     """Start uvicorn as a background subprocess (daemon)."""
+    import subprocess
     cmd = [
         sys.executable, "-m", "uvicorn",
         "govctl_cli.api.main:app",

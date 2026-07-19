@@ -71,7 +71,10 @@ class PipelineExecutorLoop(Loop):
 
         # Try Hermes first (routes through department's assigned model),
         # fallback to Claude CLI
+        # Resolve CLI paths — nvm/pyenv may not be in subprocess PATH
         hermes = shutil.which("hermes")
+        claude = shutil.which("claude") or "/home/drsolodev/.nvm/versions/node/v24.14.1/bin/claude"
+
         if hermes:
             r = subprocess.run(
                 [hermes, "chat", "-q", prompt, "-Q", "--yolo",
@@ -80,13 +83,15 @@ class PipelineExecutorLoop(Loop):
                 cwd=proj_path,
             )
             output = (r.stdout or r.stderr or "no output").strip()
-        else:
+        elif Path(claude).exists():
             r = subprocess.run(
-                ["claude", "--dangerously-skip-permissions", "-p", prompt],
+                [claude, "--dangerously-skip-permissions", "-p", prompt],
                 capture_output=True, text=True, timeout=300,
                 cwd=proj_path,
             )
             output = (r.stdout or r.stderr or "no output").strip()
+        else:
+            output = f"ERROR: no CLI runner found (hermes={hermes}, claude={claude})"
 
         # Persist artifact
         artifact_dir = (
