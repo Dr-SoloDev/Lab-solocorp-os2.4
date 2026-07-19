@@ -329,3 +329,56 @@ async def invoke_mirror_check(request: Request):
             else f"❌ Mirror Check FAILED for {department}: {result.reason}"
         ),
     }
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# POST /v1/skills/{skill_path:path} — Generic Skill Dispatcher
+# ═══════════════════════════════════════════════════════════════════════
+
+# Catch-all handler สำหรับ skill paths ที่ไม่มี explicit handler ข้างบน
+# FastAPI จะ match specific routes ก่อน (pipeline-bridge, mirror-check)
+# routes ที่ match ตรงนี้คือ department-specific skills (cfo/finance-tools, etc.)
+
+
+@router.post("/{skill_path:path}")
+async def invoke_department_skill(request: Request, skill_path: str):
+    """Generic skill dispatcher — route ไปยัง department ตาม config
+
+    Body ขึ้นอยู่กับ skill ที่เรียก (อ่าน required_fields จาก config)
+    """
+    route_key = f"/v1/skills/{skill_path}"
+    skill_routes = _load_skill_routes()
+    route_config = skill_routes.get(route_key)
+
+    if not route_config:
+        return _error(
+            "SKILL_NOT_FOUND",
+            f"No registered skill at {route_key}",
+            status=404,
+        )
+
+    try:
+        payload = await request.json()
+    except Exception:
+        return _error("INVALID_JSON", "Request body must be valid JSON", status=400)
+
+    # Validate required fields
+    required = route_config.get("required_fields", [])
+    missing = [f for f in required if f not in payload]
+    if missing:
+        return _error(
+            "VALIDATION_ERROR",
+            f"Missing required fields: {', '.join(missing)}",
+            detail={
+                "skill": route_config["skill"],
+                "required": required,
+                "missing": missing,
+            },
+        )
+
+    return await _execute_skill(
+        request=request,
+        skill_path=skill_path,
+        payload=payload,
+        mirror_min_level=route_config.get("min_mirror_level", "L2"),
+    )

@@ -38,6 +38,15 @@
       "consumers": ["architect"],
       "mirror_level": "L4",
       "status": "active"
+    },
+    {
+      "name": "@solocorp/cfo/finance-tools",
+      "version": "1.0.0",
+      "endpoint": "/v1/skills/cfo/finance-tools",
+      "owner": "cfo-meetoo",
+      "consumers": ["cfo", "ceo"],
+      "mirror_level": "L3",
+      "status": "active"
     }
   ]
 }

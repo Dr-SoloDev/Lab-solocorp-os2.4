@@ -21,6 +21,17 @@
       "mirror_check": false,
       "min_mirror_level": "L2",
       "status": "registered"
+    },
+    {
+      "skill": "@solocorp/cfo/finance-tools",
+      "method": "POST",
+      "path": "/v1/skills/cfo/finance-tools",
+      "target_department": "cfo",
+      "queue_topic": "skill.cfo.invoke",
+      "mirror_check": true,
+      "min_mirror_level": "L3",
+      "required_fields": ["command", "department"],
+      "status": "registered"
     }
   ],
   "middleware": {

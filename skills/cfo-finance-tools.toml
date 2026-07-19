@@ -1,0 +1,50 @@
+# CFO Finance Tools — Skill Definition
+# ======================================
+# เครื่องมือสำหรับแผนกบัญชี CFO (meetoo)
+# เน้นการจัดการงบประมาณ, วิเคราะห์การเงิน, Audit, Cost Control
+# เชื่อมกับ Mirror CEO และ Central Bus
+
+[skill]
+name = "cfo-finance-tools"
+version = "1.0.0"
+description = "เครื่องมือสำหรับแผนกบัญชี — วิเคราะห์งบประมาณ, Cost control, Financial forecasting, Audit trail"
+owner_department = "cfo"
+owner_agent = "cfo-meetoo"
+mirror_check_required = true
+default_mirror_level = "L3"
+priority = "high"
+status = "active"
+
+[commands]
+budget_analysis = { description = "วิเคราะห์งบประมาณและความคุ้มค่า", trigger = "@cfo-meetoo วิเคราะห์งบประมาณของ{โปรเจกต์}" }
+cost_optimization = { description = "แนะนำการลดต้นทุนโดยไม่ลดคุณภาพ", trigger = "@cfo-meetoo optimize cost {department}" }
+financial_audit = { description = "ตรวจสอบการเงินและสร้าง audit report", trigger = "@cfo-meetoo audit {period}" }
+forecast = { description = "พยากรณ์การเงินระยะสั้น-ยาว", trigger = "@cfo-meetoo forecast {period}" }
+mirror_review = { description = "ตรวจสอบด้วยมุมมองของ Dr.solodev Owner", trigger = "@cfo-meetoo mirror review {decision}" }
+
+[integration]
+central_bus = true
+mirror_ceo = true
+grok_build = true
+bus_queue_topic = "skill.cfo.invoke"
+
+[permissions]
+read = true
+edit = true
+bash = ["python finance_analysis.py", "grok-build *"]
+
+[mirror_check]
+level = "L3"
+questions = [
+    "Dr.solodev ในมุม conservative จะ approve ไหม?",
+    "Worst case นี้ Owner รับได้ไหม?",
+    "Owner จะดีใจหรือเสียใจที่ใช้เงินนี้?"
+]
+auto_approve_threshold_bath = 1000
+
+[onboard]
+created_by = "Mirror CEO Pipeline"
+created_at = "2026-07-20"
+owner = "cfo-meetoo"
+review_status = "approved"
+qa_passed = true
