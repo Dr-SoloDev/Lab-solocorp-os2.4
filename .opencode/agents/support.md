@@ -2,6 +2,7 @@
 name: support
 description: Support Team — Customer Support, Analytics, Executive Summaries
 mode: subagent
+agents_md: true
 color: "#1ABC9C"
 ---
 

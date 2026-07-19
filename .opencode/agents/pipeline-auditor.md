@@ -2,6 +2,7 @@
 name: pipeline-auditor
 description: Pipeline Auditor — ตรวจสอบ audit trail ทุก handoff, compliance check, evidence verification
 mode: subagent
+agents_md: true
 color: "#E67E22"
 ---
 

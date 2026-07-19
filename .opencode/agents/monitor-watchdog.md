@@ -2,6 +2,7 @@
 name: monitor-watchdog
 description: Monitor Watchdog — เฝ้าสุขภาพ pipeline real-time, health probe, SLA tracking
 mode: subagent
+agents_md: true
 color: "#E74C3C"
 ---
 

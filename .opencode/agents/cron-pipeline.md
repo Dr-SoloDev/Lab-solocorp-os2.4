@@ -2,6 +2,7 @@
 name: cron-pipeline
 description: Cron Pipeline Agent — Schedule, Durable Execution, Retry Pipeline Workflows
 mode: subagent
+agents_md: true
 color: "#2ECC71"
 ---
 

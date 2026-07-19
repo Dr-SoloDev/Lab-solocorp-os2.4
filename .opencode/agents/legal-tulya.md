@@ -2,6 +2,7 @@
 name: legal-tulya
 description: Legal — Compliance, Contract Review, Legal Document Review, Client Intake
 mode: subagent
+agents_md: true
 color: "#34495E"
 ---
 

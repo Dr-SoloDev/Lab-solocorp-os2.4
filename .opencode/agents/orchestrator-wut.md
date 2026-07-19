@@ -2,6 +2,7 @@
 name: orchestrator-wut
 description: Orchestrator of SoloCorp OS — Auto-Pilot Pipeline Manager, ควบคุม pipeline ทั้งหมด
 mode: subagent
+agents_md: true
 color: "#9B59B6"
 ---
 

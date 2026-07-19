@@ -2,6 +2,7 @@
 name: qa
 description: QA Team — Testing, Quality Assurance, Evidence Collection, Bug Tracking
 mode: subagent
+agents_md: true
 color: "#27AE60"
 ---
 

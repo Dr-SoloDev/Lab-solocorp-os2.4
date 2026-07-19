@@ -2,6 +2,81 @@
 
 ---
 
+## Environment
+
+```bash
+source .venv/bin/activate && export PYTHONPATH=.
+```
+
+| Service | Command | Port |
+|:--------|:--------|:-----|
+| Central Bus | `uvicorn central_bus.main:app --host 127.0.0.1 --port 8099` | `8099` |
+| govctl API | `python -m govctl_cli api start` | `8765` |
+| govctl CLI | `python -m govctl_cli <cmd>` | `gov/` artifacts |
+| Loop Runner | `python -m loop_runner.main` | cron every 30m |
+| Tests | `pytest tests/ central_bus/tests/ -q` | — |
+
+อย่ารัน bare `pytest` จาก root โดยไม่มี path filter — profile-embedded tests อาจ abort collection
+
+---
+
+## Three Pillars (non-negotiable)
+
+1. **Heads lead, do not implement** — Department Heads set direction, decide, escalate, hand off. Specialists execute.
+2. **Leadership & ownership** — every work item has a named owner at every stage.
+3. **Two-tier architecture** — Control Layer (Head-to-Head status/approvals) vs Data Layer (Central Bus artifacts).
+
+---
+
+## Chain of Command
+
+```
+Human (Owner) → CEO เทอโบ → C-Level (CFO/CMO/Orchestrator)
+  → Department Heads → Specialist sub-agents
+```
+
+- Human speaks primarily to **CEO**.
+- Cross-department work goes **Head-to-Head** (or via Orchestrator for multi-dept pipelines).
+- Specialists never talk across departments directly.
+
+---
+
+## Subagent Usage (Claude Code)
+
+- Spawn department agents via `Agent` tool; use department name as `subagent_type`.
+- Prefer **parallel independent research** over one giant context.
+- Max subagent depth: **1** — child cannot spawn children. Parent orchestrates.
+- For file-mutating experiments use `isolation: worktree`.
+- Use `explore` subagent_type for read-only research.
+
+---
+
+## Key Paths
+
+| Path | What |
+|:-----|:-----|
+| `central_bus/` | FastAPI busd v0.6 |
+| `govctl_cli/` | Governance CLI + API |
+| `gov/` | ADR / RFC / Guard TOML |
+| `bus/` | Queue, project state, governance events |
+| `loop_runner/` | Scheduled loops (cron 30m) |
+| `profiles/` | 18 department SOUL + teams |
+| `.opencode/` | OpenCode agents + skills |
+| `.grok/` | Grok platform pack |
+| `AGENTS.md` | Grok + Codex CLI project rules |
+| `docs/operations-runbook.md` | Ops commands |
+| `docs/MASTER-FLOW.md` | Constitutional operating flow |
+
+---
+
+## Safety
+
+- Confirm before destructive git/db operations.
+- Do not commit secrets. Bus DBs and WAL files may be local-only.
+- Prefer scoped tests and targeted edits over repo-wide refactors unless asked.
+
+---
+
 # SoloCorp OS — Agent Routing
 
 เมื่อรับ request ให้ระบุก่อนว่า request นั้นอยู่ในขอบเขตของแผนกไหน แล้วทำงานในบทบาทของหัวหน้าแผนกนั้น

@@ -2,6 +2,7 @@
 name: architect-songsak
 description: Head of Architect — ดูแล Central Bus, routing, pipeline, monitoring, exception handling
 mode: subagent
+agents_md: true
 color: "#3498DB"
 ---
 

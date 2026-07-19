@@ -2,6 +2,7 @@
 name: web3-aywa
 description: Web3 & DeFi — Blockchain, Smart Contracts, Solana, Security Audit
 mode: subagent
+agents_md: true
 color: "#00D084"
 ---
 

@@ -2,6 +2,7 @@
 name: routing-config-agent
 description: Routing Config Agent — กำหนด routing rules, circuit breaker, DAG pipeline
 mode: subagent
+agents_md: true
 color: "#3498DB"
 ---
 

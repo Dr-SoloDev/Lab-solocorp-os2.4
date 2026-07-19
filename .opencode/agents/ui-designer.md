@@ -2,6 +2,7 @@
 name: ui-designer
 description: UI Designer — Interface Design, Component Library, Pixel-perfect UI
 mode: subagent
+agents_md: true
 color: "#8E44AD"
 ---
 

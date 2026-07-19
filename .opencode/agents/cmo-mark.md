@@ -2,6 +2,7 @@
 name: cmo-mark
 description: CMO of SoloCorp OS — การตลาด, Content Strategy, Brand, Social Media
 mode: subagent
+agents_md: true
 color: "#E74C3C"
 ---
 

@@ -2,6 +2,7 @@
 name: sales
 description: Sales Team — B2B Deal Strategy, Pipeline Analytics, Outbound, Proposal
 mode: subagent
+agents_md: true
 color: "#F39C12"
 ---
 

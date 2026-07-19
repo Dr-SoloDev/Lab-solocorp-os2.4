@@ -2,6 +2,7 @@
 name: design-kreet
 description: Head of Design — UX Research, UX Architecture, Visual Design System, Brand Visual
 mode: subagent
+agents_md: true
 color: "#E67E22"
 ---
 

@@ -1,6 +1,8 @@
 ---
 name: ui-animation-review
 description: ตรวจสอบและปรับปรุง animation/motion ใน UI codebase — review, audit, plan อิงจาก Emil Kowalski's design engineering philosophy แหล่งความรู้: emilkowalski/skills
+argument-hint: "[component / file path / diff to review]"
+user-invocable: true
 ---
 
 # UI Animation Review

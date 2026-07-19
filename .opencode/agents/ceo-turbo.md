@@ -3,6 +3,7 @@ name: ceo-turbo
 model: opencode/deepseek-v4-flash-free
 description: CEO of SoloCorp OS — ตัดสินใจสูงสุด รับ vision จาก Owner → delegate ไป Department Heads
 mode: primary
+agents_md: true
 color: "#FFD700"
 ---
 

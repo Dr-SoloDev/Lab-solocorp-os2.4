@@ -2,6 +2,7 @@
 name: exception-triage
 description: Exception Triage Agent — Triage, Root Cause Analysis, Auto-Resolve Pipeline Exceptions
 mode: subagent
+agents_md: true
 color: "#9B59B6"
 ---
 

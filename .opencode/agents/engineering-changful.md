@@ -2,6 +2,7 @@
 name: engineering-changful
 description: Head of Engineering — Development, Code, Architecture, Technology
 mode: subagent
+agents_md: true
 color: "#2C3E50"
 ---
 
