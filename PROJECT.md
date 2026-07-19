@@ -13,8 +13,8 @@ specialized agents — each with a dedicated Head, defined responsibilities,
 and a clear chain of command.
 
 The core insight: instead of asking one AI to do everything (which means
-nobody is responsible for anything), SoloCorp OS divides work into 18 departments + R&D Lab,
-each led by a Department Head who owns outcomes. Department
+nobody is responsible for anything), SoloCorp OS divides work into 15
+departments, each led by a Department Head who owns outcomes. Department
 Heads delegate execution to specialist sub-agents and communicate with
 other departments through structured handoffs.
 
@@ -26,8 +26,8 @@ Key metrics at a glance:
 | Department Heads | 18 |
 | Specialist Agents | 55+ (across 18 departments) |
 | Skills Integration | 93 skills |
-| Pipeline Commands | 8 |
-| Platforms | Hermes, OpenCode, Codex CLI, Claude Code, Cursor, Copilot |
+| Pipeline Commands | 6 |
+| Platforms | Hermes, OpenCode, Codex CLI, Grok Build |
 | Runtime | Loop Runner (cron every 30 min) |
 | Central Bus | Production Ready (FastAPI v0.6, port 8099) |
 | Status | Production Deployed |
@@ -74,7 +74,7 @@ SoloCorp OS solves this with:
 | Problem | Solution |
 |:--------|:---------|
 | Single orchestrator bottleneck | Head-to-Head handoff — 80% of cases go direct |
-| No domain expertise | 18 specialized departments + R&D Lab with deep knowledge |
+| No domain expertise | 15 specialized departments with deep knowledge |
 | Context loss | Each Head owns their domain context |
 | Orphan work | Every task has an owner at every step |
 | Slow execution | Data Layer bypasses Heads entirely |
@@ -211,7 +211,8 @@ cd Lab-solocorp-os2.4
 **Option A: OpenCode (Recommended)**
 
 OpenCode is the primary CLI interface for SoloCorp OS. The `opencode.json`
-configuration includes all 21 agents and 8 pipeline commands.
+configuration includes all 20 agents (15 department heads + 5 architect
+specialists) and 6 pipeline commands.
 
 ```bash
 opencode
@@ -238,7 +239,7 @@ codex
 
 **Option C: Hermes Gateway**
 
-All 18 department profiles + R&D Lab are deployed to Hermes Gateway and ready for use through
+All 15 profiles are deployed to Hermes Gateway and ready for use through
 Hermes profiles system at `~/.hermes/profiles/<NN-name>/`.
 
 ### Step 3: Run a Pipeline Command
@@ -268,12 +269,12 @@ Start with these key files:
 ```
 Lab-solocorp-os2.4/
 │
-├── opencode.json                  OpenCode full configuration (21 agents)
+├── opencode.json                  OpenCode full configuration (20 agents)
 │
 ├── .opencode/
-│   ├── agents/                    21 agent definitions
-│   ├── skills/                    ui-animation-review, solodev, templates
-│   └── node_modules/              OpenCode dependencies
+│   ├── agents/                    20 agent definitions (15 heads + 5 architects)
+│   ├── commands/                  Pipeline workflow commands
+│   └── skills/                    93 skills (symlinked from Hermes)
 │
 ├── .claude/                       Claude Code configuration
 ├── .codex/                        Codex CLI sub-agents (60 TOML files)
@@ -301,10 +302,6 @@ Lab-solocorp-os2.4/
 │   ├── 13-legal/                  Legal — ตุลย์
 │   ├── 14-web3/                   Web3 — อัยวา
 │   ├── 15-content-creator/        Content Creator — เสก
-│   ├── 16-neteng/                 Network Engineer — นีต
-│   ├── 17-cybersec/               Cyber Security — ซาย
-│   ├── 18-psychology/             Psychology — จิต
-│   ├── 19-rd-lab/                 R&D Lab — Lead Researcher
 │   └── default/                   Fallback profile
 │
 ├── loop_runner/                   Auto-pilot cron system
@@ -315,11 +312,6 @@ Lab-solocorp-os2.4/
 │       ├── daily_brief.py         CEO morning report (L1)
 │       ├── subscription_audit.py  CFO subscription scan (L4)
 │       └── brain_auto_commit.py   Auto-commit brain files (L4)
-│
-├── workers/                       Agent Worker Service
-│   ├── agent_worker_service.py    Polls Central Bus queue for routed tasks
-│   ├── llm_provider.py            LLM provider with semaphore (max 3)
-│   └── agents/                    Worker sub-agent definitions
 │
 ├── scripts/                       Utility scripts
 │   ├── build-profiles.py          Build/validate Hermes profiles
@@ -416,8 +408,7 @@ is structured the way it is:
 | Central Bus — Monitor Watchdog | Partial | Functional but on JSONL backend; real-time mode + health probe pending |
 | Central Bus — Dashboard | Partial | Project-state reader only; full pipeline observability (TeamHero UI) → v0.5.0 |
 | Pipeline Dashboard | Planned | Q4 2026 target — TeamHero UI + Langfuse |
-| OpenCode Integration | Active | 21 agents, 8 commands |
-| Agent Worker Service | Active | Polls Central Bus queue, LLM provider with semaphore |
+| OpenCode Integration | Active | 20 agents, 6 commands |
 | Codex CLI Export | Active | 60 sub-agent TOML files |
 | Open Design Bridge | Active | Read-only integration on port 41551 |
 
@@ -465,7 +456,7 @@ Head cannot resolve it, they escalate to the Orchestrator (พี่วุฒิ
 issues go to the CEO.
 
 **Q: Is this production-ready?**
-A: Yes. All 18 departments + R&D Lab and their specialist agents are deployed and
+A: Yes. All 15 departments and their specialist agents are deployed and
 active on Hermes Gateway. The Loop Runner operates on cron. The Central Bus
 is the only major component still in design.
 

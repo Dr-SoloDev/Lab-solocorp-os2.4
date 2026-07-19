@@ -45,7 +45,8 @@
 
 **Platform:**
 [![packs](https://img.shields.io/badge/product%20packs-3%20available-%23E74C3C?style=flat-square)](#product-packs)
-[![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex-orange?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4)
+[![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex%20%2B%20Grok-orange?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4)
+[![grok](https://img.shields.io/badge/Grok%20pack-AGENTS.md%20%2B%20.grok-black?style=flat-square)](docs/GROK-SUPPORT.md)
 
 > **License:** Proprietary — free for personal and educational use. See [LEGAL.md](LEGAL.md) for details.
 
@@ -68,19 +69,13 @@ python3 scripts/export-codex-agents.py
 codex
 ```
 
-### 🔌 Connect from ANY coding agent via MCP
-
-SoloCorp OS now speaks **MCP (Model Context Protocol)** — so any MCP-compatible agent or IDE can discover and use SoloCorp capabilities:
-
+**Or use Grok Build CLI (project pack):**
 ```bash
-# Install, then add to your MCP client config:
-pip install mcp
-python3 -m solocorp_mcp.server
+source .venv/bin/activate && export PYTHONPATH=.
+grok
+# then: /status  ·  /route <request>  ·  /pipeline <feature>
 ```
-
-**Supported clients:** OpenCode, Claude Code, Claude Desktop, Codex CLI, Kimi CLI, Cursor, Windsurf, Continue.dev
-
-See [`solocorp_mcp/README.md`](./solocorp_mcp/README.md) for full docs and client configs.
+See [`docs/GROK-SUPPORT.md`](./docs/GROK-SUPPORT.md) and [`.grok/README.md`](./.grok/README.md).
 
 ### Pipeline Commands (once inside)
 
@@ -133,7 +128,6 @@ SoloCorp OS replaces that single point of failure with a structured department h
 | **Central Bus** | Async-first message routing between departments |
 | **Head-to-Head Handoff** | Work moves between departments without bottleneck |
 | **93 Skills** | Integrated across all departments |
-| **MCP Server** | SoloCorp capabilities exposed via MCP protocol — 7 tools, 5 resources, usable from any MCP client |
 | **20 OpenCode Agents** | 18 department heads + 5 architect specialists, all `@mention`-ready |
 | **Codex CLI Export** | All profiles exportable as Codex CLI sub-agents |
 | **xGov Governance** | RFC → ADR → Guard Gates protocol |
@@ -334,7 +328,6 @@ The fastest path to a working multi-agent team:
 - `COPILOT-SETUP.md` — GitHub Copilot Cloud Agent integration guide
 - `decisions/` — Architecture Decision Records (ADRs)
 - `dist/codex/README-CODEX-CLI.md` — Codex CLI export guide
-- `solocorp_mcp/README.md` — MCP server docs for external agent integration
 
 ---
 

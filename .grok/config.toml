@@ -1,0 +1,18 @@
+# SoloCorp OS — project-scoped Grok config
+# Loaded when cwd is inside this repo (folder must be trusted).
+
+[mcp_servers.stealth_browser]
+command = "/home/drsolodev/projects/Lab-solocorp-os2.4/tools/stealth-browser-mcp/venv/bin/python"
+args = [
+  "/home/drsolodev/projects/Lab-solocorp-os2.4/tools/stealth-browser-mcp/src/server.py",
+  "--minimal",
+]
+cwd = "/home/drsolodev/projects/Lab-solocorp-os2.4/tools/stealth-browser-mcp"
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+enabled = true
+
+[mcp_servers.stealth_browser.env]
+BROWSER_IDLE_TIMEOUT = "600"
+BROWSER_FILE_UPLOAD_ALLOWED_DIRS = "/home/drsolodev/projects/Lab-solocorp-os2.4"
+STEALTH_BROWSER_DEBUG = "0"

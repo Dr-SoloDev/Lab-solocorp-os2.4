@@ -9,13 +9,14 @@
 
 ## Problem Statement
 
-SoloCorp OS has 16 active agent profiles, a central bus, governance tooling (xGov/govctl), and 13 department pipelines. Today, full functionality is available only on **OpenCode** (native) and **Hermes** (profiles deployed). The other three major platforms — Claude Code, Codex CLI, and an unresolved CLI ("r") — have partial or no integration.
+SoloCorp OS has 18 active agent profiles, a central bus, governance tooling (xGov/govctl), and department pipelines. Historically, full functionality was available only on **OpenCode** (native) and **Hermes** (profiles deployed). Other platforms — Claude Code, Codex CLI, Grok Build, and an unresolved CLI ("r") — had partial or no integration.
 
 Fragmentation means:
 - A user on Claude Code cannot invoke `@architect-songsak` by mention
 - Pipeline commands (`/pipeline`, `/handoff`, `/status`) are not portable
 - Skills (`.opencode/skills/`) are invisible outside OpenCode
 - Codex CLI export exists but has no validation CI or ongoing sync
+- Grok Build needed a first-class pack (now: `AGENTS.md` + `.grok/`)
 
 ---
 
@@ -40,16 +41,17 @@ Fragmentation means:
 
 ## Platform Compatibility Matrix
 
-| Feature | Claude Code | Codex CLI | OpenCode | Hermes | "r" |
-|:--------|:-----------:|:---------:|:--------:|:------:|:---:|
-| Agent profiles exist | Partial | Yes | Yes | Yes | Unknown |
-| Agent @mention syntax | No | No | Yes | No | Unknown |
-| Pipeline commands | Partial | No | Yes | No | Unknown |
-| Skills invocable | No | No | Partial | No | Unknown |
-| Governance (govctl) | Via Bash | Via Bash | Via Bash | Via hook | Unknown |
-| MCP tools | Yes | No | Yes | No | Unknown |
-| Multi-agent delegation | Yes | No | Yes | No | Unknown |
-| Config file | CLAUDE.md | .codex/config.toml | opencode.json | ~/.hermes/profiles/ | Unknown |
+| Feature | Claude Code | Codex CLI | OpenCode | Hermes | Grok Build | "r" |
+|:--------|:-----------:|:---------:|:--------:|:------:|:----------:|:---:|
+| Agent profiles exist | Partial | Yes | Yes | Yes | Yes | Unknown |
+| Agent @mention syntax | No | No | Yes | No | No | Unknown |
+| Pipeline commands | Partial | No | Yes | No | Yes (`.grok/skills`) | Unknown |
+| Skills invocable | No | No | Partial | No | Yes | Unknown |
+| Governance (govctl) | Via Bash | Via Bash | Via Bash | Via hook | Via Bash | Unknown |
+| MCP tools | Yes | Partial | Yes | No | Yes (project `.grok/config.toml`) | Unknown |
+| Multi-agent delegation | Yes | No | Yes | No | Partial (depth 1) | Unknown |
+| Config file | CLAUDE.md | .codex/config.toml | opencode.json | ~/.hermes/profiles/ | AGENTS.md + `.grok/` | Unknown |
+| Department agents spawnable | Partial | Export | Yes | Profiles | Yes (core Heads) | Unknown |
 
 **Legend:** Yes = working, Partial = incomplete, No = not implemented, Unknown = TBD
 
@@ -64,6 +66,8 @@ Fragmentation means:
 **Claude Code** — `CLAUDE.md` routing table exists. Agent tool supports delegation. Gap: no `/pipeline` slash command registration.
 
 **Codex CLI** — Export script exists. Gap: no CI sync, no skill support.
+
+**Grok Build** — First-class pack (2026-07-18): root `AGENTS.md`, `.grok/agents/` (CEO, Orchestrator, Architect, Product, Engineering, QA), pipeline skills (`/pipeline`, `/handoff`, `/status`, `/audit`, `/deploy`, `/brain`, `/route`), personas, project MCP for stealth browser. See `docs/GROK-SUPPORT.md`. Gaps: no `@mention` UX; specialist depth limited to one subagent level; not all 55+ specialists packaged as agents yet.
 
 **"r"** — Platform identity unconfirmed. Possibly Roo Code, Roo Cline, or other. Cannot scope until identified.
 
