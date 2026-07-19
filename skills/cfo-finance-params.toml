@@ -1,0 +1,122 @@
+# CFO Finance Tools — Analysis Parameters
+# =========================================
+# ปรับแต่ง parameter การวิเคราะห์ทางการเงินของ SoloCorp
+# อ้างอิงจาก CFO SOUL.md — conservative mindset, cash-first
+# ใช้โดย: cfo-finance-tools skill + finance_analysis.py
+
+[metadata]
+version = "1.0.0"
+updated = "2026-07-20"
+owner = "cfo-meetoo"
+description = "Thresholds, weights, และ criteria สำหรับการวิเคราะห์การเงิน"
+
+# ═══════════════════════════════════════════════════════════════════════
+# BUDGET ANALYSIS PARAMETERS
+# ═══════════════════════════════════════════════════════════════════════
+
+[budget_analysis]
+enabled = true
+description = "วิเคราะห์งบประมาณและความคุ้มค่า — เปรียบเทียบ actual vs plan"
+
+# Variance thresholds (%)
+[variance]
+warning = 10.0          # >= 10% = flag สีเหลือง
+critical = 15.0         # >= 15% = flag สีแดง ต้อง escalate
+acceptable = 5.0        # <= 5% = normal
+
+# Approval tiers
+[approval]
+auto_max_bath = 1000            # < 1,000 = auto approve
+cfo_max_bath = 10000            # 1,000–10,000 = CFO only
+ceo_max_bath = 50000            # 10,000–50,000 = CFO + CEO
+owner_min_bath = 50001          # > 50,000 = CFO + CEO + Owner
+
+# Budget scoring
+[scoring]
+budget_adherence_weight = 0.40      # water: 40% — adherence to plan
+roi_weight = 0.30                    # weight: 30% — return on investment
+urgency_weight = 0.15                # weight: 15% — business urgency
+risk_weight = 0.15                  # weight: 15% — risk level
+threshold_pass = 0.60               # ต่ำกว่า 60% = needs review
+
+# ═══════════════════════════════════════════════════════════════════════
+# COST OPTIMIZATION PARAMETERS
+# ═══════════════════════════════════════════════════════════════════════
+
+[cost_optimization]
+enabled = true
+description = "แนะนำการลดต้นทุนโดยไม่ลดคุณภาพ"
+
+# Savings targets
+[savings]
+minimum_percent = 10.0          # ต้องเห็น saving >= 10% ถึง recommend
+payback_max_months = 6          # payback period ต้องไม่เกิน 6 เดือน
+roi_minimum = 2.0               # minimum ROI (2x)
+
+# Cost categories priority (สำหรับ optimize)
+[cost_categories]
+order = ["API/Model", "Infrastructure", "Tools/Subscriptions", "Marketing", "Operations"]
+
+# Optimization rules
+[rules]
+consolidate_tools = true        # รวม tool ที่ซ้ำซ้อน
+negotiate_vendor = true         # ต่อรองราคา vendor
+rightsize_infra = true          # ปรับขนาด infra ให้เหมาะสม
+eliminate_waste = true          # ตัดค่าใช้จ่ายที่ไม่จำเป็น
+bulk_discount = true            # ส่วนลดจากการซื้อรวม
+
+# ═══════════════════════════════════════════════════════════════════════
+# FINANCIAL FORECAST PARAMETERS
+# ═══════════════════════════════════════════════════════════════════════
+
+[forecast]
+enabled = true
+description = "พยากรณ์การเงินระยะสั้น (1-3 months), กลาง (3-6), ยาว (6-12)"
+
+# Conservative multipliers (ตาม CFO SOUL.md)
+[forecast.conservative]
+revenue_discount = 0.70         # forecast รายได้ -30%
+expense_premium = 1.20          # forecast ค่าใช้จ่าย +20%
+runway_buffer_months = 6        # ต้องมี runway >= 6 เดือน
+
+# Time horizons
+[forecast.horizons]
+short_term_months = 3
+medium_term_months = 6
+long_term_months = 12
+
+# ═══════════════════════════════════════════════════════════════════════
+# FINANCIAL AUDIT PARAMETERS
+# ═══════════════════════════════════════════════════════════════════════
+
+[financial_audit]
+enabled = true
+description = "ตรวจสอบการเงินและสร้าง audit report"
+
+# Audit scope
+[audit]
+required_fields = ["transaction_id", "amount", "category", "date", "approved_by"]
+auto_flag_threshold_bath = 5000     # transaction > 5,000 บาท ต้องมี approval
+audit_trail_required = true         # ทุก transaction ต้องมี audit trail
+
+# Audit severity
+[audit.severity]
+critical = 30000                    # > 30,000 บาทไม่มีเอกสาร = สีแดง
+major = 10000                       # > 10,000 บาทไม่มีเอกสาร = สีส้ม
+minor = 1000                        # > 1,000 บาทไม่มีเอกสาร = สีเหลือง
+
+# ═══════════════════════════════════════════════════════════════════════
+# MIRROR REVIEW PARAMETERS
+# ═══════════════════════════════════════════════════════════════════════
+
+[mirror_review]
+enabled = true
+description = "ตรวจสอบด้วยมุมมองของ Dr.solodev Owner"
+
+questions = [
+    "Dr.solodev ในมุม conservative จะ approve ไหม?",
+    "Worst case นี้ Owner รับได้ไหม?",
+    "Owner จะดีใจหรือเสียใจที่ใช้เงินนี้?"
+]
+pass_threshold_percent = 60      # ต้องผ่าน >= 60%
+auto_pass_threshold_bath = 1000  # < 1,000 บาท = auto pass
