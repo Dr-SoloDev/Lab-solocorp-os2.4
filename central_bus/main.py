@@ -7,6 +7,7 @@ Endpoints
 * ``POST /v1/update``        — Report result back; triggers AAR on completion/failure
 * ``GET  /v1/health``        — Health check: DB, queue depth, uptime
 * ``GET  /v1/aar/{trace_id}``— Retrieve After Action Review entries for a trace
+* ``GET  /v1/ab-test/report``— A/B test 50/50: route_v2 vs route metrics report
 
 Error Envelope
 ~~~~~~~~~~~~~~
@@ -45,6 +46,7 @@ from central_bus.health import get_health
 from central_bus.models import BusMessage
 from central_bus.queue import SQLiteQueueManager
 from central_bus.router import RoutingEngine, route as jsonl_route
+from central_bus.router import get_ab_report
 
 log = logging.getLogger(__name__)
 
@@ -53,34 +55,13 @@ _STARTED_AT: float = time.time()
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# Request / Response models (plain dicts — no Pydantic dependency needed)
-# ═══════════════════════════════════════════════════════════════════════
-
-# These are documented inline in the endpoint signatures for clarity.
-# Actual validation is done in the handler body for simplicity.
-
-
-# ═══════════════════════════════════════════════════════════════════════
-# Lifespan — FastAPI 0.139 reuse the lifespan pattern
-# ═══════════════════════════════════════════════════════════════════════
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Startup: initialise DB schema; shutdown: close resources."""
-    log.info("Central Bus v0.6 starting up (pid=%d)", os.getpid())
-    # DB is lazily initialised on first use via get_db()
-    yield
-    log.info("Central Bus v0.6 shutting down")
-
-
-# ═══════════════════════════════════════════════════════════════════════
 # FastAPI app
 # ═══════════════════════════════════════════════════════════════════════
 
 app = FastAPI(
     title="Central Bus v0.6",
-    version="0.6.0",
-    lifespan=lifespan,
+    version="0.6.2",
+    lifespan=lambda app: _lifespan(app),
 )
 
 # ── CORS ─────────────────────────────────────────────────────────────
@@ -100,34 +81,25 @@ _ADMIN_KEY = os.environ.get(
 
 @app.middleware("http")
 async def api_key_auth(request: Request, call_next):
-    """ตรวจสอบ API Key ทุก request (ยกเว้น health check)"""
-    # Skip auth for health and docs
+    """Check API Key for every request (except health/docs/skills)."""
     if request.url.path in (
         "/v1/health", "/docs", "/openapi.json",
-        "/v1/skills",  # skills list (public)
+        "/v1/skills",
     ) or request.url.path.startswith("/v1/skills/"):
         return await call_next(request)
-
     api_key = request.headers.get("X-API-Key", "")
-
-    # Admin key — ใช้ได้ทุกอย่าง
     if api_key == _ADMIN_KEY:
         return await call_next(request)
-
-    # Department key — validate กับ DB
     if api_key:
         try:
             db = await ensure_db()
             key_data = await validate_key(db, api_key)
             if key_data:
-                # Attach key info to request state
                 request.state.agent_id = key_data["agent_id"]
                 request.state.key_scope = key_data["scope"]
                 return await call_next(request)
         except Exception:
             pass
-
-    # No valid key
     return JSONResponse(
         status_code=401,
         content=_error_response(
@@ -139,12 +111,9 @@ async def api_key_auth(request: Request, call_next):
     )
 
 
-# ── Include compliance validator router ───────────────────────────────
+# ── Routers ───────────────────────────────────────────────────────────
 app.include_router(compliance_router)
-
-# ── Include skills router ────────────────────────────────────────────
 from central_bus.skills_router import router as skills_router
-
 app.include_router(skills_router)
 
 
@@ -152,14 +121,10 @@ app.include_router(skills_router)
 # Error handlers
 # ═══════════════════════════════════════════════════════════════════════
 
-def _error_response(
-    code: str, message: str, detail: Any, request_id: str = ""
-) -> dict:
+def _error_response(code: str, message: str, detail: Any, request_id: str = "") -> dict:
     return {
         "error": {
-            "code": code,
-            "message": message,
-            "detail": detail,
+            "code": code, "message": message, "detail": detail,
             "request_id": request_id or str(uuid.uuid4()),
         }
     }
@@ -169,9 +134,7 @@ def _error_response(
 async def http_exception_handler(request: Request, exc: HTTPException):
     headers = getattr(exc, "headers", None)
     body = _error_response(
-        code="HTTP_ERROR",
-        message=exc.detail,
-        detail={},
+        code="HTTP_ERROR", message=exc.detail, detail={},
         request_id=request.headers.get("X-Request-Id", ""),
     )
     return JSONResponse(status_code=exc.status_code, content=body, headers=headers)
@@ -181,12 +144,20 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 async def unhandled_exception_handler(request: Request, exc: Exception):
     log.exception("Unhandled exception on %s %s", request.method, request.url.path)
     body = _error_response(
-        code="INTERNAL_ERROR",
-        message="Internal server error",
-        detail={"error": str(exc)},
-        request_id=request.headers.get("X-Request-Id", ""),
+        code="INTERNAL_ERROR", message="Internal server error",
+        detail={"error": str(exc)}, request_id="",
     )
     return JSONResponse(status_code=500, content=body)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Lifespan
+# ═══════════════════════════════════════════════════════════════════════
+
+async def _lifespan(app):
+    log.info("Central Bus v0.6.2 starting up (pid=%d)", os.getpid())
+    yield
+    log.info("Central Bus v0.6.2 shutting down")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -194,7 +165,6 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 # ═══════════════════════════════════════════════════════════════════════
 
 async def _get_services():
-    """Convenience: get db, queue, facts, routing in one call."""
     db = await ensure_db()
     return {
         "db": db,
@@ -214,17 +184,12 @@ async def observe(request: Request):
     try:
         payload = await request.json()
     except Exception:
-        return JSONResponse(
-            status_code=400,
-            content=_error_response(
-                code="VALIDATION_ERROR",
-                message="Request body must be valid JSON",
-                detail={"reason": "invalid JSON"},
-                request_id=request.headers.get("X-Request-Id", ""),
-            ),
-        )
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request body must be valid JSON",
+            detail={"reason": "invalid JSON"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
 
-    # Validate required fields
     trace_id = payload.get("trace_id", new_id())
     task_id = payload.get("task_id")
     source_agent = payload.get("source_agent")
@@ -233,85 +198,47 @@ async def observe(request: Request):
     target_agent = payload.get("target_agent")
 
     if not task_id:
-        return JSONResponse(
-            status_code=400,
-            content=_error_response(
-                code="VALIDATION_ERROR",
-                message="Request payload validation failed",
-                detail={"field": "task_id", "reason": "missing"},
-                request_id=request.headers.get("X-Request-Id", ""),
-            ),
-        )
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request payload validation failed",
+            detail={"field": "task_id", "reason": "missing"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
     if not source_agent:
-        return JSONResponse(
-            status_code=400,
-            content=_error_response(
-                code="VALIDATION_ERROR",
-                message="Request payload validation failed",
-                detail={"field": "source_agent", "reason": "missing"},
-                request_id=request.headers.get("X-Request-Id", ""),
-            ),
-        )
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request payload validation failed",
+            detail={"field": "source_agent", "reason": "missing"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
     if not isinstance(msg_payload, dict):
-        return JSONResponse(
-            status_code=422,
-            content=_error_response(
-                code="VALIDATION_ERROR",
-                message="Payload format is invalid",
-                detail={"field": "payload", "reason": "expected object, got array"},
-                request_id=request.headers.get("X-Request-Id", ""),
-            ),
-        )
+        return JSONResponse(status_code=422, content=_error_response(
+            code="VALIDATION_ERROR", message="Payload format is invalid",
+            detail={"field": "payload", "reason": "expected object, got array"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
 
     services = await _get_services()
-    qm: SQLiteQueueManager = services["queue"]
-    engine: RoutingEngine = services["router"]
+    qm = services["queue"]
+    engine = services["router"]
 
-    # Create queue entry
     msg = await qm.create_message(
-        trace_id=trace_id,
-        task_id=task_id,
-        agent_id=source_agent,
-        payload=msg_payload,
-        target_agent=target_agent,
-        priority=priority,
-        max_retries=payload.get("max_retries", 3),
+        trace_id=trace_id, task_id=task_id, agent_id=source_agent,
+        payload=msg_payload, target_agent=target_agent,
+        priority=priority, max_retries=payload.get("max_retries", 3),
     )
     msg_id = msg["id"]
 
-    # Route the message
     route_to = await engine.match(
-        source_agent=source_agent,
-        payload=msg_payload,
-        fallback_department="ceo",
+        source_agent=source_agent, payload=msg_payload, fallback_department="ceo",
     )
     await qm.update_status(msg_id, "routed")
 
-    # Audit trail
     await services["db"].execute(
-        """
-        INSERT INTO audit_log (id, trace_id, action, agent_id, entity_type, entity_id, payload, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            new_id(),
-            trace_id,
-            "queue.create",
-            source_agent,
-            "queue",
-            msg_id,
-            json.dumps({"route_to": route_to, "priority": priority}),
-            now_iso(),
-        ),
+        "INSERT INTO audit_log (id, trace_id, action, agent_id, entity_type, entity_id, payload, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (new_id(), trace_id, "queue.create", source_agent, "queue", msg_id,
+         json.dumps({"route_to": route_to, "priority": priority}), now_iso()),
     )
 
-    return {
-        "trace_id": trace_id,
-        "queue_id": msg_id,
-        "status": "routed",
-        "route_to": route_to,
-        "hops": ["queue", "route"],
-    }
+    return {"trace_id": trace_id, "queue_id": msg_id, "status": "routed", "route_to": route_to, "hops": ["queue", "route"]}
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -324,53 +251,35 @@ async def get_context(request: Request):
     try:
         payload = await request.json()
     except Exception:
-        return JSONResponse(
-            status_code=400,
-            content=_error_response(
-                code="VALIDATION_ERROR",
-                message="Request body must be valid JSON",
-                detail={"reason": "invalid JSON"},
-                request_id=request.headers.get("X-Request-Id", ""),
-            ),
-        )
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request body must be valid JSON",
+            detail={"reason": "invalid JSON"}, request_id="",
+        ))
 
     trace_id = payload.get("trace_id", new_id())
     agent_id = payload.get("agent_id")
     keys = payload.get("keys", [])
 
     if not agent_id:
-        return JSONResponse(
-            status_code=400,
-            content=_error_response(
-                code="VALIDATION_ERROR",
-                message="Request payload validation failed",
-                detail={"field": "agent_id", "reason": "missing"},
-                request_id=request.headers.get("X-Request-Id", ""),
-            ),
-        )
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request payload validation failed",
+            detail={"field": "agent_id", "reason": "missing"}, request_id="",
+        ))
 
     services = await _get_services()
-    facts_service: FactsService = services["facts"]
-    qm: SQLiteQueueManager = services["queue"]
+    facts_service = services["facts"]
+    qm = services["queue"]
 
-    # Fetch matching facts
-    all_facts: list[dict] = []
+    all_facts = []
     for key_pattern in keys:
         facts = await facts_service.list_facts(prefix=key_pattern, limit=100)
         all_facts.extend(facts)
 
-    # Queue metadata
     pending_count = await qm.count_pending()
-
     return {
-        "trace_id": trace_id,
-        "context_id": new_id(),
-        "facts": [
-            {"key": f["key"], "value": f["value"], "version": f["version"]}
-            for f in all_facts
-        ],
-        "queue_pending": pending_count,
-        "agent_health": "ok",
+        "trace_id": trace_id, "context_id": new_id(),
+        "facts": [{"key": f["key"], "value": f["value"], "version": f["version"]} for f in all_facts],
+        "queue_pending": pending_count, "agent_health": "ok",
     }
 
 
@@ -384,15 +293,10 @@ async def update_message(request: Request):
     try:
         payload = await request.json()
     except Exception:
-        return JSONResponse(
-            status_code=400,
-            content=_error_response(
-                code="VALIDATION_ERROR",
-                message="Request body must be valid JSON",
-                detail={"reason": "invalid JSON"},
-                request_id=request.headers.get("X-Request-Id", ""),
-            ),
-        )
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request body must be valid JSON",
+            detail={"reason": "invalid JSON"}, request_id="",
+        ))
 
     trace_id = payload.get("trace_id")
     queue_id = payload.get("queue_id")
@@ -402,73 +306,36 @@ async def update_message(request: Request):
     error = payload.get("error")
 
     if not trace_id or not queue_id:
-        return JSONResponse(
-            status_code=400,
-            content=_error_response(
-                code="VALIDATION_ERROR",
-                message="Request payload validation failed",
-                detail={
-                    "field": "trace_id/queue_id",
-                    "reason": "trace_id and queue_id are required",
-                },
-                request_id=request.headers.get("X-Request-Id", ""),
-            ),
-        )
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="trace_id and queue_id are required",
+            detail={"field": "trace_id/queue_id", "reason": "missing"}, request_id="",
+        ))
 
     services = await _get_services()
-    qm: SQLiteQueueManager = services["queue"]
+    qm = services["queue"]
 
-    # Update message status
     try:
         updated = await qm.update_status(
-            message_id=queue_id,
-            status=status,
-            result=result,
-            error=error,
-            agent_id=agent_id,
+            message_id=queue_id, status=status, result=result, error=error, agent_id=agent_id,
         )
     except ValueError:
-        return JSONResponse(
-            status_code=404,
-            content=_error_response(
-                code="NOT_FOUND",
-                message="queue_id not found",
-                detail={"entity": "queue", "id": queue_id},
-                request_id=request.headers.get("X-Request-Id", ""),
-            ),
-        )
+        return JSONResponse(status_code=404, content=_error_response(
+            code="NOT_FOUND", message="queue_id not found",
+            detail={"entity": "queue", "id": queue_id}, request_id="",
+        ))
 
-    # Audit entry
     await services["db"].execute(
-        """
-        INSERT INTO audit_log (id, trace_id, action, agent_id, entity_type, entity_id, payload, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            new_id(),
-            trace_id,
-            "queue.update",
-            agent_id,
-            "queue",
-            queue_id,
-            json.dumps({"status": status, "error": error}),
-            now_iso(),
-        ),
+        "INSERT INTO audit_log (id, trace_id, action, agent_id, entity_type, entity_id, payload, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (new_id(), trace_id, "queue.update", agent_id, "queue", queue_id,
+         json.dumps({"status": status, "error": error}), now_iso()),
     )
 
-    # ── AAR generation hook ──────────────────────────────────────
     aar_id, final_status = await AARGenerator(services["db"]).generate(
-        trace_id=trace_id,
-        queue_id=queue_id,
-        status=status,
-        error=error,
-        updated=updated,
+        trace_id=trace_id, queue_id=queue_id, status=status, error=error, updated=updated,
     )
 
     return {
-        "trace_id": trace_id,
-        "queue_id": queue_id,
-        "status": final_status,
+        "trace_id": trace_id, "queue_id": queue_id, "status": final_status,
         "dead_letter": final_status == "dead",
         **({"aar_id": aar_id} if aar_id else {}),
     }
@@ -483,10 +350,8 @@ async def health():
     """Health check — DB status, queue depth, uptime."""
     services = await _get_services()
     return await get_health(
-        db=services["db"],
-        qm=services["queue"],
-        facts_service=services["facts"],
-        engine=services["router"],
+        db=services["db"], qm=services["queue"],
+        facts_service=services["facts"], engine=services["router"],
         started_at=_STARTED_AT,
     )
 
@@ -501,14 +366,34 @@ async def get_aar(trace_id: str):
     services = await _get_services()
     db = services["db"]
     rows = await db.fetch_all(
-        "SELECT * FROM aar WHERE trace_id = ? ORDER BY created_at DESC",
-        (trace_id,),
+        "SELECT * FROM aar WHERE trace_id = ? ORDER BY created_at DESC", (trace_id,),
     )
-    entries = []
-    for row in rows:
-        d = dict(row)
-        entries.append(d)
-    return entries
+    return [dict(r) for r in rows]
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# GET /v1/ab-test/report
+# ═══════════════════════════════════════════════════════════════════════
+
+@app.get("/v1/ab-test/report")
+async def ab_test_report():
+    """A/B test 50/50: route_v2 vs route metrics report.
+
+    Returns in-memory + DB-backed metrics for the active
+    A/B test between route_v2 (Behavior-Centric) and legacy route().
+
+    Access: Admin key required.
+    """
+    try:
+        db = await ensure_db()
+        report = get_ab_report(db=db)
+        return report
+    except Exception as e:
+        log.warning("Failed to query DB for A/B report: %s", e)
+        # Fall back to in-memory-only report
+        report = get_ab_report(db=None)
+        report["db_unavailable"] = True
+        return report
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -517,11 +402,8 @@ async def get_aar(trace_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(
         "central_bus.main:app",
-        host=settings.host,
-        port=settings.port,
-        log_level=settings.log_level.lower(),
-        reload=False,
+        host=settings.host, port=settings.port,
+        log_level=settings.log_level.lower(), reload=False,
     )
