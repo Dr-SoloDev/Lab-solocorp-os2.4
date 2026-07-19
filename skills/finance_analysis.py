@@ -58,6 +58,31 @@ def get_param(params: dict, *keys: str, default: Any = None) -> Any:
     return current if current != {} else default
 
 
+# ── Depth Multiplier ──────────────────────────────────────────────────
+
+
+def get_depth_multiplier(params: dict, key: str, depth: str = "standard") -> float:
+    """ดึง depth multiplier — standard=1.0, high=ปรับ stricter"""
+    multipliers = get_param(params, "depth", "multipliers", key, default={})
+    return float(multipliers.get(depth, 1.0))
+
+
+def apply_threshold(base: float, multiplier: float) -> float:
+    """Apply depth multiplier to a threshold.
+    Note: multipliers < 1.0 = stricter for thresholds (lower = stricter)."""
+    return round(base * multiplier, 2)
+
+
+def apply_multiplier_up(base: float, multiplier: float) -> float:
+    """Apply depth multiplier for values that INCREASE when depth=high
+    (e.g., pass threshold, expense premium)."""
+    # multiplier > 1.0 = stricter (higher threshold)
+    if multiplier >= 1.0:
+        return round(base * multiplier, 2)
+    # multiplier < 1.0 = less strict — don't go below base
+    return base
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # 1. BUDGET ANALYSIS
 # ═══════════════════════════════════════════════════════════════════════
@@ -68,11 +93,25 @@ def budget_analysis(
     period: str = "current",
     actual: float = 0,
     plan: float = 0,
+    depth: str = "standard",
 ) -> dict[str, Any]:
-    """วิเคราะห์งบประมาณเทียบ actual vs plan"""
+    """วิเคราะห์งบประมาณเทียบ actual vs plan
+
+    Args:
+        depth: 'standard' หรือ 'high' — ปรับความละเอียดของการวิเคราะห์
+    """
     params = load_params()
-    warning_pct = get_param(params, "variance", "warning", default=10.0)
-    critical_pct = get_param(params, "variance", "critical", default=15.0)
+
+    # Apply depth multipliers — high = stricter variance tolerance
+    var_mult = get_depth_multiplier(params, "variance_warning", depth)
+    crit_mult = get_depth_multiplier(params, "variance_critical", depth)
+
+    warning_pct = apply_threshold(
+        get_param(params, "variance", "warning", default=10.0), var_mult
+    )
+    critical_pct = apply_threshold(
+        get_param(params, "variance", "critical", default=15.0), crit_mult
+    )
     acceptable_pct = get_param(params, "variance", "acceptable", default=5.0)
 
     if plan == 0:
@@ -97,11 +136,31 @@ def budget_analysis(
     # Score (higher = better adherence)
     adherence_score = max(0, 1 - (abs(variance_pct) / 100))
 
-    # Approval level check
-    approval_rules = _check_approval_level(abs(variance_pct))
+    # Approval level check with depth adjustment
+    approval_mult = get_depth_multiplier(params, "approval_tier", depth)
+    approval_rules = _check_approval_level(abs(variance_pct), approval_mult)
+
+    # Deep analysis: add breakdown dimension
+    breakdown = None
+    if depth == "high":
+        # วิเคราะห์ลึก: breakdown ตามสัดส่วน
+        efficiency = round(actual / max(plan, 1), 4)
+        breakdown = {
+            "variance_tolerance": {
+                "acceptable_max": acceptable_pct,
+                "warning_max": warning_pct,
+                "critical_max": critical_pct,
+            },
+            "efficiency_ratio": {
+                "spend_vs_plan": efficiency,
+                "interpretation": "over_budget" if efficiency > 1 else "under_budget",
+            },
+            "depth_note": "วิเคราะห์เชิงลึก — threshold ถูกปรับให้เข้มงวดขึ้นตาม depth parameter",
+        }
 
     return {
         "command": "budget_analysis",
+        "depth": depth,
         "department": department,
         "period": period,
         "input": {"actual": actual, "plan": plan},
@@ -112,6 +171,7 @@ def budget_analysis(
             "adherence_score": round(adherence_score, 4),
             "recommendation": _budget_recommendation(severity, variance_pct),
         },
+        "breakdown": breakdown,
         "approval": approval_rules,
         "params_version": get_param(params, "metadata", "version", default="unknown"),
     }
@@ -128,27 +188,45 @@ def _budget_recommendation(severity: str, variance: float) -> str:
         return "🚨 ความแตกต่างรุนแรง — escalate ทันที, ต้องปรับแผนหรือ cut cost"
 
 
-def _check_approval_level(amount: float) -> dict:
+def _check_approval_level(amount: float, depth_mult: float = 1.0) -> dict:
+    """ตรวจสอบ approval level ตามจำนวนเงิน
+
+    Args:
+        amount: จำนวนเงิน (บาท)
+        depth_mult: depth multiplier — high=0.5 ทำให้ approval tier ลดลงครึ่งหนึ่ง
+    """
     params = load_params()
-    auto_max = get_param(params, "approval", "auto_max_bath", default=1000)
-    cfo_max = get_param(params, "approval", "cfo_max_bath", default=10000)
-    ceo_max = get_param(params, "approval", "ceo_max_bath", default=50000)
+    auto_max = get_param(params, "approval", "auto_max_bath", default=1000) * depth_mult
+    cfo_max = get_param(params, "approval", "cfo_max_bath", default=10000) * depth_mult
+    ceo_max = get_param(params, "approval", "ceo_max_bath", default=50000) * depth_mult
 
     if amount <= auto_max:
-        return {"level": "auto", "required": "none", "note": "ไม่ต้องขออนุมัติ"}
+        return {
+            "level": "auto", "required": "none", "note": "ไม่ต้องขออนุมัติ",
+            "adjusted_thresholds": {"auto_max": auto_max},
+        }
     elif amount <= cfo_max:
-        return {"level": "cfo", "required": "cfo-meetoo", "note": "CFO approve"}
+        return {
+            "level": "cfo", "required": "cfo-meetoo", "note": "CFO approve",
+            "adjusted_thresholds": {"auto_max": auto_max, "cfo_max": cfo_max},
+        }
     elif amount <= ceo_max:
         return {
             "level": "ceo",
             "required": "cfo-meetoo + ceo-turbo",
             "note": "CFO + CEO approve",
+            "adjusted_thresholds": {
+                "auto_max": auto_max, "cfo_max": cfo_max, "ceo_max": ceo_max,
+            },
         }
     else:
         return {
             "level": "owner",
             "required": "cfo-meetoo + ceo-turbo + dr.solodev",
             "note": "ต้อง Owner approve",
+            "adjusted_thresholds": {
+                "auto_max": auto_max, "cfo_max": cfo_max, "ceo_max": ceo_max,
+            },
         }
 
 
@@ -160,10 +238,16 @@ def _check_approval_level(amount: float) -> dict:
 def cost_optimization(
     department: str = "cfo",
     costs: dict[str, float] | None = None,
+    depth: str = "standard",
 ) -> dict[str, Any]:
-    """แนะนำการลดต้นทุน"""
+    """แนะนำการลดต้นทุน
+
+    Args:
+        depth: 'standard' หรือ 'high' — high=เจาะลึกทุกหมวด, คำนวณ saving ละเอียดขึ้น
+    """
     params = load_params()
-    min_saving = get_param(params, "savings", "minimum_percent", default=10.0)
+    saving_mult = get_depth_multiplier(params, "saving_target", depth)
+    min_saving = get_param(params, "savings", "minimum_percent", default=10.0) * saving_mult
     payback_max = get_param(params, "savings", "payback_max_months", default=6)
     categories_order = get_param(params, "cost_categories", "order", default=[])
 
@@ -200,11 +284,35 @@ def cost_optimization(
                 "roi": "ongoing" if payback == 0 else f"{payback}mo payback",
             })
 
+    # Deep analysis: analyze ALL categories with per-item saving breakdown
+    deep_breakdown = None
+    if depth == "high":
+        deep_breakdown = {
+            "analysis_scope": "full — ทุกหมวดถูกวิเคราะห์เชิงลึก",
+            "saving_assumption": f"target saving {min_saving}% ต่อหมวด (ปรับตาม depth multiplier)",
+            "category_detail": [
+                {
+                    "category": cat,
+                    "current": amt,
+                    "pct": round((amt / total) * 100, 1),
+                    "potential_saving": round(amt * (min_saving / 100), 2),
+                    "action": _cost_action(cat),
+                }
+                for cat, amt in sorted_costs
+            ],
+            "priority_matrix": {
+                "high_impact": [r["category"] for r in recommendations if r["priority"] == "high"],
+                "medium_impact": [r["category"] for r in recommendations if r["priority"] == "medium"],
+            },
+        }
+
     return {
         "command": "cost_optimization",
+        "depth": depth,
         "department": department,
         "total_monthly": total,
         "recommendations": recommendations,
+        "breakdown": deep_breakdown,
         "summary": {
             "total_monthly_saving": round(sum(r["monthly_saving"] for r in recommendations), 2),
             "saving_pct_of_total": round(
@@ -238,11 +346,27 @@ def forecast(
     monthly_revenue: float = 100000,
     monthly_expense: float = 80000,
     cash_on_hand: float = 500000,
+    depth: str = "standard",
 ) -> dict[str, Any]:
-    """พยากรณ์การเงิน"""
+    """พยากรณ์การเงิน
+
+    Args:
+        depth: 'standard' หรือ 'high' — high=conservative multipliers เข้มงวดขึ้น
+    """
     params = load_params()
-    rev_discount = get_param(params, "forecast", "conservative", "revenue_discount", default=0.70)
-    exp_premium = get_param(params, "forecast", "conservative", "expense_premium", default=1.20)
+
+    rev_mult = get_depth_multiplier(params, "conservative_rev", depth)
+    exp_mult = get_depth_multiplier(params, "conservative_exp", depth)
+
+    # depth=high: revenue_discount ต่ำลง (conservative มากขึ้น), expense_premium สูงขึ้น
+    rev_discount = (
+        get_param(params, "forecast", "conservative", "revenue_discount", default=0.70)
+        * rev_mult
+    )
+    exp_premium = (
+        get_param(params, "forecast", "conservative", "expense_premium", default=1.20)
+        * exp_mult
+    )
     buffer_months = get_param(params, "forecast", "conservative", "runway_buffer_months", default=6)
 
     horizons = {
@@ -262,8 +386,32 @@ def forecast(
     runway_months = round(cash_on_hand / max(monthly_burn, 1), 1)
     runway_status = "🟢 safe" if runway_months >= buffer_months else "🔴 critical"
 
+    # Multi-scenario for deep analysis
+    scenarios = None
+    if depth == "high":
+        scenarios = {
+            "best_case": {
+                "revenue": monthly_revenue,
+                "expense": monthly_expense,
+                "runway_months": round(cash_on_hand / max(monthly_expense - monthly_revenue, 1), 1),
+            },
+            "base_case": {
+                "revenue": round(monthly_revenue * 0.85, 2),
+                "expense": round(monthly_expense * 1.10, 2),
+                "runway_months": runway_months,
+            },
+            "worst_case": {
+                "revenue": round(monthly_revenue * rev_discount, 2),
+                "expense": round(monthly_expense * exp_premium, 2),
+                "runway_months": round(cash_on_hand / max(
+                    (monthly_expense * exp_premium) - (monthly_revenue * rev_discount), 1
+                ), 1),
+            },
+        }
+
     return {
         "command": "forecast",
+        "depth": depth,
         "period": period,
         "horizon_months": months,
         "input": {
@@ -275,8 +423,12 @@ def forecast(
             "adjusted_revenue": round(conservative_revenue, 2),
             "adjusted_expense": round(conservative_expense, 2),
             "monthly_net_burn": round(monthly_burn, 2),
-            "reasoning": "รายได้ -30% (conservative), ค่าใช้จ่าย +20% (risk buffer)",
+            "reasoning": (
+                f"depth={depth}: รายได้ -{round((1-rev_discount)*100)}%, "
+                f"ค่าใช้จ่าย +{round((exp_premium-1)*100)}% (risk buffer)"
+            ),
         },
+        "scenarios": scenarios,
         "runway": {
             "months": runway_months,
             "required_buffer": buffer_months,
@@ -298,11 +450,17 @@ def forecast(
 def financial_audit(
     period: str = "2026-Q2",
     transactions: list[dict] | None = None,
+    depth: str = "standard",
 ) -> dict[str, Any]:
-    """ตรวจสอบการเงินและ audit trail"""
+    """ตรวจสอบการเงินและ audit trail
+
+    Args:
+        depth: 'standard' หรือ 'high' — high=flag threshold ต่ำลง, severity เข้มงวดขึ้น
+    """
     params = load_params()
-    flag_threshold = get_param(params, "audit", "auto_flag_threshold_bath", default=5000)
-    critical_level = get_param(params, "audit", "severity", "critical", default=30000)
+    flag_mult = get_depth_multiplier(params, "audit_flag", depth)
+    flag_threshold = get_param(params, "audit", "auto_flag_threshold_bath", default=5000) * flag_mult
+    critical_level = get_param(params, "audit", "severity", "critical", default=30000) * flag_mult
 
     # Mock transactions for demo
     if transactions is None:
@@ -343,15 +501,22 @@ def financial_audit(
 
     return {
         "command": "financial_audit",
+        "depth": depth,
         "period": period,
         "total_transactions": len(findings),
         "flagged": flagged_count,
         "clean": len(findings) - flagged_count,
         "total_flagged_amount": total_flagged_amount,
+        "audit_params": {
+            "flag_threshold": flag_threshold,
+            "severity_critical": critical_level,
+            "depth_note": "ปรับ flag threshold ตาม depth multiplier" if depth == "high" else None,
+        },
         "findings": findings,
         "recommendation": (
-            f"พบ {flagged_count} รายการที่ต้องสอบทาน จาก {len(findings)} รายการ "
-            f"รวมมูลค่า {total_flagged_amount:,} บาท"
+            f"depth={depth}: พบ {flagged_count} รายการที่ต้องสอบทาน จาก {len(findings)} รายการ "
+            f"รวมมูลค่า {total_flagged_amount:,} บาท "
+            f"(flag threshold: {flag_threshold:,.0f} บาท)"
         ),
     }
 
@@ -361,23 +526,51 @@ def financial_audit(
 # ═══════════════════════════════════════════════════════════════════════
 
 
-def mirror_review(decision: str = "", amount: float = 0) -> dict[str, Any]:
-    """ตรวจสอบ decision ด้วย Mirror CEO perspective"""
+def mirror_review(
+    decision: str = "",
+    amount: float = 0,
+    depth: str = "standard",
+) -> dict[str, Any]:
+    """ตรวจสอบ decision ด้วย Mirror CEO perspective
+
+    Args:
+        depth: 'standard' หรือ 'high' — high=questions เพิ่ม, pass threshold สูงขึ้น
+    """
     params = load_params()
-    questions = get_param(
-        params, "mirror_review", "questions",
-        default=[
-            "Dr.solodev ในมุม conservative จะ approve ไหม?",
-            "Worst case นี้ Owner รับได้ไหม?",
-            "Owner จะดีใจหรือเสียใจที่ใช้เงินนี้?",
-        ],
+
+    # depth=high: ใช้ questions_high (5 questions) แทน questions (3 questions)
+    if depth == "high":
+        questions = get_param(
+            params, "mirror_review", "questions_high",
+            default=[
+                "Dr.solodev ในมุม conservative จะ approve ไหม?",
+                "Worst case นี้ Owner รับได้ไหม?",
+                "Owner จะดีใจหรือเสียใจที่ใช้เงินนี้?",
+                "ถ้า decision นี้ผิดพลาด โอกาส recovery มีแค่ไหน?",
+                "Decision นี้สอดคล้องกับ long-term vision ของ Dr.solodev หรือไม่?",
+            ],
+        )
+    else:
+        questions = get_param(
+            params, "mirror_review", "questions",
+            default=[
+                "Dr.solodev ในมุม conservative จะ approve ไหม?",
+                "Worst case นี้ Owner รับได้ไหม?",
+                "Owner จะดีใจหรือเสียใจที่ใช้เงินนี้?",
+            ],
+        )
+
+    mirror_mult = get_depth_multiplier(params, "mirror_pass", depth)
+    pass_threshold = (
+        get_param(params, "mirror_review", "pass_threshold_percent", default=60)
+        * mirror_mult
     )
-    pass_threshold = get_param(params, "mirror_review", "pass_threshold_percent", default=60)
     auto_pass = get_param(params, "mirror_review", "auto_pass_threshold_bath", default=1000)
 
     if amount <= auto_pass:
         return {
             "command": "mirror_review",
+            "depth": depth,
             "decision": decision,
             "amount": amount,
             "result": "auto_pass",
@@ -403,11 +596,14 @@ def mirror_review(decision: str = "", amount: float = 0) -> dict[str, Any]:
 
     return {
         "command": "mirror_review",
+        "depth": depth,
         "decision": decision,
         "amount": amount,
         "result": "pass" if passed else "fail",
         "score": score,
         "threshold": pass_threshold,
+        "total_questions": len(questions),
+        "passed_questions": passed_count,
         "reason": (
             "✅ Decision สอดคล้องกับวิสัยทัศน์ของ Dr.solodev"
             if passed
@@ -443,11 +639,15 @@ def main():
     parser.add_argument("--decision", "-D", default="", help="Decision text for mirror review")
     parser.add_argument("--actual", type=float, default=0, help="Actual spend")
     parser.add_argument("--plan", type=float, default=0, help="Planned budget")
+    parser.add_argument(
+        "--depth", choices=["standard", "high"], default="standard",
+        help="ความลึกของการวิเคราะห์: standard (default) หรือ high (เข้มงวด+ละเอียด)",
+    )
     parser.add_argument("--json", "-j", action="store_true", default=True, help="Output JSON")
 
     args = parser.parse_args()
 
-    kwargs: dict = {}
+    kwargs: dict = {"depth": args.depth}
     if args.command == "budget_analysis":
         kwargs["department"] = args.department
         kwargs["period"] = args.period
