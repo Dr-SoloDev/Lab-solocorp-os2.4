@@ -67,6 +67,24 @@ def get_depth_multiplier(params: dict, key: str, depth: str = "standard") -> flo
     return float(multipliers.get(depth, 1.0))
 
 
+def get_horizon_multiplier(params: dict, key: str, horizon: str = "medium") -> float:
+    """ดึง time_horizon multiplier — short=เข้มงวด, medium=1.0, long=ยืดหยุ่น
+
+    Time horizon เปลี่ยน perspective การวิเคราะห์:
+    - short (0-3mo):  cash preservation — tolerance ต่ำ, flag ถี่
+    - medium (3-6mo): operational balance
+    - long (6-12+mo): strategic — tolerance สูง, focus trend
+    """
+    multipliers = get_param(params, "time_horizon", "multipliers", key, default={})
+    return float(multipliers.get(horizon, 1.0))
+
+
+def get_horizon_label(params: dict, horizon: str = "medium") -> str:
+    """ดึงคำอธิบายของ time_horizon"""
+    labels = get_param(params, "time_horizon", "labels", default={})
+    return labels.get(horizon, f"Horizon: {horizon}")
+
+
 def apply_threshold(base: float, multiplier: float) -> float:
     """Apply depth multiplier to a threshold.
     Note: multipliers < 1.0 = stricter for thresholds (lower = stricter)."""
@@ -94,17 +112,25 @@ def budget_analysis(
     actual: float = 0,
     plan: float = 0,
     depth: str = "standard",
+    time_horizon: str = "medium",
 ) -> dict[str, Any]:
     """วิเคราะห์งบประมาณเทียบ actual vs plan
 
     Args:
         depth: 'standard' หรือ 'high' — ปรับความละเอียดของการวิเคราะห์
+        time_horizon: 'short', 'medium', 'long' — มุมมองเวลา
     """
     params = load_params()
 
-    # Apply depth multipliers — high = stricter variance tolerance
-    var_mult = get_depth_multiplier(params, "variance_warning", depth)
-    crit_mult = get_depth_multiplier(params, "variance_critical", depth)
+    # Combine depth + horizon multipliers (相乘 = combined effect)
+    var_mult = (
+        get_depth_multiplier(params, "variance_warning", depth)
+        * get_horizon_multiplier(params, "variance_warning", time_horizon)
+    )
+    crit_mult = (
+        get_depth_multiplier(params, "variance_critical", depth)
+        * get_horizon_multiplier(params, "variance_critical", time_horizon)
+    )
 
     warning_pct = apply_threshold(
         get_param(params, "variance", "warning", default=10.0), var_mult
@@ -137,13 +163,23 @@ def budget_analysis(
     adherence_score = max(0, 1 - (abs(variance_pct) / 100))
 
     # Approval level check with depth adjustment
-    approval_mult = get_depth_multiplier(params, "approval_tier", depth)
+    approval_mult = (
+        get_depth_multiplier(params, "approval_tier", depth)
+        * get_horizon_multiplier(params, "approval_tier", time_horizon)
+    )
     approval_rules = _check_approval_level(abs(variance_pct), approval_mult)
+
+    # Horizon-specific perspective
+    horizon_label = get_horizon_label(params, time_horizon)
+    perspective = {
+        "short": "มุมมองระยะสั้น — cash preservation, ต้องระวังทุกส่วนต่าง",
+        "medium": "มุมมองปกติ — สมดุลระหว่าง tactical และ strategic",
+        "long": "มุมมองระยะยาว — ยืดหยุ่นเรื่อง variance, focus ที่ trend",
+    }.get(time_horizon, "")
 
     # Deep analysis: add breakdown dimension
     breakdown = None
     if depth == "high":
-        # วิเคราะห์ลึก: breakdown ตามสัดส่วน
         efficiency = round(actual / max(plan, 1), 4)
         breakdown = {
             "variance_tolerance": {
@@ -158,9 +194,37 @@ def budget_analysis(
             "depth_note": "วิเคราะห์เชิงลึก — threshold ถูกปรับให้เข้มงวดขึ้นตาม depth parameter",
         }
 
+    # Time horizon-specific analysis
+    horizon_analysis = None
+    if time_horizon == "short":
+        # short-term: focus on immediate cash impact
+        cash_impact = abs(actual - plan)
+        horizon_analysis = {
+            "focus": "immediate_cash",
+            "cash_impact_bath": cash_impact,
+            "recommendation": (
+                f"กระทบเงินสด {cash_impact:,.0f} บาท — "
+                + ("ต้องหาทางลดทันที" if cash_impact > 10000 else "ติดตามต่อเนื่อง")
+            ),
+        }
+    elif time_horizon == "long":
+        # long-term: focus on trend and annualized impact
+        annualized_variance = round(((actual - plan) / max(plan, 1)) * 12 * 100, 2)
+        horizon_analysis = {
+            "focus": "trend_sustainability",
+            "annualized_variance_pct": annualized_variance,
+            "recommendation": (
+                f"annualized impact ~{annualized_variance}% — "
+                + ("ต้องปรับกลยุทธ์ระยะยาว" if abs(annualized_variance) > 20 else "ยังอยู่ในเกณฑ์ acceptable")
+            ),
+        }
+
     return {
         "command": "budget_analysis",
         "depth": depth,
+        "time_horizon": time_horizon,
+        "horizon_label": horizon_label,
+        "perspective": perspective,
         "department": department,
         "period": period,
         "input": {"actual": actual, "plan": plan},
@@ -172,6 +236,7 @@ def budget_analysis(
             "recommendation": _budget_recommendation(severity, variance_pct),
         },
         "breakdown": breakdown,
+        "horizon_analysis": horizon_analysis,
         "approval": approval_rules,
         "params_version": get_param(params, "metadata", "version", default="unknown"),
     }
@@ -239,14 +304,19 @@ def cost_optimization(
     department: str = "cfo",
     costs: dict[str, float] | None = None,
     depth: str = "standard",
+    time_horizon: str = "medium",
 ) -> dict[str, Any]:
     """แนะนำการลดต้นทุน
 
     Args:
-        depth: 'standard' หรือ 'high' — high=เจาะลึกทุกหมวด, คำนวณ saving ละเอียดขึ้น
+        depth: 'standard' หรือ 'high' — high=เจาะลึกทุกหมวด
+        time_horizon: 'short', 'medium', 'long' — มุมมองเวลา
     """
     params = load_params()
-    saving_mult = get_depth_multiplier(params, "saving_target", depth)
+    saving_mult = (
+        get_depth_multiplier(params, "saving_target", depth)
+        * get_horizon_multiplier(params, "saving_target", time_horizon)
+    )
     min_saving = get_param(params, "savings", "minimum_percent", default=10.0) * saving_mult
     payback_max = get_param(params, "savings", "payback_max_months", default=6)
     categories_order = get_param(params, "cost_categories", "order", default=[])
@@ -306,9 +376,20 @@ def cost_optimization(
             },
         }
 
+    # Horizon-specific focus
+    horizon_label = get_horizon_label(params, time_horizon)
+    horizon_focus = {
+        "short": "quick_wins — focus categories with immediate saving potential",
+        "medium": "balanced — mix of quick wins and strategic savings",
+        "long": "strategic — focus on sustainable long-term savings",
+    }.get(time_horizon, "")
+
     return {
         "command": "cost_optimization",
         "depth": depth,
+        "time_horizon": time_horizon,
+        "horizon_label": horizon_label,
+        "horizon_focus": horizon_focus,
         "department": department,
         "total_monthly": total,
         "recommendations": recommendations,
@@ -347,18 +428,26 @@ def forecast(
     monthly_expense: float = 80000,
     cash_on_hand: float = 500000,
     depth: str = "standard",
+    time_horizon: str = "medium",
 ) -> dict[str, Any]:
     """พยากรณ์การเงิน
 
     Args:
         depth: 'standard' หรือ 'high' — high=conservative multipliers เข้มงวดขึ้น
+        time_horizon: 'short', 'medium', 'long' — มุมมองเวลา
     """
     params = load_params()
 
-    rev_mult = get_depth_multiplier(params, "conservative_rev", depth)
-    exp_mult = get_depth_multiplier(params, "conservative_exp", depth)
+    rev_mult = (
+        get_depth_multiplier(params, "conservative_rev", depth)
+        * get_horizon_multiplier(params, "conservative_rev", time_horizon)
+    )
+    exp_mult = (
+        get_depth_multiplier(params, "conservative_exp", depth)
+        * get_horizon_multiplier(params, "conservative_exp", time_horizon)
+    )
 
-    # depth=high: revenue_discount ต่ำลง (conservative มากขึ้น), expense_premium สูงขึ้น
+    # Combined effect: depth × horizon
     rev_discount = (
         get_param(params, "forecast", "conservative", "revenue_discount", default=0.70)
         * rev_mult
@@ -409,9 +498,19 @@ def forecast(
             },
         }
 
+    horizon_label = get_horizon_label(params, time_horizon)
+    confidence = {
+        "short": "high — อิงข้อมูลจริง 3 เดือนล่าสุด",
+        "medium": "medium — ผสม actual + projection",
+        "long": "low — uncertainty สูง, ต้องรีไฟแนนซ์เป็นระยะ",
+    }.get(time_horizon, "")
+
     return {
         "command": "forecast",
         "depth": depth,
+        "time_horizon": time_horizon,
+        "horizon_label": horizon_label,
+        "confidence": confidence,
         "period": period,
         "horizon_months": months,
         "input": {
@@ -451,14 +550,19 @@ def financial_audit(
     period: str = "2026-Q2",
     transactions: list[dict] | None = None,
     depth: str = "standard",
+    time_horizon: str = "medium",
 ) -> dict[str, Any]:
     """ตรวจสอบการเงินและ audit trail
 
     Args:
         depth: 'standard' หรือ 'high' — high=flag threshold ต่ำลง, severity เข้มงวดขึ้น
+        time_horizon: 'short', 'medium', 'long' — scope การตรวจสอบ
     """
     params = load_params()
-    flag_mult = get_depth_multiplier(params, "audit_flag", depth)
+    flag_mult = (
+        get_depth_multiplier(params, "audit_flag", depth)
+        * get_horizon_multiplier(params, "audit_flag", time_horizon)
+    )
     flag_threshold = get_param(params, "audit", "auto_flag_threshold_bath", default=5000) * flag_mult
     critical_level = get_param(params, "audit", "severity", "critical", default=30000) * flag_mult
 
@@ -499,9 +603,19 @@ def financial_audit(
         f["amount"] for f in findings if f["flags"]
     )
 
+    horizon_label = get_horizon_label(params, time_horizon)
+    audit_scope = {
+        "short": "full_dive — ตรวจทุก transaction ละเอียด (flag threshold ต่ำ)",
+        "medium": "standard — ตรวจตามปกติ",
+        "long": "material — focus ที่ transaction สำคัญ, ข้ามรายการเล็ก",
+    }.get(time_horizon, "")
+
     return {
         "command": "financial_audit",
         "depth": depth,
+        "time_horizon": time_horizon,
+        "horizon_label": horizon_label,
+        "audit_scope": audit_scope,
         "period": period,
         "total_transactions": len(findings),
         "flagged": flagged_count,
@@ -514,8 +628,8 @@ def financial_audit(
         },
         "findings": findings,
         "recommendation": (
-            f"depth={depth}: พบ {flagged_count} รายการที่ต้องสอบทาน จาก {len(findings)} รายการ "
-            f"รวมมูลค่า {total_flagged_amount:,} บาท "
+            f"depth={depth} horizon={time_horizon}: พบ {flagged_count} รายการที่ต้องสอบทาน "
+            f"จาก {len(findings)} รายการ รวมมูลค่า {total_flagged_amount:,} บาท "
             f"(flag threshold: {flag_threshold:,.0f} บาท)"
         ),
     }
@@ -530,15 +644,17 @@ def mirror_review(
     decision: str = "",
     amount: float = 0,
     depth: str = "standard",
+    time_horizon: str = "medium",
 ) -> dict[str, Any]:
     """ตรวจสอบ decision ด้วย Mirror CEO perspective
 
     Args:
         depth: 'standard' หรือ 'high' — high=questions เพิ่ม, pass threshold สูงขึ้น
+        time_horizon: 'short', 'medium', 'long' — horizon-specific questions
     """
     params = load_params()
 
-    # depth=high: ใช้ questions_high (5 questions) แทน questions (3 questions)
+    # Select questions based on depth + horizon
     if depth == "high":
         questions = get_param(
             params, "mirror_review", "questions_high",
@@ -551,7 +667,7 @@ def mirror_review(
             ],
         )
     else:
-        questions = get_param(
+        base_questions = get_param(
             params, "mirror_review", "questions",
             default=[
                 "Dr.solodev ในมุม conservative จะ approve ไหม?",
@@ -559,8 +675,18 @@ def mirror_review(
                 "Owner จะดีใจหรือเสียใจที่ใช้เงินนี้?",
             ],
         )
+        questions = list(base_questions)
 
-    mirror_mult = get_depth_multiplier(params, "mirror_pass", depth)
+        # Add horizon-specific questions
+        if time_horizon == "short":
+            questions.append("Decision นี้กระทบ cash flow ใน 3 เดือนนี้ยังไง?")
+        elif time_horizon == "long":
+            questions.append("Decision นี้จะส่งผลยังไงใน 12 เดือนข้างหน้า?")
+
+    mirror_mult = (
+        get_depth_multiplier(params, "mirror_pass", depth)
+        * get_horizon_multiplier(params, "mirror_pass", time_horizon)
+    )
     pass_threshold = (
         get_param(params, "mirror_review", "pass_threshold_percent", default=60)
         * mirror_mult
@@ -594,14 +720,18 @@ def mirror_review(
     score = int((passed_count / len(questions)) * 100)
     passed = score >= pass_threshold
 
+    horizon_label = get_horizon_label(params, time_horizon)
+
     return {
         "command": "mirror_review",
         "depth": depth,
+        "time_horizon": time_horizon,
+        "horizon_label": horizon_label,
         "decision": decision,
         "amount": amount,
         "result": "pass" if passed else "fail",
         "score": score,
-        "threshold": pass_threshold,
+        "threshold": max(0, min(100, pass_threshold)),
         "total_questions": len(questions),
         "passed_questions": passed_count,
         "reason": (
@@ -643,11 +773,15 @@ def main():
         "--depth", choices=["standard", "high"], default="standard",
         help="ความลึกของการวิเคราะห์: standard (default) หรือ high (เข้มงวด+ละเอียด)",
     )
+    parser.add_argument(
+        "--horizon", choices=["short", "medium", "long"], default="medium",
+        help="มุมมองเวลา: short (0-3mo), medium (3-6mo), long (6-12+mo)",
+    )
     parser.add_argument("--json", "-j", action="store_true", default=True, help="Output JSON")
 
     args = parser.parse_args()
 
-    kwargs: dict = {"depth": args.depth}
+    kwargs: dict = {"depth": args.depth, "time_horizon": args.horizon}
     if args.command == "budget_analysis":
         kwargs["department"] = args.department
         kwargs["period"] = args.period
