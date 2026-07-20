@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 =============================================================
-  🧪 SoloCorp OS — QA Sign-off Gate Tests
+  SoloCorp OS - QA Sign-off Gate Tests
 =============================================================
-  pytest suite สำหรับ QA sign-off gate validation
+  pytest suite for QA sign-off gate validation
 =============================================================
 """
 
@@ -37,9 +37,7 @@ from workers.qa_signoff_gate import (
 )
 
 
-# ═══════════════════════════════════════════════════════════
-# Fixtures
-# ═══════════════════════════════════════════════════════════
+# ===== Fixtures ============================================
 
 
 @pytest.fixture
@@ -67,22 +65,7 @@ def temp_test_file(sample_test_results) -> str:
         return f.name
 
 
-@pytest.fixture
-def clean_signoff_dir():
-    """Use temp dir instead of real signoff dir to avoid side effects."""
-    original = os.environ.get("_TEST_SIGNOFF_DIR")
-    with tempfile.TemporaryDirectory() as tmpdir:
-        os.environ["_TEST_SIGNOFF_DIR"] = tmpdir
-        yield Path(tmpdir)
-    if original:
-        os.environ["_TEST_SIGNOFF_DIR"] = original
-    else:
-        os.environ.pop("_TEST_SIGNOFF_DIR", None)
-
-
-# ═══════════════════════════════════════════════════════════
-# Test: Constants
-# ═══════════════════════════════════════════════════════════
+# ===== Test: Constants =====================================
 
 
 def test_min_thresholds_are_sane():
@@ -102,9 +85,7 @@ def test_signoff_dir_path():
     assert "evidence" in str(SIGNOFF_DIR)
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: _now_iso
-# ═══════════════════════════════════════════════════════════
+# ===== Test: _now_iso ======================================
 
 
 def test_now_iso_format():
@@ -114,9 +95,7 @@ def test_now_iso_format():
     assert ts.endswith("+00:00") or "Z" in ts or "+" in ts, "Must include timezone"
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: _ensure_dir
-# ═══════════════════════════════════════════════════════════
+# ===== Test: _ensure_dir ===================================
 
 
 def test_ensure_dir_creates(tmp_path):
@@ -136,9 +115,7 @@ def test_ensure_dir_exists(tmp_path):
     assert result == test_dir
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: _load_test_results
-# ═══════════════════════════════════════════════════════════
+# ===== Test: _load_test_results ============================
 
 
 def test_load_test_results_none():
@@ -166,16 +143,14 @@ def test_load_test_results_invalid_json(tmp_path):
     assert _load_test_results(str(bad_file)) == {}
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: _validate_signoff
-# ═══════════════════════════════════════════════════════════
+# ===== Test: _validate_signoff =============================
 
 
 class TestValidateSignoff:
     """Group validation tests."""
 
     def test_approve_high_coverage_no_bugs(self):
-        """85% coverage, 0 bugs, regression pass → APPROVED."""
+        """85% coverage, 0 bugs, regression pass -> APPROVED."""
         result = _validate_signoff({
             "test_coverage": 85,
             "critical_bugs": 0,
@@ -187,7 +162,7 @@ class TestValidateSignoff:
         assert result == "APPROVED"
 
     def test_approve_at_threshold(self):
-        """80% coverage, 0 bugs, regression pass → APPROVED."""
+        """80% coverage, 0 bugs, regression pass -> APPROVED."""
         result = _validate_signoff({
             "test_coverage": 80,
             "critical_bugs": 0,
@@ -199,7 +174,7 @@ class TestValidateSignoff:
         assert result == "APPROVED"
 
     def test_conditional_below_full_threshold(self):
-        """75% coverage → CONDITIONAL."""
+        """75% coverage -> CONDITIONAL."""
         result = _validate_signoff({
             "test_coverage": 75,
             "critical_bugs": 0,
@@ -211,7 +186,7 @@ class TestValidateSignoff:
         assert result == "CONDITIONAL"
 
     def test_conditional_many_medium_bugs(self):
-        """Medium bugs > 3 → CONDITIONAL."""
+        """Medium bugs > 3 -> CONDITIONAL."""
         result = _validate_signoff({
             "test_coverage": 85,
             "critical_bugs": 0,
@@ -223,7 +198,7 @@ class TestValidateSignoff:
         assert result == "CONDITIONAL"
 
     def test_conditional_many_low_bugs(self):
-        """Low bugs > 10 → CONDITIONAL."""
+        """Low bugs > 10 -> CONDITIONAL."""
         result = _validate_signoff({
             "test_coverage": 85,
             "critical_bugs": 0,
@@ -235,7 +210,7 @@ class TestValidateSignoff:
         assert result == "CONDITIONAL"
 
     def test_reject_critical_bugs(self):
-        """Critical bugs > 0 → REJECTED."""
+        """Critical bugs > 0 -> REJECTED."""
         result = _validate_signoff({
             "test_coverage": 85,
             "critical_bugs": 1,
@@ -247,7 +222,7 @@ class TestValidateSignoff:
         assert result == "REJECTED"
 
     def test_reject_high_bugs(self):
-        """High bugs > 0 → REJECTED."""
+        """High bugs > 0 -> REJECTED."""
         result = _validate_signoff({
             "test_coverage": 85,
             "critical_bugs": 0,
@@ -259,7 +234,7 @@ class TestValidateSignoff:
         assert result == "REJECTED"
 
     def test_reject_low_coverage(self):
-        """Coverage < 70% → REJECTED."""
+        """Coverage < 70% -> REJECTED."""
         result = _validate_signoff({
             "test_coverage": 50,
             "critical_bugs": 0,
@@ -271,7 +246,7 @@ class TestValidateSignoff:
         assert result == "REJECTED"
 
     def test_reject_regression_fail(self):
-        """Regression not passed → REJECTED."""
+        """Regression not passed -> REJECTED."""
         result = _validate_signoff({
             "test_coverage": 85,
             "critical_bugs": 0,
@@ -283,7 +258,7 @@ class TestValidateSignoff:
         assert result == "REJECTED"
 
     def test_reject_edge_coverage_zero(self):
-        """Coverage 0% → REJECTED."""
+        """Coverage 0% -> REJECTED."""
         result = _validate_signoff({
             "test_coverage": 0,
             "critical_bugs": 0,
@@ -295,7 +270,7 @@ class TestValidateSignoff:
         assert result == "REJECTED"
 
     def test_approve_boundary_coverage(self):
-        """Coverage exactly at conditional boundary (70%) + no bugs → CONDITIONAL (since < 80)."""
+        """Coverage exactly at conditional boundary (70%) -> CONDITIONAL (since < 80)."""
         result = _validate_signoff({
             "test_coverage": 70,
             "critical_bugs": 0,
@@ -307,15 +282,11 @@ class TestValidateSignoff:
         assert result == "CONDITIONAL"
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: _save_signoff
-# ═══════════════════════════════════════════════════════════
+# ===== Test: _save_signoff =================================
 
 
 def test_save_signoff_creates_file(tmp_path):
     """Save should create a JSON file."""
-    from workers.qa_signoff_gate import SIGNOFF_DIR
-
     record = {
         "feature": "test-feature",
         "qa_signoff": {
@@ -369,9 +340,7 @@ def test_save_signoff_valid_json(tmp_path):
     assert loaded["qa_signoff"]["status"] == "APPROVED"
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: run_signoff (integration)
-# ═══════════════════════════════════════════════════════════
+# ===== Test: run_signoff (integration) =====================
 
 
 def test_run_signoff_approved():
@@ -418,7 +387,7 @@ def test_run_signoff_conditional_with_conditions():
 
 
 def test_run_signoff_auto_determine_approve():
-    """Auto determine status from parameters — should be APPROVED."""
+    """Auto determine status from parameters - should be APPROVED."""
     record = run_signoff(
         feature="auto-approve",
         tester="QA-Bot",
@@ -429,7 +398,7 @@ def test_run_signoff_auto_determine_approve():
 
 
 def test_run_signoff_auto_determine_reject():
-    """Auto determine status from parameters — should be REJECTED."""
+    """Auto determine status from parameters - should be REJECTED."""
     record = run_signoff(
         feature="auto-reject",
         tester="QA-Bot",
@@ -473,15 +442,13 @@ def test_run_signoff_saves_evidence():
     )
     filepath = record.get("_filepath")
     assert filepath is not None
-    assert os.path.exists(filepath), f"Evidence file not found: {filepath}"
+    assert os.path.exists(filepath), "Evidence file not found: %s" % filepath
 
     # Clean up
     os.unlink(filepath)
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: parse_args
-# ═══════════════════════════════════════════════════════════
+# ===== Test: parse_args ====================================
 
 
 def test_parse_args_minimal():
@@ -529,9 +496,7 @@ def test_parse_args_invalid_status():
         parse_args(["--feature", "x", "--status", "INVALID"])
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: record schema compliance
-# ═══════════════════════════════════════════════════════════
+# ===== Test: record schema compliance ======================
 
 
 def test_signoff_record_schema():
@@ -579,9 +544,7 @@ def test_signoff_record_schema():
         os.unlink(filepath)
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: exit codes
-# ═══════════════════════════════════════════════════════════
+# ===== Test: exit codes ====================================
 
 
 class TestExitCodes:
@@ -612,9 +575,7 @@ class TestExitCodes:
         assert main() == 2
 
 
-# ═══════════════════════════════════════════════════════════
-# Test: edge cases
-# ═══════════════════════════════════════════════════════════
+# ===== Test: edge cases ====================================
 
 
 def test_edge_case_default_values():
@@ -630,9 +591,8 @@ def test_edge_case_default_values():
         os.unlink(filepath)
 
 
-def test_edge_case_special_chars_feature(tmp_path):
+def test_edge_case_special_chars_feature():
     """Feature name with special chars should not break file saving."""
-    from workers.qa_signoff_gate import SIGNOFF_DIR
     record = run_signoff(
         feature="test/slash:feature name",
         status="APPROVED",
@@ -642,6 +602,7 @@ def test_edge_case_special_chars_feature(tmp_path):
     )
     filepath = record.get("_filepath")
     assert filepath is not None
+    assert os.path.exists(filepath)
     # Clean up
     if os.path.exists(filepath):
         os.unlink(filepath)
@@ -651,7 +612,7 @@ def test_all_status_values_accepted():
     """All three status values should produce correct records."""
     for status in ("APPROVED", "CONDITIONAL", "REJECTED"):
         record = run_signoff(
-            feature=f"status-{status.lower()}",
+            feature="status-%s" % status.lower(),
             status=status,
             tester="QA-01",
             coverage=85,
