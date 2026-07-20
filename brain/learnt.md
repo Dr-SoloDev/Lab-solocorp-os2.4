@@ -113,3 +113,40 @@
 - [🟢] Mirror Core implemented (SOUL.md + brain + routing) ✅
 - [🟡] ขยาย Mirror ไปยัง Department Head อื่น ๆ (Architect คนแรก)
 - [🟡] Mirror Sync Protocol — ข้าม platform
+
+---
+
+## Session 2026-07-20 (ต่อ) — Full Autonomy Transformation + Rules Restructure
+
+### ✅ What worked
+- **Mission realignment สำเร็จ** — Owner บอก mission จริง: "SoloCorp OS = แก้ปัญหา 'คนเดียวไปไม่รอด'" → ระบบที่ทำให้ Owner ไม่จำเป็นใน daily ops
+- **Decision autonomy เปิด** — Owner ให้ pre-approval + full authority → CEO operate โดยไม่ต้องถาม permission
+- **Phase 1-7 ทั้งหมด deploy ภายใน session เดียว** — Rules → SOPs → Dashboard → Mirror → Skills → Agents → Toolbelt
+- **Owner feedback ตีกลับ rules** → 9 topic-files → 5 behavior-files — butละพฤติกรรมจบในไฟล์เดียว
+- **Dashboard ใช้ได้จริง** — `GET /v1/dashboard?format=json|markdown` return health, RAG, dispatches, quick actions
+
+### 🔧 KEY LEARN: Behavior-Centric > Topic-Centric
+- ถ้า 1 behavior ต้องเปิด 6 ไฟล์ = **ระบบล้มเหลว** (ไม่ใช่คนใช้ผิด)
+- 1 behavior = 1 ไฟล์: `01-receive.md` = assess + filter + route + handoff + pillars — ทุกอย่างในที่เดียว
+- กฏิกาที่ดี = หาเจอใน 30 วินาที ไม่ใช่ความยาว
+
+### 🔧 KEY LEARN: Permission Culture = ข้าราชการ AI
+- ก่อน: ทุก decision ถาม Owner = CEO เป็น bottleneck
+- หลัง: Mirror Check → L1-L4 auto → L5 escalate → report at end
+- Owner ต้องตัดสินใจแค่ 20-30% — ทีม operate 70-80%
+
+### 🔧 KEY LEARN: Escalation Filter คือหัวใจ Autonomy
+- L1 (auto) / L2 (specialist) / L3 (dept head) / L4 (CEO ตัดสิน) / L5 (Owner)
+- Mirror Check 3 คำถาม: "pre-approved? / ทางเลือกอื่นดีกว่า? / Owner จะ approve ไหม?"
+- Decision filter นี้ = กลไกที่ทำให้ autonomy ทำงานได้จริง โดยไม่失控
+
+### 💡 Insights
+1. **Owner รู้มาตลอด — ผมเพิ่งฟัง** — "SoloCorp เกิดมาเพื่อแก้ปัญหาคนเดียว" คือ mission ที่แท้จริง
+2. **SOP = autonomy enabler** — มี SOP = คนใหม่เสียบทำได้เลย = ไม่ต้องรอ Owner
+3. **Deploy good enough ดีกว่า perfect** — "ระบบที่ good enough และ deploy แล้ว ดีกว่าระบบ perfect ที่ยังไม่เกิด"
+4. **Mirror Check 3 คำถาม powerful กว่าที่คิด** — decision filter นี้คือหัวใจของ autonomous system
+
+### 📌 Next
+- [🟢] Phase 1-7 Complete ✅
+- [🟢] Rules restructured to 5 behavior files ✅
+- (none — all phases done)

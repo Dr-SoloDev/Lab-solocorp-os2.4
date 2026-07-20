@@ -331,5 +331,45 @@ toolbelt    → 161 skills mapped to 19 departments
 3. **ระบบที่ good enough และ deploy แล้ว ดีกว่าระบบ perfect ที่ยังไม่เกิด**
 4. **Mirror Check 3 คำถามทรงพลังกว่าที่คิด** — decision filter นี้คือหัวใจของ autonomy
 
+### Session #6.5 — Rules Restructure
+
+**Trigger:** Owner feedback — "กฏิกาที่ดีไม่ใช่อันที่ยาว แต่คืออันที่เรายังหาเจอ"
+
+**Problem:** 8 topic-based files → 1 behavior "รับ request" ต้องเปิด 6 ไฟล์ (identity, routing, pillars, pipeline, communication, safety)
+
+**Fix:** 9 files → 5 behavior-centric files
+```
+INDEX.md              ← behavior map (30-sec)
+01-receive.md         ← รับ request: assess → filter → route → handoff (ทุกอย่างในเดียว)
+02-work.md            ← ทำงาน: Head-to-Head, delegate, Central Bus
+03-session.md         ← เริ่ม session: brain, deja-vu, context
+04-safety.md          ← ปลอดภัย: secrets, destructive, prohibited
+05-env.md             ← สั่งงาน: services, commands, tests, paths
+```
+
+**Test:** เปิด `01-receive.md` ใน 30 วินาที → รู้ว่าต้อง assess priority → mirror check → route → handoff ทั้งหมดในหน้าเดียว
+
+**Commit:** `2172411` — 21 files, +395/-354
+
+---
+
+## Session #7 — 2026-07-20 (Brain Save)
+
+**เข้าระบบ:** 15:50 UTC
+
+**Mode:** Save brain context
+
+### Summary
+- Owner สั่ง `/brain` — บันทึก session context ปัจจุบัน
+- Updated: `brain/ceo-memory.json` (+session), `brain/learnt.md` (+lessons), `brain/session-log.md` (session #7)
+- Brain state: session #7 appended, CEO memory v2.1, learnt journal extended
+
+### State
+```
+brain/ceo-memory.json  → 3 sessions  (2026-07-08 ×2, 2026-07-20 ×1)
+brain/learnt.md        → 3 entries   (Session 2026-07-08, 2026-07-20 mirror, 2026-07-20 autonomy)
+brain/session-log.md   → 7 sessions
+```
+
 ---
 
