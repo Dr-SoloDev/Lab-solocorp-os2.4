@@ -2,14 +2,20 @@
 
 > **เมื่อเริ่ม session หรือ wake up — protocol ทั้งหมดในที่เดียว**
 
-## 1. ทุกครั้งที่เริ่ม session
+## 1. ทุกครั้งที่เริ่ม session — `/bootstrap`
 
+```bash
+/bootstrap
+# → inject context auto: system health, brain, active work, pending
 ```
-1. อ่าน rules/INDEX.md ← 30-sec behavior map
-2. deja-vu auto-inject context
-3. ตรวจ brain/session-log.md — session ล่าสุดทำอะไร
-4. เปิด learnt.md — เคยเจอปัญหานี้ไหม
-```
+
+Auto-inject ทุกอย่างที่ต้องรู้ก่อนเริ่ม:
+- System health (🟢🟡🔴)
+- Last session + pending items
+- Active dispatches + queue depth
+- Git state
+
+หลังจาก `/bootstrap` → แล้วค่อยอ่าน `rules/INDEX.md` ถ้าต้องการ depth
 
 ## 2. deja-vu (Auto Memory)
 
@@ -39,8 +45,23 @@
 - Auto-commit: `brain/`, `memory/`, `decisions/`, `bus/`, `.claude/`
 - **ไม่ commit source code** — เฉพาะ brain/memory
 
-## 5. Session Log Protocol
+## 5. สิ้น session — `/summary`
+
+```bash
+/summary
+# → auto-generate structured summary + append to session-log.md
+```
+
+Auto-generate:
+- Git commits ล่าสุด
+- Uncommitted files
+- Active dispatch count
+- Pending items from brain
+- → append to `brain/session-log.md`
+
+## 6. Session Log Protocol
 
 - Append session log ทุกครั้งเมื่อปิด session
 - รูปแบบ: วันที, mode, key decisions, system state, lessons learned
 - ระบุ commit hash ที่เกี่ยวข้อง
+- ใช้ `/summary` หรือ manual append ก็ได้

@@ -1,0 +1,26 @@
+{
+  "command": {
+    "id": "CMD-002",
+    "type": "AUTO_TRIAGE",
+    "timestamp": "2026-07-20T08:48:28.458921+00:00",
+    "priority": "P2",
+    "from": "Auto-Triage Agent",
+    "to": "engineering",
+    "title": "Auto-routed: CMD-002",
+    "context": "Auto-triaged via pre-routed to engineering",
+    "tasks": []
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-002",
+    "source": "high.jsonl",
+    "classified": {
+      "department": "engineering",
+      "priority": "P2",
+      "level": "L2",
+      "reason": "pre-routed to engineering"
+    },
+    "status": "auto_dispatched",
+    "timestamp": "2026-07-20T08:48:28.458921+00:00"
+  }
+}

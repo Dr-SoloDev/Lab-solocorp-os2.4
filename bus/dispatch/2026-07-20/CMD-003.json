@@ -1,0 +1,26 @@
+{
+  "command": {
+    "id": "CMD-003",
+    "type": "AUTO_TRIAGE",
+    "timestamp": "2026-07-20T08:48:28.459623+00:00",
+    "priority": "P2",
+    "from": "Auto-Triage Agent",
+    "to": "design-kreet",
+    "title": "Auto-routed: CMD-003",
+    "context": "Auto-triaged via pre-routed to design-kreet",
+    "tasks": []
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-003",
+    "source": "normal.jsonl",
+    "classified": {
+      "department": "design-kreet",
+      "priority": "P2",
+      "level": "L2",
+      "reason": "pre-routed to design-kreet"
+    },
+    "status": "auto_dispatched",
+    "timestamp": "2026-07-20T08:48:28.459623+00:00"
+  }
+}

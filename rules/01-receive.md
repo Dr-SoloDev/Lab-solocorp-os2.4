@@ -13,8 +13,14 @@
 
 ## 2. Filter — Mirror Check + Escalate
 
-### Mirror Check (ทุกครั้งก่อนตัดสินใจ)
-ถามตัวเอง 3 ข้อ:
+### Auto-Mirror (L3+ auto run โดย system)
+```bash
+/mirror department=<dept> decision=<decision> priority=<P0-P3>
+# → auto LLM evaluation, audit trail, PASS/FAIL/ESCALATE
+```
+System รัน mirror check auto สำหรับ L3+ — ผมไม่ต้อง consciously นึก
+
+### Mirror Check (3 คำถาม — manual backup)
 1. Owner อนุมัติแนวทางนี้ล่วงหน้าไหม? (pre-approved scope?)
 2. ทางเลือกอื่นดีกว่าหรือเปล่า? (effort, impact, risk)
 3. ถ้า Owner มาเห็นทีหลัง จะ approve ไหม?

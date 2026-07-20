@@ -197,6 +197,26 @@
     "mirror-check": {
       "description": "Mirror Check Protocol — ตรวจสอบ decision สะท้อน Dr.solodev Owner",
       "template": "/mirror-check\n\nDecision: $ARGUMENTS\n\nProtocol in 01-receive.md (Escalation Filter L1-L5)\n1. 3 Mirror Check Questions\n2. alignment score\n3. Audit Trail\n4. PASS / FAIL / ESCALATE"
+    },
+    "bootstrap": {
+      "description": "Auto-Session Bootstrap — inject context auto ตอนเริ่ม session",
+      "template": "python scripts/session-bootstrap.py\n\nAuto-inject current system state, brain context, active dispatches, and pending items. อ่าน output และบอก CEO ว่าต้อง focus ที่ตรงไหน"
+    },
+    "triage": {
+      "description": "Auto-Triage — classify + route queue entries, L1-L2 auto-execute",
+      "template": "python workers/agents/auto_triage_agent.py\n\nClassify pending queue entries by priority + department. L1-L2 auto-dispatch, L3+ propose to CEO."
+    },
+    "mirror": {
+      "description": "Auto-Mirror Check — รัน mirror check (L3+ decisions)",
+      "template": "Run auto mirror check for: department=$1, decision=$2, priority=$3\n\nUses central_bus.plugins.auto_mirror_hook.auto_mirror_check(). L1-L2 auto-pass, L3+ LLM evaluation."
+    },
+    "orchestrate": {
+      "description": "Auto-Orchestrator — scan + decompose new dispatches",
+      "template": "python3 -c 'from central_bus.plugins.auto_orchestrator import AutoOrchestrator; import json; r=AutoOrchestrator().scan_new_dispatches(); print(json.dumps(r,indent=2))'\n\nScan bus/dispatch/ for new items, decompose into sub-tasks, track status."
+    },
+    "summary": {
+      "description": "Auto-Brain Summary — สรุป session auto สิ้น session",
+      "template": "python scripts/session-summary.py --save\n\nGenerate structured session summary + append to session-log.md"
     }
   }
 }

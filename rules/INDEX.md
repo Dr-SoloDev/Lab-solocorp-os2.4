@@ -19,6 +19,16 @@ INDEX.md          ← คุณอยู่ตรงนี้ — behavior map
 | Deploy / destructive ops / ระวัง secret | → `04-safety.md` |
 | เปิด busd / รัน test / หา path | → `05-env.md` |
 
+## Auto-Pilot Commands (Phase 8)
+
+| คำสั่ง | เมื่อไหร่ |
+|:------|:---------|
+| `/bootstrap` | เริ่ม session → inject context auto |
+| `/triage` | Classify queue + auto-route L1-L2 |
+| `/mirror` | รัน mirror check (L3+ decisions) |
+| `/orchestrate` | Scan + decompose new dispatches |
+| `/summary` | สิ้น session → สรุป + save brain |
+
 ## Sources of Truth
 
 | ที่ | อะไร |
