@@ -32,14 +32,29 @@
 
 ---
 
-## Escalation Filter (New)
+## Chain of Command (Deployed)
+
+```
+Owner (Dr.solodev) — L5: vision, org, core product
+  └── CEO (เทอโบ) — L4: strategy, cross-dept, roadmap
+        └── COO (กิจ/Kit) — L3: daily ops, team, front-line ← NEW
+              ├── CFO, CMO, Orchestrator, Architect
+              ├── Engineering, Design, Product, QA
+              └── อีก 13 Department Heads
+
+Owner → [L1-L3] → COO triage → auto/assign
+            [L4]   → CEO decide
+            [L5]   → Owner only
+```
+
+## Escalation Filter (v3 — with COO)
 
 | Level | อะไร | ใคร |
 |:-----:|:-----|:----|
 | **L5** | Vision, โครงสร้างองค์กร, Core Product Change | → Owner |
 | **L4** | Cross-dept strategy, Budget ใหญ่, Roadmap shift | → CEO ตัดสินใจ → รายงาน |
-| **L3** | Cross-dept handoff, Feature decision | → Department Heads |
-| **L2** | Daily ops, Fix, Bug, Deploy | → Specialist Agents |
+| **L3** | Cross-dept handoff, Feature decision, Resource | → **COO จัดการ** → รายงาน CEO |
+| **L2** | Daily ops, Fix, Bug, Deploy, Team status | → Department Heads → COO รับรู้ |
 | **L1** | Routine, Auto | → Loop Runner / Auto-pilot |
 
 ---

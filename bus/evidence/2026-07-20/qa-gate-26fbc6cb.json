@@ -1,0 +1,15 @@
+{
+  "event_id": "qa-gate-26fbc6cb",
+  "event_type": "QA_GATE",
+  "project_id": "auto-qa-pipeline",
+  "timestamp": "2026-07-20T10:33:15.096255+00:00",
+  "gate_version": "v1.0",
+  "threshold": 70,
+  "coverage_percent": null,
+  "passed": false,
+  "tests_returncode": 1,
+  "tests_passed": "FAILED",
+  "evidence_type": "auto_qa_gate",
+  "trace_id": "26fbc6cb07e3",
+  "test_summary": ""
+}

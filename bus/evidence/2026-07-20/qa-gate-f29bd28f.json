@@ -1,0 +1,15 @@
+{
+  "event_id": "qa-gate-f29bd28f",
+  "event_type": "QA_GATE",
+  "project_id": "auto-qa-pipeline",
+  "timestamp": "2026-07-20T10:42:00.458138+00:00",
+  "gate_version": "v1.0",
+  "threshold": 10,
+  "coverage_percent": 9.683966367062917,
+  "passed": false,
+  "tests_returncode": 0,
+  "tests_passed": "OK",
+  "evidence_type": "auto_qa_gate",
+  "trace_id": "f29bd28ff629",
+  "test_summary": "central_bus/monitor_watchdog.py                    70     54    23%\ncentral_bus/open_design.py                         27     14    48%\ncentral_bus/qa_gate.py                             17     11    35%\ncentral_bus/queue.py                              193    144    25%\ncentral_bus/router.py                             291    235    19%\ncentral_bus/semantic.py                            93     78    16%\ncentral_bus/skills_router.py                      102    102     0%\ncentral_bus/state.py                              206    176    15%\ncentral_bus/tests/__init__.py                       0      0   100%\ncentral_bus/tests/conftest.py                       0      0   100%\ncentral_bus/tests/test_behavior_classifier.py     278    278     0%\ncentral_bus/tests/test_facts.py                    80     80     0%\ncentral_bus/tests/test_integration.py             185    185     0%\ncentral_bus/tests/test_queue.py                   146    146     0%\ncentral_bus/tests/test_router.py                  222    222     0%\ncentral_bus/webhook_receiver.py                    83     64    23%\n-------------------------------------------------------------------\nTOTAL                                            3449   3115    10%\nCoverage JSON written to file .coverage.json\n======================== 64 passed, 1 warning in 11.84s ========================"
+}

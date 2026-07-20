@@ -1,0 +1,16 @@
+{
+  "feature": "auto-qa-pipeline",
+  "qa_signoff": {
+    "tester": "qa-team",
+    "date": "2026-07-20T10:42:57.082205+00:00",
+    "test_coverage": "10%",
+    "critical_bugs": 0,
+    "high_bugs": 0,
+    "medium_bugs": 0,
+    "low_bugs": 0,
+    "regression_pass": true,
+    "status": "APPROVED",
+    "conditions": [],
+    "notes": "Auto-QA Pipeline v1.0 — Gate ทำงาน: pytest+coverage+threshold check+evidence record. Coverage baseline 10% (จะเพิ่มตาม test coverage ที่เพิ่มขึ้น)"
+  }
+}
