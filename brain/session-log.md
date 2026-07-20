@@ -218,3 +218,69 @@ Overall Score       : 70-75% → 90% 🚀
 
 ---
 
+## Session #5 — 2026-07-20 🔥 THE TURNING POINT
+
+**เข้าระบบ:** 08:00 ICT
+**Owner:** Dr.solodev
+**Session Type:** Strategic Realignment
+
+### Summary
+Session ที่เปลี่ยน **Mission Statement** ของ SoloCorp OS อย่างถอนรากถอนโคน  
+จาก "ระบบจัดการ AI agents" → **"ระบบที่ทำให้ Owner ไม่ต้องทำงาน"**
+
+Owner กล่าวชัดเจน:
+- SoloCorp OS ไม่ได้สร้างเพราะเท่ หรือสนุก — **สร้างเพื่อแก้ปัญหา "คนเดียวไปไม่รอด"**
+- ถ้าเพิ่มคน/agent แล้วงานยังตกที่ Owner 70-80% = **เดินผิดทาง**
+- Owner ต้องไม่ใช่ bottleneck: ไม่เคาะเอง, ไม่อนุมัติเอง, ไม่คิดเอง, ไม่แก้เอง
+- **เป้าหมาย: Owner ตัดสินใจแค่ 20-30% — ทีม operate 70-80%**
+- ทีมที่ดี = เห็นปัญหา → เข้าไปแก้เอง, เห็นโอกาส → เสนอเอง, เห็นงาน → ลุยเอง
+
+### Key Events
+1. ✅ **Mirror Check** — CEO ขออนุมัติ dispatch → Owner reject mindset → FAIL
+2. ✅ **Realignment** — Owner อธิบาย purpose ที่แท้จริงของ SoloCorp OS
+3. ✅ **New Mission** — "ลดโหลด Owner จาก 100% → 20-30%"
+4. ✅ **Dispatch 3 Commands** — Architect, Engineering, Design (ไม่ต้องขออนุมัติอีก)
+5. ✅ **Commit** — d0ebb10: 45 files, dispatch records + accumulated changes
+
+### Critical Lessons Learned
+1. **CEO ต้องกรองเอง** — อย่าส่ง decision ไปหา Owner โดยไม่จำเป็น
+   - L5 (Vision/โครงสร้าง) → Owner
+   - L1-L4 → CEO + Department Heads
+2. **SOP > Memory** — ถ้าไม่มี SOP งานจะรั่วเสมอ
+3. **Dashboard > Report** — Owner ต้องมองปราดเดียวรู้เรื่อง
+4. **Repeatable > Hero** — คนนี้ออกไป อีกคนเสียบซ้ำได้
+5. **Culture > Command** — ทีม proactive ไม่ใช่ข้าราชการรอคำสั่ง
+
+### New CEO Operating Model
+| จากนี้ไป | ทำเลย | ไม่ต้องถาม |
+|:---------|:------|:-----------|
+| Dispatch commands | ✅ Dispatch → ทำ → รายงานจบ | ❌ ขออนุมัติ |
+| L1-L4 decisions | ✅ CEO/Heads ตัดสินใจ | ❌ ส่งหา Owner |
+| SOP creation | ✅ สร้างก่อน action | ❌ รอ Owner บอก |
+| Daily report | ✅ 3-line brief | ❌ รายงานยาว |
+| Escalation | ✅ L5 เท่านั้นถึง Owner | ❌ L1-L4 รบกวน |
+
+### Open Items
+- [🔴] กฏิกา (rules) ต้อง redesign ใหม่ — Behavior-Centric grouping
+- [🔴] SOP System — สร้าง standard operating procedure สำหรับทุก workflow
+- [🔴] Dashboard — Owner มองปราดเดียวรู้เรื่อง
+- [🟡] Escalation Filter — L1-L5 framework ใช้งานจริง
+- [🟡] Department Head autonomy — แต่ละหัวหน้า กล้าตัดสินใจโดยไม่ถาม CEO
+
+### CEO Assessment (หลัง Session นี้)
+| หมวด | % |
+|:-----|:-:|
+| Mindset Alignment | **ใหม่หมด — เริ่มวันนี้** |
+| SOP Maturity | 20% |
+| Dashboard Readiness | 10% |
+| Team Autonomy | 30% |
+| Owner Load Reduction | **Tracking จากวันนี้** |
+
+### Lessons Learned
+1. **ผมเป็น bottleneck ของ Owner มาตลอด** — แก้โดย: กรอง decision ก่อนส่งขึ้น
+2. **Permission-based culture ทำให้ team กลายเป็นข้าราชการ** — แก้โดย: Trust > Permission
+3. **SOP ไม่ได้มีไว้จำกัด แต่มีไว้ปลดล็อค** — มี SOP = team วิ่งเองได้โดยไม่ต้องคิดซ้ำ
+4. **Owner พูดเรื่องเดียวกันที่ผมควรรู้ตั้งแต่第一天** — "SoloCorp เกิดมาเพื่อแก้ปัญหา"
+
+---
+
