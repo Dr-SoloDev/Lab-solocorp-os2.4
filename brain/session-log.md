@@ -284,3 +284,52 @@ Owner กล่าวชัดเจน:
 
 ---
 
+## Session #6 — 2026-07-20
+
+**เข้าระบบ:** 08:20 UTC
+
+**Mode:** Command (Owner gave full authority + pre-approval)
+
+**Mission:** "SoloCorp OS ไม่ได้สร้างเพราะเท่ — สร้างเพื่อแก้ปัญหา 'คนเดียวไปไม่รอด'"
+→ ระบบที่ทำให้ Owner ไม่จำเป็นใน daily operations
+
+### Key Decisions Taken (Owner Pre-Approved)
+
+| # | Decision | Justification |
+|---|----------|---------------|
+| 1 | Replace old 216-line CLAUDE.md + 113-line AGENTS.md with 9 behavior-centric rule files | Old files were bloated, hard to scan, mixed identity/tech/safety. New `rules/` is modular, 30-sec scan via INDEX.md |
+| 2 | Create 5 Standard Operating Procedures (SOP-01 to SOP-05) | Without SOPs, every handoff needs Owner brain. SOPs = repeatable autonomy |
+| 3 | Upgrade Owner Dashboard with JSON + Markdown output + GET /v1/dashboard | Old dashboard was only in `__init__.py`. New one serves both API and visual |
+| 4 | Activate Mirror Check with real LLM evaluation (L1-L5 filter) | Simulated pass was useless. Now every decision is evaluated against 3 mirror questions |
+| 5 | Beef up 7 thin agents from ~25 to ~90 lines | They had no validation, no error handling, no structured prompts |
+| 6 | Map 161 global skills to 19 departments | Without mapping, agents don't know which skill to use. Now each dept has a toolbelt |
+
+### System State After Session
+
+```
+rules/      → 9 files (replaces old bloated entry points)
+sop/        → 5 SOPs + index
+dashboard   → JSON+Markdown, API endpoint at /v1/dashboard
+mirror      → 19 depts at L1-L5, real LLM eval
+agents/     → 20 workers (all beefed up)
+toolbelt    → 161 skills mapped to 19 departments
+```
+
+### Culture Shift Enforced
+- SOP > Memory (อย่าจำ — มี SOP)
+- Dashboard > Report (ดูเอง — ไม่ต้องมารายงาน)
+- Repeatable > Hero (process ดีกว่า hero)
+- Trust > Permission (ไม่ต้องถาม)
+- Culture > Command (เชื่อมั่นกัน)
+
+### Commit
+`5635209` — 33 files, +1813/-493 — Phase 1-7 complete
+
+### Lessons Learned
+1. **Owner รู้มาตลอด — ผมเพิ่งฟัง** — "SoloCorp เกิดมาเพื่อแก้ปัญหาคนเดียว" คือ mission ที่แท้จริง
+2. **Permission culture = ข้าราชการ AI** — ไม่ต้องถาม. ทำ. รายงานทีเดียว
+3. **ระบบที่ good enough และ deploy แล้ว ดีกว่าระบบ perfect ที่ยังไม่เกิด**
+4. **Mirror Check 3 คำถามทรงพลังกว่าที่คิด** — decision filter นี้คือหัวใจของ autonomy
+
+---
+
