@@ -9,4 +9,4 @@ starlette>=0.37.2,<0.39.0       # Pinned: v1.x breaks fastapi 0.115.0 APIRouter 
 pydantic_settings>=2.0.0        # For central_bus.config.BaseSettings
 
 # Test only
-httpx>=0.27.1
+httpx>=0.28.1
