@@ -1,28 +1,87 @@
-"""R&D Lab Agent — @rd-lab: Curiosity-driven research, prototyping
+"""R&D Lab Agent — @rd-lab: Research, Prototype, Experiment, Innovation
 
-⚠️ Owner-direct — bypasses normal pipeline. No deadlines, no pipeline process.
+Capabilities:
+- Research paper analysis and summarization
+- Prototype development
+- Experiment design and methodology
+- Tool building and automation
+- Knowledge curation
 """
+
+from __future__ import annotations
+
+import json
 
 from workers.agents.base_agent import BaseAgent
 
 
 class RDLabAgent(BaseAgent):
-    def __init__(self, bus_url="", api_key=""):
-        super().__init__("rd-lab", "R&D Lab", "profiles/19-rd-lab/SOUL.md", bus_url, api_key)
+    """R&D Lab — ดูแล Research, Prototype, Experiment, Innovation"""
+
+    ACTIVITIES = {
+        "research": ["research", "paper", "study", "analysis", "survey", "investigate"],
+        "prototype": ["prototype", "poc", "mvp", "build", "implement", "develop"],
+        "experiment": ["experiment", "test", "a/b", "methodology", "metric"],
+        "tool": ["tool", "script", "automation", "scraper", "integration"],
+        "curate": ["curate", "document", "summarize", "organize", "wiki"],
+    }
+
+    def __init__(self, bus_url: str = "", api_key: str = ""):
+        super().__init__(
+            agent_id="rd-lab",
+            name="R&D Lab",
+            profile_path="profiles/19-rd-lab/SOUL.md",
+            bus_url=bus_url,
+            api_key=api_key,
+        )
+
+    def _detect_activity(self, action: str, description: str) -> str:
+        combined = (action + " " + description).lower()
+        for activity, keywords in self.ACTIVITIES.items():
+            if any(kw in combined for kw in keywords):
+                return activity
+        return "explore"
 
     async def execute(self, task: dict) -> dict:
-        a = task.get("payload", {}).get("action", "")
-        d = task.get("payload", {}).get("description", "")
-        action_map = {"research": f"Research: {d}\nโปรดำวิจัยและสรุป findings", "prototype": f"Proof of concept: {d}\nโปรดำวางแผน POC", "experiment": f"Experiment: {d}\nโปรดำออกแบบการทดลอง"}
-        prompt = None
-        for k, v in action_map.items():
-            if k in a:
-                prompt = f"คุณคือ R&D Lab ของ SoloCorp OS (Owner-direct)\n{v}"
-                break
-        if not prompt:
-            prompt = f"คุณคือ R&D Lab ของ SoloCorp OS (Owner-direct)\nได้รับงานจาก CEO: {d}\nโปรดำดำเนินการและรายงานผล"
+        payload = task.get("payload", {})
+        action = payload.get("action", "")
+        description = payload.get("description", "")
+        params = payload.get("params", {})
+
+        if not description:
+            return {
+                "status": "failed",
+                "summary": "R&D Lab: ไม่มี description ใน payload",
+                "details": {"error": "missing_description"},
+            }
+
+        activity = self._detect_activity(action, description)
+
+        prompt = (
+            f"คุณคือ R&D Lab ของ SoloCorp OS\n"
+            f"กิจกรรม: {activity}\n"
+            f"ได้รับงานจาก CEO: {description}\n"
+        )
+        if params:
+            prompt += f"parameters: {json.dumps(params, ensure_ascii=False)}\n"
+        prompt += "\nโปรดำดำเนินการตามบทบาท R&D Lab รายงานผล"
+
         try:
-            llm = await self.think(prompt, max_tokens=500)
-            return {"status": "completed", "summary": llm[:200], "details": {"action": a, "llm_used": True, "full_response": llm}}
+            llm_response = await self.think(prompt, max_tokens=500)
+            return {
+                "status": "completed",
+                "summary": llm_response[:300],
+                "details": {
+                    "action": action,
+                    "activity": activity,
+                    "agent": self.agent_id,
+                    "llm_used": True,
+                    "full_response": llm_response,
+                },
+            }
         except Exception as e:
-            return {"status": "completed", "summary": f"R&D Lab รับทราบ: {d}", "details": {"action": a, "llm_error": str(e)}}
+            return {
+                "status": "completed",
+                "summary": f"R&D Lab รับทราบ: {description[:200]}",
+                "details": {"action": action, "activity": activity, "llm_error": str(e)},
+            }

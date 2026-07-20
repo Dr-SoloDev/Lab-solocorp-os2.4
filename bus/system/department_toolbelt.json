@@ -1,0 +1,219 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-07-20",
+  "description": "Department → Toolbelt mapping — 161 global skills จับคู่กับ 19 departments",
+  "mappings": {
+    "ceo": {
+      "primary_skills": [
+        "executive-summary", "executive-update", "strategic-narrative",
+        "board-deck-narrative", "investor-pitch-deck", "investor-update",
+        "stakeholder-update", "stakeholder-influence-mapper", "meeting-notes"
+      ],
+      "secondary_skills": [
+        "ambiguity-resolver", "multi-source-signal-synthesiser",
+        "project-status-report", "incident-postmortem"
+      ]
+    },
+    "cfo": {
+      "primary_skills": [
+        "budget-variance-analysis", "financial-model-narrative",
+        "financial-due-diligence", "saas-economics-efficiency-metrics",
+        "saas-revenue-growth-metrics", "tam-sam-som-calculator",
+        "pricing-strategy", "tax-planning-checklist"
+      ],
+      "secondary_skills": [
+        "metrics-framework", "north-star-metric", "data-analysis-standard"
+      ]
+    },
+    "cmo": {
+      "primary_skills": [
+        "go-to-market", "gtm-strategy", "content-strategy",
+        "content-calendar", "content-matrix", "copywriting",
+        "marketing-ideas", "seo-audit", "seo-content-brief",
+        "competitive-analysis", "positioning-statement"
+      ],
+      "secondary_skills": [
+        "brand-guardian", "media-pitch", "press-release",
+        "newsletter-voice", "voice-builder"
+      ]
+    },
+    "orchestrator": {
+      "primary_skills": [
+        "project-status-report", "meeting-notes", "stakeholder-map",
+        "sprint-brief", "sprint-planning", "retro-analysis",
+        "process-documentation", "sop-writer", "runbook-writer"
+      ],
+      "secondary_skills": [
+        "stakeholder-influence-mapper", "team-offsite-planner",
+        "change-management-plan", "onboarding-plan"
+      ]
+    },
+    "architect": {
+      "primary_skills": [
+        "architecture-decision-record", "technical-spec",
+        "system-design-interview", "runbook-writer",
+        "vendor-evaluation", "incident-postmortem"
+      ],
+      "secondary_skills": [
+        "code-review-checklist", "debugging-log-analyser",
+        "test-strategy-doc", "compliance-checklist"
+      ]
+    },
+    "product": {
+      "primary_skills": [
+        "create-prd", "prd-template", "prd-development",
+        "user-stories", "job-stories", "user-story",
+        "feature-prioritisation", "prioritization-frameworks",
+        "outcome-roadmap", "roadmap-planning", "roadmap-presentation",
+        "north-star-metric", "metrics-framework"
+      ],
+      "secondary_skills": [
+        "assumption-mapper", "problem-statement",
+        "product-health-analysis", "opportunity-solution-tree",
+        "epic-hypothesis", "pre-mortem"
+      ]
+    },
+    "engineering": {
+      "primary_skills": [
+        "code-review-checklist", "technical-spec",
+        "debugging-log-analyser", "system-design-interview",
+        "sql-query-explainer", "api-docs-writer",
+        "changelog-generator", "pr-description-writer"
+      ],
+      "secondary_skills": [
+        "ui-animation-review", "runbook-writer",
+        "vendor-evaluation", "incident-postmortem"
+      ]
+    },
+    "design": {
+      "primary_skills": [
+        "design-critique", "design-handoff-brief",
+        "ux-research-plan", "user-research-synthesis",
+        "accessibility-audit", "lean-ux-canvas",
+        "job-story-mapper", "user-journey-map"
+      ],
+      "secondary_skills": [
+        "proto-persona", "user-personas", "design-critique"
+      ]
+    },
+    "ui_designer": {
+      "primary_skills": [
+        "design-critique", "accessibility-audit",
+        "ui-animation-review"
+      ],
+      "secondary_skills": [
+        "lean-ux-canvas", "design-handoff-brief"
+      ]
+    },
+    "qa": {
+      "primary_skills": [
+        "test-strategy-doc", "code-review-checklist",
+        "debugging-log-analyser", "compliance-checklist",
+        "incident-postmortem"
+      ],
+      "secondary_skills": [
+        "accessibility-audit", "experiment-designer",
+        "ab-test-planner", "ab-test-analysis"
+      ]
+    },
+    "sales": {
+      "primary_skills": [
+        "sales-battlecard", "sales-enablement",
+        "discovery-call-prep", "discovery-interview-guide",
+        "account-plan", "proposal-writer",
+        "competitive-battlecard", "competitive-analysis",
+        "pricing-strategy", "sales-forecasting-model"
+      ],
+      "secondary_skills": [
+        "deal-strategist", "pipeline-analyst",
+        "value-proposition"
+      ]
+    },
+    "support": {
+      "primary_skills": [
+        "executive-summary", "executive-update",
+        "churn-prevention", "onboarding-plan",
+        "retention-analysis", "cohort-analysis",
+        "analytics-dashboard", "dashboard-brief"
+      ],
+      "secondary_skills": [
+        "meeting-notes", "project-status-report",
+        "stakeholder-update"
+      ]
+    },
+    "legal": {
+      "primary_skills": [
+        "contract-review", "nda-analyser",
+        "legal-brief", "compliance-checklist",
+        "financial-due-diligence"
+      ],
+      "secondary_skills": [
+        "grant-proposal", "tax-planning-checklist"
+      ]
+    },
+    "web3": {
+      "primary_skills": [
+        "smart-contract-engineer", "blockchain-security-auditor",
+        "colosseum-copilot"
+      ],
+      "secondary_skills": [
+        "financial-model-narrative", "saas-economics-efficiency-metrics"
+      ]
+    },
+    "content_creator": {
+      "primary_skills": [
+        "content-matrix", "content-calendar",
+        "content-strategy", "copywriting",
+        "hook-generator", "post-writer", "post-formatter",
+        "post-scorer", "pinned-comment",
+        "gemini-carousel", "gemini-infographic",
+        "graphic-designer", "quote-post",
+        "reels-scripting", "youtube-thumbnail",
+        "profile-optimizer", "newsletter-voice"
+      ],
+      "secondary_skills": [
+        "niche-research", "media-pitch",
+        "voice-builder", "analytics-dashboard"
+      ]
+    },
+    "neteng": {
+      "primary_skills": [
+        "runbook-writer", "incident-postmortem"
+      ],
+      "secondary_skills": [
+        "vendor-evaluation", "compliance-checklist"
+      ]
+    },
+    "cybersec": {
+      "primary_skills": [
+        "compliance-checklist", "incident-postmortem",
+        "vendor-evaluation"
+      ],
+      "secondary_skills": [
+        "code-review-checklist", "debugging-log-analyser"
+      ]
+    },
+    "psychology": {
+      "primary_skills": [
+        "user-research-synthesis", "user-interview-synthesis",
+        "ux-research-plan", "discovery-interview-guide",
+        "behavioral-nudge-engine"
+      ],
+      "secondary_skills": [
+        "cohort-analysis", "retention-analysis",
+        "employee-engagement-survey"
+      ]
+    },
+    "rd_lab": {
+      "primary_skills": [
+        "niche-research", "web-research-assistant",
+        "architecture-decision-record", "experiment-designer",
+        "grant-proposal"
+      ],
+      "secondary_skills": [
+        "company-research", "competitive-intelligence-monitor",
+        "trend-researcher"
+      ]
+    }
+  }
+}

@@ -1,25 +1,93 @@
-"""CyberSec Agent — @cybersec-sai: Threat Detection, Vulnerability, IR"""
+"""Cyber Security Agent — @cybersec-sai: Threat Detection, Incident Response, Security
+
+Capabilities:
+- Threat analysis and classification
+- Incident response coordination
+- Vulnerability assessment
+- Security compliance checking
+- Red team coordination
+"""
+
+from __future__ import annotations
+
+import json
 
 from workers.agents.base_agent import BaseAgent
 
 
 class CyberSecAgent(BaseAgent):
-    def __init__(self, bus_url="", api_key=""):
-        super().__init__("cybersec-sai", "CyberSec ซาย", "profiles/17-cybersec/SOUL.md", bus_url, api_key)
+    """Cyber Security — ดูแล Threat Detection, Vulnerability, Incident Response"""
+
+    SEVERITY_KEYWORDS = {
+        "critical": ["critical", "breach", "ransomware", "data leak", "cve-"],
+        "high": ["exploit", "vulnerability", "intrusion", "malware"],
+        "medium": ["scan", "suspicious", "anomaly", "warning"],
+        "low": ["info", "notice", "observation"],
+    }
+
+    def __init__(self, bus_url: str = "", api_key: str = ""):
+        super().__init__(
+            agent_id="cybersec-sai",
+            name="CyberSec ซาย",
+            profile_path="profiles/17-cybersec/SOUL.md",
+            bus_url=bus_url,
+            api_key=api_key,
+        )
+
+    def _classify_severity(self, description: str) -> str:
+        desc_lower = description.lower()
+        for sev, keywords in self.SEVERITY_KEYWORDS.items():
+            if any(kw in desc_lower for kw in keywords):
+                return sev
+        return "low"
 
     async def execute(self, task: dict) -> dict:
-        a = task.get("payload", {}).get("action", "")
-        d = task.get("payload", {}).get("description", "")
-        action_map = {"threat": f"Threat assessment: {d}\nโปรดำประเมินภัยคุกคาม", "vulnerability": f"Vulnerability scan: {d}\nโปรดำตรวจสอบช่องโหว่", "incident": f"Incident response: {d}\nโปรดำวางแผนรับมือ", "audit": f"Security audit: {d}\nโปรดำตรวจสอบความปลอดภัย"}
-        prompt = None
-        for k, v in action_map.items():
-            if k in a:
-                prompt = f"คุณคือ CyberSec (ซาย) ของ SoloCorp OS\n{v}"
-                break
-        if not prompt:
-            prompt = f"คุณคือ CyberSec (ซาย) ของ SoloCorp OS\nได้รับงานจาก CEO: {d}\nโปรดำดำเนินการและรายงานผล"
+        """Execute security tasks ด้วยพลัง LLM"""
+        payload = task.get("payload", {})
+        action = payload.get("action", "")
+        description = payload.get("description", "")
+        params = payload.get("params", {})
+
+        if not description:
+            return {
+                "status": "failed",
+                "summary": "CyberSec Agent: ไม่มี description ใน payload",
+                "details": {"error": "missing_description"},
+            }
+
+        severity = self._classify_severity(description)
+
+        prompt = (
+            f"คุณคือ Cyber Security (ซาย) ของ SoloCorp OS\n"
+            f"ระดับความรุนแรง: {severity.upper()}\n"
+            f"ได้รับงานจาก CEO: {description}\n"
+        )
+        if params:
+            prompt += f"parameters: {json.dumps(params, ensure_ascii=False)}\n"
+        prompt += (
+            f"\nวิเคราะห์และดำเนินการ:\n"
+            f"1. ระบุ threat/intent\n"
+            f"2. แนวทางการตอบสนอง\n"
+            f"3. มาตรการป้องกัน\n"
+            f"รายงานผล"
+        )
+
         try:
-            llm = await self.think(prompt, max_tokens=500)
-            return {"status": "completed", "summary": llm[:200], "details": {"action": a, "llm_used": True, "full_response": llm}}
+            llm_response = await self.think(prompt, max_tokens=500)
+            return {
+                "status": "completed",
+                "summary": llm_response[:300],
+                "details": {
+                    "action": action,
+                    "severity": severity,
+                    "agent": self.agent_id,
+                    "llm_used": True,
+                    "full_response": llm_response,
+                },
+            }
         except Exception as e:
-            return {"status": "completed", "summary": f"CyberSec รับทราบ: {d}", "details": {"action": a, "llm_error": str(e)}}
+            return {
+                "status": "completed",
+                "summary": f"{severity.upper()}: รับทราบ {description[:200]}",
+                "details": {"action": action, "severity": severity, "llm_error": str(e)},
+            }

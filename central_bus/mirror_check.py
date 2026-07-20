@@ -157,6 +157,35 @@ class MirrorCheckResult:
         }
 
 
+# ── LLM Evaluation ────────────────────────────────────────────────
+
+
+async def _evaluate_mirror_question(question: str, decision: str, department: str) -> bool:
+    """Evaluate a single mirror question using the LLM.
+
+    Calls the LLM provider to check if the decision aligns with
+    what Dr.solodev Owner would do.
+    """
+    try:
+        from workers.llm_provider import think
+
+        prompt = (
+            f"คุณคือ Mirror Check Protocol ของ SoloCorp OS\n"
+            f"Department: {department}\n"
+            f"Decision ที่ต้องตรวจสอบ: {decision}\n\n"
+            f"Mirror Question: {question}\n\n"
+            f"ตอบแค่ YES หรือ NO เท่านั้น:\n"
+            f"YES = decision สอดคล้องกับสิ่งที่ Dr.solodev Owner จะทำ\n"
+            f"NO = decision ไม่สอดคล้อง"
+        )
+        result = await think(prompt, max_tokens=10)
+        answer = result.strip().upper() if result else "NO"
+        return answer.startswith("Y")
+    except Exception as exc:
+        log.warning("Mirror LLM evaluation failed: %s — defaulting to FAIL", exc)
+        return False
+
+
 # ── Main Check Logic ────────────────────────────────────────────────
 
 
@@ -196,17 +225,16 @@ async def run_mirror_check(
     passed_count = 0
 
     for i, question in enumerate(questions):
-        # ในระบบจริงตรงนี้จะเรียก LLM เพื่อวิเคราะห์
-        # สำหรับ MVP ใช้ simulation: pass ถ้า decision ไม่ว่าง
-        simulated_pass = bool(decision and len(decision) > 10)
-        if simulated_pass:
+        # Call LLM to evaluate each mirror question against the decision
+        q_pass = await _evaluate_mirror_question(question, decision, department)
+        if q_pass:
             passed_count += 1
 
         question_results.append({
             "question_id": i + 1,
             "question": question,
-            "result": "pass" if simulated_pass else "fail",
-            "confidence": 0.85 if simulated_pass else 0.0,
+            "result": "pass" if q_pass else "fail",
+            "confidence": 0.90 if q_pass else 0.0,
         })
 
     score = int((passed_count / len(questions)) * 100) if questions else 100

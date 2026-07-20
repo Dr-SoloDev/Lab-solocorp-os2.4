@@ -1,71 +1,128 @@
 {
-  "version": "2.5.0",
+  "version": "2.5.1",
   "last_updated": "2026-07-20",
-  "description": "Mirror Protocol Registry — ระบุว่า Department ไหนมี Mirror Active และ Level เท่าไหร่",
+  "description": "Mirror Protocol Registry — L1-L5 Escalation Filter สำหรับทุก Department",
+  "default_level": "L2",
+  "escalation_rules": {
+    "owner_only": ["L5"],
+    "ceo_decides": ["L4"],
+    "head_decides": ["L3"],
+    "agent_executes": ["L2", "L1"]
+  },
   "departments": {
     "ceo": {
       "mirror_active": true,
       "level": "L5",
-      "label": "Full Mirror — Digital Twin",
-      "scope": "ทุก decision โดยไม่มีข้อยกเว้น",
-      "questions": [
-        "ลูกพี่จะทำแบบนี้ไหม?",
-        "Decision นี้สะท้อนตัวตนของ Dr.solodev หรือไม่?",
-        "ถ้า Owner เห็น decision นี้เดี๋ยวนี้ จะยิ้มหรือส่ายหัว?"
-      ],
-      "activated": "2026-07-20"
+      "auto_escalate_to_owner": true,
+      "scope": "ทุก decision โดยไม่มีข้อยกเว้น"
+    },
+    "orchestrator": {
+      "mirror_active": true,
+      "level": "L4",
+      "auto_escalate_to_owner": false,
+      "scope": "pipeline design, cross-dept orchestration"
     },
     "architect": {
       "mirror_active": true,
       "level": "L4",
-      "label": "Strategic Mirror — System Design",
-      "scope": "เฉพาะ decision ที่ impact ภาพรวมระบบ ตั้งแต่ 2 departments ขึ้นไป",
-      "questions": [
-        "Dr.solodev จะออกแบบระบบนี้ยังไง?",
-        "Decision นี้ทำให้ระบบดีขึ้นสำหรับ Owner หรือไม่?",
-        "Owner จะ approve architecture นี้ไหม?"
-      ],
-      "activated": "2026-07-20"
+      "auto_escalate_to_owner": false,
+      "scope": "decision ที่ impact 2+ departments"
     },
     "cfo": {
       "mirror_active": true,
       "level": "L3",
-      "label": "Financial Mirror — Budget & Risk",
-      "scope": "เฉพาะ budget > 3,000 บาท หรือ decision ที่มีความเสี่ยงสูง",
-      "questions": [
-        "Dr.solodev ในมุม conservative จะ approve ไหม?",
-        "Worst case นี้ Owner รับได้ไหม?",
-        "Owner จะดีใจหรือเสียใจที่ใชเงินนี้?"
-      ],
-      "activated": "2026-07-20"
+      "auto_escalate_to_owner": false,
+      "scope": "budget > 3,000 บาท หรือ decision ที่มีความเสี่ยงสูง"
     },
     "cmo": {
-      "mirror_active": false,
-      "level": "L2",
-      "label": "Advisory Mirror — Brand Voice (Future)",
-      "scope": "ยังไม่ activate",
-      "questions": [],
-      "activated": null
+      "mirror_active": true,
+      "level": "L3",
+      "auto_escalate_to_owner": false,
+      "scope": "campaign budget, brand direction change"
     },
     "product": {
-      "mirror_active": false,
-      "level": "L2",
-      "label": "Advisory Mirror — Product Direction (Future)",
-      "scope": "ยังไม่ activate",
-      "questions": [],
-      "activated": null
+      "mirror_active": true,
+      "level": "L3",
+      "auto_escalate_to_owner": false,
+      "scope": "feature scope change, roadmap shift"
     },
     "engineering": {
       "mirror_active": true,
       "level": "L2",
-      "label": "Advisory Mirror — Code & Quality",
-      "scope": "เฉพาะ architecture decision, major refactor, หรือ public API design",
-      "questions": [
-        "Dr.solodev จะเขียน code แบบนี้ไหม?",
-        "Code นี้ maintainable พอที่ Owner จะ approve หรือไม่?",
-        "Owner จะภูมิใจใน code นี้ไหม?"
-      ],
-      "activated": "2026-07-20"
+      "auto_escalate_to_owner": false,
+      "scope": "architecture decision, major refactor, API design"
+    },
+    "design": {
+      "mirror_active": true,
+      "level": "L2",
+      "auto_escalate_to_owner": false,
+      "scope": "design system change, brand identity"
+    },
+    "ui_designer": {
+      "mirror_active": true,
+      "level": "L1",
+      "auto_escalate_to_owner": false,
+      "scope": "component design, interface decisions"
+    },
+    "qa": {
+      "mirror_active": true,
+      "level": "L1",
+      "auto_escalate_to_owner": false,
+      "scope": "test strategy, quality gates"
+    },
+    "sales": {
+      "mirror_active": true,
+      "level": "L2",
+      "auto_escalate_to_owner": false,
+      "scope": "deal strategy, pricing exception"
+    },
+    "support": {
+      "mirror_active": true,
+      "level": "L1",
+      "auto_escalate_to_owner": false,
+      "scope": "customer escalation, SLA decisions"
+    },
+    "legal": {
+      "mirror_active": true,
+      "level": "L2",
+      "auto_escalate_to_owner": false,
+      "scope": "contract terms, compliance risk"
+    },
+    "web3": {
+      "mirror_active": true,
+      "level": "L2",
+      "auto_escalate_to_owner": false,
+      "scope": "smart contract deploy, tokenomics"
+    },
+    "content_creator": {
+      "mirror_active": true,
+      "level": "L1",
+      "auto_escalate_to_owner": false,
+      "scope": "content publish, campaign creative"
+    },
+    "neteng": {
+      "mirror_active": true,
+      "level": "L2",
+      "auto_escalate_to_owner": false,
+      "scope": "infrastructure change, network architecture"
+    },
+    "cybersec": {
+      "mirror_active": true,
+      "level": "L3",
+      "auto_escalate_to_owner": true,
+      "scope": "security incident, vulnerability disclosure"
+    },
+    "psychology": {
+      "mirror_active": true,
+      "level": "L1",
+      "auto_escalate_to_owner": false,
+      "scope": "user research, behavioral analysis"
+    },
+    "rd_lab": {
+      "mirror_active": true,
+      "level": "L2",
+      "auto_escalate_to_owner": false,
+      "scope": "research direction, prototype investment"
     }
   }
 }

@@ -397,6 +397,27 @@ async def ab_test_report():
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# GET /v1/dashboard
+# ═══════════════════════════════════════════════════════════════════════
+
+@app.get("/v1/dashboard")
+async def owner_dashboard_api(request: Request):
+    """Owner Dashboard — มองปราดเดียวรู้เรื่อง.
+
+    Returns:
+        format=json (default) → dict with health, metrics, dispatches
+        format=markdown      → formatted markdown string
+    """
+    fmt = request.query_params.get("format", "json")
+    from central_bus.dashboard import owner_dashboard as _od
+    result = _od(format=fmt)
+    if fmt == "markdown":
+        from fastapi.responses import PlainTextResponse
+        return PlainTextResponse(result)
+    return JSONResponse(result)
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # Entry point
 # ═══════════════════════════════════════════════════════════════════════
 

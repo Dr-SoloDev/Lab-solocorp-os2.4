@@ -7,7 +7,7 @@
   "shell": "/bin/bash",
   "logLevel": "INFO",
 
-  "instructions": ["CLAUDE.md"],
+  "instructions": ["CLAUDE.md", "rules/INDEX.md"],
 
   "skills": {
     "paths": [
@@ -44,6 +44,14 @@
     "tests": {
       "path": "tests",
       "description": "Use for test suites across all phases"
+    },
+    "rules": {
+      "path": "rules",
+      "description": "Use for behavior-centric rules — INDEX.md for 30-sec scan"
+    },
+    "sop": {
+      "path": "sop",
+      "description": "Use for Standard Operating Procedures — SOP-01 through SOP-05"
     }
   },
 
@@ -160,35 +168,35 @@
   "command": {
     "pipeline": {
       "description": "รัน SoloCorp pipeline workflow: spec → plan → build → qa → deliver",
-      "template": "Run the SoloCorp pipeline for: $ARGUMENTS\n\nFollow these phases:\n1. **Spec** — ตรวจสอบ input, ยืนยัน requirements\n2. **Plan** — แตก tasks, กำหนด department ที่เกี่ยวข้อง\n3. **Build** — delegate ไป Engineering/Design ที่เกี่ยวข้อง\n4. **QA** — ผ่าน QA loop (dev ↔ qa สูงสุด 3 รอบ)\n5. **Deliver** — สรุปผล + handoff report\n\nใช้ `@architect-songsak` สำหรับ architecture review ก่อนเริ่ม build"
+      "template": "Run the SoloCorp pipeline for: $ARGUMENTS\n\nFull protocol at rules/05-pipeline.md. ใช้ @architect-songsak สำหรับ architecture review ก่อน build"
     },
     "handoff": {
       "description": "ทำ handoff ระหว่าง departments พร้อม context pack",
-      "template": "Execute handoff from $1 to $2 for: $3\n\nProtocol:\n1. สรุป current state + completed work\n2. รวบรวม artifacts (files, decisions, pending items)\n3. สร้าง handoff brief ตาม templates ใน `.opencode/skills/solocorp/handoff-templates/`\n4. ส่ง handoff พร้อม context pack\n5. ยืนยัน receiver เข้าใจ context"
+      "template": "Execute handoff from $1 to $2 for: $3\n\nProtocol: rules/05-pipeline.md. สร้าง handoff brief ตาม templates ใน .opencode/skills/solocorp/handoff-templates/"
     },
     "status": {
       "description": "ดูสถานะภาพรวมของ SoloCorp OS pipeline",
-      "template": "Give me a full status report of SoloCorp OS:\n- Current sprint progress\n- Active pipeline tasks\n- Pending handoffs\n- Blockers / risks\n- Recent completions\n\nRead from: loop_runner/state.py, bus/projects/, และล่าสุดใน ARCHITECTURE.md"
+      "template": "Give me a full status report of SoloCorp OS.\n\nRead from: loop_runner/state.py, bus/projects/, ARCHITECTURE.md, bus/dispatch/"
     },
     "audit": {
       "description": "ตรวจสอบ pipeline audit trail และ compliance",
-      "template": "Run a pipeline audit for: $ARGUMENTS\n\nCheck:\n1. Handoff integrity — ทุก handoff มี record?\n2. QA evidence — ทุก feature ผ่าน QA?\n3. Decision trail — ทุก decision มี ADR หรือ rationale?\n4. Compliance — ตรงตาม 3 Pillars? Two-Tier Architecture?\n\nใช้ @architect-songsak และ team สำหรับ deep audit"
+      "template": "Run a pipeline audit for: $ARGUMENTS\n\nCheck handoff integrity, QA evidence, decision trail, compliance. Protocol: rules/05-pipeline.md"
     },
     "deploy": {
       "description": "Deploy ระบบ SoloCorp OS (profiles, skills, config)",
-      "template": "Deploy SoloCorp OS changes: $ARGUMENTS\n\nSteps:\n1. Build profiles — `python3 scripts/build-profiles.py`\n2. Export agents — `python3 scripts/export-codex-agents.py`\n3. Verify — `python3 scripts/export-codex-agents.py --validate-only`\n4. Commit — บันทึกการเปลี่ยนแปลง\n5. Report — สรุปสิ่งที่ deploy"
+      "template": "Deploy SoloCorp OS changes: $ARGUMENTS\n\nSteps:\n1. Build profiles — python3 scripts/build-profiles.py\n2. Export agents — python3 scripts/export-codex-agents.py\n3. Verify — python3 scripts/export-codex-agents.py --validate-only\n4. Commit\n5. Report"
     },
     "brain": {
       "description": "บันทึก context/session ลง brain memory",
-      "template": "Document the current session context for brain memory:\n\nKey topics discussed:\n$ARGUMENTS\n\nFile: loop_runner/loops/brain_auto_commit.py\nFormat: วัน/time + summary + decisions + open items"
+      "template": "Document current session context for brain memory. Format in loop_runner/loops/brain_auto_commit.py"
     },
     "pipeline-bridge": {
-      "description": "Cross-department pipeline bridge — ส่ง task ข้ามแผนกด้วย structured handoff + audit trail",
-      "template": "Pipeline Bridge: ส่ง task จาก $1 ไป $2\n\nTask: $3\nContext: $4\nDeadline: $5\n\nProtocol:\n1. Mirror Check — ก่อนส่งข้ามแผนก\n2. สร้าง structured handoff payload\n3. ส่งเข้า Bus Queue\n4. บันทึก Audit Trail\n5. แจ้ง department ปลายทาง"
+      "description": "Cross-department pipeline bridge — ส่ง task ข้ามแผนก structured handoff + audit trail",
+      "template": "Pipeline Bridge: ส่ง task from $1 to $2 for: $3\n\nProtocol: rules/05-pipeline.md + Mirror Check ก่อนส่ง"
     },
     "mirror-check": {
       "description": "Mirror Check Protocol — ตรวจสอบ decision สะท้อน Dr.solodev Owner",
-      "template": "/mirror-check\n\nDecision: $ARGUMENTS\n\nProtocol:\n1. รับ decision + context\n2. วิเคราะห์ผ่าน 3 Mirror Check Questions\n3. ประเมิน alignment score\n4. บันทึกผลลง Audit Trail\n5. คืนผล: PASS / FAIL / ESCALATE"
+      "template": "/mirror-check\n\nDecision: $ARGUMENTS\n\nProtocol in rules/08-communication.md (L1-L5 escalation)\n1. 3 Mirror Check Questions\n2. alignment score\n3. Audit Trail\n4. PASS / FAIL / ESCALATE"
     }
   }
 }
