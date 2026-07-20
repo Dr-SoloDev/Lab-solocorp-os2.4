@@ -134,6 +134,36 @@ CREATE TABLE IF NOT EXISTS ceo_alerts (
     created_at      TEXT DEFAULT (datetime('now'))
 );
 
+-- Behavior taxonomy (ADR-016)
+CREATE TABLE IF NOT EXISTS behavior_taxonomy (
+    id              TEXT PRIMARY KEY,
+    domain          TEXT NOT NULL,
+    behavior_name   TEXT NOT NULL UNIQUE,
+    description     TEXT,
+    keywords        TEXT NOT NULL DEFAULT '[]',
+    confidence_threshold REAL DEFAULT 0.9,
+    created_at      TEXT DEFAULT (datetime('now'))
+);
+
+-- Behavior → Department mapping (ADR-016)
+CREATE TABLE IF NOT EXISTS behavior_route_map (
+    id              TEXT PRIMARY KEY,
+    behavior_id     TEXT NOT NULL REFERENCES behavior_taxonomy(id),
+    primary_dept    TEXT NOT NULL,
+    secondary_depts TEXT DEFAULT '[]',
+    routing_logic   TEXT DEFAULT 'direct',
+    priority_boost  TEXT DEFAULT 'normal',
+    created_at      TEXT DEFAULT (datetime('now'))
+);
+
+-- Schema migrations tracking
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    version         TEXT PRIMARY KEY,
+    description     TEXT,
+    checksum        TEXT,
+    applied_at      TEXT DEFAULT (datetime('now'))
+);
+
 -- Department API Keys
 CREATE TABLE IF NOT EXISTS api_keys (
     id              TEXT PRIMARY KEY,
