@@ -121,6 +121,23 @@ CREATE TABLE IF NOT EXISTS escalations (
     created_at      TEXT DEFAULT (datetime('now'))
 );
 
+-- Evidence Archive (ADR-016) — auto-collected task results
+CREATE TABLE IF NOT EXISTS evidence (
+    id              TEXT PRIMARY KEY,
+    task_id         TEXT NOT NULL,
+    trace_id        TEXT NOT NULL,
+    agent_id        TEXT NOT NULL,
+    evidence_type   TEXT NOT NULL DEFAULT 'task_result',
+    evidence_file   TEXT,
+    summary         TEXT,
+    status          TEXT DEFAULT 'collected',
+    routing_hops    INTEGER DEFAULT 0,
+    retry_count     INTEGER DEFAULT 0,
+    latency_ms      INTEGER,
+    metadata_json   TEXT DEFAULT '{}',
+    created_at      TEXT DEFAULT (datetime('now'))
+);
+
 -- CEO alerts (from ADR-005)
 CREATE TABLE IF NOT EXISTS ceo_alerts (
     id              TEXT PRIMARY KEY,
@@ -132,36 +149,6 @@ CREATE TABLE IF NOT EXISTS ceo_alerts (
     acknowledged    INTEGER DEFAULT 0,
     acknowledged_by TEXT,
     created_at      TEXT DEFAULT (datetime('now'))
-);
-
--- Behavior taxonomy (ADR-016)
-CREATE TABLE IF NOT EXISTS behavior_taxonomy (
-    id              TEXT PRIMARY KEY,
-    domain          TEXT NOT NULL,
-    behavior_name   TEXT NOT NULL UNIQUE,
-    description     TEXT,
-    keywords        TEXT NOT NULL DEFAULT '[]',
-    confidence_threshold REAL DEFAULT 0.9,
-    created_at      TEXT DEFAULT (datetime('now'))
-);
-
--- Behavior → Department mapping (ADR-016)
-CREATE TABLE IF NOT EXISTS behavior_route_map (
-    id              TEXT PRIMARY KEY,
-    behavior_id     TEXT NOT NULL REFERENCES behavior_taxonomy(id),
-    primary_dept    TEXT NOT NULL,
-    secondary_depts TEXT DEFAULT '[]',
-    routing_logic   TEXT DEFAULT 'direct',
-    priority_boost  TEXT DEFAULT 'normal',
-    created_at      TEXT DEFAULT (datetime('now'))
-);
-
--- Schema migrations tracking
-CREATE TABLE IF NOT EXISTS schema_migrations (
-    version         TEXT PRIMARY KEY,
-    description     TEXT,
-    checksum        TEXT,
-    applied_at      TEXT DEFAULT (datetime('now'))
 );
 
 -- Department API Keys
@@ -180,46 +167,31 @@ CREATE TABLE IF NOT EXISTS api_keys (
     created_by      TEXT
 );
 
--- ── Behavior Taxonomy (v1.0 — 26 behaviors) ───────────────────────────
+-- ── Behavior Taxonomy (v1.0 — 26 behaviors, ADR-016) ───────────────
 -- Behavior-Centric Routing: classify user intent BEFORE keyword matching.
--- CEO Order: 2026-07-20 — Add-on layer, non-destructive.
---
--- domain: high-level category (e.g. "finance", "engineering", "leadership")
--- behavior_name: unique intent identifier (e.g. "budget_approval")
--- keywords: JSON array of trigger keywords/phrases for ML training
--- confidence_threshold: minimum score to auto-route (0.0-1.0)
 
 CREATE TABLE IF NOT EXISTS behavior_taxonomy (
     id              TEXT PRIMARY KEY,
-    domain          TEXT NOT NULL,              -- e.g. "finance", "engineering"
-    behavior_name   TEXT NOT NULL UNIQUE,       -- e.g. "budget_approval"
-    description     TEXT NOT NULL,              -- human-readable intent description
-    keywords        TEXT NOT NULL DEFAULT '[]', -- JSON array of trigger keywords
-    confidence_threshold REAL DEFAULT 0.9,      -- ≥90% → auto-route, <90% → CEO review
+    domain          TEXT NOT NULL,
+    behavior_name   TEXT NOT NULL UNIQUE,
+    description     TEXT,
+    keywords        TEXT NOT NULL DEFAULT '[]',
+    confidence_threshold REAL DEFAULT 0.9,
     is_active       INTEGER DEFAULT 1,
     created_at      TEXT DEFAULT (datetime('now')),
     updated_at      TEXT DEFAULT (datetime('now'))
 );
 
--- Behavior → Department Routing Map
--- primary_dept: main department that handles this behavior
--- secondary_depts: JSON array of backup departments
--- routing_logic: "direct" | "orchestrator" | "ceo_review" | "round_robin"
--- priority_boost: priority adjustment (0=normal, +1=high, +2=critical)
-
 CREATE TABLE IF NOT EXISTS behavior_route_map (
     id              TEXT PRIMARY KEY,
     behavior_id     TEXT NOT NULL REFERENCES behavior_taxonomy(id),
-    primary_dept    TEXT NOT NULL,              -- main routing target
-    secondary_depts TEXT NOT NULL DEFAULT '[]', -- JSON array of fallback depts
+    primary_dept    TEXT NOT NULL,
+    secondary_depts TEXT NOT NULL DEFAULT '[]',
     routing_logic   TEXT NOT NULL DEFAULT 'direct',
     priority_boost  INTEGER DEFAULT 0,
     created_at      TEXT DEFAULT (datetime('now')),
     updated_at      TEXT DEFAULT (datetime('now'))
 );
-
--- ── Migration Tracking ────────────────────────────────────────────────
--- Tracks which migrations have been applied (idempotent runs)
 
 CREATE TABLE IF NOT EXISTS schema_migrations (
     id              TEXT PRIMARY KEY,
@@ -248,9 +220,168 @@ CREATE INDEX IF NOT EXISTS idx_audit_agent ON audit_log(agent_id);
 CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at);
 CREATE INDEX IF NOT EXISTS idx_facts_key ON facts(key);
 
+-- Evidence indexes
+CREATE INDEX IF NOT EXISTS idx_evidence_task ON evidence(task_id);
+CREATE INDEX IF NOT EXISTS idx_evidence_trace ON evidence(trace_id);
+CREATE INDEX IF NOT EXISTS idx_evidence_agent ON evidence(agent_id);
+
 -- Behavior taxonomy indexes
 CREATE INDEX IF NOT EXISTS idx_behavior_taxonomy_domain ON behavior_taxonomy(domain);
 CREATE INDEX IF NOT EXISTS idx_behavior_taxonomy_name ON behavior_taxonomy(behavior_name);
 CREATE INDEX IF NOT EXISTS idx_behavior_route_map_behavior ON behavior_route_map(behavior_id);
 CREATE INDEX IF NOT EXISTS idx_behavior_route_map_dept ON behavior_route_map(primary_dept);
 """
+
+
+# ---------------------------------------------------------------------------
+# DbManager — async connection + schema lifecycle
+# ---------------------------------------------------------------------------
+
+
+class DbManager:
+    """Manages an async SQLite connection with WAL mode and schema init.
+
+    Usage (singleton, shared across the bus daemon)::
+
+        db = DbManager()
+        await db.init()
+        async with db.connect() as conn:
+            await conn.execute_fetchall("SELECT 1")
+    """
+
+    def __init__(self, db_path: str | None = None) -> None:
+        self._db_path = db_path or settings.db_path
+        self._conn: aiosqlite.Connection | None = None
+
+    # ── Lifecycle ──────────────────────────────────────────────────
+
+    async def init(self) -> None:
+        """Open the connection, enable WAL / foreign_keys, create schema."""
+        if self._conn is not None:
+            return  # already initialised
+
+        log.info("Opening SQLite at %s", self._db_path)
+        self._conn = await aiosqlite.connect(self._db_path)
+        self._conn.row_factory = aiosqlite.Row
+
+        await self._conn.execute("PRAGMA journal_mode=WAL;")
+        await self._conn.execute("PRAGMA foreign_keys=ON;")
+        await self._conn.execute("PRAGMA busy_timeout=5000;")
+
+        await self._conn.executescript(SCHEMA_SQL)
+        await self._conn.commit()
+
+        log.info("SQLite schema ready — WAL mode active")
+
+    async def close(self) -> None:
+        if self._conn is not None:
+            await self._conn.close()
+            self._conn = None
+            log.info("SQLite connection closed")
+
+    @property
+    def is_initialised(self) -> bool:
+        return self._conn is not None
+
+    # ── Connection access ─────────────────────────────────────────
+
+    @asynccontextmanager
+    async def connect(self) -> AsyncIterator[aiosqlite.Connection]:
+        """Yield the shared connection.  The caller owns the transaction
+
+        boundary — call ``await conn.commit()`` or let the context-manager
+        auto-commit when used inside ``async with db.connect()``.
+
+        Example::
+
+            async with db.connect() as conn:
+                await conn.execute("INSERT ...")
+                await conn.commit()
+        """
+        if self._conn is None:
+            raise RuntimeError("DbManager not initialised — call await db.init() first")
+        yield self._conn
+
+    # ── Convenience helpers ──────────────────────────────────────────
+
+    async def fetch_one(
+        self, sql: str, params: tuple = ()
+    ) -> Optional[aiosqlite.Row]:
+        """Execute query and return the first row (or None)."""
+        async with self.connect() as conn:
+            cur = await conn.execute(sql, params)
+            return await cur.fetchone()
+
+    async def fetch_all(
+        self, sql: str, params: tuple = ()
+    ) -> list[aiosqlite.Row]:
+        """Execute query and return all rows."""
+        async with self.connect() as conn:
+            cur = await conn.execute(sql, params)
+            return await cur.fetchall()
+
+    async def execute(self, sql: str, params: tuple = ()) -> aiosqlite.Cursor:
+        """Execute a write statement and commit."""
+        async with self.connect() as conn:
+            cur = await conn.execute(sql, params)
+            await conn.commit()
+            return cur
+
+    async def execute_many(
+        self, sql: str, params_list: list[tuple]
+    ) -> None:
+        """Execute a write statement for many rows and commit."""
+        async with self.connect() as conn:
+            await conn.executemany(sql, params_list)
+            await conn.commit()
+
+
+# ---------------------------------------------------------------------------
+# FastAPI dependency — shared DbManager instance
+# ---------------------------------------------------------------------------
+
+_db_instance: DbManager | None = None
+
+
+async def get_db() -> AsyncGenerator[DbManager, None]:
+    """FastAPI dependency: yields the shared DbManager.
+
+    Usage in route::
+
+        async def handler(db: DbManager = Depends(get_db)): ...
+    """
+    global _db_instance
+    if _db_instance is None:
+        _db_instance = DbManager()
+        await _db_instance.init()
+    yield _db_instance
+
+
+async def ensure_db(db_path: str | None = None) -> DbManager:
+    """Get or create the shared DbManager singleton.
+
+    Use this in application code that needs a direct reference to the DB
+    outside of FastAPI's dependency injection (e.g., _get_services()).
+    """
+    global _db_instance
+    if _db_instance is None:
+        _db_instance = DbManager(db_path=db_path)
+        await _db_instance.init()
+    return _db_instance
+
+
+def reset_db_for_testing() -> None:
+    """Reset the global DbManager singleton for test isolation."""
+    global _db_instance
+    _db_instance = None
+
+
+# ── UUID helper ────────────────────────────────────────────────────────
+
+
+def new_id() -> str:
+    return str(uuid.uuid4())
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()

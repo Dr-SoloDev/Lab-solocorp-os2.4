@@ -1,0 +1,19 @@
+{
+  "evidence_id": "8ed88b4b-aa1b-4df2-bb63-938ff27b0c0f",
+  "task_id": "1fce1fe0-2a6b-4dcc-a379-f05554a07445",
+  "trace_id": "skill-de7408ee-ef9",
+  "agent_id": "cfo-meetoo",
+  "source_agent": "skill:@solocorp/cfo/finance-tools",
+  "evidence_type": "task_result",
+  "status": "completed",
+  "summary": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: timeout (60s)",
+  "details": {
+    "action": "",
+    "agent": "cfo-meetoo",
+    "llm_used": true,
+    "full_response": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: timeout (60s)"
+  },
+  "routing_hops": [],
+  "retry_count": 0,
+  "created_at": "2026-07-20T00:57:52.724556+00:00"
+}
