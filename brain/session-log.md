@@ -373,3 +373,38 @@ brain/session-log.md   → 7 sessions
 
 ---
 
+## Session #8 — 2026-07-20 (Phase 8: Auto-Pilot)
+
+**เข้าระบบ:** 16:10 UTC
+
+**Mode:** Build (Auto-Pilot implementation)
+
+**Trigger:** Owner อนุมัติ Phase 8 — 5 auto-pilot components
+
+### Phase 8 Components
+
+| Component | File | อะไร |
+|:----------|:-----|:-----|
+| **8.1 Bootstrap** | `scripts/session-bootstrap.py` | `/bootstrap` — inject context auto ตอนเริ่ม session |
+| **8.2 Triage** | `workers/agents/auto_triage_agent.py` | `/triage` — classify + route queue, L1-L2 auto-execute |
+| **8.3 Mirror** | `central_bus/plugins/auto_mirror_hook.py` | `/mirror` — auto mirror check L3+, LLM eval + fallback |
+| **8.4 Orchestrator** | `central_bus/plugins/auto_orchestrator.py` | `/orchestrate` — decompose + assign + track |
+| **8.5 Summary** | `scripts/session-summary.py` | `/summary` — auto-summarize session → brain |
+
+### Problem Solved
+- **ก่อน:** ผมต้อง consciously เปิด routing table, นึก mirror check 3 คำถาม, save brain เอง
+- **หลัง:** `/bootstrap` → `/triage` → `/mirror` → `/orchestrate` → `/summary` = auto-pilot
+
+### Rules Updated
+- `rules/01-receive.md` — added auto-mirror reference
+- `rules/03-session.md` — added `/summary` protocol
+- `rules/INDEX.md` — added auto-pilot commands table
+
+### Commits
+```
+f2027eb  🤖 Phase 8: Auto-Pilot — 5 components for full autonomy
+8ebcdb3  chore: remove test artifacts from commit
+```
+
+---
+
