@@ -1,0 +1,74 @@
+{
+  "command": {
+    "id": "CMD-004",
+    "type": "FEATURE_DISPATCH",
+    "timestamp": "2026-07-20T17:50:00+07:00",
+    "priority": "P1",
+    "level": "L3",
+    "from": "ceo-turbo",
+    "to": "product-produck",
+    "title": "Execute Auto-QA Pipeline (PROP-0003) — Design + Build + Deploy",
+    "context": "PROP-0003 (Auto-QA Pipeline) ได้รับ approval แล้ว ถึงเวลาสร้าง operational history รอบแรกของระบบ",
+    "tasks": [
+      {
+        "id": "T1",
+        "dept": "product",
+        "owner": "product-produck",
+        "action": "design spec — Auto-QA Pipeline implementation plan from PROP-0003",
+        "deliverable": "implementation spec (tech + test coverage criteria + gate logic)",
+        "acceptance_criteria": [
+          "spec ระบุ tech stack, test coverage threshold, CI integration point",
+          "spec ผ่าน review โดย @qa ก่อนส่งต่อ @changful",
+          "deadline ภายใน 2026-07-22"
+        ]
+      },
+      {
+        "id": "T2",
+        "dept": "engineering",
+        "owner": "changful",
+        "depends_on": ["T1"],
+        "action": "implement Auto-QA Pipeline ตาม spec จาก Product",
+        "deliverable": "working Auto-QA gate integrated into CI, PR check passes",
+        "acceptance_criteria": [
+          "ทุก PR มี test coverage gate auto-run",
+          "gate block merge ถ้า coverage ต่ำกว่า threshold",
+          "evidence recorded ใน bus/evidence/",
+          "QA sign-off gate ผ่านก่อน deploy"
+        ]
+      },
+      {
+        "id": "T3",
+        "dept": "qa",
+        "owner": "qa",
+        "depends_on": ["T2"],
+        "action": "validate Auto-QA Pipeline — test gate ทำงานถูกต้อง",
+        "deliverable": "QA sign-off report + evidence ใน bus/evidence/qa-signoff/",
+        "acceptance_criteria": [
+          "test coverage gate ทำงานถูกต้อง (pass/fail ตรง spec)",
+          "QA sign-off gate record ใน bus/evidence/qa-signoff/",
+          "handoff confirmation จากทุกฝ่ายครบ"
+        ]
+      }
+    ],
+    "deadline": "2026-07-25",
+    "proposal_ref": "PROP-0003",
+    "sop_ref": "SOP-01 → SOP-03 → SOP-04",
+    "session_ref": "Session #9 — State Assessment Gap: Operational History = 0"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-004",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "score": 98,
+      "alignment": "Owner อนุมัติโดยตรง — สร้าง operational history รอบแรกของระบบ"
+    },
+    "classified": {
+      "level": "L3",
+      "gate": "COO",
+      "reason": "Feature decision, cross-dept handoff — COO จัดการ รายงาน CEO"
+    },
+    "timestamp": "2026-07-20T17:50:00+07:00"
+  }
+}

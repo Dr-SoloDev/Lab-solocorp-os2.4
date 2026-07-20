@@ -1,0 +1,15 @@
+{
+  "event_id": "audit-8fb4f678",
+  "event_type": "DISPATCH",
+  "timestamp": "2026-07-20T10:29:44.379571",
+  "actor": "ceo-turbo",
+  "action": "dispatch_approved",
+  "resource": "CMD-004",
+  "proposal_ref": "PROP-0003",
+  "description": "CEO dispatch Auto-QA Pipeline — Product→Engineering→QA ตาม Owner อนุมัติ",
+  "level": "L3",
+  "mirror_check": "PASS (98/100)",
+  "sop_ref": "SOP-01",
+  "status": "dispatched",
+  "evidence": "bus/dispatch/2026-07-20/CMD-004-auto-qa-pipeline.json"
+}
