@@ -1,0 +1,37 @@
+{
+  "command": {
+    "id": "CMD-003",
+    "type": "CEO_DISPATCH",
+    "timestamp": "2026-07-20T08:07:00+07:00",
+    "priority": "P1",
+    "from": "CEO เทอโบ",
+    "to": "@design-kreet (Design — ครีเอท)",
+    "mirror_check": "✅ PASSED — SOUL.md เป็น identity ของทุกแผนก ต้องได้มาตรฐานเดียวกัน",
+    "title": "Persona Engineering WP1 — 5-Layer SOUL.md Template",
+    "context": "จาก master-synthesis และ bus/plans/persona-engineering-upgrade-v1.md — ต้องยกระดับ SOUL.md profiles จาก flat markdown → structured 5-Layer Persona",
+    "tasks": [
+      {
+        "id": "CMD-003-A",
+        "priority": "P1",
+        "description": "ออกแบบ 5-Layer Persona Template สำหรับ SOUL.md — Layer 0-5: Core Personality, Identity, Communication, Decision, Interpersonal, Boundaries",
+        "acceptance": "Template พร้อมใช้ — มีตัวอย่าง 1 profile (แนะนำ CEO profile เป็นตัวอย่าง)"
+      },
+      {
+        "id": "CMD-003-B",
+        "priority": "P1",
+        "description": "Migrate SOUL.md 18 profiles (ยกเว้น CEO) ไปใช้ template ใหม่",
+        "acceptance": "ทุก profile มีครบ 5 Layers, มีตัวอย่าง ≥3, มี catchphrases ≥2"
+      }
+    ],
+    "deadline": "CMD-003-A: 2026-07-25, CMD-003-B: 2026-08-01",
+    "artifacts": [
+      "profiles/01-ceo/SOUL.md (example)",
+      "profiles/02-cfo/SOUL.md",
+      "profiles/03-cmo/SOUL.md",
+      "profiles/04-orchestrator/SOUL.md",
+      "profiles/05-architect/SOUL.md",
+      "... (ทุก profile จนถึง 19)"
+    ],
+    "report_back": "ส่ง template ให้ CEO review ก่อน migrate ทั้ง 18 profiles"
+  }
+}

@@ -8,8 +8,9 @@
 [metadata]
 id = "RFC-001"
 title = "Complexity Matrix for Governance Threshold"
-status = "proposed"
+status = "accepted"
 author = "Software Architect (พี่ทรงศักดิ์)"
+date = "2026-07-05"
 created = "2026-07-05"
 version = "0.1.0"
 
@@ -271,4 +272,4 @@ alternatives = """
 [footer]
 references = ["gov/adr/ADR-001.toml"]
 tags = ["complexity-matrix", "governance", "threshold", "rfc", "phase-0"]
-review_date = "2026-10-05"
+review_date = "2026-10-03"

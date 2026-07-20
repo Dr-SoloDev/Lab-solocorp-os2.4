@@ -1,0 +1,171 @@
+[metadata]
+id = "ADR-007"
+title = "Adopt Complexity Matrix as Governance Threshold Mechanism"
+status = "accepted"
+author = "Orchestrator (พี่วุฒิ)"
+date = "2026-07-19"
+version = "1.0.0"
+
+[classification]
+domain = "governance"
+impact = "high"
+complexity = "medium"
+scope = "organization-wide"
+
+# =============================================================================
+# BODY — ENGLISH
+# =============================================================================
+[body.en]
+
+summary = "Formally adopt the 3-question Complexity Matrix (RFC-001) as the organization-wide standard for determining governance path: Direct ADR, RFC, or Full Review."
+
+context = """
+RFC-001 (Complexity Matrix for Governance Threshold) passed all 9 governance guards on
+2026-07-19 and was accepted by Orchestrator (พี่วุฒิ) following the standard RFC review cycle.
+
+Prior to this ADR, SoloCorp OS had no consistent threshold mechanism. Decision-makers chose
+governance paths ad-hoc, resulting in over-engineering trivial changes and under-reviewing
+cross-department changes. gov/config.toml already had complexity_matrix_enabled = true
+(placeholder) without a formally adopted ruleset.
+
+This ADR implements the accepted RFC-001 proposal as executable policy.
+"""
+
+decision = """
+Adopt the Complexity Matrix as defined in RFC-001 with the following binding rules:
+
+## The Three Questions (each scored 0 or 1)
+
+Q1 — Scope Impact (S):
+  0 = Single team / single bounded context
+  1 = Cross-team (2+ departments or external API consumers)
+
+Q2 — Reversibility (R):
+  0 = Easy to reverse (code-only, no data migration, no external commitments)
+  1 = Hard or costly to reverse (data migration, breaking changes, user-facing, contracts)
+
+Q3 — Resource Commitment (C):
+  0 = Low effort (< 1 sprint, soloable, or purely documentation)
+  1 = Significant effort (1+ sprints, multiple people, external dependencies)
+
+## Governance Path by Total Score
+
+Total = S + R + C
+
+  0   → Direct ADR     (lightweight, no RFC required)
+  1   → RFC            (7-day comment period, standard review)
+  2-3 → Full Review    (14-day review, stakeholder presentations, CEO sign-off if score = 3)
+
+## Orchestrator Authority
+The Orchestrator may escalate one level above the matrix score when context warrants
+(e.g., political boundaries, undeclared dependencies). Escalation requires a rationale
+entry in the decision log.
+
+## Effective immediately
+All new proposals submitted after 2026-07-19 must include a Complexity Matrix score
+(S + R + C) in metadata.complexity_score.
+"""
+
+consequences = """
+Positive:
+- Consistent, repeatable threshold mechanism removes ambiguity for all 18 departments
+- Low-complexity changes stay fast (Direct ADR in minutes, no RFC overhead)
+- High-complexity changes receive proportional scrutiny
+- Orchestrator has a clear framework and documented escalation authority
+- Aligns with gov/config.toml threshold_model = "hybrid" and complexity_matrix_enabled = true
+
+Negative:
+- Binary questions may oversimplify borderline cases (mitigated by escalation clause)
+- All contributors must learn the matrix (mitigated by RFC-001 examples + this ADR)
+- Orchestrator must remain disciplined — not escalate everything to Full Review
+
+Risk mitigations:
+- Rationale required for all scores (audit trail)
+- Random audits by Architect team to detect matrix gaming
+- Quarterly review of matrix effectiveness (aligned with review_date cycle)
+"""
+
+# =============================================================================
+# BODY — THAI
+# =============================================================================
+[body.th]
+
+summary = "รับ Complexity Matrix แบบ 3 คำถาม (RFC-001) เป็นมาตรฐานองค์กรสำหรับกำหนด Governance Path: Direct ADR, RFC, หรือ Full Review"
+
+context = """
+RFC-001 (Complexity Matrix for Governance Threshold) ผ่าน guard ครบทั้ง 9 ข้อเมื่อวันที่
+2026-07-19 และถูก Orchestrator (พี่วุฒิ) accept หลังผ่านรอบ RFC review ตามมาตรฐาน
+
+ก่อน ADR นี้ SoloCorp OS ไม่มีกลไก threshold ที่สอดคล้องกัน ผู้ตัดสินใจเลือก governance path
+แบบ ad-hoc ส่งผลให้การเปลี่ยนแปลงเล็กๆ โดน over-engineer และการเปลี่ยนแปลงข้ามแผนกที่ซับซ้อน
+ขาดการตรวจสอบ gov/config.toml มี complexity_matrix_enabled = true อยู่แล้ว (placeholder)
+แต่ยังไม่มี ruleset ที่ adopt อย่างเป็นทางการ
+
+ADR นี้ implement RFC-001 ที่ accepted แล้วเป็น executable policy
+"""
+
+decision = """
+รับ Complexity Matrix ตามที่กำหนดใน RFC-001 โดยมี binding rules ดังนี้:
+
+## 3 คำถาม (แต่ละข้อคะแนน 0 หรือ 1)
+
+Q1 — ขอบเขตผลกระทบ (S):
+  0 = ทีมเดียว / bounded context เดียว
+  1 = ข้ามทีม (2+ departments หรือ external API consumers)
+
+Q2 — ความสามารถย้อนกลับ (R):
+  0 = ย้อนกลับง่าย (code-only ไม่มี data migration ไม่มี external commitments)
+  1 = ย้อนกลับยากหรือมีต้นทุนสูง (data migration, breaking changes, ส่งผลถึง user, contracts)
+
+Q3 — ทรัพยากรที่ต้องใช้ (C):
+  0 = ใช้ทรัพยากรน้อย (< 1 sprint ทำคนเดียวได้ หรือเป็น documentation ล้วนๆ)
+  1 = ใช้ทรัพยากรมาก (1+ sprints หลายคน มี external dependencies)
+
+## Governance Path ตามคะแนนรวม
+
+รวม = S + R + C
+
+  0   → Direct ADR     (เบาๆ ไม่ต้อง RFC)
+  1   → RFC            (comment period 7 วัน, standard review)
+  2-3 → Full Review    (review 14 วัน, stakeholder presentations, CEO sign-off ถ้าคะแนน = 3)
+
+## อำนาจ Orchestrator
+Orchestrator สามารถ escalate ได้หนึ่งระดับเหนือ matrix score เมื่อบริบทเหมาะสม
+(เช่น เส้นแบ่งทางการเมืองระหว่างแผนก, dependency ที่ไม่ได้ declare) ต้องมีเหตุผลใน decision log
+
+## มีผลทันที
+Proposal ทุกชิ้นที่ submit หลัง 2026-07-19 ต้องมี Complexity Matrix score (S + R + C)
+ใน metadata.complexity_score
+"""
+
+consequences = """
+ข้อดี:
+- กลไก threshold ที่สอดคล้องและทำซ้ำได้ ลด ambiguity ให้ทั้ง 18 แผนก
+- การเปลี่ยนแปลงที่ซับซ้อนต่ำยังคงรวดเร็ว (Direct ADR ในไม่กี่นาที ไม่มี RFC overhead)
+- การเปลี่ยนแปลงที่ซับซ้อนได้รับการตรวจสอบตามสัดส่วน
+- Orchestrator มีกรอบการทำงานที่ชัดเจนและมีอำนาจ escalation ที่ document แล้ว
+- สอดคล้องกับ gov/config.toml threshold_model = "hybrid" และ complexity_matrix_enabled = true
+
+ข้อเสีย:
+- คำถาม binary อาจ oversimplify กรณี borderline (ลดด้วย escalation clause)
+- Contributor ทุกคนต้องเรียนรู้ matrix (ลดด้วย RFC-001 examples + ADR นี้)
+- Orchestrator ต้องมีวินัย — ไม่ escalate ทุกอย่างเป็น Full Review
+
+การลดความเสี่ยง:
+- ทุก score ต้องมี rationale (audit trail)
+- Architect team สุ่ม audit เพื่อตรวจจับ matrix gaming
+- ทบทวนประสิทธิภาพ matrix รายไตรมาส (ตาม review_date cycle)
+"""
+
+# =============================================================================
+# FOOTER
+# =============================================================================
+[footer]
+references = [
+  "gov/rfc/RFC-001-complexity-matrix.toml",
+  "gov/adr/ADR-001.toml",
+  "gov/adr/ADR-006.toml",
+  "gov/config.toml"
+]
+tags = ["complexity-matrix", "governance", "threshold", "rfc-001", "phase-0", "orchestrator"]
+review_date = "2026-10-17"

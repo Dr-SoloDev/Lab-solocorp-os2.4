@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+"""Minimal Agent Orchestrator CLI for SoloCorp AO bridge / health checks.
+
+Interface expected by ``govctl_cli.ao.client.AOClient``:
+
+  agent_orchestrator --version
+  agent_orchestrator list
+  agent_orchestrator run <agent_id> --prompt "..."
+
+This is a local stub so govctl health can report ``ao_cli: ok`` without a
+separate external install. Real agent backends can replace this binary via
+``gov/ao_config.toml`` ``cli_path`` or ``AO_CLI_PATH``.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from datetime import datetime, timezone
+
+__version__ = "0.1.0-solocorp-stub"
+
+KNOWN_AGENTS = [
+    {"name": "ceo", "description": "CEO strategy / final decisions"},
+    {"name": "orchestrator", "description": "Pipeline coordination"},
+    {"name": "architect", "description": "Central Bus / routing / ADRs"},
+    {"name": "engineering", "description": "Implementation"},
+    {"name": "qa", "description": "Quality / test evidence"},
+    {"name": "product", "description": "PRD / acceptance"},
+]
+
+
+def cmd_version(_: argparse.Namespace) -> int:
+    print(f"agent_orchestrator {__version__}")
+    return 0
+
+
+def cmd_list(args: argparse.Namespace) -> int:
+    if args.json:
+        print(json.dumps(KNOWN_AGENTS, ensure_ascii=False, indent=2))
+    else:
+        for a in KNOWN_AGENTS:
+            print(a["name"])
+    return 0
+
+
+def cmd_run(args: argparse.Namespace) -> int:
+    """Stub run — acknowledge the task; does not call a real model."""
+    agent_id = args.agent_id
+    prompt = args.prompt or ""
+    known = {a["name"] for a in KNOWN_AGENTS}
+    if agent_id not in known:
+        print(
+            f"error: unknown agent {agent_id!r}; "
+            f"known: {', '.join(sorted(known))}",
+            file=sys.stderr,
+        )
+        return 2
+
+    payload = {
+        "status": "ok",
+        "agent_id": agent_id,
+        "mode": "stub",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "prompt_chars": len(prompt),
+        "output": (
+            f"[agent_orchestrator stub] agent={agent_id} "
+            f"received prompt ({len(prompt)} chars). "
+            "Replace cli_path with a real backend for live runs."
+        ),
+    }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="agent_orchestrator",
+        description="SoloCorp Agent Orchestrator CLI (local stub)",
+    )
+    parser.add_argument(
+        "--version",
+        action="store_true",
+        help="Print version and exit",
+    )
+
+    sub = parser.add_subparsers(dest="command")
+
+    p_list = sub.add_parser("list", help="List known agents")
+    p_list.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit JSON array",
+    )
+    p_list.set_defaults(func=cmd_list)
+
+    p_run = sub.add_parser("run", help="Run an agent with a prompt")
+    p_run.add_argument("agent_id", help="Agent id (ceo, engineering, …)")
+    p_run.add_argument(
+        "--prompt",
+        required=True,
+        help="Task prompt for the agent",
+    )
+    p_run.set_defaults(func=cmd_run)
+
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    if args.version or args.command is None:
+        # Bare invocation or --version → version (matches AOClient.get_status)
+        if args.command is None and not args.version and len(sys.argv) > 1:
+            # Unknown args already handled by argparse; bare call prints help-ish
+            pass
+        return cmd_version(args)
+
+    func = getattr(args, "func", None)
+    if func is None:
+        parser.print_help()
+        return 1
+    return int(func(args))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

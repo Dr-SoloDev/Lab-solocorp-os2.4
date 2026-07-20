@@ -12,45 +12,108 @@ impact = "medium"
 complexity = "low"
 scope = "organization-wide"
 
-context = """
-SoloCorp OS operates with a bilingual team: Thai-speaking department heads and contributors who are most comfortable in Thai, alongside English-language technical documentation and external-facing materials. 
+# =============================================================================
+# BODY — ENGLISH
+# =============================================================================
+[body.en]
+summary = "Mandate bilingual governance artifacts (body.en + body.th) for all ADRs and RFCs to ensure all stakeholders — Thai-speaking department heads and English-reading external contributors — can review and understand every decision."
 
-Previously, artifacts were written in whichever language the author chose, leading to inconsistency. Some non-Thai-speaking contributors could not review Thai-only ADRs, and some Thai-speaking stakeholders struggled with English-only RFCs.
+context = """
+SoloCorp OS operates with a bilingual team: Thai-speaking department heads and contributors
+who are most comfortable in Thai, alongside English-language technical documentation and
+external-facing materials.
+
+Previously, artifacts were written in whichever language the author chose, leading to
+inconsistency. Some non-Thai-speaking contributors could not review Thai-only ADRs, and
+some Thai-speaking stakeholders struggled with English-only RFCs.
 """
 
 decision = """
-All governance artifacts (ADRs, RFCs) MUST include both English (body.en) and Thai (body.th) sections with equivalent content. Each language section contains summary, context, decision/proposal, and consequences. The metadata and classification fields remain in English for machine parsing.
+All governance artifacts (ADRs, RFCs) MUST include both English (body.en) and Thai (body.th)
+sections with equivalent content. Each language section contains summary, context,
+decision/proposal, and consequences. The metadata and classification fields remain in English
+for machine parsing.
 
 Exceptions:
 - External-facing documentation may be English-only
 - Internal working notes within departments may use either language
 - Code comments remain in English
+
+Rejected alternatives:
+- English-only — rejected: excludes Thai-speaking stakeholders
+- Thai-only — rejected: excludes external contributors and machine parsing
+- Hybrid (metadata EN, body author's choice) — rejected: inconsistent review experience
 """
 
 consequences = """
-**Positive:**
+Positive:
 - All stakeholders can review artifacts in their preferred language
 - External contributors can follow architectural decisions
 - Machine parsing works on consistent English metadata
 
-**Negative:**
+Negative:
 - Authors must write equivalent content twice (increased effort)
 - Risk of translation drift between language versions
 - Longer file sizes for bilingual artifacts
 
-**Mitigation:**
+Mitigation:
 - Guard-002 (Bilingual Completeness) validates both sections exist
 - Authors may write in one language and request translation
 - Review process catches content discrepancies
 """
 
-options = [
-    "English-only — rejected: excludes Thai-speaking stakeholders",
-    "Thai-only — rejected: excludes external contributors and machine parsing",
-    "Bilingual EN+TH — accepted: maximum inclusivity",
-    "Hybrid (metadata EN, body author's choice) — rejected: inconsistent review experience"
-]
+# =============================================================================
+# BODY — THAI
+# =============================================================================
+[body.th]
+summary = "กำหนดให้ governance artifacts ทุกชิ้น (ADR และ RFC) ต้องมีทั้งสองภาษา (body.en + body.th) เพื่อให้ stakeholders ทุกคน — ทั้งหัวหน้าแผนกที่พูดภาษาไทยและ external contributors ที่ใช้ภาษาอังกฤษ — สามารถ review และเข้าใจ decisions ทุกชิ้นได้"
 
+context = """
+SoloCorp OS ทำงานกับทีมที่ใช้สองภาษา: หัวหน้าแผนกและ contributor ที่ถนัดภาษาไทย ควบคู่กับ
+technical documentation ภาษาอังกฤษและ external-facing materials
+
+ก่อนหน้านี้ artifacts ถูกเขียนในภาษาที่ author เลือกเอง ส่งผลให้ขาดความสอดคล้อง
+contributor ที่ไม่ใช่คนไทยไม่สามารถ review ADR ที่เป็นภาษาไทยล้วนๆ ได้ และ stakeholders
+ที่ใช้ภาษาไทยบางคนก็ติดขัดกับ RFC ที่เป็นภาษาอังกฤษล้วนๆ
+"""
+
+decision = """
+Governance artifacts ทุกชิ้น (ADR, RFC) ต้องมีทั้ง English (body.en) และ Thai (body.th)
+sections ที่มีเนื้อหาเทียบเคียงกัน แต่ละ language section ประกอบด้วย summary, context,
+decision/proposal และ consequences ส่วน metadata และ classification fields ยังคงเป็น
+ภาษาอังกฤษสำหรับ machine parsing
+
+ข้อยกเว้น:
+- External-facing documentation อาจเป็น English-only
+- Internal working notes ภายใน department อาจใช้ภาษาใดก็ได้
+- Code comments ยังคงเป็นภาษาอังกฤษ
+
+ตัวเลือกที่ถูกปฏิเสธ:
+- English-only — ปฏิเสธ: ไม่รวม Thai-speaking stakeholders
+- Thai-only — ปฏิเสธ: ไม่รวม external contributors และ machine parsing
+- Hybrid (metadata EN, body ตามใจ author) — ปฏิเสธ: ประสบการณ์การ review ไม่สอดคล้องกัน
+"""
+
+consequences = """
+ข้อดี:
+- Stakeholders ทุกคนสามารถ review artifacts ในภาษาที่ถนัดได้
+- External contributors สามารถติดตาม architectural decisions ได้
+- Machine parsing ทำงานได้อย่างสม่ำเสมอบน English metadata
+
+ข้อเสีย:
+- ผู้เขียนต้องเขียนเนื้อหาที่เทียบเคียงกันสองครั้ง (เพิ่ม effort)
+- เสี่ยงต่อ translation drift ระหว่าง language versions
+- ขนาดไฟล์ใหญ่ขึ้นสำหรับ bilingual artifacts
+
+การลดความเสี่ยง:
+- Guard-002 (Bilingual Completeness) ตรวจสอบว่ามีทั้งสอง sections
+- ผู้เขียนอาจเขียนภาษาเดียวก่อนแล้วขอ translation
+- กระบวนการ review ตรวจจับ content discrepancies
+"""
+
+# =============================================================================
+# FOOTER
+# =============================================================================
 [footer]
 references = ["gov/adr/ADR-001.toml"]
 tags = ["documentation", "bilingual", "policy", "phase-0"]

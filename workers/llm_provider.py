@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 # ── Configuration ──────────────────────────────────────────────────────
 
 DEFAULT_MODEL = "opencode/deepseek-v4-flash-free"
-_CMD = "/usr/local/bin/opencode"
+_CMD = os.environ.get("OPENCODE_BIN", os.path.expanduser("~/.opencode/bin/opencode"))
 _MAX_CONCURRENT = 3
 _LLM_TIMEOUT = 60
 _MAX_RETRIES = 3

@@ -1,0 +1,266 @@
+[metadata]
+id = "ADR-004"
+title = "Central Bus Agent — v0.6 Implementation Specification"
+status = "accepted"
+author = "Software Architect (พี่ทรงศักดิ์)"
+date = "2026-07-19"
+version = "1.0.0"
+complexity_score = 3
+
+[classification]
+domain = "architecture"
+impact = "high"
+complexity = "high"
+scope = "organization-wide"
+
+# =============================================================================
+# BODY — ENGLISH
+# =============================================================================
+[body.en]
+summary = "Specify the v0.6 implementation of Central Bus Agent: a file-based, dependency-free message broker with 4-priority JSONL queues, Router Engine, State Store, Exception Handler, Audit Logger, and exponential-backoff retry — serving as the sole data-layer backbone for all 18 SoloCorp departments."
+
+context = """
+ADR-003 established the canonical BusMessage schema and routing protocol but left the
+implementation unspecified. Central Bus v0.6 must fulfil five goals:
+
+G1 — Route messages between department agents within SLA.
+G2 — Track real-time state for every project (state.json always correct).
+G3 — Detect and escalate CRITICAL exceptions within 30 seconds.
+G4 — Maintain a complete, immutable audit trail keyed by trace_id.
+G5 — Auto-retry failed messages up to 3 times with exponential backoff
+     (≥ 80% retry-success rate).
+
+Design constraints:
+- Single operator (Dr.solodev) — zero external services allowed (no Redis, Kafka, RabbitMQ).
+- All storage must be human-readable and git-trackable.
+- Concurrent-write safety required; full ACID not required.
+"""
+
+decision = """
+## Components
+
+### Router Engine
+- Reads message from queue; matches against routing_rules.json (3-tier: GOVERNANCE/AO
+  passthrough → keyword → TF-IDF → CEO fallback).
+- Unroutable messages raise UNROUTABLE exception; never silently dropped.
+
+### State Store
+- Reads/writes projects/{id}/state.json.
+- Updates phase status on STATUS or ARTIFACT messages.
+- Concurrent-write protection via optimistic locking on `updated_at`.
+
+### Exception Handler
+- Subscribes to EXCEPTION message type.
+- Classifies severity: LOW / MED / HIGH / CRITICAL.
+- CRITICAL triggers escalation chain → Telegram MCP alert < 30 s.
+
+### Message Queue
+- 4-priority JSONL queue files: critical.jsonl, high.jsonl, normal.jsonl, low.jsonl.
+- Persistence: append-only; no external dependency.
+- Retry: exponential backoff — 1 s, 5 s, 30 s.
+- After 3 failed retries: move to dead_letter queue (never silently discard).
+
+### Audit Logger
+- Appends every event to projects/{id}/audit/{date}.jsonl.
+- Immutable (append-only); trace_id present in every record.
+
+## File Layout
+
+    bus/
+    ├── system/
+    │   ├── routing_rules.json       ← Router Engine
+    │   ├── monitor/{pipeline}.json  ← Watchdog health
+    │   └── schedule/registry.json  ← Cron jobs
+    ├── projects/{id}/
+    │   ├── state.json               ← State Store
+    │   ├── audit/{date}.jsonl       ← Audit Logger (append-only)
+    │   └── artifacts/{phase}/       ← Phase outputs
+    └── queue/
+        ├── critical.jsonl
+        ├── high.jsonl
+        ├── normal.jsonl
+        ├── low.jsonl
+        └── dead_letter/
+
+## Technology Choices
+
+| Component     | Technology         | Rationale                           |
+|---------------|--------------------|-------------------------------------|
+| Queue storage | JSONL files        | No external service; simple         |
+| State storage | JSON files         | Human-readable, git-trackable       |
+| Locking       | flock (file lock)  | Prevents concurrent write           |
+| Scheduling    | cron + Hermes      | Reuses existing infrastructure      |
+| Alerts        | Telegram MCP       | Dr.solodev's existing channel       |
+
+## Quality Gates (before shipping v0.6)
+
+- Unit test coverage ≥ 80 %
+- All 14 department routes validated by integration test
+- Throughput ≥ 100 msg/min without queue overflow
+- trace_id present in every audit event
+- CRITICAL escalation latency < 30 s
+- Dead-letter rate: 0 messages silently lost
+
+## v0.6 Non-Goals (deferred)
+
+- UI Dashboard → v0.7
+- Multi-tenant isolation
+- External webhook inbound
+- Real-time streaming (polling only in v0.6)
+"""
+
+consequences = """
+Positive:
+- Zero external dependencies — runs on any machine with Python and a filesystem.
+- Human-readable, git-trackable storage; easy to inspect and debug.
+- Dead-letter queue ensures no message is silently lost.
+- Immutable audit trail satisfies full trace_id coverage required by ADR-003.
+- CRITICAL alert < 30 s satisfies Orchestrator SLA (MTTR ≤ 30 min).
+
+Negative:
+- File I/O limits throughput vs. in-memory broker; acceptable for current 14-agent scale.
+- flock-based locking is not safe across NFS; acceptable for single-machine deployment.
+- Dead-letter queue requires manual triage; no automated requeue in v0.6.
+
+Risks and mitigations:
+- File lock contention (Low/High) → optimistic lock + retry.
+- Queue growth (Low/Med) → max queue size cap + dead-letter.
+- State divergence (Med/High) → all writes must go through State Store exclusively.
+- Routing rule errors (Med/Med) → dry-run mode before production apply.
+"""
+
+# =============================================================================
+# BODY — THAI
+# =============================================================================
+[body.th]
+summary = "กำหนด implementation ของ Central Bus Agent v0.6: message broker ที่ใช้ไฟล์ ไม่ต้องพึ่ง external service มี JSONL queue 4 ระดับความสำคัญ, Router Engine, State Store, Exception Handler, Audit Logger และ retry แบบ exponential backoff — เป็น backbone ของ data layer ให้ 18 แผนกของ SoloCorp"
+
+context = """
+ADR-003 กำหนด BusMessage schema และ routing protocol แล้ว แต่ยังไม่ระบุ implementation
+Central Bus v0.6 ต้องบรรลุเป้าหมาย 5 ข้อ:
+
+G1 — route messages ระหว่าง department agents ภายใน SLA
+G2 — ติดตาม state ของทุก project แบบ real-time (state.json ถูกต้องเสมอ)
+G3 — ตรวจจับและ escalate CRITICAL exceptions ภายใน 30 วินาที
+G4 — บันทึก audit trail ที่สมบูรณ์และไม่สามารถเปลี่ยนแปลงได้ โดยใช้ trace_id เป็น key
+G5 — retry message ที่ล้มเหลวอัตโนมัติสูงสุด 3 ครั้ง ด้วย exponential backoff
+     (retry-success rate ≥ 80%)
+
+ข้อจำกัดการออกแบบ:
+- ผู้ดูแลคนเดียว (Dr.solodev) — ห้ามใช้ external services (ไม่มี Redis, Kafka, RabbitMQ)
+- storage ทั้งหมดต้องอ่านได้โดยมนุษย์และ git-trackable
+- ป้องกัน concurrent write; ไม่จำเป็นต้องการ ACID เต็มรูปแบบ
+"""
+
+decision = """
+## Components
+
+### Router Engine
+- อ่าน message จาก queue; จับคู่กับ routing_rules.json (3 ชั้น: GOVERNANCE/AO passthrough
+  → keyword → TF-IDF → CEO fallback)
+- Messages ที่ route ไม่ได้จะสร้าง UNROUTABLE exception; ไม่เคยหายเงียบๆ
+
+### State Store
+- อ่าน/เขียน projects/{id}/state.json
+- อัปเดต phase status เมื่อรับ STATUS หรือ ARTIFACT messages
+- ป้องกัน concurrent write ด้วย optimistic locking บน `updated_at`
+
+### Exception Handler
+- Subscribe EXCEPTION message type
+- จัดระดับ severity: LOW / MED / HIGH / CRITICAL
+- CRITICAL trigger escalation chain → Telegram MCP alert ภายใน 30 วินาที
+
+### Message Queue
+- JSONL queue files 4 ระดับ: critical.jsonl, high.jsonl, normal.jsonl, low.jsonl
+- Persistence: append-only; ไม่มี external dependency
+- Retry: exponential backoff — 1 วินาที, 5 วินาที, 30 วินาที
+- หลัง retry ล้มเหลว 3 ครั้ง: ย้ายไป dead_letter queue (ไม่มีการทิ้งเงียบๆ)
+
+### Audit Logger
+- append ทุก event ลง projects/{id}/audit/{date}.jsonl
+- Immutable (append-only); ทุก record มี trace_id
+
+## โครงสร้างไฟล์
+
+    bus/
+    ├── system/
+    │   ├── routing_rules.json       ← Router Engine
+    │   ├── monitor/{pipeline}.json  ← Watchdog health
+    │   └── schedule/registry.json  ← Cron jobs
+    ├── projects/{id}/
+    │   ├── state.json               ← State Store
+    │   ├── audit/{date}.jsonl       ← Audit Logger (append-only)
+    │   └── artifacts/{phase}/       ← Phase outputs
+    └── queue/
+        ├── critical.jsonl
+        ├── high.jsonl
+        ├── normal.jsonl
+        ├── low.jsonl
+        └── dead_letter/
+
+## การเลือก Technology
+
+| Component     | Technology         | เหตุผล                              |
+|---------------|--------------------|-------------------------------------|
+| Queue storage | JSONL files        | ไม่ต้อง external service; เรียบง่าย |
+| State storage | JSON files         | อ่านได้ง่าย, git-trackable          |
+| Locking       | flock (file lock)  | ป้องกัน concurrent write            |
+| Scheduling    | cron + Hermes      | ใช้ infrastructure ที่มีอยู่แล้ว   |
+| Alerts        | Telegram MCP       | channel ของ Dr.solodev ที่ใช้อยู่   |
+
+## Quality Gates (ก่อน ship v0.6)
+
+- Unit test coverage ≥ 80%
+- department routes ทั้ง 14 แผนกผ่าน integration test
+- Throughput ≥ 100 msg/min โดยไม่ overflow
+- ทุก audit event มี trace_id
+- CRITICAL escalation latency < 30 วินาที
+- Dead-letter rate: ไม่มี message หายเงียบๆ เลย
+
+## สิ่งที่ไม่ทำใน v0.6 (เลื่อนไป)
+
+- UI Dashboard → v0.7
+- Multi-tenant isolation
+- External webhook inbound
+- Real-time streaming (v0.6 ใช้ polling เท่านั้น)
+"""
+
+consequences = """
+ข้อดี:
+- ไม่มี external dependencies — รันได้บนทุกเครื่องที่มี Python และ filesystem
+- Storage อ่านได้โดยมนุษย์, git-trackable; debug ง่าย
+- Dead-letter queue ทำให้ไม่มี message หายเงียบๆ
+- Audit trail ไม่เปลี่ยนแปลงได้ ตอบสนองความต้องการ trace_id ครบของ ADR-003
+- CRITICAL alert ภายใน 30 วินาที ตอบสนอง SLA ของ Orchestrator (MTTR ≤ 30 นาที)
+
+ข้อเสีย:
+- I/O ของไฟล์จำกัด throughput เมื่อเทียบกับ in-memory broker; ยอมรับได้สำหรับ 14 agents
+- flock-based locking ไม่ปลอดภัยบน NFS; ยอมรับได้สำหรับ single-machine deployment
+- Dead-letter queue ต้องมีคนมา triage เอง; ไม่มี automated requeue ใน v0.6
+
+ความเสี่ยงและการลดความเสี่ยง:
+- File lock contention (ต่ำ/สูง) → optimistic lock + retry
+- Queue growth (ต่ำ/กลาง) → max queue size cap + dead-letter
+- State divergence (กลาง/สูง) → ทุก write ต้องผ่าน State Store เท่านั้น
+- Routing rule ผิด (กลาง/กลาง) → dry-run mode ก่อน production
+
+ตัวเลือกที่ถูกปฏิเสธ:
+- Redis — ปฏิเสธ: ต้อง external service; ซับซ้อนเกินสำหรับ single operator
+- RabbitMQ / Kafka — ปฏิเสธ: over-engineered; operational overhead สูงเกิน
+- SQLite queue — ปฏิเสธ: ซับซ้อนกว่า JSONL โดยไม่มีประโยชน์เพิ่ม
+"""
+
+# =============================================================================
+# FOOTER
+# =============================================================================
+[footer]
+references = [
+  "gov/adr/ADR-003.toml",
+  "gov/adr/ADR-001.toml",
+  "central_bus/main.py",
+  "central_bus/models.py",
+  "central_bus/router.py",
+  "decisions/ADR-004-central-bus-agent-v0.6.md"
+]
+tags = ["central-bus", "architecture", "implementation", "queue", "routing", "state", "audit", "phase-0"]
+review_date = "2026-10-17"

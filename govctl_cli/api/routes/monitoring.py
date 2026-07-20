@@ -83,39 +83,46 @@ async def health_check():
             "detail": str(exc),
         }
 
-    # 3. AO CLI — check binary on PATH
+    # 3. AO CLI — resolve from AO_CLI_PATH / gov/ao_config.toml / PATH
     try:
-        ao_path = shutil.which("agent_orchestrator")
-        if ao_path:
-            # Try to get version
-            import subprocess
-            version = None
-            try:
-                result = subprocess.run(
-                    ["agent_orchestrator", "--version"],
-                    capture_output=True, text=True, timeout=5,
-                )
-                if result.returncode == 0:
-                    version = result.stdout.strip() or result.stderr.strip()
-            except (subprocess.TimeoutExpired, OSError):
-                pass
+        from govctl_cli.ao.client import get_configured_client
 
+        ao_client = get_configured_client(Path("gov") / "ao_config.toml")
+        status = ao_client.get_status()
+        if status.get("available"):
             components["ao_cli"] = {
                 "status": "ok",
-                "path": ao_path,
-                "version": version,
+                "path": status.get("cli_path") or "",
+                "version": status.get("version"),
             }
         else:
             components["ao_cli"] = {
                 "status": "not_configured",
-                "path": "",
+                "path": status.get("cli_path") or "",
                 "version": None,
             }
     except Exception as exc:
-        components["ao_cli"] = {
-            "status": "error",
-            "detail": str(exc),
-        }
+        # Fallback: bare PATH lookup (legacy)
+        try:
+            ao_path = shutil.which("agent_orchestrator")
+            if ao_path:
+                components["ao_cli"] = {
+                    "status": "ok",
+                    "path": ao_path,
+                    "version": None,
+                }
+            else:
+                components["ao_cli"] = {
+                    "status": "not_configured",
+                    "path": "",
+                    "version": None,
+                    "detail": str(exc),
+                }
+        except Exception as exc2:
+            components["ao_cli"] = {
+                "status": "error",
+                "detail": f"{exc}; fallback: {exc2}",
+            }
 
     # 4. Governance directory — check writability
     try:

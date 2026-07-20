@@ -1,2 +1,2 @@
 # SoloCorp MCP Server — Dependencies
-mcp>=1.0.0
+mcp>=1.23.0

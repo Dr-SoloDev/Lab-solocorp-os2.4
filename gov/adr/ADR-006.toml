@@ -124,4 +124,4 @@ consequences = """
 [footer]
 references = ["gov/adr/ADR-001.toml", "gov/adr/ADR-002.toml", "gov/guards/default.toml"]
 tags = ["governance", "guard-engine", "automation", "validation", "phase-1"]
-review_date = "2026-10-05"
+review_date = "2026-10-03"

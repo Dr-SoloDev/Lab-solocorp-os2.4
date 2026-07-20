@@ -1,0 +1,33 @@
+[skill]
+name = "@solocorp/cross-dept/mirror-check"
+version = "0.1.0"
+description = "Mirror Check Protocol — ตรวจสอบว่าทุก decision สะท้อน Dr.solodev Owner ก่อนดำเนินการ"
+category = "cross-dept"
+
+[dept]
+owner = "ceo"
+consumers = ["architect", "engineering", "cfo", "product", "cmo", "qa", "legal", "web3"]
+
+[bus]
+endpoint = "/v1/skills/cross-dept/mirror-check"
+queue_topic = "governance.mirror"
+lifecycle = "mirror_check → pass/fail → audit_trail"
+
+[mirror]
+minimum_level = "L2"
+check_on_invoke = false
+description = "Skill นี้คือตัว Mirror Check เอง — invoke โดย department head ก่อน decision"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/mirror-check"
+description = "รัน Mirror Check Protocol สำหรับ decision ที่กำลังจะทำ"
+platforms = ["opencode", "grok", "claude-code"]
+
+[[triggers]]
+keyword = "/mc"
+description = "Shorthand: mirror-check"
+platforms = ["opencode"]

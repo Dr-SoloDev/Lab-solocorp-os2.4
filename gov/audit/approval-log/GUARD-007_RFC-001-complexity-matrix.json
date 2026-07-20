@@ -1,0 +1,8 @@
+{
+  "guard_id": "GUARD-007",
+  "guard_name": "Stakeholder Sign-off",
+  "target": "gov/rfc/RFC-001-complexity-matrix.toml",
+  "approver": "\u0e1e\u0e35\u0e48\u0e27\u0e38\u0e12\u0e34 (Orchestrator)",
+  "status": "approved",
+  "timestamp": "2026-07-19T02:08:47.239566+00:00"
+}

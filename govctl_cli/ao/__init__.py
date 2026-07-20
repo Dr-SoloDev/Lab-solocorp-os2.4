@@ -80,18 +80,19 @@ def run_agent(
 
 
 def check_ao() -> bool:
-    """Check if the AO CLI binary is available on PATH."""
-    return AOClient().check_available()
+    """Check if the AO CLI binary is available (config / env / PATH)."""
+    return get_configured_client().check_available()
 
 
 def get_ao_status() -> dict[str, Any]:
     """Return dict describing AO CLI and agent availability."""
-    client = AOClient()
-    cli_available = client.check_available()
+    client = get_configured_client()
+    status = client.get_status()
     agents = list_agents()
     return {
-        "cli_available": cli_available,
-        "cli_path": client._cli_path,
+        "cli_available": bool(status.get("available")),
+        "cli_path": status.get("cli_path") or client._cli_path,
+        "version": status.get("version"),
         "agent_count": len(agents),
         "agents": agents,
     }

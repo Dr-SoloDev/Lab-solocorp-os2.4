@@ -11,7 +11,8 @@
 
   "skills": {
     "paths": [
-      ".opencode/skills"
+      ".opencode/skills",
+      "skills/@solocorp/cross-dept"
     ]
   },
 
@@ -81,6 +82,7 @@
       "python*": "allow",
       "node*": "allow",
       "git *": "allow",
+      "gh *": "allow",
       "jj *": "allow",
       "ls": "allow",
       "cat *": "allow",
@@ -114,30 +116,26 @@
   "mcp": {
     "stealth-browser": {
       "type": "local",
-      "command": ["python3", "-m", "tools.stealth-browser-mcp.src.server"],
-      "cwd": ".",
+      "command": ["tools/stealth-browser-mcp/venv/bin/python3", "-m", "server"],
+      "cwd": "tools/stealth-browser-mcp/src",
       "enabled": true,
       "timeout": 60000
     },
     "solocorp": {
       "type": "local",
-      "command": ["python3", "-m", "solocorp_mcp.server"],
+      "command": [".venv/bin/python3", "-m", "solocorp_mcp.server"],
       "cwd": ".",
       "enabled": true,
-      "timeout": 30000,
+      "timeout": 60000,
       "env": {
         "SOLOCORP_API_KEY": "{env:SOLOCORP_API_KEY}"
       }
     },
     "github": {
-      "type": "remote",
-      "url": "https://api.github.com/mcp",
-      "enabled": false,
-      "headers": {
-        "Authorization": "Bearer {env:GITHUB_TOKEN}",
-        "User-Agent": "opencode-solocorp"
-      },
-      "timeout": 15000
+      "type": "local",
+      "command": ["gh", "mcp"],
+      "enabled": true,
+      "timeout": 60000
     }
   },
 
@@ -146,7 +144,7 @@
 
   "experimental": {
     "primary_tools": ["edit", "bash", "task"],
-    "mcp_timeout": 30000
+    "mcp_timeout": 60000
   },
 
   "compaction": {
@@ -183,6 +181,14 @@
     "brain": {
       "description": "บันทึก context/session ลง brain memory",
       "template": "Document the current session context for brain memory:\n\nKey topics discussed:\n$ARGUMENTS\n\nFile: loop_runner/loops/brain_auto_commit.py\nFormat: วัน/time + summary + decisions + open items"
+    },
+    "pipeline-bridge": {
+      "description": "Cross-department pipeline bridge — ส่ง task ข้ามแผนกด้วย structured handoff + audit trail",
+      "template": "Pipeline Bridge: ส่ง task จาก $1 ไป $2\n\nTask: $3\nContext: $4\nDeadline: $5\n\nProtocol:\n1. Mirror Check — ก่อนส่งข้ามแผนก\n2. สร้าง structured handoff payload\n3. ส่งเข้า Bus Queue\n4. บันทึก Audit Trail\n5. แจ้ง department ปลายทาง"
+    },
+    "mirror-check": {
+      "description": "Mirror Check Protocol — ตรวจสอบ decision สะท้อน Dr.solodev Owner",
+      "template": "/mirror-check\n\nDecision: $ARGUMENTS\n\nProtocol:\n1. รับ decision + context\n2. วิเคราะห์ผ่าน 3 Mirror Check Questions\n3. ประเมิน alignment score\n4. บันทึกผลลง Audit Trail\n5. คืนผล: PASS / FAIL / ESCALATE"
     }
   }
 }

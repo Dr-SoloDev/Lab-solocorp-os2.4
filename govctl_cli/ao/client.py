@@ -55,6 +55,51 @@ log.addHandler(_log_handler)
 
 MAX_RETRIES = 1  # 1 initial + 1 retry = 2 attempts max
 _TRANSIENT_EXIT_CODES = {125, 130, 137, 143}  # container timeout, OOM, kill
+DEFAULT_CLI_PATH = "agent_orchestrator"
+AO_CLI_PATH_ENV = "AO_CLI_PATH"
+
+
+# ---------------------------------------------------------------------------
+# Path resolution
+# ---------------------------------------------------------------------------
+
+def resolve_cli_path(cli_path: str | None = None) -> str:
+    """Resolve AO CLI path from env, explicit arg, or default name.
+
+    Priority:
+      1. Explicit *cli_path* argument (if given)
+      2. ``AO_CLI_PATH`` environment variable
+      3. Default ``agent_orchestrator``
+    """
+    if cli_path:
+        return cli_path
+    env = os.environ.get(AO_CLI_PATH_ENV, "").strip()
+    if env:
+        return env
+    return DEFAULT_CLI_PATH
+
+
+def find_cli_executable(cli_path: str) -> Optional[str]:
+    """Locate an executable for *cli_path*.
+
+    Supports:
+      - bare command names on PATH (``agent_orchestrator``)
+      - absolute paths
+      - relative paths from CWD (e.g. ``scripts/agent_orchestrator``)
+    """
+    if not cli_path:
+        return None
+
+    path = Path(cli_path).expanduser()
+    # Path with directory component (absolute or relative)
+    if path.is_absolute() or os.sep in cli_path or (os.altsep and os.altsep in cli_path):
+        if path.is_file() and os.access(path, os.X_OK):
+            return str(path.resolve())
+        # also try which for absolute paths that may be symlinks on PATH
+        found = shutil.which(cli_path)
+        return found
+
+    return shutil.which(cli_path)
 
 
 # ---------------------------------------------------------------------------
@@ -123,19 +168,24 @@ class AOClient:
         default_timeout: Default timeout วินาที (sec)
     """
 
-    def __init__(self, cli_path: str = "agent_orchestrator", timeout: int = 120):
-        self.cli_path = cli_path
+    def __init__(self, cli_path: str | None = None, timeout: int = 120):
+        self.cli_path = resolve_cli_path(cli_path)
         self.default_timeout = timeout
-        self._cli_path = cli_path  # For backward compat with get_ao_status
+        self._cli_path = self.cli_path  # For backward compat with get_ao_status
 
     # ------------------------------------------------------------------
     # Availability check
     # ------------------------------------------------------------------
 
+    def resolved_path(self) -> Optional[str]:
+        """Return absolute executable path if available, else None."""
+        return find_cli_executable(self.cli_path)
+
     def check_available(self) -> bool:
-        """ตรวจสอบว่า AO CLI binary พร้อมใช้งานใน PATH"""
-        available = shutil.which(self.cli_path) is not None
-        log.info("AO CLI '%s' available: %s", self.cli_path, available)
+        """ตรวจสอบว่า AO CLI binary พร้อมใช้งาน (PATH หรือ path ใน config)"""
+        found = self.resolved_path()
+        available = found is not None
+        log.info("AO CLI '%s' available: %s (%s)", self.cli_path, available, found)
         return available
 
     # ------------------------------------------------------------------
@@ -198,8 +248,9 @@ class AOClient:
                 time.sleep(1 * attempt)
 
             try:
+                exe = self.resolved_path() or self.cli_path
                 proc = subprocess.run(
-                    [self.cli_path, "run", agent_id, "--prompt", prompt],
+                    [exe, "run", agent_id, "--prompt", prompt],
                     capture_output=True,
                     text=True,
                     timeout=effective_timeout,
@@ -265,19 +316,22 @@ class AOClient:
         Returns:
             dict: {available, cli_path, version, error}
         """
-        available = self.check_available()
-        if not available:
+        resolved = self.resolved_path()
+        if not resolved:
             return {
                 "available": False,
                 "cli_path": self.cli_path,
                 "version": None,
-                "error": f"AO CLI '{self.cli_path}' not found in PATH",
+                "error": (
+                    f"AO CLI '{self.cli_path}' not found. "
+                    f"Set {AO_CLI_PATH_ENV} or cli_path in gov/ao_config.toml"
+                ),
             }
 
         version: Optional[str] = None
         try:
             result = subprocess.run(
-                [self.cli_path, "--version"],
+                [resolved, "--version"],
                 capture_output=True, text=True, timeout=10,
             )
             if result.returncode == 0:
@@ -287,7 +341,7 @@ class AOClient:
 
         return {
             "available": True,
-            "cli_path": self.cli_path,
+            "cli_path": resolved,
             "version": version,
             "error": None,
         }
@@ -298,9 +352,10 @@ class AOClient:
         Returns:
             list[dict]: แต่ละ agent มี key ``name``
         """
+        exe = self.resolved_path() or self.cli_path
         try:
             result = subprocess.run(
-                [self.cli_path, "list"],
+                [exe, "list"],
                 capture_output=True, text=True, timeout=10,
             )
             if result.returncode != 0:
@@ -341,12 +396,15 @@ class AOCliClient(AOClient):
 # ---------------------------------------------------------------------------
 
 def get_configured_client(config_path: Optional[Path] = None) -> AOClient:
-    """สร้าง AOClient จาก ao_config.toml"""
+    """สร้าง AOClient จาก ao_config.toml + AO_CLI_PATH env override."""
     config = _load_config(config_path)
     ao_cfg = config.get("ao", {})
+    # Env wins over config (ops override without editing TOML)
+    env_path = os.environ.get(AO_CLI_PATH_ENV, "").strip()
+    cli_path = env_path or ao_cfg.get("cli_path") or DEFAULT_CLI_PATH
     return AOClient(
-        cli_path=ao_cfg.get("cli_path", "agent_orchestrator"),
-        timeout=ao_cfg.get("timeout_seconds", 120),
+        cli_path=cli_path,
+        timeout=int(ao_cfg.get("timeout_seconds", 120)),
     )
 
 

@@ -1,0 +1,33 @@
+[skill]
+name = "@solocorp/cross-dept/pipeline-bridge"
+version = "0.1.0"
+description = "Cross-department pipeline bridge — ส่ง task ข้ามแผนกด้วย structured handoff + audit trail"
+category = "cross-dept"
+
+[dept]
+owner = "architect"
+consumers = ["architect", "engineering", "product", "cfo", "cmo"]
+
+[bus]
+endpoint = "/v1/skills/cross-dept/pipeline-bridge"
+queue_topic = "skill.invoke"
+lifecycle = "skill_invoke → skill_complete → audit_trail"
+
+[mirror]
+minimum_level = "L3"
+check_on_invoke = true
+description = "Cross-dept = กระทบ ≥2 departments → Mirror Check บังคับ"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/pipeline-bridge"
+description = "Invoke cross-department pipeline bridge"
+platforms = ["opencode", "grok"]
+
+[[triggers]]
+keyword = "/handoff-structured"
+description = "ทำ structured handoff ข้ามแผนก พร้อม audit"
+platforms = ["opencode"]

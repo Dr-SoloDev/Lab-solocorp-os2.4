@@ -1,0 +1,56 @@
+{
+  "command": {
+    "id": "CMD-001",
+    "type": "CEO_DISPATCH",
+    "timestamp": "2026-07-20T08:05:00+07:00",
+    "priority": "P0",
+    "from": "CEO เทอโบ",
+    "to": "@architect-songsak (พี่ทรงศักดิ์)",
+    "mirror_check": "✅ PASSED — Dr.solodev ต้องการให้ cross-dept skills ใช้งานได้ทันที",
+    "title": "Integrate Cross-Dept Skills → Central Bus",
+    "context": "HANDOFF-001 ได้ส่ง artifacts ครบ 10 รายการแล้ว (pipeline-bridge + mirror-check TOML/SKILL.md, registry, route config, handoff template) รอ integration กับ busd จริง",
+    "tasks": [
+      {
+        "id": "CMD-001-A",
+        "priority": "P0",
+        "description": "Integrate skill_routes_config.json กับ Central Bus (busd) — สร้าง /v1/skills/* endpoints จริง",
+        "acceptance": "POST /v1/skills/cross-dept/pipeline-bridge และ POST /v1/skills/cross-dept/mirror-check เรียกได้จริง"
+      },
+      {
+        "id": "CMD-001-B",
+        "priority": "P1",
+        "description": "Mock test POST /v1/skills/cross-dept/pipeline-bridge",
+        "acceptance": "200 response + queue topic: skill.invoke"
+      },
+      {
+        "id": "CMD-001-C",
+        "priority": "P1",
+        "description": "Mock test POST /v1/skills/cross-dept/mirror-check",
+        "acceptance": "200 response + governance event logged"
+      },
+      {
+        "id": "CMD-001-D",
+        "priority": "P2",
+        "description": "Deploy skill routes ไป production bus",
+        "acceptance": "Routes พร้อมใช้งานจริง"
+      },
+      {
+        "id": "CMD-001-E",
+        "priority": "P2",
+        "description": "แจ้งทุก Department Head ว่ามี /pipeline-bridge และ /mirror-check ให้ใช้",
+        "acceptance": "Announcement ส่งครบทุกแผนก"
+      }
+    ],
+    "deadline": "2026-07-23",
+    "artifacts": [
+      "skills/@solocorp/cross-dept/pipeline-bridge/skill.toml",
+      "skills/@solocorp/cross-dept/pipeline-bridge/SKILL.md",
+      "skills/@solocorp/cross-dept/mirror-check/skill.toml",
+      "skills/@solocorp/cross-dept/mirror-check/SKILL.md",
+      "bus/system/skills_registry.json",
+      "bus/system/skill_routes_config.json",
+      "skills/REGISTRY.md"
+    ],
+    "report_back": "เมื่อเสร็จ CMD-001-A บอก CEO ก่อน deploy ต่อ"
+  }
+}

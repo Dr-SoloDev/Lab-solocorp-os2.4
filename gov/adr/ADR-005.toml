@@ -1,0 +1,237 @@
+[metadata]
+id = "ADR-005"
+title = "Loop Runner Architecture — Scheduled Autonomous Pipeline Execution"
+status = "accepted"
+author = "Orchestrator (พี่วุฒิ)"
+date = "2026-07-19"
+version = "1.0.0"
+complexity_score = 2
+
+[classification]
+domain = "architecture"
+impact = "high"
+complexity = "high"
+scope = "organization-wide"
+
+# =============================================================================
+# BODY — ENGLISH
+# =============================================================================
+[body.en]
+summary = "Adopt loop_runner/ as the standard framework for all scheduled autonomous operations in SoloCorp OS, with a formal 4-level trust model (L1–L4) that gates how much each loop can do without human approval."
+
+context = """
+SoloCorp OS requires recurring automated operations: pipeline task dispatch,
+brain-file commits, CEO briefings, and financial audits. Prior to this ADR,
+these operations were ad-hoc scripts with no consistent contract for:
+
+- When a loop may execute autonomously vs. when it must wait for approval
+- How failures are recorded and surfaced
+- What models/agents execute each loop
+- How loops integrate with the Central Bus queue (ADR-003/ADR-004)
+
+A formal Loop Runner architecture is needed to make autonomous operation
+safe, auditable, and consistent across all 18 departments.
+"""
+
+decision = """
+## Loop Abstract Contract
+
+All scheduled loops MUST extend the Loop abstract class (loop_runner/runner.py)
+and declare four required attributes:
+
+    loop_id    : str        # unique identifier, used as state key
+    interval   : timedelta  # minimum time between executions
+    trust_level: int        # 1–4 (see Trust Model below)
+    model_hint : str        # Hermes model alias for this loop's sub-agent
+
+The runner calls loop.execute() which:
+1. Checks should_run() — skips if last_run + interval > now
+2. Calls run() — the loop's business logic
+3. Calls record(loop_id, result, success) — persists to state.db
+
+## Trust Model (L1–L4)
+
+Every loop MUST declare a trust_level. This level governs the maximum
+autonomous action the loop may take without human approval:
+
+  L1 (report)       — read-only; produces a report, takes no action
+  L2 (assist)       — writes drafts or suggestions; human must approve before execution
+  L3 (advise)       — proposes actions; queues to Central Bus for Orchestrator review
+  L4 (auto-execute) — executes immediately; no approval required
+
+Loops at L4 MUST be scoped to reversible or low-blast-radius operations.
+Any loop that modifies external systems, sends messages to users, or makes
+financial commitments requires explicit review before being set to L4.
+
+## Active Loops (v1.0)
+
+| loop_id             | interval | trust_level | responsibility                            |
+|---------------------|----------|-------------|-------------------------------------------|
+| pipeline_executor   | 30 min   | L4          | Dequeue Central Bus tasks → dispatch to dept agents via Hermes |
+| brain_auto_commit   | 1 h      | L4          | Auto-commit brain/memory/bus files to git |
+| daily_brief         | 20 h     | L1          | Generate CEO morning briefing (report only) |
+| subscription_audit  | 30 days  | L4          | Scan monthly subscriptions for redundancy |
+
+## Cron Entry Point
+
+    */30 * * * * cd /path/to/repo && python3 -m loop_runner.main
+
+loop_runner/main.py iterates ALL_LOOPS, calls execute() on each, and prints
+results to stdout (captured by cron → system log).
+
+## Integration with Central Bus
+
+pipeline_executor is the bridge between Central Bus and department agents:
+1. Dequeues messages from high → normal priority JSONL queues (ADR-004)
+2. Resolves agent persona + Hermes model alias per to_dept
+3. Dispatches via Hermes CLI (primary) or Claude CLI (fallback)
+4. MAX_TASKS_PER_RUN = 2 per cron tick (conservative; prevents runaway execution)
+
+## Failure Handling
+
+All exceptions inside run() are caught by execute(), recorded to state.db
+with success=False, and re-raised so cron stdout captures the traceback.
+Loops never silently fail — every execution is recorded.
+"""
+
+consequences = """
+Positive:
+- Consistent contract for all scheduled operations — no more ad-hoc scripts
+- Trust model makes autonomous scope explicit and auditable
+- loop_runner/state.db provides a complete execution history
+- pipeline_executor closes the loop between Central Bus queue and live agent dispatch
+- Failure is always recorded; cron captures stderr for alerting
+
+Negative:
+- L4 loops run without human approval — misconfigured loops can cause unintended actions
+  (mitigated: L4 requires explicit code review before assignment)
+- state.db is a local SQLite file — not replicated; single-machine limitation
+  (acceptable for single-operator deployment per ADR-004 constraints)
+- MAX_TASKS_PER_RUN = 2 limits throughput under high queue depth
+  (addressable in v1.1 by dynamic cap based on queue depth)
+
+Rejected alternatives:
+- Celery / Airflow — rejected: external dependencies violate ADR-004 single-operator constraint
+- Systemd timers — rejected: not portable; harder to introspect from Python code
+- Central Bus polling inside busd — rejected: conflates message broker with scheduler concerns
+"""
+
+# =============================================================================
+# BODY — THAI
+# =============================================================================
+[body.th]
+summary = "รับ loop_runner/ เป็น framework มาตรฐานสำหรับการทำงานอัตโนมัติตามกำหนดเวลาทั้งหมดของ SoloCorp OS พร้อม trust model 4 ระดับ (L1–L4) ที่กำหนดขอบเขตการทำงานอัตโนมัติโดยไม่ต้องขออนุมัติจากมนุษย์"
+
+context = """
+SoloCorp OS ต้องการการทำงานอัตโนมัติที่ทำซ้ำเป็นประจำ: dispatch pipeline tasks,
+commit brain files, รายงานสรุป CEO และ audit ค่าใช้จ่าย ก่อน ADR นี้ operations
+เหล่านี้เป็น ad-hoc scripts ที่ไม่มี contract ร่วมกันสำหรับ:
+
+- เมื่อไหร่ loop สามารถทำงานอัตโนมัติได้ vs. ต้องรอการอนุมัติ
+- การบันทึกและ surface ความล้มเหลวอย่างไร
+- model/agent ใดรัน loop แต่ละตัว
+- Loop ผสาน Central Bus queue (ADR-003/ADR-004) อย่างไร
+
+จำเป็นต้องมี Loop Runner architecture ที่เป็นทางการเพื่อให้การทำงานอัตโนมัติ
+ปลอดภัย, ตรวจสอบได้, และสอดคล้องกันทั้ง 18 แผนก
+"""
+
+decision = """
+## Loop Abstract Contract
+
+ทุก scheduled loop ต้อง extend Loop abstract class (loop_runner/runner.py)
+และ declare 4 attributes ที่จำเป็น:
+
+    loop_id    : str        # identifier เฉพาะ ใช้เป็น state key
+    interval   : timedelta  # ระยะเวลาขั้นต่ำระหว่างการรัน
+    trust_level: int        # 1–4 (ดู Trust Model ด้านล่าง)
+    model_hint : str        # Hermes model alias สำหรับ sub-agent ของ loop นี้
+
+runner เรียก loop.execute() ซึ่ง:
+1. ตรวจ should_run() — ข้ามถ้า last_run + interval > ตอนนี้
+2. เรียก run() — business logic ของ loop
+3. เรียก record(loop_id, result, success) — บันทึกลง state.db
+
+## Trust Model (L1–L4)
+
+ทุก loop ต้อง declare trust_level ระดับนี้กำหนด action อัตโนมัติสูงสุดที่ loop
+ทำได้โดยไม่ต้องขออนุมัติจากมนุษย์:
+
+  L1 (report)       — อ่านอย่างเดียว; สร้างรายงาน ไม่ทำ action
+  L2 (assist)       — เขียน draft หรือ suggestion; มนุษย์ต้องอนุมัติก่อน execute
+  L3 (advise)       — เสนอ actions; enqueue ไป Central Bus เพื่อ Orchestrator review
+  L4 (auto-execute) — execute ทันที; ไม่ต้องขออนุมัติ
+
+Loop ที่ L4 ต้อง scope ให้อยู่ในการ operation ที่ reversible หรือ blast-radius ต่ำ
+Loop ใดที่แก้ไข external systems, ส่งข้อความถึง user, หรือมี financial commitments
+ต้องผ่าน review ก่อนกำหนดเป็น L4
+
+## Active Loops (v1.0)
+
+| loop_id             | interval  | trust_level | หน้าที่                                             |
+|---------------------|-----------|-------------|-----------------------------------------------------|
+| pipeline_executor   | 30 นาที   | L4          | Dequeue Central Bus tasks → dispatch ไปยัง dept agents ผ่าน Hermes |
+| brain_auto_commit   | 1 ชม.     | L4          | Auto-commit brain/memory/bus files ไปยัง git        |
+| daily_brief         | 20 ชม.    | L1          | สร้างสรุปเช้าให้ CEO (report เท่านั้น)               |
+| subscription_audit  | 30 วัน    | L4          | สแกน subscriptions รายเดือนเพื่อหา redundancy       |
+
+## Cron Entry Point
+
+    */30 * * * * cd /path/to/repo && python3 -m loop_runner.main
+
+loop_runner/main.py วน ALL_LOOPS เรียก execute() แต่ละตัว และ print ผลลัพธ์ไปยัง
+stdout (cron จับไว้ → system log)
+
+## การผสานกับ Central Bus
+
+pipeline_executor เป็น bridge ระหว่าง Central Bus กับ department agents:
+1. Dequeue messages จาก high → normal priority JSONL queues (ADR-004)
+2. Resolve agent persona + Hermes model alias ตาม to_dept
+3. Dispatch ผ่าน Hermes CLI (primary) หรือ Claude CLI (fallback)
+4. MAX_TASKS_PER_RUN = 2 ต่อ cron tick (conservative; ป้องกัน runaway execution)
+
+## การจัดการความล้มเหลว
+
+Exception ทั้งหมดใน run() ถูก catch โดย execute(), บันทึกลง state.db พร้อม
+success=False และ re-raise เพื่อให้ cron stdout จับ traceback ได้
+Loop ไม่เคย fail แบบเงียบ — ทุกการ execute ถูกบันทึก
+"""
+
+consequences = """
+ข้อดี:
+- Contract ที่สอดคล้องสำหรับทุก scheduled operations — ไม่มี ad-hoc scripts อีกต่อไป
+- Trust model ทำให้ขอบเขตอัตโนมัติชัดเจนและตรวจสอบได้
+- loop_runner/state.db ให้ execution history ครบ
+- pipeline_executor ปิด loop ระหว่าง Central Bus queue และ live agent dispatch
+- ความล้มเหลวถูกบันทึกเสมอ; cron จับ stderr สำหรับ alerting
+
+ข้อเสีย:
+- Loop ระดับ L4 รันโดยไม่ขออนุมัติ — loop ที่ configured ผิดอาจเกิด unintended actions
+  (ลดด้วย: L4 ต้องผ่าน explicit code review ก่อน assign)
+- state.db เป็น SQLite file ในเครื่อง — ไม่ replicate; ข้อจำกัดสำหรับ single machine
+  (ยอมรับได้ตาม ADR-004 single-operator constraint)
+- MAX_TASKS_PER_RUN = 2 จำกัด throughput เมื่อ queue depth สูง
+  (แก้ได้ใน v1.1 ด้วย dynamic cap ตาม queue depth)
+
+ตัวเลือกที่ถูกปฏิเสธ:
+- Celery / Airflow — ปฏิเสธ: external dependencies ขัดกับ ADR-004 single-operator constraint
+- Systemd timers — ปฏิเสธ: ไม่ portable; introspect จาก Python code ยากกว่า
+- Central Bus polling ใน busd — ปฏิเสธ: ปะปน message broker กับ scheduler concerns
+"""
+
+# =============================================================================
+# FOOTER
+# =============================================================================
+[footer]
+references = [
+  "loop_runner/runner.py",
+  "loop_runner/main.py",
+  "loop_runner/loops/pipeline_executor.py",
+  "loop_runner/loops/brain_auto_commit.py",
+  "loop_runner/loops/daily_brief.py",
+  "loop_runner/loops/subscription_audit.py",
+  "gov/adr/ADR-003.toml",
+  "gov/adr/ADR-004.toml"
+]
+tags = ["loop-runner", "automation", "trust-model", "scheduled", "pipeline", "architecture", "phase-0"]
+review_date = "2026-10-17"

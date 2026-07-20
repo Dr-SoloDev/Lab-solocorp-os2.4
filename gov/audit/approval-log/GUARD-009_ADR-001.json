@@ -1,0 +1,8 @@
+{
+  "guard_id": "GUARD-009",
+  "guard_name": "Reality Checker Integration (Final Gate)",
+  "target": "gov/adr/ADR-001.toml",
+  "approver": "Orchestrator (\u0e1e\u0e35\u0e48\u0e27\u0e38\u0e12\u0e34)",
+  "status": "approved",
+  "timestamp": "2026-07-19T06:31:48.762996+00:00"
+}

@@ -1,0 +1,39 @@
+{
+  "command": {
+    "id": "CMD-002",
+    "type": "CEO_DISPATCH",
+    "timestamp": "2026-07-20T08:06:00+07:00",
+    "priority": "P0",
+    "from": "CEO เทอโบ",
+    "to": "@changful (Engineering — ช่างฟูล)",
+    "mirror_check": "✅ PASSED — A/B Test เสร็จแล้วต้อง deploy, 7 agents เป็น system gap",
+    "title": "A/B Test 50/50 Go-Live + Fix 7 Agents Business Logic",
+    "context": "A/B Test 50/50 layer (ADR-017) พร้อม deploy แล้ว — tests ผ่าน, endpoints พร้อม ส่วน 7 agents มี business logic ขนาดเล็กเกินไปต้องยกระดับ",
+    "tasks": [
+      {
+        "id": "CMD-002-A",
+        "priority": "P0",
+        "description": "Deploy A/B Test 50/50 — เปิด route_v1 vs route_v2 live split",
+        "acceptance": "50% traffic ไป route_v1, 50% ไป route_v2, GET /v1/ab-test/report เรียกดูผลได้"
+      },
+      {
+        "id": "CMD-002-B",
+        "priority": "P1",
+        "description": "ยกระดับ business logic 7 agents: Content Creator, Cyber Security, Legal, NetEng, Psychology, Web3, R&D Lab — ปัจจุบัน 25-28 บรรทัด → เพิ่มให้สมบูรณ์",
+        "acceptance": "แต่ละ agent มี minimum: domain logic, input validation, output format, error handling"
+      }
+    ],
+    "deadline": "CMD-002-A: 2026-07-21, CMD-002-B: 2026-07-25",
+    "artifacts": [
+      "workers/agents/agent_content_creator.py",
+      "workers/agents/agent_cyber_security.py",
+      "workers/agents/agent_legal.py",
+      "workers/agents/agent_neteng.py",
+      "workers/agents/agent_psychology.py",
+      "workers/agents/agent_web3.py",
+      "workers/agents/agent_rd_lab.py",
+      "central_bus/router.py (A/B test layer)"
+    ],
+    "report_back": "รายงานเมื่อ deploy A/B Test เสร็จ — แล้วค่อยเริ่ม fix agents"
+  }
+}

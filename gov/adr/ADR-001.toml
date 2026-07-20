@@ -12,10 +12,20 @@ impact = "high"
 complexity = "low"
 scope = "organization-wide"
 
-context = """
-SoloCorp OS needs a standardized directory structure and schema for governance artifacts (ADRs, RFCs, Guards) to ensure consistency across all 9 departments. Previously, decisions were documented ad-hoc in markdown files scattered across the repository.
+# =============================================================================
+# BODY — ENGLISH
+# =============================================================================
+[body.en]
+summary = "Adopt a standardized gov/ directory structure and TOML artifact schema as the Single Source of Truth for all architectural and governance decisions across SoloCorp OS."
 
-The gov/ directory must serve as the Single Source of Truth (SSoT) for all architectural and governance decisions, with a consistent TOML schema that both humans and automated tooling can parse.
+context = """
+SoloCorp OS needs a standardized directory structure and schema for governance artifacts
+(ADRs, RFCs, Guards) to ensure consistency across all 9 departments. Previously, decisions
+were documented ad-hoc in markdown files scattered across the repository.
+
+The gov/ directory must serve as the Single Source of Truth (SSoT) for all architectural
+and governance decisions, with a consistent TOML schema that both humans and automated
+tooling can parse.
 """
 
 decision = """
@@ -24,30 +34,78 @@ Adopt a gov/ directory structure with three subdirectories:
 - gov/rfc/ — Request for Comments (proposals requiring discussion)
 - gov/guards/ — Verification guard specifications
 
-Each artifact follows a standardized TOML schema with metadata, classification, English body, Thai body, and footer sections. The schema requires author, date, status, domain, impact, complexity, and scope fields in all artifacts.
+Each artifact follows a standardized TOML schema with metadata, classification, English
+body, Thai body, and footer sections. The schema requires author, date, status, domain,
+impact, complexity, and scope fields in all artifacts.
+
+Rejected alternatives:
+- Markdown-based ADRs in doc/ directory — rejected: not machine-parseable
+- YAML schema — rejected: less readable than TOML for nested structures
+- Database-backed governance store — rejected: over-engineered for current scale
 """
 
 consequences = """
-**Positive:**
+Positive:
 - Consistent artifact format across all departments
 - Machine-parseable TOML enables automated tooling (validation, CI checks)
 - Bilingual support (EN + TH) ensures accessibility for all stakeholders
 - Clear directory convention eliminates "where do I put this?" confusion
 
-**Negative:**
+Negative:
 - Migration effort to convert existing markdown ADRs to TOML
 - Learning curve for contributors unfamiliar with TOML schema
 - Schema changes require updating all existing artifacts
 """
 
-options = [
-    "Markdown-based ADRs in doc/ directory — rejected: not machine-parseable",
-    "YAML schema — rejected: less readable than TOML for nested structures",
-    "TOML with gov/ directory — accepted: balance of readability and parseability",
-    "Database-backed governance store — rejected: over-engineered for current scale"
-]
+# =============================================================================
+# BODY — THAI
+# =============================================================================
+[body.th]
+summary = "รับโครงสร้าง gov/ directory มาตรฐานและ TOML artifact schema เป็น Single Source of Truth สำหรับทุก architectural และ governance decisions ทั่วทั้ง SoloCorp OS"
 
+context = """
+SoloCorp OS ต้องการโครงสร้าง directory และ schema มาตรฐานสำหรับ governance artifacts
+(ADR, RFC, Guards) เพื่อความสอดคล้องกันทั้ง 9 departments ก่อนหน้านี้ decisions ถูก
+document แบบ ad-hoc ในไฟล์ markdown กระจายอยู่ทั่ว repository
+
+directory gov/ ต้องทำหน้าที่เป็น Single Source of Truth (SSoT) สำหรับทุก architectural
+และ governance decisions โดยมี TOML schema ที่สอดคล้องกันซึ่งทั้งมนุษย์และ automated
+tooling สามารถ parse ได้
+"""
+
+decision = """
+รับโครงสร้าง gov/ directory พร้อม 3 subdirectories:
+- gov/adr/ — Architecture Decision Records
+- gov/rfc/ — Request for Comments (proposals ที่ต้องการการถกเถียง)
+- gov/guards/ — Verification guard specifications
+
+แต่ละ artifact ใช้ TOML schema มาตรฐานประกอบด้วย metadata, classification, English body,
+Thai body และ footer sections schema กำหนดให้ทุก artifact ต้องมี fields: author, date,
+status, domain, impact, complexity และ scope
+
+ตัวเลือกที่ถูกปฏิเสธ:
+- Markdown-based ADRs ใน doc/ directory — ปฏิเสธ: machine-parseable ไม่ได้
+- YAML schema — ปฏิเสธ: อ่านยากกว่า TOML สำหรับ nested structures
+- Database-backed governance store — ปฏิเสธ: over-engineered เกินไปสำหรับ scale ปัจจุบัน
+"""
+
+consequences = """
+ข้อดี:
+- รูปแบบ artifact ที่สอดคล้องกันทั่วทุก department
+- TOML ที่ machine-parseable รองรับ automated tooling (validation, CI checks)
+- รองรับ bilingual (EN + TH) ทำให้ stakeholders ทุกคนเข้าถึงได้
+- convention directory ที่ชัดเจน ขจัดความสับสน "จะวางไฟล์ที่ไหน?"
+
+ข้อเสีย:
+- ต้องใช้แรงงาน migrate ADR เดิมจาก markdown → TOML
+- learning curve สำหรับ contributor ที่ไม่คุ้นกับ TOML schema
+- การเปลี่ยนแปลง schema ต้องอัปเดต artifacts ที่มีอยู่ทั้งหมด
+"""
+
+# =============================================================================
+# FOOTER
+# =============================================================================
 [footer]
 references = []
 tags = ["governance", "schema", "ssot", "phase-0"]
-review_date = "2026-10-05"
+review_date = "2026-10-03"

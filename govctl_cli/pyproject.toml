@@ -17,3 +17,5 @@ dependencies = [
 
 [project.scripts]
 govctl = "govctl_cli.cli:app"
+# Optional: after `pip install -e govctl_cli`, bare `agent_orchestrator` on PATH.
+# Default config still points at scripts/agent_orchestrator for zero-install.

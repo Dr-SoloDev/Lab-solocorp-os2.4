@@ -45,6 +45,8 @@ Think of them as "slash commands with memory."
 | `brain` | pipeline | `.grok/skills/brain/SKILL.md` | grok | Active |
 | `route` | pipeline | `.grok/skills/route/SKILL.md` | grok | Active |
 | `pipeline-full-cycle` | pipeline | _(alias of grok `pipeline`)_ | grok | Active |
+| **`pipeline-bridge`** 🆕 | **cross-dept** | **`@solocorp/cross-dept/pipeline-bridge/`** | **opencode + grok** | **🟢 Active** |
+| **`mirror-check`** 🆕 | **cross-dept** | **`@solocorp/cross-dept/mirror-check/`** | **opencode + grok + claude** | **🟢 Active** |
 | `eng-deploy` | engineering | _(proposed)_ | all | Planned |
 | `cfo-budget-check` | cfo | _(proposed)_ | all | Planned |
 | `qa-smoke-test` | qa | _(proposed)_ | all | Planned |

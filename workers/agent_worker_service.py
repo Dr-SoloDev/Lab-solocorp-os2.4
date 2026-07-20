@@ -53,6 +53,9 @@ from workers.agents.psychology_agent import PsychologyAgent
 from workers.agents.ui_agent import UIAgent
 from workers.agents.rd_lab_agent import RDLabAgent
 
+from workers.evidence_collector import collect_evidence
+from workers.aar_generator import generate_aar
+
 
 class AgentWorkerService:
     """Agent Worker Service — หัวใจของ Agent Activation
@@ -212,6 +215,8 @@ class AgentWorkerService:
             return
 
         try:
+            start_time = time.monotonic()
+
             # Mark as processing
             await self._update_status(task_id, "processing")
             
@@ -226,6 +231,10 @@ class AgentWorkerService:
                     "priority": task.get("priority", "normal"),
                 }
             )
+
+            # ── Evidence & AAR (auto-collect after completion) ──
+            await collect_evidence(task, result, latency_ms=int((time.monotonic() - start_time) * 1000))
+            await generate_aar(task, result, start_time=start_time)
 
             # Mark completed
             await self.mark_completed(task_id, result, agent_id)
@@ -243,6 +252,13 @@ class AgentWorkerService:
 
         except Exception as e:
             log.error(f"❌ {agent_id} Error: {e}")
+            error_result = {"status": "failed", "summary": str(e), "details": {}}
+            # Still collect evidence + AAR for failed tasks
+            try:
+                await collect_evidence(task, error_result)
+                await generate_aar(task, error_result, error=str(e))
+            except Exception as nested_e:
+                log.warning(f"⚠️ Failed to collect evidence for failed task: {nested_e}")
             await self.mark_failed(task_id, str(e))
 
     # ── Main Loop ──────────────────────────────────────────────────────

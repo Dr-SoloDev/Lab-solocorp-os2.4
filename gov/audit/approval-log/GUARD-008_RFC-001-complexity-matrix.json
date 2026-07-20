@@ -1,0 +1,8 @@
+{
+  "guard_id": "GUARD-008",
+  "guard_name": "Cross-Department Impact Notification",
+  "target": "gov/rfc/RFC-001-complexity-matrix.toml",
+  "approver": "\u0e1e\u0e35\u0e48\u0e27\u0e38\u0e12\u0e34 (Orchestrator)",
+  "status": "approved",
+  "timestamp": "2026-07-19T02:08:48.106397+00:00"
+}

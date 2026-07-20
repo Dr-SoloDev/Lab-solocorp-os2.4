@@ -353,11 +353,15 @@ def check_guard_009(data: dict) -> list[dict]:
             ),
         })
 
-    # No placeholder text in critical metadata fields
-    PLACEHOLDER_PATTERNS = ["todo", "tbd", "fixme", "placeholder", "lorem ipsum", "fill in"]
+    # No placeholder markers in critical metadata fields.
+    # Use word-boundary regex so legitimate prose (e.g. "must not contain placeholder text")
+    # is not flagged — only standalone markers like TODO, TBD, FIXME are caught.
+    PLACEHOLDER_RE = re.compile(
+        r"\b(todo|tbd|fixme|lorem\s+ipsum|fill\s+in)\b", re.IGNORECASE
+    )
     for field_key in ("title", "author"):
-        val = meta.get(field_key, "").lower()
-        if any(p in val for p in PLACEHOLDER_PATTERNS):
+        val = meta.get(field_key, "")
+        if PLACEHOLDER_RE.search(val):
             issues.append({
                 "field": f"metadata.{field_key}",
                 "status": "FAIL",
@@ -367,12 +371,12 @@ def check_guard_009(data: dict) -> list[dict]:
                 ),
             })
 
-    # No placeholder text in body sections
+    # No placeholder markers in body sections
     for lang in ("en", "th"):
         body_lang = data.get("body", {}).get(lang, {})
         for section in ("summary", "context", "decision", "proposal", "consequences"):
-            val = body_lang.get(section, "").lower()
-            if val and any(p in val for p in PLACEHOLDER_PATTERNS):
+            val = body_lang.get(section, "")
+            if val and PLACEHOLDER_RE.search(val):
                 issues.append({
                     "field": f"body.{lang}.{section}",
                     "status": "WARN",

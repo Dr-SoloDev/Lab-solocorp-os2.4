@@ -1,10 +1,13 @@
 # AO CLI Bridge Configuration
 # SoloCorp OS — Agent Orchestrator Integration
-# version: 0.1.0 | 2026-07-05
+# version: 0.1.1 | 2026-07-20
 
 [ao]
+# Bridge polling is off by default; health still requires a resolvable CLI.
 enabled = false
-cli_path = "agent_orchestrator"
+# Prefer repo stub (works when CWD is repo root). Override with AO_CLI_PATH
+# or install entry point so bare "agent_orchestrator" is on PATH.
+cli_path = "scripts/agent_orchestrator"
 timeout_seconds = 120
 max_concurrent = 3
 

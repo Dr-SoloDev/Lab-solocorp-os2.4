@@ -1,0 +1,311 @@
+[metadata]
+id = "ADR-003"
+title = "Central Bus Schema + Protocol"
+status = "accepted"
+author = "Orchestrator (พี่วุฒิ)"
+date = "2026-07-19"
+version = "1.0.0"
+
+[classification]
+domain = "architecture"
+impact = "high"
+complexity = "medium"
+scope = "organization-wide"
+
+# =============================================================================
+# BODY — ENGLISH
+# =============================================================================
+[body.en]
+summary = "Define the canonical BusMessage schema, department registry, routing protocol, and handoff template for Central Bus v0.6 — the single message-passing backbone of SoloCorp OS."
+
+context = """
+SoloCorp OS routes all inter-department communication through a single FastAPI daemon
+(busd) running on port 8099. Prior to this ADR, the message schema and routing rules
+existed only in code (central_bus/models.py, central_bus/router.py) with no
+governance-level specification. This caused three problems:
+
+1. Department agents wrote messages with inconsistent field sets, causing routing
+   failures and silent misroutes.
+2. There was no authoritative list of valid departments, message types, or priorities,
+   so new agents guessed at values.
+3. The handoff template lived informally in the Orchestrator SOUL profile — not in
+   a versioned, machine-readable artifact.
+
+The Central Bus is a load-bearing component: 100% of cross-department traffic flows
+through it. It must have a formally specified schema that all agents can rely on.
+"""
+
+decision = """
+## BusMessage Schema (canonical)
+
+All messages on the Central Bus MUST conform to this schema:
+
+    {
+      "id":          "<uuid4>",           # auto-generated
+      "trace_id":    "<uuid4>",           # caller-assigned; groups related messages
+      "from_dept":   "<Department>",      # sender
+      "to_dept":     "<Department>",      # addressee (may be overridden by router)
+      "type":        "<MessageType>",     # see below
+      "project_id":  "<string>",          # logical project / work-item ID
+      "phase":       "<string>",          # pipeline phase label (e.g. "design", "review")
+      "priority":    "<Priority>",        # default "normal"
+      "payload":     { ... },             # type-specific content (see conventions)
+      "ts":          "<ISO-8601 UTC>",    # auto-generated
+      "retry_count": <int>                # default 0; incremented by auto-retry
+    }
+
+## Valid Enum Values
+
+Departments (14):
+  ceo | cfo | cmo | orchestrator | architect | product | engineering
+  design | ui_designer | qa | sales | support | legal | web3
+
+MessageType (7):
+  HANDOFF | STATUS | ARTIFACT | EXCEPTION | GOVERNANCE | AO_REQUEST | AO_RESPONSE
+
+Priority (4):
+  critical | high | normal | low
+
+## Routing Protocol (3-tier)
+
+Tier 0a — AO messages:
+  AO_REQUEST  → architect
+  AO_RESPONSE → msg.to_dept (passthrough)
+
+Tier 0b — GOVERNANCE event routing:
+  guard_failed        → orchestrator (priority: critical)
+  rfc_created         → orchestrator (priority: high)
+  complexity_assessed → architect
+  adr_accepted        → architect
+  guard_run           → architect
+
+Tier 1 — Keyword matching (JSONL rules, skipped for Thai text):
+  Match any keyword in routing_rules.json against lowercased payload values.
+
+Tier 2 — Semantic matching (TF-IDF cosine similarity):
+  TfidfRouter scores payload text against department keyword sets.
+
+Tier 3 — Fallback:
+  CEO fallback rule; route_to = "ceo".
+
+The SQLite RoutingEngine (v0.6 default) caches rules with 60s TTL and supports
+source_agent regex matching plus JSON condition predicates (equals, contains, exists,
+and, or).
+
+## GOVERNANCE Payload Convention
+
+When type = GOVERNANCE, the payload MUST include:
+
+    {
+      "gov_event":     "<GovernanceEvent>",   # required
+      "gov_detail":    "<string>",             # required, human-readable
+      "gov_entity_id": "<string>",             # optional — e.g. "ADR-003", "RFC-001"
+      "gov_result":    { ... }                 # optional — scores, status, etc.
+    }
+
+Valid GovernanceEvent values:
+  rfc_created | adr_accepted | guard_run | guard_failed | complexity_assessed
+
+## Handoff Template (binding for all Department Heads)
+
+Every HANDOFF message payload MUST contain:
+
+    {
+      "context":    "<string>",   # what happened before this handoff
+      "request":    "<string>",   # explicit, measurable request for the receiver
+      "artifacts":  ["<path>"],   # list of attached file paths or artifact IDs
+      "known_issues": "<string>", # known gaps; "none" if clean handoff
+      "deadline":   "<ISO-8601 or relative>",
+      "escalation": "Notify Orchestrator (พี่วุฒิ) immediately on blockers"
+    }
+
+Orphan handoffs (missing "request" or "context") are rejected at the bus boundary.
+
+## API Endpoints
+
+  POST /v1/observe  — receive task, enqueue, route
+  POST /v1/context  — provide facts + queue status to agent
+  POST /v1/update   — report result; triggers AAR on completion/failure
+  GET  /v1/health   — DB, queue depth, uptime
+  GET  /v1/aar/{trace_id} — retrieve After Action Review entries
+
+## Error Envelope (all error responses)
+
+    {"error": {"code": "<CODE>", "message": "...", "detail": {...}}}
+"""
+
+consequences = """
+Positive:
+- All agents have a single authoritative schema reference — no more field guessing
+- Routing is fully documented; new department onboarding is deterministic
+- GOVERNANCE payload convention enables automated guard + RFC event propagation
+- Handoff template eliminates orphan work items
+- Error envelope standard simplifies client error handling
+
+Negative:
+- Schema changes require a new ADR revision (mitigated: schema is stable at v0.6)
+- 14 hard-coded department values mean adding a department requires an ADR update
+- Bilingual constraint on GOVERNANCE gov_detail not enforced; English-only acceptable
+  for automated events
+
+Rejected alternatives:
+- Protocol Buffers / Avro schema — rejected: over-engineered for 14-agent scale
+- OpenAPI-only specification — rejected: not machine-parseable by govctl guard tooling
+- Per-department message contracts — rejected: defeats single-bus architecture
+"""
+
+# =============================================================================
+# BODY — THAI
+# =============================================================================
+[body.th]
+summary = "กำหนด BusMessage schema, department registry, routing protocol, และ handoff template สำหรับ Central Bus v0.6 — กระดูกสันหลังการส่งข้อความของ SoloCorp OS"
+
+context = """
+SoloCorp OS ส่งการสื่อสารทุกอย่างระหว่าง department ผ่าน FastAPI daemon ตัวเดียว (busd)
+ที่รันบน port 8099 ก่อน ADR นี้ message schema และ routing rules มีอยู่แค่ในโค้ด
+(central_bus/models.py, central_bus/router.py) โดยไม่มี specification ระดับ governance
+ทำให้เกิดปัญหา 3 ประการ:
+
+1. Department agents เขียน messages ด้วย field sets ที่ไม่สอดคล้องกัน ทำให้ routing
+   ล้มเหลวและเกิด misroute แบบเงียบๆ
+2. ไม่มีรายการอ้างอิงที่เชื่อถือได้สำหรับ departments, message types, หรือ priorities
+   ที่ถูกต้อง agents ใหม่จึงต้องเดาค่า
+3. Handoff template อยู่ใน SOUL profile ของ Orchestrator อย่างไม่เป็นทางการ ไม่ได้อยู่ใน
+   artifact ที่มี version และ machine-readable
+
+Central Bus เป็น load-bearing component: traffic ข้าม department 100% ไหลผ่านมัน
+จึงต้องมี schema ที่ระบุอย่างเป็นทางการให้ทุก agent พึ่งพาได้
+"""
+
+decision = """
+## BusMessage Schema (canonical)
+
+ทุก message บน Central Bus ต้องเป็นไปตาม schema นี้:
+
+    {
+      "id":          "<uuid4>",           # auto-generated
+      "trace_id":    "<uuid4>",           # caller กำหนด; จัดกลุ่ม messages ที่เกี่ยวข้อง
+      "from_dept":   "<Department>",      # ผู้ส่ง
+      "to_dept":     "<Department>",      # ผู้รับ (router อาจ override)
+      "type":        "<MessageType>",     # ดูด้านล่าง
+      "project_id":  "<string>",          # ID ของ project / work-item
+      "phase":       "<string>",          # ป้าย pipeline phase (เช่น "design", "review")
+      "priority":    "<Priority>",        # default "normal"
+      "payload":     { ... },             # เนื้อหาตาม type
+      "ts":          "<ISO-8601 UTC>",    # auto-generated
+      "retry_count": <int>                # default 0; เพิ่มโดย auto-retry
+    }
+
+## ค่า Enum ที่ถูกต้อง
+
+Departments (14 แผนก):
+  ceo | cfo | cmo | orchestrator | architect | product | engineering
+  design | ui_designer | qa | sales | support | legal | web3
+
+MessageType (7 ประเภท):
+  HANDOFF | STATUS | ARTIFACT | EXCEPTION | GOVERNANCE | AO_REQUEST | AO_RESPONSE
+
+Priority (4 ระดับ):
+  critical | high | normal | low
+
+## Routing Protocol (3 ชั้น)
+
+Tier 0a — AO messages:
+  AO_REQUEST  → architect
+  AO_RESPONSE → msg.to_dept (passthrough)
+
+Tier 0b — GOVERNANCE event routing:
+  guard_failed        → orchestrator (priority: critical)
+  rfc_created         → orchestrator (priority: high)
+  complexity_assessed → architect
+  adr_accepted        → architect
+  guard_run           → architect
+
+Tier 1 — Keyword matching (JSONL rules ข้ามสำหรับ Thai text):
+  จับคู่ keyword ใดๆ ใน routing_rules.json กับ payload values ที่เป็น lowercase
+
+Tier 2 — Semantic matching (TF-IDF cosine similarity):
+  TfidfRouter ให้คะแนน payload text กับ keyword sets ของแต่ละ department
+
+Tier 3 — Fallback:
+  CEO fallback rule; route_to = "ceo"
+
+SQLite RoutingEngine (v0.6 default) cache rules ด้วย TTL 60 วินาที และรองรับ
+source_agent regex matching พร้อม JSON condition predicates (equals, contains, exists, and, or)
+
+## GOVERNANCE Payload Convention
+
+เมื่อ type = GOVERNANCE, payload ต้องมี:
+
+    {
+      "gov_event":     "<GovernanceEvent>",   # required
+      "gov_detail":    "<string>",             # required, อ่านได้โดยมนุษย์
+      "gov_entity_id": "<string>",             # optional — เช่น "ADR-003", "RFC-001"
+      "gov_result":    { ... }                 # optional — คะแนน, สถานะ ฯลฯ
+    }
+
+ค่า GovernanceEvent ที่ถูกต้อง:
+  rfc_created | adr_accepted | guard_run | guard_failed | complexity_assessed
+
+## Handoff Template (binding สำหรับ Department Heads ทุกคน)
+
+ทุก HANDOFF message payload ต้องมี:
+
+    {
+      "context":      "<string>",   # เกิดอะไรขึ้นก่อน handoff นี้
+      "request":      "<string>",   # สิ่งที่ต้องการให้ผู้รับทำ ชัดเจน วัดผลได้
+      "artifacts":    ["<path>"],   # รายการ file paths หรือ artifact IDs ที่แนบมา
+      "known_issues": "<string>",   # สิ่งที่ยังไม่สมบูรณ์; "none" ถ้า handoff สะอาด
+      "deadline":     "<ISO-8601 หรือ relative>",
+      "escalation":   "แจ้ง Orchestrator (พี่วุฒิ) ทันทีเมื่อติดขัด"
+    }
+
+Orphan handoffs (ขาด "request" หรือ "context") จะถูกปฏิเสธที่ bus boundary
+
+## API Endpoints
+
+  POST /v1/observe  — รับ task, enqueue, route
+  POST /v1/context  — ส่ง facts + queue status ให้ agent
+  POST /v1/update   — รายงานผล; trigger AAR เมื่อ complete/fail
+  GET  /v1/health   — DB, queue depth, uptime
+  GET  /v1/aar/{trace_id} — ดึง After Action Review entries
+
+## Error Envelope (response error ทุกชิ้น)
+
+    {"error": {"code": "<CODE>", "message": "...", "detail": {...}}}
+"""
+
+consequences = """
+ข้อดี:
+- ทุก agent มี schema reference เดียวที่เชื่อถือได้ — ไม่ต้องเดา field อีก
+- Routing ถูก document ครบ; การ onboard department ใหม่เป็นไปอย่าง deterministic
+- GOVERNANCE payload convention รองรับการ propagate event ของ guard และ RFC อัตโนมัติ
+- Handoff template กำจัด orphan work items
+- Error envelope มาตรฐานทำให้ client จัดการ error ได้ง่าย
+
+ข้อเสีย:
+- การเปลี่ยนแปลง schema ต้องมี ADR revision ใหม่ (ลดด้วย: schema stable ที่ v0.6)
+- 14 department values ที่ hard-code หมายความว่าการเพิ่ม department ต้องอัปเดต ADR ด้วย
+- ข้อกำหนด bilingual บน GOVERNANCE gov_detail ไม่ถูก enforce; English-only ยอมรับได้
+  สำหรับ automated events
+
+ตัวเลือกที่ถูกปฏิเสธ:
+- Protocol Buffers / Avro schema — ปฏิเสธ: over-engineered สำหรับ scale 14 agents
+- OpenAPI specification เพียงอย่างเดียว — ปฏิเสธ: govctl guard tooling parse ไม่ได้
+- Per-department message contracts — ปฏิเสธ: ขัดกับ single-bus architecture
+"""
+
+# =============================================================================
+# FOOTER
+# =============================================================================
+[footer]
+references = [
+  "central_bus/models.py",
+  "central_bus/router.py",
+  "central_bus/main.py",
+  "gov/adr/ADR-001.toml",
+  "gov/adr/ADR-006.toml",
+  "gov/adr/ADR-007.toml"
+]
+tags = ["central-bus", "schema", "protocol", "routing", "handoff", "architecture", "phase-0"]
+review_date = "2026-10-17"
