@@ -431,3 +431,120 @@ State tracking files: 0
 
 
 ---
+
+## Session Auto-Summary — 2026-07-20 10:11 UTC
+
+### Git
+```
+9f3bb23 chore(brain): save end-of-session context — Phase 8 + rules restructure lessons
+a230b64 chore(brain): save Phase 8 context
+8ebcdb3 chore: remove test artifacts from commit
+f2027eb 🤖 Phase 8: Auto-Pilot — 5 components for full autonomy
+91d8e68 chore(brain): save session context — Phase 1-7 + rules restructure
+2172411 📐 9 rules → 5 behavior-centric files
+16ec1d6 📝 Session #6 log — Phase 1-7 autonomous transformation complete
+5635209 🎯 Phase 1-7 Complete: SoloCorp OS autonomous transformati
+```
+Uncommitted: 30 files
+
+### State
+Active dispatch files: 8
+State tracking files: 0
+
+### Pending
+- Auto-Pilot 5 components deployed — ใช้งานจริงใน session ต่อไป
+
+---
+
+## Session: 2026-07-20 — COO Deploy + SOP Sprint + Proposal System
+
+### Key Decisions
+1. COO = กิจ (Kit) — Chief Operating Officer, L3 gatekeeper
+2. Chain: Owner(L5) → CEO(L4) → COO(L3) → Dept Heads(L2) → Specialists(L1)
+3. SOP ทั้ง 5 → v1.1 พร้อม checklist + verification + Quality Gate
+4. Dept Proposal System — ≥1 proposal/dept/week วัด proactivity
+
+### Files Created
+- `profiles/02-coo/SOUL.md` — COO profile
+- `workers/coo_dispatch_agent.py` — COO triage engine
+- `workers/handoff_confirm.py` — Handoff confirmation
+- `workers/qa_signoff_gate.py` — QA sign-off gate
+- `workers/dept_proposal.py` — Proposal system
+- `workers/sop_compliance_check.py` — SOP health checker
+
+### Files Updated
+- `bus/system/routing_rules.json` — COO keywords + fallback
+- `bus/system/mirror_config.json` — COO entry
+- `rules/01-receive.md`, `02-work.md`, `INDEX.md` — COO + proposals
+- `sop/` ทั้ง 5 ไฟล์ — v1.1 checklist sprint
+- `decisions/ADR-004-*.md` — Finalized
+- `opencode.json` — coo-kit agent, 3 new commands
+- `profiles/INDEX.md` — COO active
+- `brain/mission-solocorp-reason.md` — Chain updated
+
+### Audit Score: 🟡 70 → 🟢 86
+
+---
+
+## Session #9 — 2026-07-20 (Mirror Check — State Assessment)
+
+**เข้าระบบ:** 17:40 ICT
+**Mode:** Strategic / Review
+**Duration:** Complete Mirror Check of entire SoloCorp OS capability
+
+### Key Topics Discussed
+1. **Mirror Check (L5)** — Owner ขอให้ประเมิน SoloCorp OS ว่ามีความสามารถระดับไหน, สิ่งที่จัดการได้จริงตามเป้าสำเร็จคืออะไร, ดีระดับไหน, และพัฒนาได้หรือไม่
+2. **Full State Assessment** — Architecture, Infrastructure, Agent Readiness, Testing, SOP, Autonomy
+
+### Summary
+ภาพรวม SoloCorp OS ณ จุดนี้:
+- **Architecture & Structure:** 🟢 85/100 — 18 Departments + COO, Central Bus 33 modules, Phase 8 Auto-Pilot, Behavior Classifier
+- **Operational Capability:** 🟡 60/100 — Core systems พร้อม แต่ operational history เป็น 0 เกือบทุกตัว
+- **Quality & Testing:** 🟡 80/100 — 460/460 tests ที่ผ่านมา, 10 files evidence
+- **Autonomy Readiness (ภารกิจหลัก):** 🟡 55/100 — System พร้อม แต่ไม่เคย execute รอบแรก
+- **Owner Load Reduction:** ~30% → target 70-80%
+
+### Key Decisions
+1. ✅ Mirror Check PASS (96/100) — Decision: "ประเมิน SoloCorp OS capability" ได้รับ绿灯
+2. ✅ Owner รับทราบสถานะปัจจุบัน — ระบบพร้อมแต่ operational history = 0
+3. ✅ Recommendation ชัดเจน: รัน SOP checklist จริง 1 วงจร → push readiness 55% → 70%
+
+### System State
+```
+Git status         : 34 uncommitted files (COO + SOP sprint + proposals)
+CEO Memory         : 6 sessions tracked
+Active dispatches  : 8 files
+Proposals created  : 5 files (PROP-0001 to PROP-0005)
+Evidence store     : 11 files (7 generic + 1 mirror + 2 qa-signoff + 1 confirmations)
+SOP Score          : 90/100 (5 SOPs v1.1, but 0/10 to 0/17 checklists)
+Audit Score        : 🟢 86/100 (up from 🟡 70)
+Agent Workers      : 22 agents in workers/agents/
+Central Bus plugins: 2 (auto_mirror_hook, auto_orchestrator)
+Brain learnt.md    : 5 entries
+```
+
+### Assessment Scores
+| หมวด | % |
+|:-----|:-:|
+| Architecture & Structure | 85% |
+| Operational Capability | 60% |
+| Quality & Testing | 80% |
+| Documentation | 80% |
+| Autonomy Readiness | 55% |
+| **Owner Load Reduction** | **~30%** |
+| Target (Mission) | **70-80%** |
+| **Gap to close** | **25-35%** |
+
+### Open Items
+- [🔴] รัน SOP checklist จริง 1 วงจร — dispatch → handoff → deploy
+- [🔴] Owner Dashboard v1 — KBI glanceable auto-report ทุกเช้า
+- [🟡] COO เริ่ม operate — dispatch, triage, respond โดยตรง
+- [🟡] Fix tests timeout — ยืนยัน 460/460
+- [🟡] Dept Heads generate 1st proposal — วัด proactivity
+- [🟡] Starlette version pin — ensure dependencies
+
+### Lessons Learned
+1. **ระบบพร้อมแต่ไม่ active = เหมือนไม่มี** — SOP 5 ฉบับที่ checklist = 0 ไม่ต่างจากไม่มี SOP
+2. **Operational history คือ currency ของ trust** — COO ต้องมี track record ถึงจะ operate ได้จริง
+3. **Mission metric วัดที่ Owner Load ไม่ใช่ Lines of Code** — 55% readiness แต่ Owner load ลดแค่ ~30%
+4. **Mirror Check ที่ honest มีค่า > status report ที่สวย** — Owner เลือกความจริงเสมอ
