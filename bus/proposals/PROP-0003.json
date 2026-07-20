@@ -1,0 +1,21 @@
+{
+  "id": "PROP-0003",
+  "department": "qa",
+  "title": "Auto-QA Pipeline — ทุก PR ต้องมี test coverage gate",
+  "problem": "QA review manual → พลาดบ่อย, coverage ต่ำ",
+  "impact": "ลด regression bug 80%, เพิ่ม test coverage",
+  "effort": "M",
+  "category": "improvement",
+  "status": "approved",
+  "created_at": "2026-07-20T10:09:28.027988+00:00",
+  "updated_at": "2026-07-20T10:09:38.786024+00:00",
+  "review_history": [
+    {
+      "reviewed_at": "2026-07-20T10:09:38.786024+00:00",
+      "old_status": "submitted",
+      "new_status": "approved",
+      "notes": "QA gate = high priority — deploy ทันทีหลัง implement"
+    }
+  ],
+  "notes": "QA gate = high priority — deploy ทันทีหลัง implement"
+}

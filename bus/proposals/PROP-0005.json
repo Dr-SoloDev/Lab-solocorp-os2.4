@@ -1,0 +1,14 @@
+{
+  "id": "PROP-0005",
+  "department": "support",
+  "title": "Auto-Chatbot สำหรับ Tier-1 Support",
+  "problem": "Tier-1 tickets 70% เป็นคำถามซ้ำ",
+  "impact": "ลด support load 60%, response time < 1 นาที",
+  "effort": "S",
+  "category": "improvement",
+  "status": "submitted",
+  "created_at": "2026-07-20T10:09:28.527962+00:00",
+  "updated_at": "2026-07-20T10:09:28.527962+00:00",
+  "review_history": [],
+  "notes": ""
+}

@@ -1,0 +1,14 @@
+{
+  "id": "PROP-0002",
+  "department": "design",
+  "title": "Design System v2 — Dark Mode + Accessibility",
+  "problem": "ไม่มี dark mode, accessibility ยังไม่ถึง WCAG AA",
+  "impact": "เพิ่ม user retention 15%, ครอบคลุม accessibility",
+  "effort": "XL",
+  "category": "improvement",
+  "status": "submitted",
+  "created_at": "2026-07-20T10:09:27.660337+00:00",
+  "updated_at": "2026-07-20T10:09:27.660337+00:00",
+  "review_history": [],
+  "notes": ""
+}

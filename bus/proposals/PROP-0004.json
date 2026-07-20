@@ -1,0 +1,14 @@
+{
+  "id": "PROP-0004",
+  "department": "product",
+  "title": "User Onboarding Flow Redesign",
+  "problem": "Onboarding conversion 32% → ต้องเพิ่มเป็น 60%",
+  "impact": "เพิ่ม activation rate 2x",
+  "effort": "L",
+  "category": "improvement",
+  "status": "submitted",
+  "created_at": "2026-07-20T10:09:28.308096+00:00",
+  "updated_at": "2026-07-20T10:09:28.308096+00:00",
+  "review_history": [],
+  "notes": ""
+}

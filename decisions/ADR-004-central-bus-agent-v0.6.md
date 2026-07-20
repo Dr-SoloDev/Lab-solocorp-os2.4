@@ -1,7 +1,9 @@
 # ADR-004: Central Bus Agent — v0.6 Implementation Spec
 
-> **Status:** Draft | **Date:** 2026-06-28 | **Author:** พี่ทรงศักดิ์ (Head of Architect)
+> **Status:** Accepted — Implemented | **Date:** 2026-06-28 | **Last Updated:** 2026-07-20
+> **Author:** พี่ทรงศักดิ์ (Head of Architect)
 > **Depends on:** ADR-003 (Central Bus Schema)
+> **Implemented by:** Central Bus v0.6.2 — Router, State Store, Exception Handler, Queue, Audit Logger
 
 ---
 
@@ -211,4 +213,38 @@ interface BusMessage {
 | Queue ใหญ่เกิน | Low | Med | max queue size + dead-letter |
 | State diverge | Med | High | เสมอเขียนผ่าน State Store เท่านั้น |
 | Routing rule ผิด | Med | Med | dry-run mode ก่อน production |
+
+---
+
+## 11. Implementation Notes (2026-07-20)
+
+> ADR-004 finalized โดย @architect-songsak จากการตรวจสอบ implementation จริง
+
+### Component Implementation Status
+
+| Component | Status | File | Lines |
+|-----------|:------:|:-----|:-----:|
+| Router Engine | ✅ Implemented | `central_bus/router.py` | 675 |
+| State Store | ✅ Implemented | `central_bus/state.py` | 445 |
+| Exception Handler | ✅ Implemented | `central_bus/exceptions.py` | 75 |
+| Message Queue | ✅ Implemented | `central_bus/queue.py` | 439 |
+| Audit Logger | ✅ Implemented | `central_bus/audit.py` | 162 |
+| FastAPI Daemon | ✅ Implemented | `central_bus/main.py` | 430 |
+| Mirror Config | ✅ Deployed | `bus/system/mirror_config.json` | — |
+| Routing Rules | ✅ Deployed | `bus/system/routing_rules.json` | — |
+
+### Missing Items (non-blocking — deferred)
+
+| Item | Status | Notes |
+|:-----|:------:|:------|
+| `bus/system/monitor/` | ❌ | Watchdog health dir — non-critical |
+| `bus/system/schedule/registry.json` | ❌ | Cron registry — not yet integrated |
+| UI Dashboard | ⏳ v0.7 | Non-goal per design |
+
+### Dependencies Check
+
+| ADR | Status | Alignment |
+|:---:|:------:|:----------|
+| ADR-002 (Two-Tier) | ✅ Accepted | สอดคล้อง — Data layer auto-routing, Control ผ่าน Head |
+| ADR-003 (Bus Schema) | ✅ Accepted | สอดคล้อง — `BusMessage` dataclass ครอบคลุมทุก field |
 

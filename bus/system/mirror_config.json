@@ -16,6 +16,12 @@
       "auto_escalate_to_owner": true,
       "scope": "ทุก decision โดยไม่มีข้อยกเว้น"
     },
+    "coo": {
+      "mirror_active": true,
+      "level": "L3",
+      "auto_escalate_to_ceo": true,
+      "scope": "daily ops, team control, front-line — L4+ escalate to CEO"
+    },
     "orchestrator": {
       "mirror_active": true,
       "level": "L4",
