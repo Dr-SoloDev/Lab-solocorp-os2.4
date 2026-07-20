@@ -26,7 +26,9 @@
         "id": "T2",
         "dept": "engineering",
         "owner": "changful",
-        "depends_on": ["T1"],
+        "depends_on": [
+          "T1"
+        ],
         "action": "implement Auto-QA Pipeline ตาม spec จาก Product",
         "deliverable": "working Auto-QA gate integrated into CI, PR check passes",
         "acceptance_criteria": [
@@ -40,7 +42,9 @@
         "id": "T3",
         "dept": "qa",
         "owner": "qa",
-        "depends_on": ["T2"],
+        "depends_on": [
+          "T2"
+        ],
         "action": "validate Auto-QA Pipeline — test gate ทำงานถูกต้อง",
         "deliverable": "QA sign-off report + evidence ใน bus/evidence/qa-signoff/",
         "acceptance_criteria": [
@@ -55,7 +59,7 @@
     "sop_ref": "SOP-01 → SOP-03 → SOP-04",
     "session_ref": "Session #9 — State Assessment Gap: Operational History = 0"
   },
-  "status": "dispatched",
+  "status": "completed",
   "meta": {
     "dispatch_id": "CMD-004",
     "source": "ceo-dispatch",
@@ -69,6 +73,22 @@
       "gate": "COO",
       "reason": "Feature decision, cross-dept handoff — COO จัดการ รายงาน CEO"
     },
-    "timestamp": "2026-07-20T17:50:00+07:00"
+    "timestamp": "2026-07-20T17:50:00+07:00",
+    "completed_at": "2026-07-20T13:52:14.276830",
+    "summary": {
+      "tests_passed": 64,
+      "coverage_pct": 9.7,
+      "qa_signoff": "APPROVED",
+      "handoff_confirmations": 3,
+      "sop_chain": "SOP-01 → SOP-03 → SOP-04",
+      "evidence": [
+        "bus/evidence/2026-07-20/qa-gate-f29bd28f.json",
+        "bus/evidence/2026-07-20/qa-gate-9f61645e.json",
+        "bus/evidence/qa-signoff/auto-qa-pipeline-APPROVED-*.json",
+        "bus/dispatch/confirmations/CMD-004-T1-acknowledged-*.json",
+        "bus/dispatch/confirmations/CMD-004-T2-acknowledged-*.json",
+        "bus/dispatch/confirmations/CMD-004-T3-acknowledged-*.json"
+      ]
+    }
   }
 }

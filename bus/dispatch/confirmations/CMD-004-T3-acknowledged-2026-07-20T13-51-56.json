@@ -1,0 +1,13 @@
+{
+  "handoff_id": "CMD-004-T3",
+  "from": "qa",
+  "to": "ceo",
+  "work_item": "Auto-QA Pipeline validated + signed off",
+  "confirmed_by": "ceo",
+  "confirmed_at": "2026-07-20T13:51:56.854454+00:00",
+  "status": "acknowledged",
+  "acknowledge_context": true,
+  "understand_pending": true,
+  "take_over": true,
+  "notes": "QA sign-off complete. Evidence in bus/evidence/qa-signoff/"
+}

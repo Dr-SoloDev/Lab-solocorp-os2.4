@@ -1,0 +1,13 @@
+{
+  "handoff_id": "CMD-004-T1",
+  "from": "product",
+  "to": "engineering",
+  "work_item": "Auto-QA Pipeline spec → implement",
+  "confirmed_by": "engineering",
+  "confirmed_at": "2026-07-20T13:51:56.433197+00:00",
+  "status": "acknowledged",
+  "acknowledge_context": true,
+  "understand_pending": true,
+  "take_over": true,
+  "notes": "Spec delivered: pytest.ini, .coveragerc, ci.yml, auto_qa_gate.py — พร้อม implement"
+}

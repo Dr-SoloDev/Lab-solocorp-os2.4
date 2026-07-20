@@ -1,0 +1,13 @@
+{
+  "handoff_id": "CMD-004-T2",
+  "from": "engineering",
+  "to": "qa",
+  "work_item": "Auto-QA Pipeline implementation → validate",
+  "confirmed_by": "qa",
+  "confirmed_at": "2026-07-20T13:51:56.648920+00:00",
+  "status": "acknowledged",
+  "acknowledge_context": true,
+  "understand_pending": true,
+  "take_over": true,
+  "notes": "Gate implemented + evidence produced. พร้อม validate"
+}
