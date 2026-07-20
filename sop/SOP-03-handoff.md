@@ -45,24 +45,24 @@
 
 ### 5a. Confirmation Record (Handoff Confirmation Mechanism)
 - **หลังจาก Receiver ยืนยันแล้ว** ให้สร้าง Confirmation Record ทันที
-- ใช้ `workers/handoff-confirm.py` สำหรับสร้าง confirmation:
+- ใช้ `workers/handoff_confirm.py` สำหรับสร้าง confirmation:
 
   ```bash
   # Receiver ยืนยันรับงาน
-  python3 workers/handoff-confirm.py \
+  python3 workers/handoff_confirm.py \
     --handoff HANDOFF-NNN \
     --to department-id \
     --status acknowledged
 
   # Receiver ขอ clarification (ยังไม่รับช่วง)
-  python3 workers/handoff-confirm.py \
+  python3 workers/handoff_confirm.py \
     --handoff HANDOFF-NNN \
     --to department-id \
     --status need_clarify \
     --notes "รายละเอียดที่ต้องการเพิ่มเติม"
 
   # Receiver ปฏิเสธ (ส่งกลับ sender)
-  python3 workers/handoff-confirm.py \
+  python3 workers/handoff_confirm.py \
     --handoff HANDOFF-NNN \
     --to department-id \
     --status rejected \
@@ -102,7 +102,7 @@ Sender                    Receiver              System
   │                         │                     │
   │─── Handoff Payload ────>│                     │
   │                         │                     │
-  │                         │─── handoff-confirm ─>│
+  │                         │─── handoff_confirm ─>│
   │                         │    --status          │
   │                         │    acknowledged      │
   │                         │                     │──> bus/dispatch/confirmations/
@@ -127,3 +127,11 @@ Sender                    Receiver              System
 - ❌ ไม่อนุญาตให้ department เริ่มทำงานถ้า handoff ยังไม่มี confirmation record
 - ✅ ทุก handoff ต้องระบุ priority
 - ✅ ทุก handoff ต้องมี confirmation record (acknowledged) ก่อนเริ่ม execution
+
+## Integration Scripts
+
+| Asset | Path | Purpose |
+|:------|:-----|:--------|
+| Confirmation Script | `workers/handoff_confirm.py` | CLI สำหรับสร้าง confirmation record |
+| Confirmations Storage | `bus/dispatch/confirmations/` | Directory สำหรับเก็บ confirmation records |
+| Test Suite | `tests/test_handoff_confirm.py` | 24 test cases สำหรับ handoff confirmation |
