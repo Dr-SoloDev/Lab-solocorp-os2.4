@@ -1,39 +1,40 @@
-# 📋 SoloCorp OS — Behavior-Centric Rules
+# 📋 SoloCorp OS — Behavior Rules
 
-> **30-วินาทีรู้เรื่อง: "อะไรอยู่ตรงไหน"**
+> **30 วินาทีรู้เรื่อง • พฤติกรรมละ 1 ไฟล์**
 
 ```
-INDEX.md              ← คุณอยู่ตรงนี้
-01-identity.md        ← ฉันคือใคร? Hierarchy, Chain of Command
-02-environment.md     ← เปิด service ไหน? venv, ports, commands
-03-pillars.md         ← 3 Pillars: Heads lead, Ownership, Two-tier
-04-routing.md         ← request นี้ไป department ไหน? (แหล่งเดียว)
-05-pipeline.md        ← /pipeline, /handoff, /status, /audit
-06-safety.md          ← ห้ามอะไร, secrets, destructive ops
-07-memory.md          ← deja-vu, brain, session protocol
-08-communication.md   ← ภาษาไทย, Head-to-Head, escalation
+INDEX.md          ← คุณอยู่ตรงนี้ — behavior map
+01-receive.md     ← เมื่อรับ request: assess → filter → route → handoff
+02-work.md        ← เมื่อทำงานกับทีม: Head-to-Head, delegate, Bus
+03-session.md     ← เมื่อเริ่ม session: brain, memory, context
+04-safety.md      ← เมื่อต้องระวัง: secrets, destructive, prohibited
+05-env.md         ← เมื่อลงมือ: services, commands, tests, paths
 ```
 
-## Quick Reference
+| ต้องการทำอะไร | เปิดไฟล์นี้ |
+|:-------------|:-----------|
+| Owner ส่ง request มา → รับ-กรอง-ส่งต่อ | → `01-receive.md` |
+| ทำงานกับ Department Heads / ทีม | → `02-work.md` |
+| เริ่ม session ใหม่ / จำ context เก่า | → `03-session.md` |
+| Deploy / destructive ops / ระวัง secret | → `04-safety.md` |
+| เปิด busd / รัน test / หา path | → `05-env.md` |
 
-| ต้องการรู้เรื่องนี้ | เปิดไฟล์นี้ |
-|:------------------|:-----------|
-| องค์กรมีกี่แผนก? โครงสร้างเป็นยังไง? | → `01-identity.md` |
-| จะรัน busd / test / loop ยังไง? | → `02-environment.md` |
-| หลักการ 3 ข้อที่ห้ามละเมิด? | → `03-pillars.md` |
-| request นี้ส่งไปแผนกไหน? | → `04-routing.md` |
-| /pipeline /handoff /status ใช้ยังไง? | → `05-pipeline.md` |
-| อะไรห้ามทำ? secrets เก็บยังไง? | → `06-safety.md` |
-| ความจำข้าม session ทำงานยังไง? | → `07-memory.md` |
-| ภาษาไทย? escalation protocol? | → `08-communication.md` |
+## Sources of Truth
 
-## Source of Truth
+| ที่ | อะไร |
+|:---|:-----|
+| `opencode.json` | Infrastructure config (permissions, MCP, references, commands) |
+| `profiles/` | Department identity (SOUL.md) |
+| `rules/` | **Behavior rules (คุณอยู่ตรงนี้)** |
+| `sop/` | Standard Operating Procedures |
+| `central_bus/` | System code + API |
 
-- `opencode.json` — Infrastructure config (permissions, MCP, references, commands)
-- `profiles/` — Department identity (SOUL.md)
-- `rules/` — **Behavior rules (คุณอยู่ตรงนี้)**
-- `sop/` — Standard Operating Procedures (มาตรฐานการทำงาน)
+## Why Behavior-Centric?
 
-## ประวัติ
+ก่อน: 6 topic ไฟล์ scattered สำหรับ 1 behavior "รับ request"
+- Identity → Routing → Pillars → Pipeline → Communication → Safety
+- **6 เปิด = หาย**
 
-- 2026-07-20: กฏิกาจัดใหม่จาก CLAUDE.md + AGENTS.md → 8 ไฟล์ตามพฤติกรรม (Behavior-Centric)
+หลัง: 1 behavior ไฟล์ = ทุกอย่างที่ต้องทำ
+- `01-receive.md` → assess + filter + route + handoff + pillars
+- **1 เปิด = จบ**

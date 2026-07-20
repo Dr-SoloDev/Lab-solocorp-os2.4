@@ -66,4 +66,4 @@ Dr.solodev (Human / Owner) — Vision + Final Say
 - smart contract, solana, DeFi → `@web3-aywa`
 - content, caption, image, video → `@content-creator-sek`
 
-Always-read: `CLAUDE.md`, `profiles/INDEX.md`, `PROJECT.md`
+Always-read: `CLAUDE.md`, `profiles/INDEX.md`

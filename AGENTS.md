@@ -6,7 +6,7 @@
 
 SoloCorp OS rules อยู่ที่ `rules/` — เปิด `rules/INDEX.md` สำหรับ 30-sec scan
 
-Platform-specific notes:
+Platform-specific notes (Grok only):
 
 - Grok subagents: `.grok/agents/` → spawn ด้วย `subagent_type`
 - Slash skills: `/pipeline`, `/handoff`, `/status`, `/audit`, `/deploy`, `/brain`, `/route`

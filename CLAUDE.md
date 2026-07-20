@@ -2,18 +2,15 @@
 
 ---
 
-## Quick Entry
+## Quick Entry — Behavior Map
 
 ```
-rules/INDEX.md        ← 30-sec scan: อะไรอยู่ตรงไหน
-rules/01-identity.md  ← ฉันคือใคร? Hierarchy
-rules/02-environment.md ← Services, ports, commands
-rules/03-pillars.md   ← 3 Pillars (non-negotiable)
-rules/04-routing.md   ← Department routing (แหล่งเดียว)
-rules/05-pipeline.md  ← /pipeline /handoff /status
-rules/06-safety.md    ← ห้ามอะไร, secrets
-rules/07-memory.md    ← deja-vu, brain
-rules/08-communication.md ← ภาษาไทย, escalation, culture
+rules/INDEX.md      ← 30-sec: behavior map
+01-receive.md       ← รับ request → assess → filter → route
+02-work.md          ← ทำงานกับทีม → Head-to-Head, delegate
+03-session.md       ← เริ่ม session → brain, memory
+04-safety.md        ← ปลอดภัย → secrets, destructive
+05-env.md           ← สั่งงาน → services, commands, tests
 ```
 
 ---
