@@ -146,7 +146,21 @@
 3. **Deploy good enough ดีกว่า perfect** — "ระบบที่ good enough และ deploy แล้ว ดีกว่าระบบ perfect ที่ยังไม่เกิด"
 4. **Mirror Check 3 คำถาม powerful กว่าที่คิด** — decision filter นี้คือหัวใจของ autonomous system
 
+### 🔧 KEY LEARN: Auto-Pilot ≠ Automation — Auto-Pilot = Decision Support
+- Bootstrap = ไม่ต้องคิด context → focus ที่ work
+- Triage = ไม่ต้องเปิด routing table → เสนอ auto
+- Mirror Hook = ไม่ต้อง consciously นึก 3 คำถาม → system remind
+- Orchestrator = ไม่ต้อง kickoff pipeline → system ทำ
+- Summary = ไม่ต้อง save brain manual → system สรุป
+- **5 components = CEO สามารถ focus ที่ L4-L5 decisions ไม่ใช่ routine**
+
+### 🔧 KEY LEARN: Owner Feedback = Friction Signal
+- Owner บอก "กฏิกาที่ดีไม่ใช่อันที่ยาว แต่คืออันที่เรายังหาเจอ" → 1 behavior = 1 ไฟล์
+- ถ้า Owner รู้สึก friction → มีปัญหาจริง → อย่าเถียง → แก้
+- กฏิกาที่ต้องเปิด 6 ไฟล์เพื่อ 1 behavior = failure ไม่ใช่ user error
+
 ### 📌 Next
 - [🟢] Phase 1-7 Complete ✅
 - [🟢] Rules restructured to 5 behavior files ✅
-- (none — all phases done)
+- [🟢] Phase 8: Auto-Pilot (5 components) ✅
+- (none — all phases done. ระบบพร้อม operate)
