@@ -1,0 +1,32 @@
+{
+  "department": "product",
+  "decision": "Client feedback: ปรับระบบบิล 2/3 ให้กำหนดต่อลูกค้าเฉพาะรายที่หน้า sellers แทนให้แคชเชียร์จำ — sync ทุกสาขา",
+  "level": "L3",
+  "priority": "P1",
+  "passed": true,
+  "score": 66,
+  "threshold": 60,
+  "rag": "🔴",
+  "question_results": [
+    {
+      "question_id": 1,
+      "question": "Dr.solodev ในมุม conservative จะ approve ไหม",
+      "result": "pass",
+      "reason": "LLM unavailable — moderate L3"
+    },
+    {
+      "question_id": 2,
+      "question": "Worst case นี้ Owner รับได้ไหม",
+      "result": "pass",
+      "reason": "LLM unavailable — moderate L3"
+    },
+    {
+      "question_id": 3,
+      "question": "Owner จะดีใจหรือเสียใจกับ decision นี้",
+      "result": "fail",
+      "reason": "LLM unavailable — moderate L3"
+    }
+  ],
+  "reason": "",
+  "timestamp": "2026-07-23T19:01:32.331077+00:00"
+}
