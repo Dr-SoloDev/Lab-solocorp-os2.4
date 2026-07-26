@@ -1,0 +1,45 @@
+{
+  "command": {
+    "id": "ORD-001",
+    "type": "CEO_ORDER",
+    "timestamp": "2026-07-26T12:03:00+07:00",
+    "priority": "P1",
+    "from": "CEO เทอโบ",
+    "to": "@orchestrator-wut (Orchestrator — พี่วุฒิ)",
+    "title": "[ORDER] Activate Loop Runner — 4 Loops Never Executed",
+    "context": "Loop Runner system พร้อมใช้งานเต็มที่ (4 loops defined: daily_brief, brain_auto_commit, pipeline_executor, subscription_audit) แต่ state.db ว่างเปล่า — ไม่มีการรันใดๆ เลยตั้งแต่สร้างระบบ",
+    "tasks": [
+      {
+        "id": "ORD-001-A",
+        "priority": "P1",
+        "description": "Trigger first run ของทั้ง 4 loops — manual fire หรือรอ cron cycle ถัดไป",
+        "acceptance": "state.db มี record การรันของทั้ง 4 loops อย่างน้อย 1 ครั้ง"
+      },
+      {
+        "id": "ORD-001-B",
+        "priority": "P2",
+        "description": "Verify cron: */30 * * * * python3 -m loop_runner.main — ทำงานปกติ",
+        "acceptance": "ทุก loop รันตาม interval ถูกต้อง"
+      },
+      {
+        "id": "ORD-001-C",
+        "priority": "P2",
+        "description": "ตั้ง dashboard แสดง loop status (last_run, failures, result summary)",
+        "acceptance": "CEO และ COO สามารถเห็นสถานะ loop runner ได้ glance"
+      }
+    ],
+    "note": "Loop Runner คือหัวใจของ Auto-Pilot Phase 8 — ถ้าไม่รัน แสดงว่าระบบยังไม่ autonomous จริง",
+    "report_back": "ยืนยันเมื่อ loops รันสำเร็จ — และรายงานผลครั้งแรกให้ CEO ทราบ"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "ORD-001",
+    "type": "CEO_ORDER",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "reason": "Owner อนุมัติ auto-pilot — Loop Runner รอการ activate"
+    },
+    "timestamp": "2026-07-26T12:03:00+07:00"
+  }
+}

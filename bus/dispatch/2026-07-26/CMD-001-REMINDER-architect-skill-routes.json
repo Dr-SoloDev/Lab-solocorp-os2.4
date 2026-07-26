@@ -1,0 +1,63 @@
+{
+  "command": {
+    "id": "CMD-001-REMINDER",
+    "type": "CEO_ESCALATION",
+    "timestamp": "2026-07-26T12:00:00+07:00",
+    "priority": "P0",
+    "from": "CEO เทอโบ",
+    "to": "@architect-songsak (พี่ทรงศักดิ์)",
+    "title": "[URGENT] CMD-001 — Skill Routes P0 Overdue 3 Days",
+    "context": "CMD-001 (dispatched 2026-07-20) ครบกำหนด 2026-07-23 — ขณะนี้เกิน 3 วันแล้ว Tasks A-E ทุกข้อยัง pending อยู่",
+    "reminder": true,
+    "original_deadline": "2026-07-23",
+    "new_deadline": "2026-07-28 (urgent extension)",
+    "tasks": [
+      {
+        "id": "CMD-001-A",
+        "priority": "P0",
+        "status": "overdue",
+        "description": "Integrate skill_routes_config.json กับ Central Bus (busd) — สร้าง /v1/skills/* endpoints จริง",
+        "acceptance": "POST /v1/skills/cross-dept/pipeline-bridge และ POST /v1/skills/cross-dept/mirror-check เรียกได้จริง"
+      },
+      {
+        "id": "CMD-001-B",
+        "priority": "P1",
+        "status": "overdue",
+        "description": "Mock test POST /v1/skills/cross-dept/pipeline-bridge",
+        "acceptance": "200 response + queue topic: skill.invoke"
+      },
+      {
+        "id": "CMD-001-C",
+        "priority": "P1",
+        "status": "overdue",
+        "description": "Mock test POST /v1/skills/cross-dept/mirror-check",
+        "acceptance": "200 response + governance event logged"
+      },
+      {
+        "id": "CMD-001-D",
+        "priority": "P2",
+        "description": "Deploy skill routes ไป production bus",
+        "acceptance": "Routes พร้อมใช้งานจริง"
+      },
+      {
+        "id": "CMD-001-E",
+        "priority": "P2",
+        "description": "แจ้งทุก Department Head ว่ามี /pipeline-bridge และ /mirror-check ให้ใช้",
+        "acceptance": "Announcement ส่งครบทุกแผนก"
+      }
+    ],
+    "consequence": "If not completed by 2026-07-28, CEO จะ escalate ไป Architect team lead review",
+    "report_back": "รายงานความคืบหน้าภายใน 24 ชม. — แจ้ง CEO ทันทีเมื่องาน A เสร็จ"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-001-REMINDER",
+    "type": "CEO_ESCALATION",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "reason": "Owner อนุมัติให้ดำเนินการ — P0 overdue ต้องเร่ง"
+    },
+    "timestamp": "2026-07-26T12:00:00+07:00"
+  }
+}

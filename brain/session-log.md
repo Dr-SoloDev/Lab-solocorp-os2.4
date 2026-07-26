@@ -593,3 +593,27 @@ Session ที่เปลี่ยน **55% → 65% Autonomy Readiness** ด้
 
 ### 👑 Owner
 Dr.solodev — ทำงานกับ CEO เทอโบ
+
+## CEO Dispatch — 2026-07-26T12:00 (Session: Overdue Task Cleanup)
+
+**Owner อนุมัติให้ดำเนินการตามงานค้าง**
+
+### Dispatches Created
+
+| ID | To | Priority | Due |
+|:---|:---|:---------|:----|
+| CMD-001-REMINDER | @architect-songsak — Skill Routes Integrate | P0 | 2026-07-28 |
+| CMD-002-REMINDER | @changful — A/B Test Deploy + 7 Agents | P0/P1 | 2026-07-28 / 08-01 |
+| CMD-003-REMINDER | @design-kreet — Persona 5-Layer Template | P1 | 2026-07-29 |
+| ORD-001 | @orchestrator-wut — Activate Loop Runner | P1 | immediate |
+
+### File Locations
+- `bus/dispatch/2026-07-26/CMD-001-REMINDER-architect-skill-routes.json`
+- `bus/dispatch/2026-07-26/CMD-002-REMINDER-changful-abtest-agents.json`
+- `bus/dispatch/2026-07-26/CMD-003-REMINDER-design-persona-wp1.json`
+- `bus/dispatch/2026-07-26/ORD-001-loop-runner-activate.json`
+
+### Notes
+- CMD-004 (Auto-QA Pipeline) = COMPLETED ✅ — ไม่ต้องตาม
+- 4 overdue items = 4 dispatches sent
+- Loop Runner state.db ยังว่าง — ต้องให้ Orchestrator activate

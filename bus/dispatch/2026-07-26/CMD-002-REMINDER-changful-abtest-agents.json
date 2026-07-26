@@ -1,0 +1,45 @@
+{
+  "command": {
+    "id": "CMD-002-REMINDER",
+    "type": "CEO_ESCALATION",
+    "timestamp": "2026-07-26T12:01:00+07:00",
+    "priority": "P0",
+    "from": "CEO เทอโบ",
+    "to": "@changful (Engineering — ช่างฟูล)",
+    "title": "[URGENT] CMD-002 — A/B Test Deploy (P0) + 7 Agents (P1) Overdue",
+    "context": "CMD-002 (dispatched 2026-07-20) — Task A ครบกำหนด 2026-07-21 (5 วัน overdue), Task B ครบกำหนด 2026-07-25 (1 วัน overdue)",
+    "reminder": true,
+    "original_deadline": "CMD-002-A: 2026-07-21, CMD-002-B: 2026-07-25",
+    "new_deadline": "CMD-002-A: 2026-07-28, CMD-002-B: 2026-08-01",
+    "tasks": [
+      {
+        "id": "CMD-002-A",
+        "priority": "P0",
+        "status": "overdue",
+        "description": "Deploy A/B Test 50/50 — เปิด route_v1 vs route_v2 live split",
+        "acceptance": "50% traffic ไป route_v1, 50% ไป route_v2, GET /v1/ab-test/report เรียกดูผลได้"
+      },
+      {
+        "id": "CMD-002-B",
+        "priority": "P1",
+        "status": "overdue",
+        "description": "ยกระดับ business logic 7 agents: Content Creator, Cyber Security, Legal, NetEng, Psychology, Web3, R&D Lab",
+        "acceptance": "แต่ละ agent มี minimum: domain logic, input validation, output format, error handling"
+      }
+    ],
+    "note": "ถ้า A/B Test deploy เสร็จให้รีบรายงาน CEO ก่อนเริ่ม Task B",
+    "blockers_to_escalate": "ถ้ามี blocker ให้แจ้ง CEO ทันที — อย่าปล่อยค้าง",
+    "report_back": "รายงาน status ปัจจุบันภายใน 24 ชม. — มีอะไรปิดกั้นอยู่?"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-002-REMINDER",
+    "type": "CEO_ESCALATION",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "reason": "Owner อนุมัติให้ดำเนินการ — P0 overdue 5 วัน"
+    },
+    "timestamp": "2026-07-26T12:01:00+07:00"
+  }
+}

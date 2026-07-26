@@ -1,0 +1,43 @@
+{
+  "command": {
+    "id": "CMD-003-REMINDER",
+    "type": "CEO_ESCALATION",
+    "timestamp": "2026-07-26T12:02:00+07:00",
+    "priority": "P1",
+    "from": "CEO เทอโบ",
+    "to": "@design-kreet (Design — ครีเอท)",
+    "title": "[URGENT] CMD-003 — Persona Engineering WP1 5-Layer Template Overdue",
+    "context": "CMD-003 (dispatched 2026-07-20) — Task A ครบกำหนด 2026-07-25 (1 วัน overdue)",
+    "reminder": true,
+    "original_deadline": "CMD-003-A: 2026-07-25",
+    "new_deadline": "CMD-003-A: 2026-07-29, CMD-003-B: 2026-08-03",
+    "tasks": [
+      {
+        "id": "CMD-003-A",
+        "priority": "P1",
+        "status": "overdue",
+        "description": "ออกแบบ 5-Layer Persona Template สำหรับ SOUL.md — Layer 0-5: Core Personality, Identity, Communication, Decision, Interpersonal, Boundaries",
+        "acceptance": "Template พร้อมใช้ — มีตัวอย่าง 1 profile (แนะนำ CEO profile เป็นตัวอย่าง)"
+      },
+      {
+        "id": "CMD-003-B",
+        "priority": "P1",
+        "description": "Migrate SOUL.md 18 profiles (ยกเว้น CEO) ไปใช้ template ใหม่",
+        "acceptance": "ทุก profile มีครบ 5 Layers, มีตัวอย่าง ≥3, มี catchphrases ≥2"
+      }
+    ],
+    "artifacts_reference": "bus/plans/persona-engineering-upgrade-v1.md — แผนงานมีอยู่แล้ว ถึงเวลาลงมือ",
+    "report_back": "ส่ง template draft ให้ CEO review ภายใน 3 วัน — แล้วค่อย migrate 18 profiles"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-003-REMINDER",
+    "type": "CEO_ESCALATION",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "reason": "Owner อนุมัติให้ดำเนินการ — P1 overdue"
+    },
+    "timestamp": "2026-07-26T12:02:00+07:00"
+  }
+}
