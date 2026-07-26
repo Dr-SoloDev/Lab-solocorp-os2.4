@@ -1,0 +1,49 @@
+{
+  "dispatch_id": "COO-001",
+  "date": "2026-07-27",
+  "to": "coo-kit",
+  "from": "ceo-turbo",
+  "type": "operational_briefing",
+  "priority": "critical",
+  "summary": "COO Activation Briefing — กิจ (Kit) รับช่วงต่อ L1-L3 operations",
+  "context": {
+    "coo_activated": true,
+    "coo_head": "กิจ (Kit)",
+    "profiles_path": "profiles/02-coo/SOUL.md",
+    "available_tools": [
+      "workers/agents/coo_dispatch_agent.py — Triage + assign + escalate",
+      "workers/dept_proposal.py — Proposal system for department heads",
+      "workers/sop_compliance_check.py — SOP coverage audit"
+    ],
+    "routing": {
+      "fallback": "ALL unmatched requests → COO (bus/system/routing_rules.json)",
+      "coo_keywords": ["daily ops", "operation", "ปฏิบัติการ", "routine", "daily", "จุกจิก", "general", "ทั่วไป", "admin", "จัดการ"]
+    },
+    "skill_available": "@solocorp/coo/daily-ops — invoke via POST /v1/skills/coo/daily-ops"
+  },
+  "delegated_responsibilities": [
+    "Triage L1-L3 requests — Owner/CEO ไม่ต้องเห็น",
+    "Monitor department head status — daily ops report",
+    "SOP compliance — ตรวจทุก workflow มี SOP ครบ",
+    "Proposal tracking — Dept heads ต้อง propose ≥1/สัปดาห์",
+    "Escalate L4+ → CEO, L5 → Owner"
+  ],
+  "active_sprint": {
+    "name": "Sprint 2: Master Synthesis — Integration",
+    "plan": "bus/plans/sprint-master-synthesis-v2.md",
+    "tasks_in_queue": [
+      {"id": "RD-02", "dept": "R&D Lab", "action": "Deep Ideation"},
+      {"id": "AR-04", "dept": "Architect", "action": "Publish curated skills"},
+      {"id": "CS-02", "dept": "Cyber Security", "action": "Red Team Campaign #1"},
+      {"id": "EN-03", "dept": "Engineering", "action": "Dev Environment Standard"},
+      {"id": "DS-01", "dept": "Design", "action": "SOUL.md v2 pilot"},
+      {"id": "QA-01", "dept": "QA", "action": "SkillHub smoke test"}
+    ]
+  },
+  "note": "LLM timeout issue in agent worker — tasks queued but deep execution needs direct session. COO to coordinate async delivery.",
+  "tools_handoff": {
+    "dispatch_agent": "python3 workers/agents/coo_dispatch_agent.py --scan",
+    "proposal_system": "python3 workers/dept_proposal.py --list",
+    "sop_check": "python3 workers/sop_compliance_check.py"
+  }
+}

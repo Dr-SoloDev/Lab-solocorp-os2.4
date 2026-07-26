@@ -664,13 +664,56 @@ Owner (Dr.solodev) — L5
 - ~~Review + commit COO~~ → ✅ DONE
 - ~~Clean git dirty state~~ → ✅ DONE (except COO agent review by Kit himself)
 
+### ✅ Resolved
+- ~~COO review + commit~~ → ✅ DONE
+- ~~Sprint 2 planning~~ → ✅ Sprint 2 launched
+
 ### ⏳ Remaining Open Items
-- [ ] COO กิจ (Kit) — รับช่วงต่อ: review dispatch agent, propose SOP improvements
-- [ ] Sprint 2 planning — Master Synthesis หรือ pivot
-- [ ] Review deferred proposals (PROP-0001/02/04)
+- [ ] COO กิจ (Kit) — รัน dispatch agent ครั้งแรก, สร้าง daily ops report
+- [ ] รอ evidence Sprint 2 tasks (RD-02, AR-04, CS-02, EN-03, DS-01, QA-01)
+- [ ] Review deferred proposals (PROP-0001/02/04) — รอ COO review feasibility ก่อน
 - [ ] Fix bootstrap script to query Central Bus live
+- [ ] LLM integration — ถ้า possible (blocker สำหรับ agent worker deep execution)
 
 ---
+
+## Session #10c — 2026-07-27T01:00 (+07:00) — SPRINT 2 LAUNCH
+
+**เข้าระบบ:** ~00:45 UTC+7  
+**สิ้นสุด:** ~01:00 UTC+7  
+**Commit:** `7f5f498` (มี commit ใหม่ตาม)
+
+### 🎯 ภารกิจ
+1. Owner อนุมัติ "เริ่มเลย" → Sprint 2 design + execution
+2. Bootstrap assessment → ระบุ 3 priorities (COO → Clean Git → Sprint 2)
+3. COO Activated + committed + pushed
+4. Sprint 2 plan: `bus/plans/sprint-master-synthesis-v2.md`
+5. 2 new skills published: `@solocorp/coo/daily-ops` + `@solocorp/ceo/sprint-plan`
+6. 6 Sprint 2 tasks dispatched to Central Bus queue
+7. COO briefing dispatched: `bus/dispatch/2026-07-27/COO-001-briefing.json`
+
+### 🚀 Sprint 2 — Master Synthesis Integration
+
+| Track | Tasks | Status |
+|:------|:------|:-------|
+| 🔴 A: SkillHub First Publish | A1-A3: schema → register → verify | ✅ Skill routes registered (5 total) |
+| 🟡 B: COO Takeover | B1-B4: ops report → route → SOP → proposals | 📋 COO briefed |
+| 🟢 C: Master Synthesis | C1-C6: R&D, Arch, Security, Eng, Design, QA | 📨 6 tasks queued |
+| 🔵 D: Proposals | PROP-0001/02/04 deferred | ⏸️ รอ COO |
+
+### 📊 Stats
+- Skills registered: 5 (3 existing + 2 new)
+- Dispatches today: 6 Sprint 2 + 1 COO briefing = 7
+- Departments active: 19 (COO added)
+- Central Bus uptime: ~75 min
+
+### 💡 Learnt
+1. **Skills registry is file-based** — `bus/system/skill_routes_config.json` → edit + immediate effect (no restart)
+2. **Route always falls back to CEO** — routing engine doesn't match target_agent IDs; Agent Worker picks up by target_agent field regardless
+3. **LLM timeout remains** — Sprint 2 tasks dispatched but deep execution needs direct CEO session or LLM fix
+
+---
+
 
 
 **เข้าระบบ:** ~23:30 UTC+7  

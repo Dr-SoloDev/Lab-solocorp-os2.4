@@ -32,6 +32,30 @@
       "min_mirror_level": "L3",
       "required_fields": ["command", "department"],
       "status": "registered"
+    },
+    {
+      "skill": "@solocorp/coo/daily-ops",
+      "method": "POST",
+      "path": "/v1/skills/coo/daily-ops",
+      "target_department": "coo",
+      "queue_topic": "skill.coo.invoke",
+      "mirror_check": false,
+      "min_mirror_level": "L2",
+      "required_fields": ["action"],
+      "description": "COO daily operations — generate ops report, route requests, check SOP compliance",
+      "status": "registered"
+    },
+    {
+      "skill": "@solocorp/ceo/sprint-plan",
+      "method": "POST",
+      "path": "/v1/skills/ceo/sprint-plan",
+      "target_department": "ceo",
+      "queue_topic": "skill.ceo.invoke",
+      "mirror_check": false,
+      "min_mirror_level": "L1",
+      "required_fields": ["department", "sprint"],
+      "description": "Request sprint plan template or report sprint progress",
+      "status": "registered"
     }
   ],
   "middleware": {

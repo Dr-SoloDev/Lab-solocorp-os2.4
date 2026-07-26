@@ -1,0 +1,16 @@
+{
+  "evidence_id": "5c251241-f8a7-4f92-996b-6ac6b4169d6f",
+  "task_id": "ca6165e1-7bc9-4392-80d8-5347d0e7150e",
+  "trace_id": "f91e7cd4-636c-4cbd-b9d6-997d95ec8f2e",
+  "agent_id": "cybersec-sai",
+  "source_agent": "ceo",
+  "evidence_type": "task_result",
+  "status": "failed",
+  "summary": "CyberSec Agent: \u0e44\u0e21\u0e48\u0e21\u0e35 description \u0e43\u0e19 payload",
+  "details": {
+    "error": "missing_description"
+  },
+  "routing_hops": [],
+  "retry_count": 0,
+  "created_at": "2026-07-26T18:51:20.376518+00:00"
+}

@@ -1,0 +1,16 @@
+{
+  "evidence_id": "0a4a9162-203d-4bab-9e9f-d2d794010d62",
+  "task_id": "49a05c90-de69-4556-a5e9-cc922fb360a2",
+  "trace_id": "2069318f-0cd2-4a1e-a241-0c149f6c1b14",
+  "agent_id": "rd-lab",
+  "source_agent": "ceo",
+  "evidence_type": "task_result",
+  "status": "failed",
+  "summary": "R&D Lab: \u0e44\u0e21\u0e48\u0e21\u0e35 description \u0e43\u0e19 payload",
+  "details": {
+    "error": "missing_description"
+  },
+  "routing_hops": [],
+  "retry_count": 0,
+  "created_at": "2026-07-26T18:51:20.370220+00:00"
+}
