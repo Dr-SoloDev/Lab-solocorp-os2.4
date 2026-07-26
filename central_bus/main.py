@@ -55,13 +55,24 @@ _STARTED_AT: float = time.time()
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# Lifespan
+# ═══════════════════════════════════════════════════════════════════════
+
+@asynccontextmanager
+async def _lifespan(app):
+    log.info("Central Bus v0.6.2 starting up (pid=%d)", os.getpid())
+    yield
+    log.info("Central Bus v0.6.2 shutting down")
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # FastAPI app
 # ═══════════════════════════════════════════════════════════════════════
 
 app = FastAPI(
     title="Central Bus v0.6",
     version="0.6.2",
-    lifespan=lambda app: _lifespan(app),
+    lifespan=_lifespan,
 )
 
 # ── CORS ─────────────────────────────────────────────────────────────
@@ -152,14 +163,6 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 # ═══════════════════════════════════════════════════════════════════════
 # Lifespan
-# ═══════════════════════════════════════════════════════════════════════
-
-async def _lifespan(app):
-    log.info("Central Bus v0.6.2 starting up (pid=%d)", os.getpid())
-    yield
-    log.info("Central Bus v0.6.2 shutting down")
-
-
 # ═══════════════════════════════════════════════════════════════════════
 # Dependency helpers
 # ═══════════════════════════════════════════════════════════════════════
