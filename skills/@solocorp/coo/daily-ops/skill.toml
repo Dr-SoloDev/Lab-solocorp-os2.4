@@ -1,0 +1,33 @@
+[skill]
+name = "@solocorp/coo/daily-ops"
+version = "0.1.0"
+description = "COO daily operations — ops report, request routing, SOP compliance check"
+category = "coo"
+
+[dept]
+owner = "coo"
+consumers = ["coo", "ceo", "all"]
+
+[bus]
+endpoint = "/v1/skills/coo/daily-ops"
+queue_topic = "skill.coo.invoke"
+lifecycle = "skill_invoke → coo_process → complete"
+
+[mirror]
+minimum_level = "L2"
+check_on_invoke = false
+description = "Daily ops — L2 ขึ้นไปใช้ได้ (COO หรือ Dept Head)"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/daily-ops"
+description = "Generate daily operations status report"
+platforms = ["opencode", "grok"]
+
+[[triggers]]
+keyword = "/coo-dispatch"
+description = "Triage and route L1-L3 requests"
+platforms = ["opencode"]

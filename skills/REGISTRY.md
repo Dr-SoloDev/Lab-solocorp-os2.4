@@ -2,7 +2,7 @@
 
 > Single source of truth for all skills. Every platform config must reference or be generated from this registry.
 
-**Version:** 1.1 | **Updated:** 2026-07-18
+**Version:** 1.2 | **Updated:** 2026-07-27
 
 ---
 
@@ -47,6 +47,8 @@ Think of them as "slash commands with memory."
 | `pipeline-full-cycle` | pipeline | _(alias of grok `pipeline`)_ | grok | Active |
 | **`pipeline-bridge`** 🆕 | **cross-dept** | **`@solocorp/cross-dept/pipeline-bridge/`** | **opencode + grok** | **🟢 Active** |
 | **`mirror-check`** 🆕 | **cross-dept** | **`@solocorp/cross-dept/mirror-check/`** | **opencode + grok + claude** | **🟢 Active** |
+| **`sprint-plan`** 🆕 | **ceo** | **`@solocorp/ceo/sprint-plan/`** | **opencode + grok + claude** | **🟢 Active** |
+| **`daily-ops`** 🆕 | **coo** | **`@solocorp/coo/daily-ops/`** | **opencode + grok** | **🟢 Active** |
 | `eng-deploy` | engineering | _(proposed)_ | all | Planned |
 | `cfo-budget-check` | cfo | _(proposed)_ | all | Planned |
 | `qa-smoke-test` | qa | _(proposed)_ | all | Planned |

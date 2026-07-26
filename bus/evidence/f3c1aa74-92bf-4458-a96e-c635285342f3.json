@@ -1,0 +1,19 @@
+{
+  "evidence_id": "f3c1aa74-92bf-4458-a96e-c635285342f3",
+  "task_id": "c9f768c1-1475-40ef-bfad-12d1a1468843",
+  "trace_id": "5f75f385-f3b1-4f35-8696-51112ea0093d",
+  "agent_id": "design-kreet",
+  "source_agent": "ceo",
+  "evidence_type": "task_result",
+  "status": "completed",
+  "summary": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: timeout (60s)",
+  "details": {
+    "action": "SOUL.md v2 apply to 5 depts pilot",
+    "agent": "design-kreet",
+    "llm_used": true,
+    "full_response": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: timeout (60s)"
+  },
+  "routing_hops": [],
+  "retry_count": 0,
+  "created_at": "2026-07-26T18:57:11.326502+00:00"
+}

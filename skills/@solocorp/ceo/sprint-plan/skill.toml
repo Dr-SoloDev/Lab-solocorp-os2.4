@@ -1,0 +1,33 @@
+[skill]
+name = "@solocorp/ceo/sprint-plan"
+version = "0.1.0"
+description = "Sprint planning & progress tracking — ขอ template sprint plan หรือรายงานความคืบหน้า sprint"
+category = "ceo"
+
+[dept]
+owner = "ceo"
+consumers = ["ceo", "coo", "architect", "product", "engineering", "design", "qa"]
+
+[bus]
+endpoint = "/v1/skills/ceo/sprint-plan"
+queue_topic = "skill.ceo.invoke"
+lifecycle = "skill_invoke → ceo_review → complete"
+
+[mirror]
+minimum_level = "L1"
+check_on_invoke = false
+description = "Sprint plan — L1 ทุก department ใช้ได้ ไม่ต้อง Mirror"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/sprint-plan"
+description = "Request sprint plan template or report progress"
+platforms = ["opencode", "grok", "claude"]
+
+[[triggers]]
+keyword = "/sprint-status"
+description = "Check sprint progress dashboard"
+platforms = ["opencode"]
