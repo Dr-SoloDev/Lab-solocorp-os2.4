@@ -1,0 +1,28 @@
+[skill]
+name = "@solocorp/qa/smoke-test"
+version = "0.1.0"
+description = "Smoke test — รัน smoke test suite, report results, validate QA gate"
+category = "qa"
+
+[dept]
+owner = "qa"
+consumers = ["qa", "engineering", "architect", "ceo"]
+
+[bus]
+endpoint = "/v1/skills/qa/smoke-test"
+queue_topic = "skill.qa.invoke"
+lifecycle = "skill_invoke → qa_exec → report → complete"
+
+[mirror]
+minimum_level = "L1"
+check_on_invoke = false
+description = "Smoke test — L1 ขึ้นไปใช้ได้ ไม่ต้อง Mirror"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/smoke-test"
+description = "Run smoke test suite for a service"
+platforms = ["opencode", "grok", "claude"]

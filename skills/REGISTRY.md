@@ -2,7 +2,7 @@
 
 > Single source of truth for all skills. Every platform config must reference or be generated from this registry.
 
-**Version:** 1.2 | **Updated:** 2026-07-27
+**Version:** 1.3 | **Updated:** 2026-07-27
 
 ---
 
@@ -49,11 +49,10 @@ Think of them as "slash commands with memory."
 | **`mirror-check`** 🆕 | **cross-dept** | **`@solocorp/cross-dept/mirror-check/`** | **opencode + grok + claude** | **🟢 Active** |
 | **`sprint-plan`** 🆕 | **ceo** | **`@solocorp/ceo/sprint-plan/`** | **opencode + grok + claude** | **🟢 Active** |
 | **`daily-ops`** 🆕 | **coo** | **`@solocorp/coo/daily-ops/`** | **opencode + grok** | **🟢 Active** |
-| `eng-deploy` | engineering | _(proposed)_ | all | Planned |
-| `cfo-budget-check` | cfo | _(proposed)_ | all | Planned |
-| `qa-smoke-test` | qa | _(proposed)_ | all | Planned |
-| `gov-adr-new` | governance | _(proposed)_ | all | Planned |
-| `gov-rfc-new` | governance | _(proposed)_ | all | Planned |
+| **`deploy`** 🆕 | **engineering** | **`@solocorp/engineering/deploy/`** | **opencode + grok** | **🟢 Active** |
+| **`budget-check`** 🆕 | **cfo** | **`@solocorp/cfo/budget-check/`** | **opencode + grok** | **🟢 Active** |
+| **`smoke-test`** 🆕 | **qa** | **`@solocorp/qa/smoke-test/`** | **opencode + grok + claude** | **🟢 Active** |
+| **`rfc`** 🆕 | **governance** | **`@solocorp/governance/rfc/`** | **opencode + grok** | **🟢 Active** |
 
 ---
 

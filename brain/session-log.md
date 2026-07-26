@@ -783,6 +783,40 @@ Owner (Dr.solodev) — L5
 2. **FastAPI lifespan bug** — v0.108+ ต้องการ `@asynccontextmanager` + function ต้อง define ก่อน `FastAPI()`
 3. **opencode spawn catch-22** — ไม่สามารถเรียก `opencode run` จากภายใน opencode process ได้
 4. **Agent Worker max 3 concurrent** — 7 tasks → 3 cycle rounds ~9 นาที
+5. **Skills need a full package, not just a route entry** — Central Bus route registration + `skills/@solocorp/<ns>/<name>/` package (skill.toml + SKILL.md) + REGISTRY.md update + end-to-end test = shipped skill
+6. **Skill invocation produces evidence immediately** — POST /v1/skills/... creates queue entry + evidence JSON; Agent Worker picks up next cycle
+
+---
+
+## Session #10e — TRACK A COMPLETE 🎉
+
+**วัน:** 2026-07-27 18:00 ICT  
+**Focus:** Ship first SkillHub skill end-to-end (Track A from Sprint 2)
+
+### Done
+- Read skill package format from existing `@solocorp/cross-dept/pipeline-bridge` and `mirror-check`
+- Created `skills/@solocorp/ceo/sprint-plan/` — full package:
+  - `skill.toml` (metadata, bus config, dept/consumer, triggers)
+  - `SKILL.md` (frontmatter, purpose, inputs, steps, output, integration)
+- Created `skills/@solocorp/coo/daily-ops/` — full package (same structure)
+- Updated `skills/REGISTRY.md` v1.1 → v1.2 — added both skills
+- Tested end-to-end via Central Bus API:
+  - ✅ `GET /v1/skills/ceo/sprint-plan` → returns registered detail
+  - ✅ `POST /v1/skills/ceo/sprint-plan {"action":"plan"}` → queued to CEO, trace_id: skill-70352587-315
+  - ✅ `POST /v1/skills/coo/daily-ops {"action":"status"}` → queued to COO, trace_id: skill-f24254e9-ad6
+- Committed & pushed: `a70d0fe` (9 files, 250 insertions)
+
+### Impact
+- **SkillHub now has 7 skills total:** 2 cross-dept (pipeline-bridge, mirror-check) + 5 architect (pipeline-auditor, routing-config, monitor-watchdog, exception-triage, cron-pipeline) + 1 ceo (sprint-plan) + 1 coo (daily-ops)
+- **First 2 @solocorp/<dept> skills shipped** — blueprint for all future department skills
+- **Track A of Sprint 2 marked complete**
+- **Sprint 2 progress:** 1/12 tasks done, 6 dispatched to queue (waiting Agent Worker)
+
+### Next
+- Track B: COO Takeover — await first COO dispatch agent run
+- Track C: Master Synthesis v2 — needs LLM (blocked by opencode spawn)
+- Track D: Proposals — needs LLM (same blocker)
+- Or: Owner decides next priority
 
 ---
 

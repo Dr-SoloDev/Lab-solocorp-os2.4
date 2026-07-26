@@ -1,0 +1,28 @@
+[skill]
+name = "@solocorp/engineering/deploy"
+version = "0.1.0"
+description = "Deployment pipeline — trigger deploy, check status, rollback"
+category = "engineering"
+
+[dept]
+owner = "engineering"
+consumers = ["engineering", "architect", "ceo"]
+
+[bus]
+endpoint = "/v1/skills/engineering/deploy"
+queue_topic = "skill.eng.invoke"
+lifecycle = "skill_invoke → eng_review → deploy_exec → complete"
+
+[mirror]
+minimum_level = "L2"
+check_on_invoke = true
+description = "Deploy = potentially destructive → Mirror Check required for production"
+
+[dependencies]
+skills = ["@solocorp/ceo/sprint-plan"]
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/deploy"
+description = "Trigger deployment or check deploy status"
+platforms = ["opencode", "grok"]

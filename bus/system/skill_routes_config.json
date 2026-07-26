@@ -56,7 +56,7 @@
       "required_fields": ["department", "sprint"],
       "description": "Request sprint plan template or report sprint progress",
       "status": "registered"
-    }
+    },
     {
       "skill": "@solocorp/engineering/deploy",
       "method": "POST",

@@ -1,0 +1,28 @@
+[skill]
+name = "@solocorp/governance/rfc"
+version = "0.1.0"
+description = "RFC — สร้างหรือ review RFC (Request for Comments) สำหรับการเปลี่ยนแปลงสำคัญ"
+category = "governance"
+
+[dept]
+owner = "legal"
+consumers = ["legal", "ceo", "coo", "architect", "engineering", "all"]
+
+[bus]
+endpoint = "/v1/skills/governance/rfc"
+queue_topic = "skill.gov.invoke"
+lifecycle = "skill_invoke → gov_review → comment_period → complete"
+
+[mirror]
+minimum_level = "L3"
+check_on_invoke = true
+description = "RFC = governance change → Mirror Check บังคับ L3+"
+
+[dependencies]
+skills = ["@solocorp/cross-dept/mirror-check"]
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/rfc-new"
+description = "Create a new RFC for governance decision"
+platforms = ["opencode", "grok"]

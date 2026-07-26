@@ -1,0 +1,28 @@
+[skill]
+name = "@solocorp/cfo/budget-check"
+version = "0.1.0"
+description = "Budget check — ตรวจสอบงบประมาณ, cost analysis, ROI projection"
+category = "cfo"
+
+[dept]
+owner = "cfo"
+consumers = ["cfo", "ceo", "coo", "engineering", "product", "cmo"]
+
+[bus]
+endpoint = "/v1/skills/cfo/budget-check"
+queue_topic = "skill.cfo.invoke"
+lifecycle = "skill_invoke → cfo_review → complete"
+
+[mirror]
+minimum_level = "L2"
+check_on_invoke = false
+description = "Budget check — L2 ขึ้นไปใช้ได้ ไม่ต้อง Mirror (ข้อมูลอ่านอย่างเดียว)"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/budget-check"
+description = "Check budget status or run cost analysis"
+platforms = ["opencode", "grok"]
