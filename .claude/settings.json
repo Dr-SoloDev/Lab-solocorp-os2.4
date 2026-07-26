@@ -8,5 +8,31 @@
       "command": "python3",
       "args": ["-m", "tools.stealth-browser-mcp.src.server", "--minimal"]
     }
+  },
+  "commands": {
+    "sprint-plan": {
+      "description": "📋 Sprint Plan — ขอ template sprint plan",
+      "skill": "@solocorp/ceo/sprint-plan"
+    },
+    "daily-ops": {
+      "description": "👷 Daily Ops — ดูรายงาน daily operations",
+      "skill": "@solocorp/coo/daily-ops"
+    },
+    "eng-deploy": {
+      "description": "🚀 Deploy — trigger deploy, check status, rollback",
+      "skill": "@solocorp/engineering/deploy"
+    },
+    "budget-check": {
+      "description": "💰 Budget Check — ตรวจสอบงบประมาณ department",
+      "skill": "@solocorp/cfo/budget-check"
+    },
+    "smoke-test": {
+      "description": "🧪 Smoke Test — รัน smoke test suite",
+      "skill": "@solocorp/qa/smoke-test"
+    },
+    "rfc-new": {
+      "description": "📜 RFC — สร้างหรือ review RFC",
+      "skill": "@solocorp/governance/rfc"
+    }
   }
 }

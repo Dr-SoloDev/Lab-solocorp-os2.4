@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-07-09T12:00:00Z",
+  "last_updated": "2026-07-27T18:30:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -239,7 +239,7 @@
       "active": "brain_auto_commit",
       "note": "brain_auto_commit ทำงานปกติ, daily_brief/subscription_audit/pipeline_executor มี external dep"
     },
-    "codex_agents": 80,
+    "codex_agents": 86,
     "opencode_agents": 21,
     "deployed": true,
     "api_key": "sk-solocorp-admin-local-dev-001 (admin scope)",
@@ -590,8 +590,8 @@
       ]
     }
   ],
-  "saved_at": "2026-07-27 00:45 UTC+7",
-  "latest_commit": "8229835 chore(brain): save Session #10 — THE ACTIVATION",
+  "saved_at": "2026-07-27 18:30 UTC+7",
+  "latest_commit": "9ac90b5 deploy(profiles): build profiles v1.3 + export 86 agents + ship 4 new skills",
   "state_snapshot": {
     "date": "2026-07-27",
     "services": {
@@ -608,7 +608,7 @@
       "workers/sop_compliance_check.py"
     ],
     "coo_deployed_at": "2026-07-27 00:45 UTC+7",
-    "active_sprint": "Sprint Clear Overdue v1 (bus/plans/sprint-clear-overdue-v1.md)",
+    "active_sprint": "Sprint 2: Master Synthesis Integration (bus/plans/sprint-master-synthesis-v2.md)",
     "tasks_in_queue": 0,
     "proposals": {
       "PROP-0001": "deferred",

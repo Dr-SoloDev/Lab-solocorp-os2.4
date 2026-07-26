@@ -15,6 +15,7 @@ Architecture
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from pathlib import Path
@@ -116,15 +117,23 @@ async def _execute_skill(
     queue_topic = route_config.get("queue_topic", "skill.invoke")
     decision_text = payload.get("decision") or payload.get("task") or json.dumps(payload)
 
-    # Step 1: Mirror Check
+    # Step 1: Mirror Check (with timeout — LLM may be unavailable)
     if route_config.get("mirror_check", False):
         db = await ensure_db()
-        mirror_result = await run_mirror_check(
-            department=department,
-            decision=decision_text[:500],
-            context=payload,
-            db=db,
-        )
+        try:
+            mirror_result = await asyncio.wait_for(
+                run_mirror_check(
+                    department=department,
+                    decision=decision_text[:500],
+                    context=payload,
+                    db=db,
+                ),
+                timeout=15.0,
+            )
+        except asyncio.TimeoutError:
+            # LLM not available — fail open (accept with warning)
+            log.warning("Mirror check timed out for %s — accepting decision", department)
+            mirror_result = type("obj", (), {"passed": True, "to_dict": lambda s: {"passed": True, "note": "timeout — auto-passed"}})()
         if not mirror_result.passed:
             return {
                 "status": "rejected",

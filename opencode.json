@@ -12,7 +12,13 @@
   "skills": {
     "paths": [
       ".opencode/skills",
-      "skills/@solocorp/cross-dept"
+      "skills/@solocorp/cross-dept",
+      "skills/@solocorp/ceo",
+      "skills/@solocorp/coo",
+      "skills/@solocorp/engineering",
+      "skills/@solocorp/cfo",
+      "skills/@solocorp/qa",
+      "skills/@solocorp/governance"
     ]
   },
 
@@ -166,6 +172,30 @@
   },
 
   "command": {
+    "sprint-plan": {
+      "description": "📋 Sprint Plan — ขอ template sprint plan หรือรายงานความคืบหน้า",
+      "template": "Run @solocorp/ceo/sprint-plan skill for: department=$1, sprint=$2, action=$3\n\nPOST /v1/skills/ceo/sprint-plan ด้วย payload action=plan|report|status"
+    },
+    "daily-ops": {
+      "description": "👷 Daily Ops — ดูรายงาน daily operations หรือ route request",
+      "template": "Run @solocorp/coo/daily-ops skill: action=$1\n\nPOST /v1/skills/coo/daily-ops ด้วย payload action=status|route|sop"
+    },
+    "eng-deploy": {
+      "description": "🚀 Deploy — trigger deploy, check status, rollback service",
+      "template": "Run @solocorp/engineering/deploy skill for: service=$1, env=$2, action=$3\n\nPOST /v1/skills/engineering/deploy ด้วย payload action=deploy|status|rollback"
+    },
+    "budget-check": {
+      "description": "💰 Budget Check — ตรวจสอบงบประมาณ department, cost analysis",
+      "template": "Run @solocorp/cfo/budget-check skill for: department=$1, period=$2, action=$3\n\nPOST /v1/skills/cfo/budget-check ด้วย payload action=check|analyze|project"
+    },
+    "smoke-test": {
+      "description": "🧪 Smoke Test — รัน smoke test suite สำหรับ service",
+      "template": "Run @solocorp/qa/smoke-test skill for: service=$1, env=$2\n\nPOST /v1/skills/qa/smoke-test ด้วย payload scope=quick|full"
+    },
+    "rfc-new": {
+      "description": "📜 RFC — สร้างหรือ review RFC สำหรับ governance decision",
+      "template": "Run @solocorp/governance/rfc skill: title=$1, summary=$2\n\nPOST /v1/skills/governance/rfc ด้วย payload action=create|review|approve|reject"
+    },
     "pipeline": {
       "description": "รัน SoloCorp pipeline workflow: spec → plan → build → qa → deliver",
       "template": "Run the SoloCorp pipeline for: $ARGUMENTS\n\nใช้ @architect-songsak สำหรับ architecture review ก่อน build"

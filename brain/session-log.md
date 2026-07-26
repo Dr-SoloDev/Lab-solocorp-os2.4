@@ -807,16 +807,38 @@ Owner (Dr.solodev) — L5
 - Committed & pushed: `a70d0fe` (9 files, 250 insertions)
 
 ### Impact
-- **SkillHub now has 7 skills total:** 2 cross-dept (pipeline-bridge, mirror-check) + 5 architect (pipeline-auditor, routing-config, monitor-watchdog, exception-triage, cron-pipeline) + 1 ceo (sprint-plan) + 1 coo (daily-ops)
-- **First 2 @solocorp/<dept> skills shipped** — blueprint for all future department skills
-- **Track A of Sprint 2 marked complete**
-- **Sprint 2 progress:** 1/12 tasks done, 6 dispatched to queue (waiting Agent Worker)
+- **SkillHub now has 7 skills total:** 2 cross-dept + 5 architect + 1 ceo + 1 coo
 
 ### Next
 - Track B: COO Takeover — await first COO dispatch agent run
 - Track C: Master Synthesis v2 — needs LLM (blocked by opencode spawn)
 - Track D: Proposals — needs LLM (same blocker)
 - Or: Owner decides next priority
+
+---
+
+## Session #10f — DEPLOY + EXPAND SKILLHUB 🚀
+
+**วัน:** 2026-07-27 18:30 ICT  
+**Focus:** Deploy profiles + ship 4 more SkillHub skills (Track A expansion)
+
+### Done
+1. `python3 scripts/build-profiles.py` — 81 SOUL.md → 3 formats (droid/codex/hermes) ✅
+2. `python3 scripts/export-codex-agents.py` — 86 agents exported ✅
+3. `python3 scripts/export-codex-agents.py --validate-only` — 86 validated OK ✅
+4. Shipped 4 new SkillHub packages:
+   - `@solocorp/engineering/deploy` — deploy pipeline
+   - `@solocorp/cfo/budget-check` — budget/cost/ROI
+   - `@solocorp/qa/smoke-test` — smoke test suite
+   - `@solocorp/governance/rfc` — RFC governance
+5. Registered all 4 in `bus/system/skill_routes_config.json` (9 routes total)
+6. Updated `skills/REGISTRY.md` v1.2 → v1.3
+7. Committed: `9ac90b5` — 21 files, 378 insertions
+
+### SkillHub Stats
+- **11 active skills** (was 7)
+- **9 bus routes** (was 5) — 4 new registered
+- **6 departments with skills:** architect (5) + cross-dept (2) + ceo (1) + coo (1) + engineering (1) + cfo (1) + qa (1) + governance (1)
 
 ---
 
