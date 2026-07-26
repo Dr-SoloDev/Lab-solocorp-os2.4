@@ -57,6 +57,54 @@
       "description": "Request sprint plan template or report sprint progress",
       "status": "registered"
     }
+    {
+      "skill": "@solocorp/engineering/deploy",
+      "method": "POST",
+      "path": "/v1/skills/engineering/deploy",
+      "target_department": "engineering",
+      "queue_topic": "skill.eng.invoke",
+      "mirror_check": true,
+      "min_mirror_level": "L2",
+      "required_fields": ["action", "environment", "service"],
+      "description": "Trigger deploy, check status, or rollback",
+      "status": "registered"
+    },
+    {
+      "skill": "@solocorp/cfo/budget-check",
+      "method": "POST",
+      "path": "/v1/skills/cfo/budget-check",
+      "target_department": "cfo",
+      "queue_topic": "skill.cfo.invoke",
+      "mirror_check": false,
+      "min_mirror_level": "L2",
+      "required_fields": ["action", "department", "period"],
+      "description": "Check budget, analyze costs, project ROI",
+      "status": "registered"
+    },
+    {
+      "skill": "@solocorp/qa/smoke-test",
+      "method": "POST",
+      "path": "/v1/skills/qa/smoke-test",
+      "target_department": "qa",
+      "queue_topic": "skill.qa.invoke",
+      "mirror_check": false,
+      "min_mirror_level": "L1",
+      "required_fields": ["service", "environment"],
+      "description": "Run smoke test suite for any service",
+      "status": "registered"
+    },
+    {
+      "skill": "@solocorp/governance/rfc",
+      "method": "POST",
+      "path": "/v1/skills/governance/rfc",
+      "target_department": "legal",
+      "queue_topic": "skill.gov.invoke",
+      "mirror_check": true,
+      "min_mirror_level": "L3",
+      "required_fields": ["action", "title", "summary"],
+      "description": "Create or review RFC for governance decisions",
+      "status": "registered"
+    }
   ],
   "middleware": {
     "mirror_check": {
