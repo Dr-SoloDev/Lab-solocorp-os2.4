@@ -583,6 +583,23 @@
       ]
     }
   ],
-  "saved_at": "2026-07-20 16:20 UTC",
-  "latest_commit": "a230b64 chore(brain): save Phase 8 context"
+  "saved_at": "2026-07-27 00:16 UTC+7",
+  "latest_commit": "5b57f93 feat(sprint): Sprint Clear Overdue v1 — 7 tasks dispatched",
+  "state_snapshot": {
+    "date": "2026-07-27",
+    "services": {
+      "central_bus": {"status": "running", "port": 8099, "queue_completed": 75},
+      "agent_worker": {"status": "running", "agents": 18, "poll_interval": "5s"},
+      "loop_runner": {"status": "active", "loops": 4, "cron": "*/30 * * * *"}
+    },
+    "active_sprint": "Sprint Clear Overdue v1 (bus/plans/sprint-clear-overdue-v1.md)",
+    "tasks_in_queue": 12,
+    "proposals": {
+      "PROP-0001": "deferred",
+      "PROP-0002": "deferred",
+      "PROP-0003": "completed",
+      "PROP-0004": "deferred",
+      "PROP-0005": "approved"
+    }
+  }
 }

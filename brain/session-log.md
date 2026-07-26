@@ -617,3 +617,78 @@ Dr.solodev — ทำงานกับ CEO เทอโบ
 - CMD-004 (Auto-QA Pipeline) = COMPLETED ✅ — ไม่ต้องตาม
 - 4 overdue items = 4 dispatches sent
 - Loop Runner state.db ยังว่าง — ต้องให้ Orchestrator activate
+
+---
+
+## Session #10 — 2026-07-27T00:00 (+07:00) — THE ACTIVATION
+
+**เข้าระบบ:** ~23:30 UTC+7  
+**สิ้นสุด:** ~00:16 UTC+7  
+**Commit:** `5b57f93`  
+**ระยะเวลา:** ~45 นาที
+
+### 🎯 ภารกิจหลัก
+1. Full Status Report — อ่าน state.py, bus/projects/, ARCHITECTURE.md, bus/dispatch/
+2. Activate both services — Central Bus (busd) + Agent Worker Service + Loop Runner
+3. Fix FastAPI lifespan bug — `asynccontextmanager` decorator missing
+4. Submit 4 overdue tasks through Central Bus queue (CMD-001 → CMD-003)
+5. Activate Loop Runner — state.db now populated (4 loops)
+6. Sprint Plan "Clear Overdue v1" — 7 tasks dispatched to 5 departments
+7. Review 4 proposals — 1 approved (PROP-0005), 3 deferred
+
+### 🔑 Key Decisions
+| # | Decision | Rationale |
+|:-:|:---------|:----------|
+| D1 | ✅ Activate Central Bus + Agent Worker | Owner อนุมัติ — system ต้อง online |
+| D2 | ✅ Fix lifespan bug with @asynccontextmanager | FastAPI v0.108+ requires async context manager |
+| D3 | ✅ Submit tasks via POST /v1/observe (not just JSON files) | Dispatch files alone = no action; queue = pipeline flow |
+| D4 | ✅ Option A: Sprint Clear Overdue | Owner เลือก Master Synthesis S1 + WP1 + Props |
+| D5 | 🟢 PROP-0005 Approved | S effort quick win — Auto-Chatbot Support |
+| D6 | 🔴 PROP-0001/02/04 Deferred | CI/CD done, Design busy, Product not ready |
+| D7 | ⏸️ LLM timeout = known limitation | `opencode` can't spawn subprocess of itself — agents return fallback |
+
+### 📨 Dispatches Sent (via Central Bus queue)
+| ID | To | Priority | Task |
+|:---|:---|:---------|:-----|
+| RD-01 | `@rd-lab` | HIGH | OmniScientist — 7 papers |
+| RD-05 | `@rd-lab` | HIGH | Agency Agents — 210 catalog |
+| AR-01 | `@architect-songsak` | HIGH | Deploy SkillHub |
+| AR-02/03 | `@architect-songsak` | HIGH | Namespace + RBAC |
+| EN-01 | `@changful` | HIGH | Evaluate 32 Dev Agents |
+| CS-01 | `@cybersec-sai` | HIGH | Install HackAgent |
+| WP1 | `@design-kreet` | HIGH | 5-Layer Persona Template |
+| PROP-0005 | `@support` | HIGH | Auto-Chatbot prototype |
+
+### 🛠️ System State (End of Session)
+| Component | Status | Detail |
+|:-----------|:-------|:-------|
+| Central Bus (busd) | ✅ Running | `127.0.0.1:8099`, 75 completed tasks |
+| Agent Worker | ✅ Running | 18 agents, polling every 5s |
+| Loop Runner | ✅ Active | Cron `*/30 * * * *`, 4 loops |
+| Queue | ✅ Active | completed=75, processing=1, routed=11 |
+| Git | ✅ Synced | `5b57f93` pushed to origin/main |
+
+### 📂 Key Files Created/Modified
+- `bus/dispatch/2026-07-26/CMD-001-REMINDER-architect-skill-routes.json`
+- `bus/dispatch/2026-07-26/CMD-002-REMINDER-changful-abtest-agents.json`
+- `bus/dispatch/2026-07-26/CMD-003-REMINDER-design-persona-wp1.json`
+- `bus/dispatch/2026-07-26/ORD-001-loop-runner-activate.json`
+- `bus/plans/sprint-clear-overdue-v1.md`
+- `central_bus/main.py` — fixed FastAPI lifespan bug
+- `bus/proposals/PROP-0005.json` — approved
+
+### ⏳ Open Items for Next Session
+- [ ] รอ Agent Worker ประมวลผล 7 tasks + report กลับ
+- [ ] รอ evidence + AAR ครบทุกงาน → audit
+- [ ] Review deferred proposals เมื่อพร้อม (PROP-0001/02/04)
+- [ ] Follow up WP1 template จาก @design-kreet
+- [ ] LLM integration — ถ้า possible
+
+### 💡 Learnt
+1. **Dispatch files alone ≠ action** — files ต้องเข้า Central Bus queue ถึงจะประมวลผล
+2. **FastAPI lifespan bug** — v0.108+ ต้องการ `@asynccontextmanager` + function ต้อง define ก่อน `FastAPI()`
+3. **opencode spawn catch-22** — ไม่สามารถเรียก `opencode run` จากภายใน opencode process ได้
+4. **Agent Worker max 3 concurrent** — 7 tasks → 3 cycle rounds ~9 นาที
+
+---
+
