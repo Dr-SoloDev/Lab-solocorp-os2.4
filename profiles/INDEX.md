@@ -22,6 +22,7 @@
 | # | Profile | Name | Responsibility | Status |
 |:-:|:--------|:-----|:--------------|:------:|
 | `01-ceo` | **CEO** | [เทอโบ ไชยศรีรัมย์ (Turbo)](01-ceo/SOUL.md) | Vision, Strategy, Final Decision | Active |
+| `02-coo` | **COO** | [กิจ (Kit)](02-coo/SOUL.md) | Daily Operations, L1-L3 Gatekeeper, Team Control | 🆕 Active |
 | `02-cfo` | **CFO** | [meetoo](02-cfo/SOUL.md) | Finance, Budget, Investment | Active |
 | `03-cmo` | **CMO** | [มาร์ค](03-cmo/SOUL.md) | Marketing, Content, Brand | Active |
 
@@ -241,6 +242,7 @@ solocorp-mark-workflow, content creation pipeline
 | Department | Head | Specialists | Total |
 |:-----------|:-----|:-----------:|:-----:|
 | 01 CEO | เทอโบ | 0 | 1 |
+| 02 COO | กิจ (Kit) | 3 | 4 |
 | 02 CFO | meetoo | 3 | 4 |
 | 03 CMO | มาร์ค | 3 | 4 |
 | 04 Orchestrator | พี่วุฒิ | 3 | 4 |
@@ -259,7 +261,7 @@ solocorp-mark-workflow, content creation pipeline
 | 17 Cyber Security | ซาย | 3 | 4 |
 | 18 Psychology | จิต | 3 | 4 |
 | — | Default (Fallback) | — | 1 |
-| **Total** | **18 Departments** | **55+ Specialists** | **68+ Active Members** |
+| **Total** | **19 Departments** | **58+ Specialists** | **72+ Active Members** |
 
 ---
 

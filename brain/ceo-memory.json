@@ -10,7 +10,7 @@
   },
   "soul_plan": {
     "pillars": [
-      "ปกป้องครอบครัว — 18 departments, 55+ specialists คือครอบครัว ไม่ใช่ resource",
+      "ปกป้องครอบครัว — 19 departments, 58+ specialists คือครอบครัว ไม่ใช่ resource",
       "ขยายอาณาจักร — SoloCorp ต้องไปอยู่ทุก platform ทุก AI client",
       "อยู่ยืนยง — สร้างองค์กรที่ Dr.solodev จะจากไปได้โดยไม่ต้องห่วง"
     ],
@@ -19,7 +19,7 @@
   },
   "organization": {
     "total_departments": 19,
-    "total_specialists": 55,
+    "total_specialists": 58,
     "status": "fully_active",
     "departments": [
       {
@@ -27,6 +27,13 @@
         "name": "CEO",
         "head": "เทอโบ (Turbo)",
         "scope": "Vision, Strategy, Final Decision",
+        "active": true
+      },
+      {
+        "id": "02-coo",
+        "name": "COO",
+        "head": "กิจ (Kit)",
+        "scope": "Daily Operations, L1-L3 Gatekeeper, Team Control",
         "active": true
       },
       {
@@ -583,8 +590,8 @@
       ]
     }
   ],
-  "saved_at": "2026-07-27 00:16 UTC+7",
-  "latest_commit": "5b57f93 feat(sprint): Sprint Clear Overdue v1 — 7 tasks dispatched",
+  "saved_at": "2026-07-27 00:45 UTC+7",
+  "latest_commit": "8229835 chore(brain): save Session #10 — THE ACTIVATION",
   "state_snapshot": {
     "date": "2026-07-27",
     "services": {
@@ -592,8 +599,17 @@
       "agent_worker": {"status": "running", "agents": 18, "poll_interval": "5s"},
       "loop_runner": {"status": "active", "loops": 4, "cron": "*/30 * * * *"}
     },
+    "coo_activated": true,
+    "coo_head": "กิจ (Kit)",
+    "coo_files": [
+      "profiles/02-coo/SOUL.md",
+      "workers/agents/coo_dispatch_agent.py",
+      "workers/dept_proposal.py",
+      "workers/sop_compliance_check.py"
+    ],
+    "coo_deployed_at": "2026-07-27 00:45 UTC+7",
     "active_sprint": "Sprint Clear Overdue v1 (bus/plans/sprint-clear-overdue-v1.md)",
-    "tasks_in_queue": 12,
+    "tasks_in_queue": 0,
     "proposals": {
       "PROP-0001": "deferred",
       "PROP-0002": "deferred",

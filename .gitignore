@@ -13,6 +13,10 @@ Thumbs.db
 # Antigravity Awesome Skills (cloned community skill library)
 /reference/antigravity-awesome-skills/
 
+# Central Bus SQLite temp files
+central_bus/bus.db-shm
+central_bus/bus.db-wal
+
 # Agency Agents (cloned agent personality library)
 /reference/agency-agents/
 
