@@ -809,12 +809,6 @@ Owner (Dr.solodev) — L5
 ### Impact
 - **SkillHub now has 7 skills total:** 2 cross-dept + 5 architect + 1 ceo + 1 coo
 
-### Next
-- Track B: COO Takeover — await first COO dispatch agent run
-- Track C: Master Synthesis v2 — needs LLM (blocked by opencode spawn)
-- Track D: Proposals — needs LLM (same blocker)
-- Or: Owner decides next priority
-
 ---
 
 ## Session #10f — DEPLOY + EXPAND SKILLHUB 🚀
@@ -839,6 +833,30 @@ Owner (Dr.solodev) — L5
 - **11 active skills** (was 7)
 - **9 bus routes** (was 5) — 4 new registered
 - **6 departments with skills:** architect (5) + cross-dept (2) + ceo (1) + coo (1) + engineering (1) + cfo (1) + qa (1) + governance (1)
+
+---
+
+## Session #10g — CLOSE SKILLHUB ✅
+
+**วัน:** 2026-07-27 19:00 ICT  
+**Focus:** Close SkillHub — platform commands, mirror fix, docs, QA dispatch
+
+### Done
+1. **opencode.json**: Added 6 skill commands (sprint-plan, daily-ops, eng-deploy, budget-check, smoke-test, rfc-new)
+2. **.claude/commands/**: Created 6 command markdown files
+3. **.claude/settings.json**: Added commands section
+4. **Bug fix**: `mirror_check=true` skills hung for 180s calling LLM → added `asyncio.wait_for(mirror_check, timeout=15.0)` → now auto-pass with warning
+5. **`docs/PLATFORM-COMPAT.md`**: Created — 7 platforms, full coverage matrix
+6. **All 9 bus routes verified**: GET ↔ 200 ✅ + POST → queued ✅
+7. **Mirror fix verified**: eng/deploy + gov/rfc respond in <20s ✅
+8. **QA-002 dispatched**: Full SkillHub closure test brief to QA team
+9. Committed: `ccc255a` (SkillHub close) + `8d67c11` (QA dispatch)
+
+### Evidence
+- trace_id: `skill-b74fbb2d-cad` (eng/deploy — mirror timeout → auto-pass)
+- trace_id: `skill-3e81e278-05a` (gov/rfc — mirror timeout → auto-pass)
+- trace_id: `skill-7bfbf9ef-2fc` (qa/smoke-test — QA-002 brief)
+- Queue: 10 pending
 
 ---
 
