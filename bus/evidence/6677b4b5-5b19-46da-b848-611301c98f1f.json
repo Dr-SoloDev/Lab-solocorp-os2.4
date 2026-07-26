@@ -1,0 +1,20 @@
+{
+  "evidence_id": "6677b4b5-5b19-46da-b848-611301c98f1f",
+  "task_id": "4ee7b51e-7c04-48cc-aee6-bee727444e3b",
+  "trace_id": "f33b4c17-dca6-4c7a-ba75-ab8ff0926e6e",
+  "agent_id": "rd-lab",
+  "source_agent": "ceo-turbo",
+  "evidence_type": "task_result",
+  "status": "completed",
+  "summary": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: empty response",
+  "details": {
+    "action": "research",
+    "activity": "research",
+    "agent": "rd-lab",
+    "llm_used": true,
+    "full_response": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: empty response"
+  },
+  "routing_hops": [],
+  "retry_count": 0,
+  "created_at": "2026-07-26T17:19:31.867798+00:00"
+}

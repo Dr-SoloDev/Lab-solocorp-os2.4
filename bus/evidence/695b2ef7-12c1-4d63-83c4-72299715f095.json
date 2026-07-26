@@ -1,0 +1,20 @@
+{
+  "evidence_id": "695b2ef7-12c1-4d63-83c4-72299715f095",
+  "task_id": "007c8447-3b58-40cd-8231-cfb936fee069",
+  "trace_id": "380f6efc-bdbc-4a15-a788-a034685b882f",
+  "agent_id": "rd-lab",
+  "source_agent": "ceo-turbo",
+  "evidence_type": "task_result",
+  "status": "completed",
+  "summary": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: timeout (60s)",
+  "details": {
+    "action": "research",
+    "activity": "research",
+    "agent": "rd-lab",
+    "llm_used": true,
+    "full_response": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: timeout (60s)"
+  },
+  "routing_hops": [],
+  "retry_count": 0,
+  "created_at": "2026-07-26T17:13:36.913636+00:00"
+}

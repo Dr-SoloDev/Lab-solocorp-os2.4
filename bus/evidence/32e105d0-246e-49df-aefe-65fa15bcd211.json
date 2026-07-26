@@ -1,0 +1,18 @@
+{
+  "evidence_id": "32e105d0-246e-49df-aefe-65fa15bcd211",
+  "task_id": "e9a4f238-99c5-4892-a642-d9ad064dc4a6",
+  "trace_id": "d967d839-f718-4a87-89d8-c69b7d012b1e",
+  "agent_id": "changful",
+  "source_agent": "ceo-turbo",
+  "evidence_type": "task_result",
+  "status": "completed",
+  "summary": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: timeout (60s)",
+  "details": {
+    "feature": "CMD-002-A P0: Deploy A/B Test 50/50 live split \u2014 Open route_v1 vs route_v2 traffic split. 50% traffic to each. GET /v1/ab-test/report must work. This is 5 days overdue. Deadline extended to 2026-07-28. Report immediately on deploy.",
+    "llm_used": true,
+    "full_response": "\u26a0\ufe0f LLM \u0e44\u0e21\u0e48\u0e1e\u0e23\u0e49\u0e2d\u0e21: timeout (60s)"
+  },
+  "routing_hops": [],
+  "retry_count": 0,
+  "created_at": "2026-07-26T17:00:19.996085+00:00"
+}
