@@ -1,0 +1,111 @@
+{
+  "trace_id": "skillhub-qa-001",
+  "type": "QA_TEST_BRIEF",
+  "priority": "high",
+  "source": "ceo",
+  "target_department": "qa",
+  "title": "SkillHub Closure — Full QA Test",
+  "objective": "Verify SkillHub 11 skills ทำงานถูกต้อง — routes, commands, platform integration, mirror check fix",
+  "test_scope": {
+    "phase_1_bus_routes": {
+      "description": "GET + POST ทั้ง 9 skill routes ผ่าน Central Bus API",
+      "skills": [
+        "@solocorp/cross-dept/pipeline-bridge",
+        "@solocorp/cross-dept/mirror-check",
+        "@solocorp/cfo/finance-tools",
+        "@solocorp/coo/daily-ops",
+        "@solocorp/ceo/sprint-plan",
+        "@solocorp/engineering/deploy",
+        "@solocorp/cfo/budget-check",
+        "@solocorp/qa/smoke-test",
+        "@solocorp/governance/rfc"
+      ],
+      "test_cases": [
+        "GET /v1/skills/<path> → return skill detail (200)",
+        "POST /v1/skills/<path> → return queued (200)",
+        "POST required_fields validation → 400 ถ้าขาด field",
+        "POST invalid path → 404 SKILL_NOT_FOUND"
+      ]
+    },
+    "phase_2_mirror_check_fix": {
+      "description": "Verify mirror_check=true skills ไม่ hang เมื่อ LLM unavailable",
+      "skills_with_mirror": [
+        "@solocorp/engineering/deploy",
+        "@solocorp/governance/rfc",
+        "@solocorp/cross-dept/pipeline-bridge",
+        "@solocorp/cfo/finance-tools"
+      ],
+      "test_cases": [
+        "POST skill → response ภายใน 20 วินาที (ไม่ hang)",
+        "mirror_check ถูกเรียกใน response (passed=true)",
+        "queue entry ถูกสร้างใน Bus"
+      ]
+    },
+    "phase_3_platform_commands": {
+      "description": "Verify command registration บนทุก platform",
+      "platforms": [
+        {
+          "name": "OpenCode",
+          "path": "opencode.json",
+          "expected_commands": ["sprint-plan", "daily-ops", "eng-deploy", "budget-check", "smoke-test", "rfc-new"],
+          "checks": [
+            "command.name ถูกต้อง",
+            "description ไม่ซ้ำซ้อน",
+            "template fields สมเหตุสมผล"
+          ]
+        },
+        {
+          "name": "Claude Code",
+          "path": ".claude/commands/",
+          "expected_files": 6,
+          "checks": [
+            "ไฟล์ .md มี frontmatter ถูกต้อง",
+            "name + description + skill fields ครบ",
+            ".claude/settings.json commands section ตรงกับไฟล์"
+          ]
+        }
+      ]
+    },
+    "phase_4_documentation": {
+      "description": "Verify docs ถูกต้อง",
+      "items": [
+        {
+          "path": "docs/PLATFORM-COMPAT.md",
+          "checks": [
+            "7 platforms documented",
+            "SkillHub coverage table ตรงกับ reality",
+            "Gap section มี next steps"
+          ]
+        },
+        {
+          "path": "skills/REGISTRY.md",
+          "checks": [
+            "11 skills listed (ไม่มี Planned)",
+            "Version และ Updated date ถูกต้อง",
+            "ทุก skill มี link ไป package directory"
+          ]
+        }
+      ]
+    }
+  },
+  "success_criteria": [
+    "9/9 skill routes GET → 200 ✅",
+    "9/9 skill routes POST → queued ✅",
+    "mirror_check skills respond within 20s ✅ (ไม่ hang)",
+    "required_fields validation → 400 ✅",
+    "opencode.json มี 6 skill commands ✅",
+    "6 .claude/commands/ ไฟล์ครบ ✅",
+    "docs/PLATFORM-COMPAT.md ถูกต้อง ✅"
+  ],
+  "evidence_required": [
+    "curl output ของ GET/POST ทุก skill",
+    "mirror_check response time proof (timestamp)",
+    "validation error response example",
+    "opencode.json command section",
+    ".claude/commands/ directory listing"
+  ],
+  "deliverable": "QA Test Report — SkillHub Closure",
+  "format": "markdown → bus/evidence/QA-002-report.md",
+  "deadline": "2026-07-28",
+  "assigned_agents": ["api-tester", "evidence-collector", "tool-evaluator"]
+}
