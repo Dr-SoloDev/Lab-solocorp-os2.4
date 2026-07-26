@@ -556,3 +556,40 @@ Session ที่เปลี่ยน **55% → 65% Autonomy Readiness** ด้
 2. **SOP Chain ใช้ได้จริง** — SOP-01→SOP-03→SOP-04 pipeline ไม่มีสะดุด
 3. **Auto-QA Gate ค้นหา real issue** — full test suite timeout (3 นาที) เป็น barrier
 4. **Owner อนุมัติ 1 คำ = pipeline วิ่งทั้งระบบ** — นี่คือเป้าหมายที่แท้จริงของ SoloCorp OS
+
+## Session: 2026-07-24 — UI Refresh + Customer Tier Feature
+
+**Commit main:** `ad5f1f0` — feat: customer tier assignment
+**สาขาที่ merge:** `feat/customer-tier-assignment-2026-07-24`
+
+### ✅ Completed
+1. **UI Refresh** (PR #1)
+   - ตัวอักษรเข้มขึ้น, ขอบการ์ดชัด (#d1d5db), accent Teal
+   - WCAG fix: `.btn-accent` → teal-700 (5.47:1)
+   - CSS: tokens, cards, buttons, dashboard, forms, tables, badges, interactions
+   - QA: 31/31 pass, WCAG AA 6/6 pass
+
+2. **Customer Tier Assignment** (Feature #15)
+   - Mirror Check → PASS
+   - Feature spec → Design → Implementation → QA Round 3 → PASS
+   - 7 files: migration, model, controller, sellers.html, sellers.js, purchase-orders.js, sellers.css
+   - Admin/manager กำหนด tier_level ในหน้า sellers ได้
+   - PO auto-select tier ตามสิทธิ์ผู้ขาย
+   - Audit log ทุกการเปลี่ยน tier
+   - Role-gated (เฉพาะ admin/manager)
+   - Merged → main ✅
+
+### 📝 Key Decisions
+- accent = Teal อย่างเดียว
+- card border = #d1d5db
+- tier_level: INT DEFAULT 1 (1=ทั่วไป, 2=บิล2, 3=บิล3)
+- Auto-select tier ใน PO (cashier override ได้)
+- tier_level ส่ง conditional เฉพาะ admin/manager
+
+### ⏳ ยังต้องทำต่อ
+- งานส่วนอื่นๆ ที่ยังไม่สมบูรณ์ (แต่ยังไม่ระบุ)
+- Deploy ขึ้น Railway
+- แจ้งผู้ว่าจ้าง
+
+### 👑 Owner
+Dr.solodev — ทำงานกับ CEO เทอโบ
