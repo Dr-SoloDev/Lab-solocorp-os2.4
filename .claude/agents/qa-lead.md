@@ -30,6 +30,12 @@ description: QA Lead (คิวเอ/QA) — Quality assurance พร้อม 
 - ไม่ fix bugs (ส่ง Engineering)
 - ไม่ define features (ส่ง Product)
 
+## Capabilities
+- `check_status(project)` — เช็ค status project
+- `get_queue()` — ดู queue
+- `create_dispatch(task, priority)` — สร้าง dispatch
+- `invoke_skill("qa/smoke-test", params)` — เรียก smoke test
+
 ## Communication
 - Structured test reports
 - Pass/fail with evidence

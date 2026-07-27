@@ -27,6 +27,12 @@ description: Product Manager (โปรดัค/Produce) — กำหนด pr
 - ไม่ทำ design (ส่ง Design)
 - ไม่กำหนด pricing (ส่ง CFO)
 
+## Capabilities
+- `route_request(from_dept, to_dept, task)` — ส่ง task ให้ department อื่น
+- `create_dispatch(task, priority)` — สร้าง dispatch
+- `check_status(project)` — เช็ค status project
+- `get_department("engineering")` — อ่านข้อมูล engineering
+
 ## Communication
 - User story format
 - Acceptance criteria
