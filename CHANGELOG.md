@@ -24,6 +24,15 @@
 - **Routing Rules Import** — `bus/system/routing_rules.json` → SQLite `routing_rules` table (16 rules)
   - Map short names → full agent IDs (e.g. `"cfo"` → `"cfo-meetoo"`)
   - Fallback route → CEO (`ceo-turbo`)
+- **Claude Code Integration (v0.7.1)** — `.claude/` config สำหรับ Claude Code
+  - `.claude/settings.json` — Full config: 18 commands, skills, MCPs, permissions
+  - `.claude/commands/` — 18 commands (was 6 → 18)
+  - `.claude/agents/` — 20 agents (was 2 → 20)
+  - `.claude/skills/solocorp/` — 9 SKILL.md files (Claude Code native)
+- **Solocorp Skills Module** — Python module สำหรับ agents communicate
+  - `solocorp_skills/` — 9 modules (routing, departments, status, dispatch, queue, skills, mirror, broadcast, utils)
+  - ทุก agent file มี `## Capabilities` section
+  - SOUL.md parser — อ่านข้อมูล department จาก profiles/ (11/12 departments parsed)
 
 ### Changed
 - **LLM provider rewrite** (commit `30e373a`):
@@ -260,7 +269,8 @@
 | v0.6.0 | Content Creator Department (15th profile) | Complete |
 | v0.6.1 | Thai Language Alignment + MoA Presets | Complete |
 | **v0.7.0** | **Agent Activation (18 agents) + LLM Provider + UI Animation** | **Complete** |
-| **v0.7** | **Pipeline Dashboard + Compliance Gate** | **Planned** |
+| **v0.7.1** | **Claude Code Integration + Solocorp Skills Module** | **Complete** |
+| **v0.8** | **Pipeline Dashboard + Compliance Gate** | **Planned** |
 | **v1.0** | **Production-ready Release** | **Planned** |
 
 ---

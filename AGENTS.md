@@ -88,6 +88,64 @@ Coverage baseline: 9% (gate at `workers/auto_qa_gate.py`).
 | `decisions/` | ADRs (Architecture Decision Records) |
 | `.github/workflows/ci.yml` | CI pipeline (tests + coverage gate per PR) |
 
+## Claude Code Integration
+
+SoloCorp OS ใช้ Claude Code เป็น primary interface ทำงานคู่กับ Hermes (Opencode) — ไม่ทับซ้อนกัน
+
+### Agents (20)
+Located in `.claude/agents/`:
+- **solo-corp** — Master Coordinator (orchestrate cross-department work)
+- **ceo-turbo** — CEO (Digital Twin of Dr.solodev)
+- **coo-kit** — COO (Daily ops, L1-L3 gatekeeper)
+- **architect-song** — Head of Architect
+- **engineer-full** — Lead Engineer
+- **designer-kreet** — Chief Creative Director
+- **qa-lead** — QA Lead
+- **lawyer-thong** — Legal & Governance
+- **web3-dev** — Head of Web3 & DeFi
+- **cybersec** — Head of Cyber Security
+- **product-prod** — Product Manager
+- **marketing-sak** — CMO
+- **sales-pim** — Sales Manager
+- **support-yen** — Support Manager
+- **content-sak** — Head of Content
+- **neteng-tee** — Head of Network Engineer
+- **rd-lab** — R&D Lab
+- **psychology** — Head of Psychology
+- **design-kreet** — Design (existing)
+- **ui-designer** — UI Designer (existing)
+
+### Skills (9)
+Located in `.claude/skills/solocorp/`:
+- CEO Sprint Plan, CFO Budget Check, COO Daily Ops
+- Engineering Deploy, Governance RFC, QA Smoke Test
+- Cross-Dept Mirror Check, Pipeline Bridge
+- UI Animation Review
+
+### Commands (18)
+Located in `.claude/commands/`:
+- All commands from opencode.json (migrated)
+- Plus additional operational commands
+
+### Solocorp Skills Module
+Python module at `solocorp_skills/` — ใช้โดย agents คุยกัน:
+```python
+from solocorp_skills import route_request, get_department, check_status
+```
+
+| Module | Key Functions |
+|--------|--------------|
+| `routing` | `route_request()`, `route_to_dept()` |
+| `departments` | `get_department()`, `list_departments()` |
+| `status` | `check_status()`, `project_status()` |
+| `dispatch` | `create_dispatch()`, `get_dispatch()` |
+| `queue` | `get_queue()`, `peek_queue()`, `push_queue()` |
+| `skills` | `invoke_skill()` |
+| `mirror` | `mirror_check()` |
+| `broadcast` | `announce()` |
+
+---
+
 ## Communication
 
 - `@ceo-turbo` — default agent, routes everything
