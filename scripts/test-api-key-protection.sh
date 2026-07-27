@@ -18,12 +18,16 @@ echo -e "${BLUE}║   SoloCorp OS Security Testing                          ║$
 echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-# Get tester name
-echo -e "${YELLOW}👤 Enter your name (e.g., 'turbo' or 'changful'):${NC}"
-read -r TESTER_NAME
+# Get tester name from argument or prompt
+if [ -n "$1" ]; then
+    TESTER_NAME="$1"
+else
+    echo -e "${YELLOW}👤 Enter your name (e.g., 'turbo' or 'changful'):${NC}"
+    read -r TESTER_NAME
+fi
 
 if [ -z "$TESTER_NAME" ]; then
-    echo -e "${RED}❌ Name required!${NC}"
+    echo -e "${RED}❌ Name required! Usage: $0 <your-name>${NC}"
     exit 1
 fi
 
