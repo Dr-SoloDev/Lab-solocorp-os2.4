@@ -9,30 +9,125 @@
       "args": ["-m", "tools.stealth-browser-mcp.src.server", "--minimal"]
     }
   },
+  "skills": {
+    "paths": [
+      ".claude/skills"
+    ]
+  },
   "commands": {
     "sprint-plan": {
-      "description": "📋 Sprint Plan — ขอ template sprint plan",
+      "description": "📋 Sprint Plan — ขอ template sprint plan หรือรายงานความคืบหน้า",
       "skill": "@solocorp/ceo/sprint-plan"
     },
     "daily-ops": {
-      "description": "👷 Daily Ops — ดูรายงาน daily operations",
+      "description": "👷 Daily Ops — ดูรายงาน daily operations หรือ route request",
       "skill": "@solocorp/coo/daily-ops"
     },
     "eng-deploy": {
-      "description": "🚀 Deploy — trigger deploy, check status, rollback",
+      "description": "🚀 Deploy — trigger deploy, check status, rollback service",
       "skill": "@solocorp/engineering/deploy"
     },
     "budget-check": {
-      "description": "💰 Budget Check — ตรวจสอบงบประมาณ department",
+      "description": "💰 Budget Check — ตรวจสอบงบประมาณ department, cost analysis",
       "skill": "@solocorp/cfo/budget-check"
     },
     "smoke-test": {
-      "description": "🧪 Smoke Test — รัน smoke test suite",
+      "description": "🧪 Smoke Test — รัน smoke test suite สำหรับ service",
       "skill": "@solocorp/qa/smoke-test"
     },
     "rfc-new": {
-      "description": "📜 RFC — สร้างหรือ review RFC",
+      "description": "📜 RFC — สร้างหรือ review RFC สำหรับ governance decision",
       "skill": "@solocorp/governance/rfc"
+    },
+    "pipeline": {
+      "description": "🔄 Pipeline — รัน SoloCorp pipeline workflow: spec → plan → build → qa → deliver",
+      "template": "Run the SoloCorp pipeline for: $ARGUMENTS\n\nใช้ @architect-song สำหรับ architecture review ก่อน build"
+    },
+    "handoff": {
+      "description": "🤝 Handoff — ทำ handoff ระหว่าง departments พร้อม context pack",
+      "template": "Execute handoff from $1 to $2 for: $3\n\nProtocol in 01-receive.md (handoff section). สร้าง handoff brief ตาม templates ใน .opencode/skills/solocorp/handoff-templates/"
+    },
+    "status": {
+      "description": "📊 Status — ดูสถานะภาพรวมของ SoloCorp OS pipeline",
+      "template": "Give me a full status report of SoloCorp OS.\n\nRead from: loop_runner/state.py, bus/projects/, ARCHITECTURE.md, bus/dispatch/"
+    },
+    "audit": {
+      "description": "🔍 Audit — ตรวจสอบ pipeline audit trail และ compliance",
+      "template": "Run a pipeline audit for: $ARGUMENTS\n\nCheck handoff integrity, QA evidence, decision trail, compliance."
+    },
+    "deploy": {
+      "description": "🚀 Deploy — Deploy ระบบ SoloCorp OS (profiles, skills, config)",
+      "template": "Deploy SoloCorp OS changes: $ARGUMENTS\n\nSteps:\n1. Build profiles — python3 scripts/build-profiles.py\n2. Export agents — python3 scripts/export-codex-agents.py\n3. Verify — python3 scripts/export-codex-agents.py --validate-only\n4. Commit\n5. Report"
+    },
+    "brain": {
+      "description": "🧠 Brain — บันทึก context/session ลง brain memory",
+      "template": "Document current session context for brain memory. Format in loop_runner/loops/brain_auto_commit.py"
+    },
+    "pipeline-bridge": {
+      "description": "🌉 Pipeline Bridge — ส่ง task ข้ามแผนก structured handoff + audit trail",
+      "template": "Pipeline Bridge: ส่ง task from $1 to $2 for: $3\n\nMirror Check ก่อนส่ง — ถ้า L3+ ต้องผ่าน filter ใน 01-receive.md"
+    },
+    "mirror-check": {
+      "description": "🪞 Mirror Check — ตรวจสอบ decision สะท้อน Dr.solodev Owner",
+      "template": "/mirror-check\n\nDecision: $ARGUMENTS\n\nProtocol in 01-receive.md (Escalation Filter L1-L5)\n1. 3 Mirror Check Questions\n2. alignment score\n3. Audit Trail\n4. PASS / FAIL / ESCALATE"
+    },
+    "bootstrap": {
+      "description": "🌱 Bootstrap — Auto-Session Bootstrap inject context auto ตอนเริ่ม session",
+      "template": "python scripts/session-bootstrap.py\n\nAuto-inject current system state, brain context, active dispatches, and pending items. อ่าน output และบอก CEO ว่าต้อง focus ที่ตรงไหน"
+    },
+    "triage": {
+      "description": "📥 Triage — Auto-Triage classify + route queue entries, L1-L2 auto-execute",
+      "template": "python workers/agents/auto_triage_agent.py\n\nClassify pending queue entries by priority + department. L1-L2 auto-dispatch, L3+ propose to CEO."
+    },
+    "mirror": {
+      "description": "🪞 Mirror — Auto-Mirror Check รัน mirror check (L3+ decisions)",
+      "template": "Run auto mirror check for: department=$1, decision=$2, priority=$3\n\nUses central_bus.plugins.auto_mirror_hook.auto_mirror_check(). L1-L2 auto-pass, L3+ LLM evaluation."
+    },
+    "summary": {
+      "description": "📝 Summary — Auto-Brain Summary สรุป session auto สิ้น session",
+      "template": "python scripts/session-summary.py --save\n\nGenerate structured session summary + append to session-log.md"
     }
+  },
+  "permissions": {
+    "allow": [
+      "Read(//tmp/**)",
+      "Read(//home/drsolodev/projects/Lab-solocorp-os2.4/**)",
+      "Read(//home/drsolodev/.claude/projects/-home-drsolodev-projects-Lab-solocorp-os2-4/memory/**)"
+    ],
+    "bash": {
+      "npm *": "allow",
+      "pip *": "allow",
+      "python3 *": "allow",
+      "python *": "allow",
+      "node *": "allow",
+      "git *": "allow",
+      "gh *": "allow",
+      "jj *": "allow",
+      "ls *": "allow",
+      "cat *": "allow",
+      "curl *": "allow",
+      "wget *": "allow",
+      "docker *": "ask",
+      "docker-compose *": "ask",
+      "rm *": "ask",
+      "rm -rf *": "deny",
+      "sudo *": "deny",
+      "chmod *": "ask",
+      "chown *": "deny"
+    },
+    "task": "allow",
+    "external_directory": {
+      "~/.hermes/**": "allow",
+      "~/.claude/**": "allow",
+      "~/.opencode/**": "allow",
+      "~/.config/opencode/**": "allow",
+      "/tmp/**": "allow",
+      "*": "ask"
+    },
+    "todowrite": "allow",
+    "question": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "skill": "allow"
   }
 }
