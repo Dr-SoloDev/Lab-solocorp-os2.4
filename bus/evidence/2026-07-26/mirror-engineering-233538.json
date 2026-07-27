@@ -1,0 +1,11 @@
+{
+  "department": "engineering",
+  "decision": "ตรวจสอบระบบ authentication",
+  "level": "L2",
+  "priority": "P0",
+  "passed": true,
+  "score": 100,
+  "rag": "🟢",
+  "reason": "Level L2 — auto-passed (below L3 threshold)",
+  "timestamp": "2026-07-26T23:35:38.774580+00:00"
+}

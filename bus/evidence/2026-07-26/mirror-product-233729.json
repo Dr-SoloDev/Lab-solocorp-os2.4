@@ -1,0 +1,32 @@
+{
+  "department": "product",
+  "decision": "Change feature roadmap priority",
+  "level": "L3",
+  "priority": "P2",
+  "passed": true,
+  "score": 66,
+  "threshold": 60,
+  "rag": "🔴",
+  "question_results": [
+    {
+      "question_id": 1,
+      "question": "Dr.solodev ในมุม conservative จะ approve ไหม",
+      "result": "pass",
+      "reason": "LLM unavailable — moderate L3"
+    },
+    {
+      "question_id": 2,
+      "question": "Worst case นี้ Owner รับได้ไหม",
+      "result": "pass",
+      "reason": "LLM unavailable — moderate L3"
+    },
+    {
+      "question_id": 3,
+      "question": "Owner จะดีใจหรือเสียใจกับ decision นี้",
+      "result": "fail",
+      "reason": "LLM unavailable — moderate L3"
+    }
+  ],
+  "reason": "",
+  "timestamp": "2026-07-26T23:37:29.459194+00:00"
+}

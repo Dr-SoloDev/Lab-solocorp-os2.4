@@ -44,6 +44,35 @@ Add to `~/.claude/settings.json` (Claude Desktop) or `claude.json` (Claude Code 
 
 ---
 
+## 🔌 Grok Build CLI
+
+Add to project `.grok/config.toml` (already wired in this repo):
+
+```toml
+[mcp_servers.solocorp]
+command = "/path/to/Lab-solocorp-os2.4/.venv/bin/python"
+args = ["-m", "solocorp_mcp.server"]
+cwd = "/path/to/Lab-solocorp-os2.4"
+startup_timeout_sec = 30
+tool_timeout_sec = 60
+enabled = true
+
+[mcp_servers.solocorp.env]
+PYTHONPATH = "/path/to/Lab-solocorp-os2.4"
+SOLOCORP_API_KEY = "${SOLOCORP_API_KEY:-sk-solocorp-admin-local-dev-001}"
+```
+
+Verify:
+
+```bash
+grok mcp list          # should show solocorp (project)
+# In TUI: solocorp_list_departments / solocorp_route_request
+```
+
+Also start runtime: `bash scripts/start-services.sh`
+
+---
+
 ## 🔌 Codex CLI
 
 Add to `.codex/config.toml`:

@@ -152,9 +152,23 @@ async def auto_mirror_check(
     async def _ask_llm(question: str) -> tuple[bool, str]:
         """Ask LLM with 5-second timeout. Returns (passed, reason)"""
         try:
-            from workers.llm_provider import think
+            from workers.maxplus_llm_provider import think
+            
+            # Context about Dr.solodev Owner
+            owner_context = (
+                "Dr.solodev (Owner) คือ:\n"
+                "- มองระบบแบบ long-term, sustainable, repeatable\n"
+                "- ชอบ automation, efficiency, clear process\n"
+                "- Conservative กับ budget แต่ approve ถ้าเห็นค่า ROI ชัดเจน\n"
+                "- เชื่อในหลัก: Good enough + deployed > Perfect + not born\n"
+                "- ต้องการให้ทีมทำงานอิสระ (L1-L4) ไม่ต้องรอ approval ตลอด\n"
+                "- Budget < 5,000 THB = ปกติ OK ถ้ามีเหตุผล\n"
+                "- Budget > 10,000 THB = ต้องมี clear ROI + justification\n\n"
+            )
+            
             prompt = (
-                f"คุณคือ Mirror Check Protocol ของ SoloCorp OS\n"
+                f"คุณคือ Mirror Check Protocol ของ SoloCorp OS\n\n"
+                f"{owner_context}"
                 f"Department: {department}\n"
                 f"Decision: {decision[:300]}\n\n"
                 f"คำถาม: {question}\n\n"
@@ -162,7 +176,7 @@ async def auto_mirror_check(
                 f"YES = decision สอดคล้องกับสิ่งที่ Dr.solodev Owner จะทำ\n"
                 f"NO = decision ไม่สอดคล้อง"
             )
-            answer = await asyncio.wait_for(think(prompt, max_tokens=10), timeout=5.0)
+            answer = await asyncio.wait_for(think(prompt, max_tokens=10), timeout=8.0)
             q_pass = answer.strip().upper().startswith("Y") if answer else True
             return q_pass, ""
         except asyncio.TimeoutError:

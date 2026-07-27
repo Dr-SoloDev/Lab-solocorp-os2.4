@@ -8,7 +8,7 @@
 |:---------|:------------|:------:|:------:|:------:|
 | **OpenCode** | `opencode.json` | ✅ 18 commands | ✅ 4 agents | 🟢 Active |
 | **Claude Code** | `.claude/settings.json` | ✅ 6 commands | ❌ (via MCP) | 🟡 Partial |
-| **Grok Build** | `.grok/agents/` + `.grok/skills/` | ✅ 7 pipeline | ❌ | 🟡 Partial |
+| **Grok Build** | `.grok/agents/` + `.grok/skills/` | ✅ 7 pipeline (→19 Plan 1) | ✅ 6 Heads (→≥21 Plan 1) | 🟡 Partial · [parity plan](GROK-PARITY-PLAN.md) |
 | **Codex CLI** | `.codex/config.toml` + `.codex/agents/` | ❌ | ✅ 86 agents | 🟡 Partial |
 | **Hermes** | `dist/hermes/` profiles | ❌ | ✅ 81 profiles | 🟡 Partial |
 | **Cursor** | `.cursor/mcp.json` | ❌ | ❌ (via MCP) | 🟢 MCP only |
@@ -42,14 +42,19 @@
 
 ## Grok Build
 
-**Config**: `.grok/skills/` + `AGENTS.md`
+**Config**: `.grok/skills/` + `.grok/agents/` + `AGENTS.md` + `.grok/config.toml`  
+**Parity roadmap**: [`docs/GROK-PARITY-PLAN.md`](GROK-PARITY-PLAN.md) (Phase 0 ✅ · Plan 1–3 ⏳) · Guide: [`GROK-SUPPORT.md`](GROK-SUPPORT.md)
 
 | Feature | Status | Notes |
 |:--------|:------:|:------|
-| Pipeline skills | ✅ | 7 skills (pipeline, handoff, status, audit, deploy, brain, route) |
-| Department skills | ❌ | Not yet ported from `@solocorp/*` format |
-| Agent profiles | ❌ | `AGENTS.md` defines hierarchy but no per-agent configs |
-| MCP | ❌ | No MCP config found for Grok |
+| Pipeline skills | ✅ partial | 7 skills today; **19** target in Plan 1 (match `opencode.json`) |
+| Department agents | ✅ partial | 6 spawnable Heads; **≥21 + coo-kit** in Plan 1 |
+| Department skills | 🟡 | SkillHub `@solocorp/*` via bus; port as Grok skills in Plan 1–2 |
+| MCP | ✅ | `solocorp` + `stealth_browser`; runtime tools (health/queue) in Plan 2 |
+| Runtime | ✅ | `bash scripts/start-services.sh` → bus :8099 + govctl :8765 + agent worker |
+| OpenCode gold badge | 🟡 | 🟢 only after Plan 3 acceptance (smoke + CI + demo) |
+
+Quick start: `source .venv/bin/activate && export PYTHONPATH=. && bash scripts/start-services.sh && grok`
 
 ## Codex CLI
 
@@ -110,11 +115,12 @@
 
 | Gap | Priority | Resolution |
 |:----|:--------:|:-----------|
+| **Grok ↔ OpenCode parity** | **P1** | [`GROK-PARITY-PLAN.md`](GROK-PARITY-PLAN.md) — Plan 1 agents+skills, Plan 2 MCP, Plan 3 🟢 |
 | Claude Code agent model | P3 | Create `.claude/CLAUDERC.md` for auto-agent |
-| Grok dept skills | P2 | Port 6 `@solocorp/*` skills → `.grok/skills/` |
+| Grok dept skills | P1 | Covered by parity Plan 1–2 (port `@solocorp/*` + missing slash cmds) |
 | Codex CLI commands | P3 | Add commands to `.codex/config.toml` |
 | Hermes deployment | P3 | Add Hermes deploy step to `/deploy` pipeline |
-| Cross-platform test suite | P2 | Create smoke test for each platform |
+| Cross-platform test suite | P2 | Create smoke test for each platform (Grok smoke = Plan 3) |
 | All platform docs | P3 | Quickstart per platform |
 
 ---

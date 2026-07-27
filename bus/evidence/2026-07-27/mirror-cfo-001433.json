@@ -1,0 +1,32 @@
+{
+  "department": "cfo",
+  "decision": "Approve budget 50,000 THB for new office furniture",
+  "level": "L3",
+  "priority": "P2",
+  "passed": false,
+  "score": 0,
+  "threshold": 60,
+  "rag": "🔴",
+  "question_results": [
+    {
+      "question_id": 1,
+      "question": "Dr.solodev ในมุม conservative จะ approve ไหม",
+      "result": "fail",
+      "reason": ""
+    },
+    {
+      "question_id": 2,
+      "question": "Worst case นี้ Owner รับได้ไหม",
+      "result": "fail",
+      "reason": ""
+    },
+    {
+      "question_id": 3,
+      "question": "Owner จะดีใจหรือเสียใจกับ decision นี้",
+      "result": "fail",
+      "reason": ""
+    }
+  ],
+  "reason": "Mirror Check FAILED [cfo] score=0% (threshold=60%) — Approve budget 50,000 THB for new office furniture",
+  "timestamp": "2026-07-27T00:14:33.035450+00:00"
+}

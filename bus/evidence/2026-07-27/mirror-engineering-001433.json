@@ -1,0 +1,11 @@
+{
+  "department": "engineering",
+  "decision": "Refactor authentication system to use OAuth2",
+  "level": "L2",
+  "priority": "P2",
+  "passed": true,
+  "score": 100,
+  "rag": "🟢",
+  "reason": "Level L2 — auto-passed (below L3 threshold)",
+  "timestamp": "2026-07-27T00:14:33.036644+00:00"
+}

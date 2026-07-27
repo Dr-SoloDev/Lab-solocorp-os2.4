@@ -45,6 +45,24 @@ If Owner sees L1-L3 work, COO failed.
 Specialists never talk cross-department directly — always through the Bus.
 Heads never implement — they delegate to specialists.
 
+## 🔒 Security — API Key Protection
+
+**Before you start:** SoloCorp OS uses API keys for LLM providers. **Never commit `.env` files!**
+
+- 📖 **Full guide:** `docs/API-KEY-PROTECTION.md`
+- 🚨 **Quick ref:** `docs/API-KEY-SAFETY.md`
+- ✅ **Protection active:** Pre-commit hook scans for secrets automatically
+
+```bash
+# ✅ Safe: API keys in .env
+echo "MAXPLUS_API_KEY=your-key" > .env
+
+# ❌ Dangerous: Hardcoded keys
+API_KEY = "ccsk-xxx"  # Will be blocked by pre-commit hook!
+```
+
+---
+
 ## How to test
 
 ```bash

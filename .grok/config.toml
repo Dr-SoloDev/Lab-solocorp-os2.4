@@ -1,6 +1,21 @@
 # SoloCorp OS — project-scoped Grok config
 # Loaded when cwd is inside this repo (folder must be trusted).
+# Docs: docs/GROK-SUPPORT.md · .grok/README.md
 
+# ── SoloCorp MCP (departments, routing, SOUL profiles) ──────────────
+[mcp_servers.solocorp]
+command = "/home/drsolodev/projects/Lab-solocorp-os2.4/.venv/bin/python"
+args = ["-m", "solocorp_mcp.server"]
+cwd = "/home/drsolodev/projects/Lab-solocorp-os2.4"
+startup_timeout_sec = 30
+tool_timeout_sec = 60
+enabled = true
+
+[mcp_servers.solocorp.env]
+PYTHONPATH = "/home/drsolodev/projects/Lab-solocorp-os2.4"
+SOLOCORP_API_KEY = "${SOLOCORP_API_KEY:-sk-solocorp-admin-local-dev-001}"
+
+# ── Stealth browser (optional automation) ───────────────────────────
 [mcp_servers.stealth_browser]
 command = "/home/drsolodev/projects/Lab-solocorp-os2.4/tools/stealth-browser-mcp/venv/bin/python"
 args = [

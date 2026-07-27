@@ -2,6 +2,19 @@
 
 Makes **Grok Build CLI** a first-class host for SoloCorp OS 2.4 (alongside OpenCode, Hermes, Codex).
 
+**Parity status:** Phase 0 docs ✅ · Plan 1–3 ⏳ — full roadmap in [`docs/GROK-PARITY-PLAN.md`](../docs/GROK-PARITY-PLAN.md)
+
+## Gap vs OpenCode (today)
+
+| มิติ | OpenCode | Grok pack now | Target (Plan 1+) |
+|:-----|:---------|:--------------|:-----------------|
+| Agents | 21 in `.opencode/agents/` | **6** in `agents/` | ≥ 21 + `coo-kit` |
+| Slash skills | 19 commands | **7** in `skills/` | 19 |
+| MCP solocorp | 7 tools | 7 tools ✅ | + runtime (Plan 2) |
+| Badge | 🟢 | 🟡 Partial | 🟢 after Plan 3 |
+
+Do not start Plan 1 code until Owner says **เริ่ม Plan 1**. See parity plan for acceptance gates.
+
 ## What's included
 
 | Path | Purpose |
@@ -10,7 +23,9 @@ Makes **Grok Build CLI** a first-class host for SoloCorp OS 2.4 (alongside OpenC
 | `agents/` | Department Head agent definitions (spawnable subagent types) |
 | `skills/` | Pipeline slash commands: `/pipeline`, `/handoff`, `/status`, … |
 | `personas/` | Optional behavioral overlays for subagents |
-| `config.toml` | Project-scoped MCP (stealth browser) |
+| `config.toml` | Project-scoped MCP (`solocorp` + stealth browser) |
+| `../docs/GROK-PARITY-PLAN.md` | **Plan 1 / 2 / 3** toward OpenCode gold |
+| `../docs/GROK-SUPPORT.md` | Support guide + limits |
 
 ## Quick start
 
@@ -71,22 +86,35 @@ Always set `PYTHONPATH=.` from repo root (or use activated `.venv` with editable
 
 ## MCP
 
-Project config wires **stealth-browser** MCP when the local venv exists:
+Project `.grok/config.toml` wires:
 
-`tools/stealth-browser-mcp/venv/bin/python` + `src/server.py`
+| Server | Purpose |
+|:-------|:--------|
+| **solocorp** | Departments, SOUL profiles, route request, commands (needs `.venv` + `PYTHONPATH`) |
+| **stealth_browser** | Browser automation (optional) |
 
-Disable in `.grok/config.toml` (`enabled = false`) if unused.
+```bash
+grok mcp list   # expect: solocorp + stealth_browser (project)
+```
+
+Disable either with `enabled = false` in `.grok/config.toml` if unused.
+
+Runtime services (bus + govctl + worker):
+
+```bash
+bash scripts/start-services.sh
+```
 
 ## Compatibility limits (honest)
 
 | Works well | Partial / not native |
 |:-----------|:---------------------|
 | Dev runtime (bus, govctl, tests) | OpenCode-only `@mention` UI |
-| Department agents via spawn | 55+ specialist auto-registry |
-| Pipeline skills as workflows | Hermes profile deploy |
-| CLAUDE.md + AGENTS.md routing | Infinite multi-agent depth (Grok max depth 1) |
+| Department agents via spawn (6 Heads) | Full 21+ Heads (Plan 1) · 55+ specialists |
+| Pipeline skills (7) | Full 19 OpenCode commands (Plan 1) |
+| CLAUDE.md + AGENTS.md routing | Infinite multi-agent depth (Grok max depth 1 → Plan 2 fan-out) |
 
-See `docs/GROK-SUPPORT.md` and the multi-platform PRD matrix.
+**Roadmap:** [`docs/GROK-PARITY-PLAN.md`](../docs/GROK-PARITY-PLAN.md) · Guide: [`docs/GROK-SUPPORT.md`](../docs/GROK-SUPPORT.md) · Matrix: [`docs/PLATFORM-COMPAT.md`](../docs/PLATFORM-COMPAT.md)
 
 ## Verify pack is loaded
 

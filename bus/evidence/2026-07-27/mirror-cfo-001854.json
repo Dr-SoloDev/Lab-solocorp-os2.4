@@ -1,0 +1,32 @@
+{
+  "department": "cfo",
+  "decision": "Approve budget 3,000 THB for team lunch",
+  "level": "L3",
+  "priority": "P2",
+  "passed": true,
+  "score": 66,
+  "threshold": 60,
+  "rag": "🔴",
+  "question_results": [
+    {
+      "question_id": 1,
+      "question": "Dr.solodev ในมุม conservative จะ approve ไหม",
+      "result": "fail",
+      "reason": ""
+    },
+    {
+      "question_id": 2,
+      "question": "Worst case นี้ Owner รับได้ไหม",
+      "result": "pass",
+      "reason": ""
+    },
+    {
+      "question_id": 3,
+      "question": "Owner จะดีใจหรือเสียใจกับ decision นี้",
+      "result": "pass",
+      "reason": ""
+    }
+  ],
+  "reason": "",
+  "timestamp": "2026-07-27T00:18:54.473065+00:00"
+}

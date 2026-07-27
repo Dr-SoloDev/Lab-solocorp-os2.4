@@ -1,0 +1,32 @@
+{
+  "department": "orchestrator",
+  "decision": "Design new cross-dept pipeline",
+  "level": "L4",
+  "priority": "P2",
+  "passed": false,
+  "score": 33,
+  "threshold": 60,
+  "rag": "🔴",
+  "question_results": [
+    {
+      "question_id": 1,
+      "question": "Dr.solodev จะออกแบบระบบนี้ยังไง",
+      "result": "pass",
+      "reason": "LLM unavailable — conservative L4"
+    },
+    {
+      "question_id": 2,
+      "question": "Decision นี้ทำให้ระบบดีขึ้นสำหรับ Owner หรือไม่",
+      "result": "fail",
+      "reason": "LLM unavailable — conservative L4"
+    },
+    {
+      "question_id": 3,
+      "question": "Owner จะ approve นี้ไหม",
+      "result": "fail",
+      "reason": "LLM unavailable — conservative L4"
+    }
+  ],
+  "reason": "Mirror Check FAILED [orchestrator] score=33% (threshold=60%) — Design new cross-dept pipeline",
+  "timestamp": "2026-07-26T23:37:59.738970+00:00"
+}

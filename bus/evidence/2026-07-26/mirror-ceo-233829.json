@@ -1,0 +1,32 @@
+{
+  "department": "ceo",
+  "decision": "Change SoloCorp OS mission statement",
+  "level": "L5",
+  "priority": "P0",
+  "passed": false,
+  "score": 0,
+  "threshold": 80,
+  "rag": "🔴",
+  "question_results": [
+    {
+      "question_id": 1,
+      "question": "ลูกพี่จะทำแบบนี้ไหม",
+      "result": "fail",
+      "reason": "LLM unavailable — L5 requires Owner verification"
+    },
+    {
+      "question_id": 2,
+      "question": "Decision นี้สะท้อนตัวตนของ Dr.solodev หรือไม่",
+      "result": "fail",
+      "reason": "LLM unavailable — L5 requires Owner verification"
+    },
+    {
+      "question_id": 3,
+      "question": "ถ้า Owner เห็น decision นี้ จะยิ้มหรือส่ายหัว",
+      "result": "fail",
+      "reason": "LLM unavailable — L5 requires Owner verification"
+    }
+  ],
+  "reason": "Mirror Check FAILED [ceo] score=0% (threshold=80%) — Change SoloCorp OS mission statement",
+  "timestamp": "2026-07-26T23:38:29.930300+00:00"
+}
