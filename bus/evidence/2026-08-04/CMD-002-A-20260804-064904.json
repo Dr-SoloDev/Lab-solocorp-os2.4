@@ -1,0 +1,81 @@
+{
+  "event_id": "CMD-002-A",
+  "event_type": "DEPLOY",
+  "timestamp": "2026-08-04T06:49:04+07:00",
+  "actor": "changful",
+  "action": "deploy_ab_test_50_50",
+  "resource": "central_bus",
+  "task": "Deploy A/B Test 50/50 (route_v1 vs route_v2) + report endpoint",
+  "level": "L2",
+  "sop_ref": "SOP-04",
+  "status": "done",
+
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/v1/route_v1",
+      "description": "A/B variant entry (v1/legacy side) — returns the deterministically selected variant for the request id"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/route_v2",
+      "description": "A/B variant entry (v2/behavior side) — same experiment, returns the selected variant"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/ab-test/report",
+      "description": "counts per variant + split ratio (merges ADR-017 legacy report + CMD-002-A experiment layer)"
+    }
+  ],
+
+  "split": {
+    "experiment": "route_split",
+    "variants": ["v1", "v2"],
+    "target_ratio": "50/50",
+    "method": "MD5 hash of request_id — first hex nibble < 8 -> v2, >= 8 -> v1 (reuses router.should_use_v2; 8 of 16 buckets per variant = 50/50 by construction)",
+    "measured": {
+      "scope": "request ids ab-0000..ab-0099 (100 requests, same id space as the CI test)",
+      "v1": 49,
+      "v2": 51,
+      "v1_percent": 49.0,
+      "v2_percent": 51.0,
+      "deviation_from_50": 1.0
+    },
+    "result": "PASS — 49/51 within 5% tolerance of 50/50"
+  },
+
+  "test_result": {
+    "unit_suite": "central_bus/tests/test_ab_test.py",
+    "e2e_suite": "tests/test_ab_test_api.py (runs in GitHub Actions CI on push to main)",
+    "assertions": [
+      "same request_id always maps to same variant (deterministic)",
+      "100 live requests -> report total == 100 and v1 percent within 35-65%",
+      "report endpoint returns count per variant + split ratio + split_balance",
+      "force=v1/v2 override works for QA",
+      "legacy ADR-017 report fields preserved (backward compatible)"
+    ],
+    "expected_ci": "GitHub Actions auto-qa pipeline runs tests/ on push to main"
+  },
+
+  "files": [
+    {"action": "created", "path": "central_bus/ab_test.py"},
+    {"action": "modified", "path": "central_bus/main.py"},
+    {"action": "created", "path": "central_bus/tests/test_ab_test.py"},
+    {"action": "created", "path": "tests/test_ab_test_api.py"}
+  ],
+
+  "commits": [
+    "b2015c7bf0ceeaa8f927aa668684771b9ba802b0",
+    "4532b29489da94528e644bcf80fc88c09d5a70dc",
+    "697f32cf4021dbbe4184e71725617edf7994499d",
+    "82c4657e208631ed69b5fb4e5997683c4eae5107"
+  ],
+
+  "constraints": [
+    "no .env touched",
+    "no unrelated files modified",
+    "router.py untouched (existing A/B machinery preserved)"
+  ],
+
+  "evidence": "bus/evidence/2026-08-04/CMD-002-A-20260804-064904.json"
+}
