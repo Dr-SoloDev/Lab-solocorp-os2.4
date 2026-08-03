@@ -7,7 +7,9 @@ Endpoints
 * ``POST /v1/update``        — Report result back; triggers AAR on completion/failure
 * ``GET  /v1/health``        — Health check: DB, queue depth, uptime
 * ``GET  /v1/aar/{trace_id}``— Retrieve After Action Review entries for a trace
-* ``GET  /v1/ab-test/report``— A/B test 50/50: route_v2 vs route metrics report
+* ``GET  /v1/ab-test/report``— A/B test 50/50: route_v1 vs route_v2 metrics report
+* ``GET  /v1/route_v1``      — A/B test variant entry (v1/legacy side)
+* ``GET  /v1/route_v2``      — A/B test variant entry (v2/behavior side)
 
 Error Envelope
 ~~~~~~~~~~~~~~
@@ -47,6 +49,8 @@ from central_bus.models import BusMessage
 from central_bus.queue import SQLiteQueueManager
 from central_bus.router import RoutingEngine, route as jsonl_route
 from central_bus.router import get_ab_report
+from central_bus.ab_test import router as ab_test_router
+from central_bus.ab_test import get_all_reports as get_ab_experiment_reports
 
 log = logging.getLogger(__name__)
 
@@ -126,6 +130,7 @@ async def api_key_auth(request: Request, call_next):
 app.include_router(compliance_router)
 from central_bus.skills_router import router as skills_router
 app.include_router(skills_router)
+app.include_router(ab_test_router)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -380,23 +385,26 @@ async def get_aar(trace_id: str):
 
 @app.get("/v1/ab-test/report")
 async def ab_test_report():
-    """A/B test 50/50: route_v2 vs route metrics report.
+    """A/B test 50/50: route_v1 vs route_v2 metrics report.
 
-    Returns in-memory + DB-backed metrics for the active
-    A/B test between route_v2 (Behavior-Centric) and legacy route().
+    Returns in-memory + DB-backed metrics for the active A/B test between
+    route_v2 (Behavior-Centric) and legacy route(), PLUS the experiment
+    layer report (``route_split`` v1/v2 counts + split ratio) from
+    ``central_bus.ab_test``.
 
     Access: Admin key required.
     """
     try:
         db = await ensure_db()
         report = get_ab_report(db=db)
-        return report
     except Exception as e:
         log.warning("Failed to query DB for A/B report: %s", e)
         # Fall back to in-memory-only report
         report = get_ab_report(db=None)
         report["db_unavailable"] = True
-        return report
+    # Merge experiment-layer report (CMD-002-A)
+    report["experiments"] = get_ab_experiment_reports()
+    return report
 
 
 # ═══════════════════════════════════════════════════════════════════════
