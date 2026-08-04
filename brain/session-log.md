@@ -372,3 +372,8 @@ After testing, each member will:
   - ✅ Deploy (Owner สั่ง step-by-step): build-profiles (81 SOUL.md → dist 3 formats) → export-codex-agents (86 agents, validate ผ่าน) → validate-only (86/86 PASS) → commit **9f9d132** (10 files: CEO 5-Layer persona CMD-003-A, TEMPLATE-5LAYER rename, ci.yml+QA gate hardening, daily_brief EN prompt+fallback, auto_qa_gate JSON 1-3, brain/queue state, drop .coverage binary)
   - Culture note: สนทราช่วงเย็นเป็น human-first — Owner พักผ่อนได้จริง Work ในวันนี้: deploy เสร็จสมบูรณ์ codex กำลังทดสอบโปรเจกต์ของตัวเอง
   - Open: Kingston 1TB ตรวจเมื่อเสียบช่อง DVD, CMD-004-T3 (@qa 08-08), CMD-001-F host-level verify, 26 baseline test debt
+- **04 ส.ค. 16:30 — Project Update: scrap-pos (ร้านรับซื้อของเก่า 4 สาขา จ.สุรินทร์, ดีล 40K):**
+  - 🎉 **ลูกค้าตรวจรับงานผ่านแล้ว** — ผ่านด่าน trust (ลูกค้าโดนทิ้งงาน 2 ครั้ง) → เหลือปรับสมบูรณ์ + เสถียร
+  - ✅ **Owner ติดตั้ง Ubuntu Server ที่ร้านลูกค้าเสร็จ** — deploy จริงที่หน้างาน เริ่ม Phase Stabilize
+  - Next: deploy prod บน server ร้าน, Cloudflare Tunnel (remote access), NAS/storage จริง, QA photo capture, monitor การใช้งานจริง
+  - อัปเดต AGENT-MEMORY.md (scrap-pos) เรียบร้อย — status ใหม่ + todo ใหม่ (04 ส.ค.)
