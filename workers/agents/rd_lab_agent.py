@@ -26,6 +26,16 @@ class RDLabAgent(BaseAgent):
         "curate": ["curate", "document", "summarize", "organize", "wiki"],
     }
 
+    # Output structure ต่อ activity — enforcement รูปแบบผลงาน
+    ACTIVITY_OUTPUTS = {
+        "research": "research question + method + sources + next steps",
+        "prototype": "goal + tech stack + scope + success criteria",
+        "experiment": "hypothesis + metrics + sample + evaluation plan",
+        "tool": "purpose + inputs + outputs + integration points",
+        "curate": "topic + key findings + tags + reference links",
+        "explore": "idea + feasibility + risks + recommended action",
+    }
+
     def __init__(self, bus_url: str = "", api_key: str = ""):
         super().__init__(
             agent_id="rd-lab",
@@ -66,8 +76,30 @@ class RDLabAgent(BaseAgent):
             prompt += f"parameters: {json.dumps(params, ensure_ascii=False)}\n"
         prompt += "\nโปรดำดำเนินการตามบทบาท R&D Lab รายงานผล"
 
+        @staticmethod
+        def _llm_usable(result: str) -> bool:
+            return bool(result and not result.startswith("⚠️ LLM ไม่พร้อม"))
+
+        def _output_fallback(activity: str, description: str, action: str) -> dict:
+            """Rule-based fallback — output structure ตาม activity แม้ LLM ล้ม"""
+            structure = self.ACTIVITY_OUTPUTS.get(activity, self.ACTIVITY_OUTPUTS["explore"])
+            return {
+                "status": "completed",
+                "summary": f"[{activity.upper()}] output: {structure} — จาก: {description[:150]}",
+                "details": {
+                    "action": action,
+                    "activity": activity,
+                    "agent": self.agent_id,
+                    "llm_used": False,
+                    "fallback": "activity_output",
+                    "output_structure": structure,
+                },
+            }
+
         try:
             llm_response = await self.think(prompt, max_tokens=500)
+            if not _llm_usable(llm_response):
+                return _output_fallback(activity, description, action)
             return {
                 "status": "completed",
                 "summary": llm_response[:300],
@@ -80,8 +112,4 @@ class RDLabAgent(BaseAgent):
                 },
             }
         except Exception as e:
-            return {
-                "status": "completed",
-                "summary": f"R&D Lab รับทราบ: {description[:200]}",
-                "details": {"action": action, "activity": activity, "llm_error": str(e)},
-            }
+            return _output_fallback(activity, description, action)

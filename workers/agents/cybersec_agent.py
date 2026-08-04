@@ -25,6 +25,30 @@ class CyberSecAgent(BaseAgent):
         "low": ["info", "notice", "observation"],
     }
 
+    # Rule-based playbook per severity — fallback เมื่อ LLM ไม่พร้อม
+    PLAYBOOKS = {
+        "critical": {
+            "response": "INCIDENT RESPONSE: isolate affected systems, revoke credentials, preserve evidence, notify CEO + CTO immediately, begin forensics",
+            "action": "escalate_incident",
+            "sla": "15 min",
+        },
+        "high": {
+            "response": "Patch/contain the exploited surface, rotate keys, deploy monitoring rules, report within 1h",
+            "action": "contain_and_patch",
+            "sla": "1 hour",
+        },
+        "medium": {
+            "response": "Investigate anomaly, correlate logs, validate threat, update threat intel",
+            "action": "investigate",
+            "sla": "4 hours",
+        },
+        "low": {
+            "response": "Log observation, monitor trend, include in weekly security review",
+            "action": "log_and_monitor",
+            "sla": "24 hours",
+        },
+    }
+
     def __init__(self, bus_url: str = "", api_key: str = ""):
         super().__init__(
             agent_id="cybersec-sai",
@@ -40,6 +64,28 @@ class CyberSecAgent(BaseAgent):
             if any(kw in desc_lower for kw in keywords):
                 return sev
         return "low"
+
+    @staticmethod
+    def _llm_usable(result: str) -> bool:
+        """LLM output ใช้ได้ไหม — filter empty/failure จาก llm_provider"""
+        return bool(result and not result.startswith("⚠️ LLM ไม่พร้อม"))
+
+    def _playbook_fallback(self, severity: str, description: str, action: str) -> dict:
+        """Rule-based fallback — ให้ผลงานจริงแม้ LLM ล้ม"""
+        pb = self.PLAYBOOKS.get(severity, self.PLAYBOOKS["low"])
+        return {
+            "status": "completed",
+            "summary": f"[{severity.upper()}] {pb['response']} — จาก: {description[:150]}",
+            "details": {
+                "action": action,
+                "severity": severity,
+                "agent": self.agent_id,
+                "llm_used": False,
+                "fallback": "playbook",
+                "playbook_action": pb["action"],
+                "sla": pb["sla"],
+            },
+        }
 
     async def execute(self, task: dict) -> dict:
         """Execute security tasks ด้วยพลัง LLM"""
@@ -74,6 +120,8 @@ class CyberSecAgent(BaseAgent):
 
         try:
             llm_response = await self.think(prompt, max_tokens=500)
+            if not self._llm_usable(llm_response):
+                return self._playbook_fallback(severity, description, action)
             return {
                 "status": "completed",
                 "summary": llm_response[:300],
@@ -86,8 +134,4 @@ class CyberSecAgent(BaseAgent):
                 },
             }
         except Exception as e:
-            return {
-                "status": "completed",
-                "summary": f"{severity.upper()}: รับทราบ {description[:200]}",
-                "details": {"action": action, "severity": severity, "llm_error": str(e)},
-            }
+            return self._playbook_fallback(severity, description, action)

@@ -26,6 +26,15 @@ class Web3Agent(BaseAgent):
         "nft": ["nft", "token", " mint", "collection", "metadata"],
     }
 
+    # Security red flags — fallback assessment เมื่อ LLM ไม่พร้อม
+    SECURITY_RED_FLAGS = {
+        "reentrancy": "check CEI pattern, reentrancy guard, cross-function reentrancy",
+        "overflow": "check SafeMath / Solidity 0.8+ builtin overflow, casting",
+        "access control": "check onlyOwner, role checks, admin keys, timelock",
+        "oracle": "check price manipulation, TWAP, oracle centralization",
+        "rugpull": "check mint authority, LP lock, ownership transfer, blacklist",
+    }
+
     def __init__(self, bus_url: str = "", api_key: str = ""):
         super().__init__(
             agent_id="web3-aywa",
@@ -66,8 +75,41 @@ class Web3Agent(BaseAgent):
             prompt += f"parameters: {json.dumps(params, ensure_ascii=False)}\n"
         prompt += "\nโปรดวิเคราะห์และดำเนินการ รายงานผล"
 
+        @staticmethod
+        def _llm_usable(result: str) -> bool:
+            return bool(result and not result.startswith("⚠️ LLM ไม่พร้อม"))
+
+        def _redflag_fallback(domain: str, description: str, action: str) -> dict:
+            """Rule-based fallback — red flag scan แม้ LLM ล้ม"""
+            desc_lower = description.lower()
+            flags = [
+                {"flag": f, "check": c}
+                for f, c in self.SECURITY_RED_FLAGS.items()
+                if f in desc_lower
+            ]
+            risk = "HIGH" if flags else ("REVIEW" if domain == "security" else "NORMAL")
+            return {
+                "status": "completed",
+                "summary": (
+                    f"[{domain.upper()} / {risk}] "
+                    + (f"red flags: {', '.join(f['flag'] for f in flags)}" if flags else "no known red flags in description")
+                    + f" — จาก: {description[:150]}"
+                ),
+                "details": {
+                    "action": action,
+                    "domain": domain,
+                    "risk": risk,
+                    "red_flags": flags,
+                    "agent": self.agent_id,
+                    "llm_used": False,
+                    "fallback": "redflag_scan",
+                },
+            }
+
         try:
             llm_response = await self.think(prompt, max_tokens=500)
+            if not _llm_usable(llm_response):
+                return _redflag_fallback(domain, description, action)
             return {
                 "status": "completed",
                 "summary": llm_response[:300],
@@ -80,8 +122,4 @@ class Web3Agent(BaseAgent):
                 },
             }
         except Exception as e:
-            return {
-                "status": "completed",
-                "summary": f"Web3 รับทราบ: {description[:200]}",
-                "details": {"action": action, "domain": domain, "llm_error": str(e)},
-            }
+            return _redflag_fallback(domain, description, action)

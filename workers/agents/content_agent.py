@@ -57,6 +57,36 @@ class ContentAgent(BaseAgent):
             "newsletter": "คุณคือ Content Creator (เสก) ของ SoloCorp OS — เขียน newsletter\n",
         }
 
+        # Output format ตามประเภท — enforcement โครงสร้างผลงาน
+        OUTPUT_FORMATS = {
+            "social": "Format: hook + body + CTA + hashtags",
+            "video": "Format: concept + script outline + visual direction",
+            "caption": "Format: caption ≤280 chars + hashtags",
+            "campaign": "Format: goal + channels + content pillars + timeline",
+            "blog": "Format: title + outline + key points",
+            "newsletter": "Format: subject + sections + CTA",
+        }
+
+        @staticmethod
+        def _llm_usable(result: str) -> bool:
+            return bool(result and not result.startswith("⚠️ LLM ไม่พร้อม"))
+
+        def _structure_fallback(content_type: str, description: str, action: str) -> dict:
+            """Rule-based fallback — สร้างโครงสร้างผลงานจริงแม้ LLM ล้ม"""
+            fmt = OUTPUT_FORMATS.get(content_type, "Format: outline + deliverables")
+            return {
+                "status": "completed",
+                "summary": f"[{content_type.upper()}] draft plan จาก: {description[:150]} — {fmt}",
+                "details": {
+                    "action": action,
+                    "content_type": content_type,
+                    "agent": self.agent_id,
+                    "llm_used": False,
+                    "fallback": "output_structure",
+                    "format": fmt,
+                },
+            }
+
         prompt = type_prompts.get(content_type, "คุณคือ Content Creator (เสก) ของ SoloCorp OS\n")
         prompt += f"ได้รับงานจาก CEO: {description}\n"
         if params:
@@ -65,6 +95,8 @@ class ContentAgent(BaseAgent):
 
         try:
             llm_response = await self.think(prompt, max_tokens=500)
+            if not _llm_usable(llm_response):
+                return _structure_fallback(content_type, description, action)
             return {
                 "status": "completed",
                 "summary": llm_response[:300],
@@ -77,12 +109,4 @@ class ContentAgent(BaseAgent):
                 },
             }
         except Exception as e:
-            return {
-                "status": "completed",
-                "summary": f"Content รับทราบ: {description[:200]}",
-                "details": {
-                    "action": action,
-                    "agent": self.agent_id,
-                    "llm_error": str(e),
-                },
-            }
+            return _structure_fallback(content_type, description, action)

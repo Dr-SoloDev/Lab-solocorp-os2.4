@@ -27,6 +27,17 @@ class NetEngAgent(BaseAgent):
         "monitor": ["monitor", "ping", "latency", "bandwidth", "snmp"],
     }
 
+    # Rule-based SOP ต่อ domain — fallback เมื่อ LLM ไม่พร้อม
+    DOMAIN_SOPS = {
+        "dns": "ตรวจ TTL, nameserver propagation, DNSSEC, fallback resolver",
+        "cdn": "ตรวจ cache hit ratio, edge POP, purge policy, origin health",
+        "vpn": "ตรวจ tunnel status, key rotation, MTU, split-tunnel policy",
+        "lb": "ตรวจ health check, session stickiness, TLS termination, backend pool",
+        "bgp": "ตรวจ peering, prefix advertisement, route flap, AS-path",
+        "monitor": "ตรวจ latency, packet loss, bandwidth utilization, uptime SLA",
+        "general": "ตรวจ topology, dependency, runbook, escalation path",
+    }
+
     def __init__(self, bus_url: str = "", api_key: str = ""):
         super().__init__(
             agent_id="neteng-neet",
@@ -67,8 +78,30 @@ class NetEngAgent(BaseAgent):
             prompt += f"parameters: {json.dumps(params, ensure_ascii=False)}\n"
         prompt += "\nโปรดวิเคราะห์และเสนอแนวทางการดำเนินการ รายงานผล"
 
+        @staticmethod
+        def _llm_usable(result: str) -> bool:
+            return bool(result and not result.startswith("⚠️ LLM ไม่พร้อม"))
+
+        def _sop_fallback(domain: str, description: str, action: str) -> dict:
+            """Rule-based fallback — SOP ตาม domain แม้ LLM ล้ม"""
+            sop = self.DOMAIN_SOPS.get(domain, self.DOMAIN_SOPS["general"])
+            return {
+                "status": "completed",
+                "summary": f"[{domain.upper()}] SOP: {sop} — จาก: {description[:150]}",
+                "details": {
+                    "action": action,
+                    "domain": domain,
+                    "agent": self.agent_id,
+                    "llm_used": False,
+                    "fallback": "domain_sop",
+                    "sop": sop,
+                },
+            }
+
         try:
             llm_response = await self.think(prompt, max_tokens=500)
+            if not _llm_usable(llm_response):
+                return _sop_fallback(domain, description, action)
             return {
                 "status": "completed",
                 "summary": llm_response[:300],
@@ -81,8 +114,4 @@ class NetEngAgent(BaseAgent):
                 },
             }
         except Exception as e:
-            return {
-                "status": "completed",
-                "summary": f"NetEng รับทราบ: {description[:200]}",
-                "details": {"action": action, "domain": domain, "llm_error": str(e)},
-            }
+            return _sop_fallback(domain, description, action)

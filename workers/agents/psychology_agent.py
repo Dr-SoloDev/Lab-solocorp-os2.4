@@ -26,6 +26,16 @@ class PsychologyAgent(BaseAgent):
         "research": ["research", "study", "survey", "interview", "user research"],
     }
 
+    # Rule-based framework ต่อ focus — fallback เมื่อ LLM ไม่พร้อม
+    FOCUS_FRAMEWORKS = {
+        "ux": "cognitive load ↓, Hick's law, Fitts's law, error prevention — สังเกต + แนะนำ UX",
+        "bias": "anchoring, confirmation bias, loss aversion — ระบุ bias + mitigation",
+        "org": "psychological safety, communication patterns, conflict resolution",
+        "behavior": "nudge theory, habit loop (cue-routine-reward), incentive design",
+        "research": "methodology, sample size, bias control, interpretation",
+        "general": "observation + hypothesis + recommendation",
+    }
+
     def __init__(self, bus_url: str = "", api_key: str = ""):
         super().__init__(
             agent_id="psych-jit",
@@ -66,8 +76,30 @@ class PsychologyAgent(BaseAgent):
             prompt += f"parameters: {json.dumps(params, ensure_ascii=False)}\n"
         prompt += "\nโปรดวิเคราะห์ทางจิตวิทยาและให้คำแนะนำ รายงานผล"
 
+        @staticmethod
+        def _llm_usable(result: str) -> bool:
+            return bool(result and not result.startswith("⚠️ LLM ไม่พร้อม"))
+
+        def _framework_fallback(focus: str, description: str, action: str) -> dict:
+            """Rule-based fallback — framework ตาม focus แม้ LLM ล้ม"""
+            fw = self.FOCUS_FRAMEWORKS.get(focus, self.FOCUS_FRAMEWORKS["general"])
+            return {
+                "status": "completed",
+                "summary": f"[{focus.upper()}] {fw} — จาก: {description[:150]}",
+                "details": {
+                    "action": action,
+                    "focus": focus,
+                    "agent": self.agent_id,
+                    "llm_used": False,
+                    "fallback": "focus_framework",
+                    "framework": fw,
+                },
+            }
+
         try:
             llm_response = await self.think(prompt, max_tokens=500)
+            if not _llm_usable(llm_response):
+                return _framework_fallback(focus, description, action)
             return {
                 "status": "completed",
                 "summary": llm_response[:300],
@@ -80,8 +112,4 @@ class PsychologyAgent(BaseAgent):
                 },
             }
         except Exception as e:
-            return {
-                "status": "completed",
-                "summary": f"Psychology รับทราบ: {description[:200]}",
-                "details": {"action": action, "focus": focus, "llm_error": str(e)},
-            }
+            return _framework_fallback(focus, description, action)

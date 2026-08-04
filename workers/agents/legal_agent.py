@@ -20,6 +20,18 @@ class LegalAgent(BaseAgent):
 
     DOCUMENT_TYPES = ["contract", "nda", "agreement", "policy", "terms", "compliance"]
 
+    RISK_KEYWORDS = {
+        "high": ["breach", "violation", "penalty", "liability", "termination", "lawsuit", "indemnity", "confidential"],
+        "medium": ["ambiguous", "unclear", "discretion", "may", "subject to"],
+        "low": ["routine", "renewal", "notice", "standard", "template"],
+    }
+
+    RISK_ACTIONS = {
+        "high": "escalate to CEO + legal review required before sign — อย่าเซ็นก่อน",
+        "medium": "clarify terms with counterparty before execution",
+        "low": "proceed with standard review",
+    }
+
     def __init__(self, bus_url: str = "", api_key: str = ""):
         super().__init__(
             agent_id="legal-tulya",
@@ -35,6 +47,33 @@ class LegalAgent(BaseAgent):
             if dt in combined:
                 return dt
         return "general"
+
+    def _assess_risk(self, description: str) -> str:
+        desc_lower = description.lower()
+        for level, keywords in self.RISK_KEYWORDS.items():
+            if any(kw in desc_lower for kw in keywords):
+                return level
+        return "low"
+
+    @staticmethod
+    def _llm_usable(result: str) -> bool:
+        return bool(result and not result.startswith("⚠️ LLM ไม่พร้อม"))
+
+    def _risk_fallback(self, doc_type: str, description: str, action: str) -> dict:
+        """Rule-based fallback — วิเคราะห์ความเสี่ยงจริงแม้ LLM ล้ม"""
+        risk = self._assess_risk(description)
+        return {
+            "status": "completed",
+            "summary": f"[{doc_type.upper()} / RISK:{risk.upper()}] {self.RISK_ACTIONS[risk]} — จาก: {description[:150]}",
+            "details": {
+                "action": action,
+                "doc_type": doc_type,
+                "risk_level": risk,
+                "agent": self.agent_id,
+                "llm_used": False,
+                "fallback": "risk_assessment",
+            },
+        }
 
     async def execute(self, task: dict) -> dict:
         """Execute legal tasks ด้วยพลัง LLM"""
@@ -69,20 +108,19 @@ class LegalAgent(BaseAgent):
 
         try:
             llm_response = await self.think(prompt, max_tokens=500)
+            if not self._llm_usable(llm_response):
+                return self._risk_fallback(doc_type, description, action)
             return {
                 "status": "completed",
                 "summary": llm_response[:300],
                 "details": {
                     "action": action,
                     "doc_type": doc_type,
+                    "risk_level": self._assess_risk(description),
                     "agent": self.agent_id,
                     "llm_used": True,
                     "full_response": llm_response,
                 },
             }
         except Exception as e:
-            return {
-                "status": "completed",
-                "summary": f"Legal รับทราบ: {description[:200]}",
-                "details": {"action": action, "doc_type": doc_type, "llm_error": str(e)},
-            }
+            return self._risk_fallback(doc_type, description, action)
