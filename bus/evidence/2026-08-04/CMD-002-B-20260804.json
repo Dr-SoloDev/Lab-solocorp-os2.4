@@ -1,0 +1,58 @@
+{
+  "evidence_id": "CMD-002-B-20260804",
+  "task_id": "CMD-002-B",
+  "title": "Upgrade 7 specialist agents — LLM resilience with rule-based fallbacks",
+  "status": "completed",
+  "assignee": "nong-changful (delegated by CEO เทอโบ)",
+  "verified_by": "CEO เทอโบ (executive verification)",
+  "date": "2026-08-04",
+  "deadline": "2026-08-06",
+  "commit": "03f0178",
+  "summary": "ทั้ง 7 agents มี safety net เมื่อ LLM (deepseek-v4-flash-free) ตอบ empty หรือล้ม: _llm_usable() filter + rule-based fallback ที่ให้ผลงานจริงตาม domain ไม่ใช่ 'รับทราบ'",
+  "changes": [
+    {
+      "agent": "cybersec_agent.py",
+      "pattern": "SEVERITY_KEYWORDS + PLAYBOOKS (LOW/MEDIUM/HIGH/CRITICAL) + _llm_usable + _playbook_fallback"
+    },
+    {
+      "agent": "content_agent.py",
+      "pattern": "OUTPUT_FORMATS per content type (social/video/caption/campaign/blog/newsletter) + _structure_fallback"
+    },
+    {
+      "agent": "legal_agent.py",
+      "pattern": "RISK_KEYWORDS + RISK_ACTIONS (high/medium/low) + _assess_risk + _risk_fallback"
+    },
+    {
+      "agent": "neteng_agent.py",
+      "pattern": "DOMAIN_SOPS (dns/cdn/vpn/lb/bgp/monitor) + _sop_fallback"
+    },
+    {
+      "agent": "psychology_agent.py",
+      "pattern": "FOCUS_FRAMEWORKS (ux/bias/org/behavior/research) + _framework_fallback"
+    },
+    {
+      "agent": "web3_agent.py",
+      "pattern": "SECURITY_RED_FLAGS (reentrancy/overflow/access control/oracle/rugpull) + _redflag_fallback"
+    },
+    {
+      "agent": "rd_lab_agent.py",
+      "pattern": "ACTIVITY_OUTPUTS (research/prototype/experiment/tool/curate) + _output_fallback"
+    }
+  ],
+  "verification": {
+    "method": "execute() test with mock think() returning empty (LLM down) + py_compile syntax check",
+    "results": "7/7 PASS — ทุก agent กลับ status=completed พร้อม summary มีเนื้อหา + details.llm_used=false + details.fallback ชี้ rule",
+    "example_results": {
+      "cybersec": "fallback=playbook, [LOW] Log observation, monitor trend...",
+      "legal": "fallback=risk_assessment, [NDA / RISK:HIGH] escalate to CEO...",
+      "web3": "fallback=redflag_scan, [SOLIDITY / HIGH] red flags: reentrancy",
+      "neteng": "fallback=domain_sop, [DNS] ตรวจ TTL, nameserver propagation..."
+    },
+    "pytest": "tests/ -k agent: 13 passed (smoke_test_agent.py รัน LLM จริง ตัดออกเพราะ timeout 120s)"
+  },
+  "lesson_learned": "ระหว่าง verify เจอ bug: nested function ใน execute ถูกเรียกด้วย self. (AttributeError) — แก้โดยเรียกแบบ closure; cybersec/legal ใช้ class-level method จึงผ่านตั้งแต่แรก",
+  "open_items": [
+    "smoke_test_agent.py รันช้าเพราะ LLM จริง — พิจารณา mock LLM ใน CI",
+    "T2 CI: ยังมี 26 baseline failures (behavior_classifier 12, phase4 5, phase1 3, api_cli+handoff 6) — debt เดิม ไม่ใช่ regression"
+  ]
+}
