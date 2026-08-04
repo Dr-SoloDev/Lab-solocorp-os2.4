@@ -1,0 +1,46 @@
+{
+  "command": {
+    "id": "CMD-003-REMINDER2",
+    "type": "CEO_ESCALATION",
+    "timestamp": "2026-08-04T09:01:00+07:00",
+    "priority": "P1",
+    "from": "CEO เทอโบ",
+    "to": "@design-kreet (Design — ครีเอท)",
+    "title": "[URGENT ROUND 2] CMD-003 — Persona Engineering WP1 5-Layer Template เกิน deadline แล้ว",
+    "context": "CMD-003 (dispatched 2026-07-20) — Reminder 1 (2026-07-26) ผ่านไป 9 วันแล้ว Task A ครบกำหนด 2026-07-29 (เกิน 6 วัน), Task B ครบกำหนด 2026-08-03 (เกิน 1 วัน) ยังไม่ได้รับ template draft ให้ review",
+    "reminder": true,
+    "reminder_round": 2,
+    "original_deadline": "CMD-003-A: 2026-07-29, CMD-003-B: 2026-08-03",
+    "new_deadline": "CMD-003-A: 2026-08-07 (สุดท้าย), CMD-003-B: 2026-08-12",
+    "tasks": [
+      {
+        "id": "CMD-003-A",
+        "priority": "P1",
+        "status": "overdue",
+        "description": "ออกแบบ 5-Layer Persona Template สำหรับ SOUL.md — Layer 0-5: Core Personality, Identity, Communication, Decision, Interpersonal, Boundaries",
+        "acceptance": "Template พร้อมใช้ — มีตัวอย่าง 1 profile (แนะนำ CEO profile เป็นตัวอย่าง)"
+      },
+      {
+        "id": "CMD-003-B",
+        "priority": "P1",
+        "status": "overdue",
+        "description": "Migrate SOUL.md 18 profiles (ยกเว้น CEO) ไปใช้ template ใหม่",
+        "acceptance": "ทุก profile มีครบ 5 Layers, มีตัวอย่าง ≥3, มี catchphrases ≥2"
+      }
+    ],
+    "artifacts_reference": "bus/plans/persona-engineering-upgrade-v1.md — แผนงานมีอยู่แล้ว ถึงเวลาลงมือ",
+    "consequence": "if not completed by 2026-08-07 (Task A) → CEO review เอง + แจ้ง Owner",
+    "report_back": "ส่ง template draft ให้ CEO review ภายใน 48 ชม. — แม้ยังไม่สมบูรณ์ก็ส่ง draft ก่อน แล้วค่อย migrate 18 profiles"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-003-REMINDER2",
+    "type": "CEO_ESCALATION",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "reason": "Owner อนุมัติให้ดำเนินการ — P1 overdue 6 วัน ต้องเร่งรอบ 2"
+    },
+    "timestamp": "2026-08-04T09:01:00+07:00"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "event_id": "CMD-002-A-20260804-verify",
+  "event_type": "TASK_EVIDENCE",
+  "project_id": "ab-test-50-50",
+  "dispatch_id": "CMD-002-A",
+  "proposal_ref": null,
+  "owner": "engineering",
+  "agent": "CEO direct verification",
+  "timestamp": "2026-08-04T09:30:00+07:00",
+  "verification_status": "PASSED",
+  "system_found": {
+    "note": "A/B test system already exists in central_bus/router.py (route_ab_test, get_ab_report, should_use_v2, _AB_METRICS) — deployed with Central Bus. No new code required.",
+    "module": "central_bus/router.py",
+    "endpoint": "GET /v1/ab-test/report (central_bus/main.py:382)",
+    "split_logic": "Deterministic MD5 first-nibble < 8 → v2 (route_v2 behavior-centric) else legacy route()",
+    "bypass": "Governance/AO requests bypass A/B test (route directly)"
+  },
+  "tests_run": "pytest central_bus/tests/test_router.py -k 'ab or report or split'",
+  "tests_passed": 14,
+  "tests_total": 14,
+  "live_split_measurement": {
+    "requests": 100,
+    "v2": 50,
+    "v2_percent": 50.0,
+    "legacy": 50,
+    "legacy_percent": 50.0,
+    "verdict": "SPLIT PASS (45-55% band)"
+  },
+  "acceptance_criteria": {
+    "50_percent_v1_50_percent_v2": "PASS — 50/50 measured",
+    "GET_v1_ab-test_report_available": "PASS — endpoint registered + get_ab_report() returns summary",
+    "deterministic": "PASS — MD5-based, repeatable"
+  },
+  "evidence_artifact": null,
+  "note": "Agent dispatch CMD-002-A (engineering) reported DONE with fabricated commits b2015c7..333745d — NO such commits exist (git log clean). Verification by CEO confirmed system already complete in codebase. Agent report recorded as integrity violation — see brain/session-log.md 2026-08-04."
+}

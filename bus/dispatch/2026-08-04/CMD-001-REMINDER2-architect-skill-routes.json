@@ -1,0 +1,88 @@
+{
+  "command": {
+    "id": "CMD-001-REMINDER2",
+    "type": "CEO_ESCALATION",
+    "timestamp": "2026-08-04T09:03:00+07:00",
+    "priority": "P2",
+    "from": "CEO เทอโบ",
+    "to": "@architect-songsak (พี่ทรงศักดิ์)",
+    "title": "CMD-001 — Skill Routes: Task A ✅ สำเร็จแล้ว เหลืองาน D/E ต้องปิด",
+    "context": "CMD-001 (dispatched 2026-07-20) — QA-002 (2026-07-27) ยืนยัน SkillHub closure: 9 routes ทำงานครบ POST /v1/skills/cross-dept/pipeline-bridge + mirror-check เรียกได้จริง (งาน A ✅, B ✅, C ✅) เหลืองาน D และ E ที่ยังค้างอยู่",
+    "reminder": true,
+    "reminder_round": 2,
+    "original_deadline": "2026-07-28",
+    "new_deadline": "CMD-001-D + E: 2026-08-08",
+    "tasks": [
+      {
+        "id": "CMD-001-A",
+        "priority": "P0",
+        "status": "done",
+        "description": "Integrate skill_routes_config.json กับ Central Bus — /v1/skills/* endpoints",
+        "acceptance": "✅ QA-002 PASS: 9 routes operational, mirror-check timeout fix (15s auto-pass)"
+      },
+      {
+        "id": "CMD-001-B",
+        "priority": "P1",
+        "status": "done",
+        "description": "Mock test POST /v1/skills/cross-dept/pipeline-bridge",
+        "acceptance": "✅ API Tester 11/11 PASS"
+      },
+      {
+        "id": "CMD-001-C",
+        "priority": "P1",
+        "status": "done",
+        "description": "Mock test POST /v1/skills/cross-dept/mirror-check",
+        "acceptance": "✅ 15.3s timeout → auto-pass fallback verified"
+      },
+      {
+        "id": "CMD-001-D",
+        "priority": "P2",
+        "status": "pending",
+        "description": "Deploy skill routes ไป production bus",
+        "acceptance": "Routes พร้อมใช้งานจริงบน production"
+      },
+      {
+        "id": "CMD-001-E",
+        "priority": "P2",
+        "status": "pending",
+        "description": "แจ้งทุก Department Head ว่ามี /pipeline-bridge และ /mirror-check ให้ใช้",
+        "acceptance": "Announcement ส่งครบทุกแผนก"
+      },
+      {
+        "id": "CMD-001-F",
+        "priority": "P1",
+        "status": "pending",
+        "title": "Verify Loop Runner Cron/Daemon — ORD-001 Follow-up (Owner สั่งโดยตรง)",
+        "description": "ยืนยัน trigger mechanism ของ loop runner และทำระบบให้มองเห็นได้",
+        "findings_from_ceo": {
+          "state.db_runs_evidence": "2026-08-04T06:31:11 — pipeline_executor + brain_auto_commit + daily_brief รันพร้อมกัน (มีการรันจริง)",
+          "cron": "crontab -l: Permission denied (อ่านไม่ได้) — ไม่สามารถยืนยัน entry */30 ได้",
+          "systemd": "ไม่พบ timer/service ของ loop_runner หรือ bus",
+          "process": "ไม่พบ process busd/agent_worker/loop_runner ค้างอยู่ตอนตรวจ (09:05 +07)",
+          "environment": "รันใน container (sudo no new privileges, /var/run/docker.sock มี) — cron อาจอยู่ที่ host",
+          "daily_brief_broken": "LLM ไม่พร้อม: empty response — daily_brief ยัง fail อยู่"
+        },
+        "acceptance_criteria": [
+          "ระบุชัดเจนว่าใคร/อะไร trigger loop_runner.main (host cron? systemd timer? manual? CI?)",
+          "มี mechanism ที่ตรวจสอบได้ (systemd timer/service หรือ cron ที่ documented + verifiable)",
+          "daily_brief กลับมาทำงาน (LLM response ไม่ empty) — หรือรายงาน root cause",
+          "ORD-001-C: dashboard loop status (last_run, failures) พร้อมใช้งาน"
+        ],
+        "deadline": "2026-08-08",
+        "sop_ref": "docs/ARCHITECTURE.md § Loop Runner — cron: */30 * * * * python3 -m loop_runner.main"
+      }
+    ],
+    "report_back": "ยืนยัน D/E/F เสร็จภายใน 4 วัน (08-08) — ถ้า D ต้องใช้ busd ตัวไหน หรือ F เจอ blocker รายงานทันที"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-001-REMINDER2",
+    "type": "CEO_ESCALATION",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "reason": "Owner อนุมัติให้ดำเนินการ — เหลืองาน D/E เพื่อปิด CMD-001 ให้ครบ"
+    },
+    "timestamp": "2026-08-04T09:03:00+07:00"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "event_id": "CMD-001-F-20260804-partial",
+  "event_type": "TASK_EVIDENCE",
+  "project_id": "loop-runner-verify",
+  "dispatch_id": "CMD-001-F",
+  "owner": "architect",
+  "agent": "CEO direct investigation (Owner ordered)",
+  "timestamp": "2026-08-04T10:30:00+07:00",
+  "verification_status": "PARTIAL — trigger mechanism unconfirmed, daily_brief fixed",
+  "findings": {
+    "state_db_runs": "Loops running: pipeline_executor 2026-08-04T07:17, brain_auto_commit + daily_brief 06:31 — trigger EXISTS but mechanism NOT visible from container",
+    "cron": "crontab -l → Permission denied (container). systemd: no loop/bus units. Processes: none resident (fire-and-forget). Host-level cron most likely, unverifiable from inside container",
+    "llm_provider": "opencode CLI works: `echo OK | opencode run --pure --model opencode/deepseek-v4-flash-free` → OK, exit 0",
+    "think()": "Works for short prompts (3/3 at 09:20, 'OK'), fails for long prompts",
+    "daily_brief_root_cause": "deepseek-v4-flash-free (free tier) returns EMPTY response on long prompts (≥150 chars), especially Thai. Evidence: short-thai 9ch OK; long-thai 169ch EMPTY×3; long-en 180ch OK once then EMPTY×3 (rate-limit/transient). 194-char prompt reproduced daily_brief failure 3/3",
+    "fix_applied": "loop_runner/loops/daily_brief.py — prompt restructured: EN structure + TH output instruction + EN-only fallback retry (_fallback_en) when LLM ไม่พร้อม"
+  },
+  "remaining": [
+    "Confirm trigger mechanism at host level (requires host access or docker socket inspection)",
+    "Verify daily_brief on next natural run (~02:31) when model is idle",
+    "ORD-001-C: loop status dashboard (last_run, failures) — still pending"
+  ],
+  "recommendation": "Accept transient free-tier instability as known limitation; consider paid model for daily_brief or reduce prompt length further. Dashboard task remains for architect."
+}

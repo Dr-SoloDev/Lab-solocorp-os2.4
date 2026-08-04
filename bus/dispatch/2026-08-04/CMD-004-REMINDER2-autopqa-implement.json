@@ -1,0 +1,70 @@
+{
+  "command": {
+    "id": "CMD-004-REMINDER2",
+    "type": "CEO_ESCALATION",
+    "timestamp": "2026-08-04T09:02:00+07:00",
+    "priority": "P1",
+    "from": "CEO เทอโบ",
+    "to": "@changful (Engineering) + @qa (QA Team)",
+    "title": "[URGENT ROUND 2] CMD-004 — Auto-QA Pipeline T2/T3 เกิน deadline แล้ว",
+    "context": "CMD-004 (dispatched 2026-07-20) — T1 (spec) สำเร็จและ acknowledged โดย engineering ตั้งแต่วันที่ 2026-07-20 แต่ T2 (implement) และ T3 (QA sign-off) ยังไม่มี evidence ปิดงาน — deadline เดิม 2026-07-25 เกินมา 10 วัน",
+    "reminder": true,
+    "reminder_round": 2,
+    "original_deadline": "2026-07-25",
+    "new_deadline": "CMD-004-T2: 2026-08-06 (สุดท้าย), CMD-004-T3: 2026-08-08",
+    "tasks": [
+      {
+        "id": "CMD-004-T1",
+        "priority": "P1",
+        "status": "done",
+        "description": "Design spec — Auto-QA Pipeline implementation plan",
+        "deliverable": "pytest.ini, .coveragerc, ci.yml, workers/auto_qa_gate.py — spec delivered 2026-07-20, acknowledged by engineering",
+        "acceptance": "✅ ผ่าน"
+      },
+      {
+        "id": "CMD-004-T2",
+        "priority": "P1",
+        "status": "overdue",
+        "owner": "changful",
+        "description": "Implement Auto-QA Pipeline ตาม spec จาก Product — gate integrated into CI, PR check passes",
+        "deliverable": "working Auto-QA gate integrated into CI, PR check passes",
+        "acceptance_criteria": [
+          "ทุก PR มี test coverage gate auto-run",
+          "gate block merge ถ้า coverage ต่ำกว่า threshold",
+          "evidence recorded ใน bus/evidence/"
+        ]
+      },
+      {
+        "id": "CMD-004-T3",
+        "priority": "P1",
+        "status": "overdue",
+        "owner": "qa",
+        "depends_on": [
+          "CMD-004-T2"
+        ],
+        "description": "Validate Auto-QA Pipeline — test gate ทำงานถูกต้อง",
+        "deliverable": "QA sign-off report + evidence ใน bus/evidence/qa-signoff/",
+        "acceptance_criteria": [
+          "test coverage gate ทำงานถูกต้อง (pass/fail ตรง spec)",
+          "QA sign-off gate record ใน bus/evidence/qa-signoff/",
+          "handoff confirmation จากทุกฝ่ายครบ"
+        ]
+      }
+    ],
+    "proposal_ref": "PROP-0003",
+    "sop_ref": "SOP-01 → SOP-03 → SOP-04",
+    "consequence": "if not completed by 2026-08-06 (T2) → CEO escalate ไป Owner + PROP-0003 ถูกพิจารณายกเลิก",
+    "report_back": "Engineering รายงาน T2 status ภายใน 24 ชม. — QA เตรียมแผน validate ล่วงหน้าได้เลย"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-004-REMINDER2",
+    "type": "CEO_ESCALATION",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "reason": "Owner อนุมัติให้ดำเนินการ — T2/T3 overdue 10 วัน ต้องเร่งรอบ 2"
+    },
+    "timestamp": "2026-08-04T09:02:00+07:00"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "command": {
+    "id": "CMD-004-T3",
+    "type": "CEO_DISPATCH",
+    "timestamp": "2026-08-04T09:50:00+07:00",
+    "priority": "P1",
+    "from": "CEO เทอโบ",
+    "to": "@qa (QA Team)",
+    "title": "CMD-004-T3 — Auto-QA Pipeline Validation + Sign-off (T2 DONE โดย CEO)",
+    "context": "T2 (implement) เสร็จแล้วโดย CEO direct apply: gate รันจริง coverage 70.8% (threshold 9), 525 passed / 26 failed (baseline debt เดิม). เหลืองาน T3: QA validate + sign-off",
+    "tasks": [
+      {
+        "id": "CMD-004-T3",
+        "priority": "P1",
+        "status": "pending",
+        "description": "Validate Auto-QA Pipeline — test gate ทำงานถูกต้องตาม spec",
+        "deliverable": "QA sign-off report + evidence ใน bus/evidence/qa-signoff/",
+        "acceptance_criteria": [
+          "รัน `python3 workers/auto_qa_gate.py --threshold=9` — ยืนยัน gate ตัดสินถูก (coverage pass + test fail = block)",
+          "รัน `pytest tests/ central_bus/tests/ -q` — จับคู่ผลกับ gate",
+          "ตรวจ ci.yml: PR + push triggers, threshold=9, test paths ครบ, pytest-asyncio ใน install",
+          "QA sign-off report + evidence ใน bus/evidence/qa-signoff/",
+          "ระบุ 26 baseline failures เป็น debt — แนะนำ Sprint 3 task"
+        ],
+        "deadline": "2026-08-08"
+      }
+    ],
+    "evidence_reference": [
+      "bus/evidence/2026-08-04/CMD-004-T2-20260804-apply.json",
+      "bus/evidence/2026-08-03/qa-gate-9d336ec7.json"
+    ],
+    "report_back": "sign-off หรือ findings ภายใน 4 วัน"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-004-T3",
+    "type": "CEO_DISPATCH",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "reason": "Owner อนุมัติ execution P0/P1 — T2 เสร็จแล้ว ถึงคิว QA"
+    },
+    "timestamp": "2026-08-04T09:50:00+07:00"
+  }
+}

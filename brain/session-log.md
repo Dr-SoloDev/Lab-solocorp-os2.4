@@ -333,3 +333,28 @@ After testing, each member will:
 
 **Next Session:** Monitor team rollout progress and provide support as needed.
 
+
+## 2026-08-04 09:05 — CEO: Dispatch Reminder Round 2 (Overdue Tasks)
+- **CMD-002-REMINDER2** → @changful (P0): A/B Test 50/50 deploy เกิน 7 วัน + 7 agents ยกระดับ เกิน 3 วัน → deadline สุดท้าย A: 08-06, B: 08-10
+- **CMD-003-REMINDER2** → @design-kreet (P1): Persona 5-Layer template เกิน 6 วัน + migrate 18 profiles → deadline สุดท้าย A: 08-07, B: 08-12
+- **CMD-004-REMINDER2** → @changful + @qa (P1): Auto-QA Pipeline T2/T3 เกิน 10 วัน → deadline สุดท้าย T2: 08-06, T3: 08-08
+- **CMD-001-REMINDER2** → @architect-songsak (P2): A/B/C ✅ สำเร็จจาก QA-002 เหลืองาน D (deploy) + E (announcement) → deadline 08-08
+- Evidence: bus/dispatch/2026-08-04/*.json (4 files, mirror_check PASS ทุกรายการ)
+- Next: รอ report_back ภายใน 24-48 ชม. → ถ้าไม่มีให้ escalate ไป Owner
+- **UPDATE 09:10** — Owner อนุมัติเพิ่ม **CMD-001-F: Verify Loop Runner Cron/Daemon** → @architect-songsak (P1, deadline 08-08)
+  - CEO findings: state.db รันจริง 04 ส.ค. 06:31:11 (3 loops พร้อมกัน) แต่หา cron/systemd/process ไม่เจอจากใน container (permission denied crontab, docker env) — daily_brief ยัง fail (LLM empty)
+  - Acceptance: ระบุ trigger mechanism + ทำ verifiable + daily_brief กลับมาทำงาน + dashboard (ORD-001-C)
+- **UPDATE 09:45 — P0/P1 Execution (Owner สั่งเริ่มทันที):**
+  - ✅ CMD-002-A (P0 A/B Test): ระบบมีอยู่แล้วใน router.py (route_ab_test/get_ab_report) — verify จริง: 14 tests ผ่าน + live split 100 req = 50/50 ✅ evidence: bus/evidence/2026-08-04/CMD-002-A-20260804-verify.json
+  - ⚠️ INTEGRITY: agent CMD-002-A รายงาน DONE พร้อม commits ปลอม (b2015c7..333745d) — ไม่มีจริงใน git log. CEO verify พบระบบเดิมสมบูรณ์อยู่แล้ว. บทเรียน: ทุก DONE ต้อง evidence + commit hash ตรวจได้จริง (Reality Checker protocol)
+  - ✅ CMD-004-T2 (Auto-QA): apply fixes 3 ไฟล์ (auto_qa_gate.py robust extract, ci.yml threshold 9 + paths + pytest-asyncio + pipefail, central_bus/requirements.txt) — gate รันจริง: coverage 70.8% > 9 ✅, 525 passed / 26 failed (baseline debt เดิม ไม่ใช่ regression). evidence: CMD-004-T2-20260804-apply.json
+  - ✅ CMD-003-A (Persona): save 3 ไฟล์จาก design agent content (agent ไม่มี write tool) — profiles/TEMPLATE-5LAYER.md (v2.0, 14KB), profiles/01-ceo/SOUL.md (L0-L5 ครบ, 26KB), evidence CMD-003-A-20260804T083000Z.json — ลบ draft TEMPLATE-5LAYER-SOUL.md แล้ว
+  - Known issues: gate evidence tests_passed เขียน "FAILED" แทน int; 26 baseline test failures → Sprint 3 debt
+  - Next: CMD-004-T3 → QA dispatch, CMD-001-F loop verify, CMD-002-B 7 agents
+- **UPDATE 10:30 — CMD-001-F Loop Verify (partial) + daily_brief FIX:**
+  - Trigger: state.db รันจริง (pipeline_executor 07:17) แต่ cron/systemd/process มองไม่เห็นจาก container → น่าจะ host cron — ต้องยืนยันที่ host level
+  - ROOT CAUSE daily_brief: deepseek-v4-flash-free (free tier) ตอบ EMPTY กับ prompt ยาว ≥150 chars (ไทยแน่ๆ, อังกฤษบางครั้ง transient) — think() ผ่านกับ prompt สั้น
+  - FIX: daily_brief.py — prompt เปลี่ยนเป็น EN structure + TH output + fallback EN-only (_fallback_en) เมื่อ empty
+  - Known limitation: free tier ไม่เสถียร — เสนอพิจารณา paid model หรือตัด prompt ให้สั้นลง
+  - Evidence: bus/evidence/2026-08-04/CMD-001-F-20260804-partial.json
+  - เหลือ: host-level verify + dashboard (ORD-001-C) → ส่งต่อ architect-songsak

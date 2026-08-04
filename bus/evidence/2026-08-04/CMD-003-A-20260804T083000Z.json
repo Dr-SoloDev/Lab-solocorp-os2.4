@@ -1,0 +1,63 @@
+{
+  "event_id": "CMD-003-A-20260804T083000Z",
+  "event_type": "WP1_PERSONA_5LAYER_DELIVERABLE",
+  "task_id": "CMD-003-A",
+  "work_package": "WP1",
+  "owner": "design-kreet",
+  "department": "design",
+  "project_id": "persona-engineering-upgrade-v1",
+  "timestamp": "2026-08-04T08:30:00+00:00",
+  "template_path": "profiles/TEMPLATE-5LAYER.md",
+  "example_profile_path": "profiles/01-ceo/SOUL.md",
+  "superseded": "profiles/TEMPLATE-5LAYER-SOUL.md (draft v1.0 → v2.0, แนะนำลบ draft เก่า)",
+  "layers_checklist": {
+    "L0_core_personality": {
+      "present": true,
+      "source": "กฎสำคัญ ข้อ 0,1,2,3,4,7",
+      "notes": "6 hard rules — trigger→action→reason ครบทุกข้อ: Mirror Check, Delegate or Die, Delegation≠Abandonment, No Hero Mode, Decision Velocity, Informed Consent"
+    },
+    "L1_identity": {
+      "present": true,
+      "source": "🎭 Identity + 🧠 ข้อมูลประจำตัว + Mirror Core + Why I Exist",
+      "notes": "Identity card + Mirror Core diagram/table + Permanent Memory 5 ข้อ + Origin + Hierarchy"
+    },
+    "L2_communication": {
+      "present": true,
+      "source": "💭 รูปแบบการสื่อสาร + Voice Sync",
+      "notes": "Voice/tone + catchphrases 4 ข้อ + Response Patterns 4 ตัวอย่างจริง (สั่งการ/Strategic/Review/Vision) + defaults"
+    },
+    "L3_decision": {
+      "present": true,
+      "source": "กฎ priority + 🧠 Core Mode + 🔄 Decision Framework + 🎯 KPI",
+      "notes": "Priority ranked 4 ข้อ + Core Mode table + Pushback 4 ข้อ + First Principles/Bias/RAPID + KPI 5 ข้อ"
+    },
+    "L4_interpersonal": {
+      "present": true,
+      "source": "หลักการบริหารคน ข้อ 9-12 + Crisis Management",
+      "notes": "Owner/C-Level/Department Heads/Specialists + ภายใต้ความกดดัน (60s crisis) + conflict"
+    },
+    "L5_boundaries": {
+      "present": true,
+      "source": "🚫 Boundaries + implied",
+      "notes": "Frustrate 3 ข้อ + Dealbreakers 3 ข้อ + ไม่ทำ 7 ข้อ (delegate) + ขอบเขตปกป้อง 3 ข้อ"
+    }
+  },
+  "quality_checks": {
+    "examples_count": 4,
+    "examples_min_required": 3,
+    "examples_pass": true,
+    "catchphrases_count": 4,
+    "catchphrases_min_required": 2,
+    "catchphrases_pass": true,
+    "no_generic_filler": true,
+    "hard_rules_have_trigger_action_reason": true,
+    "content_fidelity_preserved": true,
+    "appendix_non_persona_kept": true
+  },
+  "constraints_respected": {
+    "touched_env": false,
+    "committed_or_pushed": false,
+    "modified_other_department_soul": false
+  },
+  "delivery_note": "Session ไม่มี local write tool — เนื้อหาทั้ง 3 ไฟล์ deliver แบบ inline ใน report ให้ Owner save ลง path ตามที่ระบุ"
+}

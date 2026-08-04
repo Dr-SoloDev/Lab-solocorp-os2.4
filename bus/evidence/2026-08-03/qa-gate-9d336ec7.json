@@ -1,0 +1,15 @@
+{
+  "event_id": "qa-gate-9d336ec7",
+  "event_type": "QA_GATE",
+  "project_id": "auto-qa-pipeline",
+  "timestamp": "2026-08-03T23:59:31.528062+00:00",
+  "gate_version": "v1.0",
+  "threshold": 9,
+  "coverage_percent": 70.8008094825094,
+  "passed": false,
+  "tests_returncode": 1,
+  "tests_passed": "FAILED",
+  "evidence_type": "auto_qa_gate",
+  "trace_id": "9d336ec70601",
+  "test_summary": "FAILED tests/test_phase1.py::test_route_fallback - AssertionError: assert 'co...\nFAILED tests/test_phase1.py::test_priority_for_unknown - AssertionError: asse...\nFAILED tests/test_phase4.py::test_summary_initial - AttributeError: <module '...\nFAILED tests/test_phase4.py::test_summary_progress - AttributeError: <module ...\nFAILED tests/test_phase4.py::test_render_contains_phases - AttributeError: <m...\nFAILED tests/test_phase4.py::test_all_projects - AttributeError: <module 'cen...\nFAILED tests/test_phase4.py::test_advance_passes_gate - AttributeError: <modu...\nFAILED central_bus/tests/test_behavior_classifier.py::TestLogisticRegression::test_fit_and_predict\nFAILED central_bus/tests/test_behavior_classifier.py::TestLogisticRegression::test_predict_proba\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorClassifierColdStart::test_classify_security_keyword\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorClassifierColdStart::test_classify_thai_text\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorClassifierColdStart::test_classify_thai_budget\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorClassifierTrained::test_classify_bug_after_training\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorClassifierTrained::test_classify_budget_after_training\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorClassifierTrained::test_classify_sales_after_training\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorClassifierTrained::test_classify_security_after_training\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorRouter::test_route_v2_budget\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorRouter::test_route_v2_bug\nFAILED central_bus/tests/test_behavior_classifier.py::TestBehaviorRouter::test_route_v2_security\n=========== 26 failed, 525 passed, 120 warnings in 84.34s (0:01:24) ============"
+}
