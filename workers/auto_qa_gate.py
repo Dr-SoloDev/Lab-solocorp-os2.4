@@ -61,20 +61,42 @@ def run_tests(test_path: str | None = None) -> dict:
 
 
 def extract_coverage_percent(coverage_data: dict) -> float | None:
-    """Extract overall coverage percentage from coverage.json."""
-    try:
-        # pytest-cov json format: {"meta": ..., "files": {...}, "totals": {...}}
-        totals = coverage_data.get("totals", {})
-        percent_covered = totals.get("percent_covered")
-        if percent_covered is not None:
-            return float(percent_covered)
+    """Extract overall coverage percentage from coverage.json.
 
-        # Alternative: sum covered / sum total statements
-        covered = totals.get("covered_lines", 0)
-        total = totals.get("num_statements", 0)
-        if total and total > 0:
+    Handles coverage.py JSON formats 1-3:
+      - format 2/3: totals is a dict with "percent_covered"
+      - format 1:   totals is a list [covered, statements, percent, ...]
+      - fallback:   compute from per-file "summary" blocks when totals missing
+    """
+    try:
+        totals = coverage_data.get("totals")
+        # Format 2/3: totals dict
+        if isinstance(totals, dict):
+            percent_covered = totals.get("percent_covered")
+            if percent_covered is not None:
+                return float(percent_covered)
+            covered = totals.get("covered_lines") or 0
+            total = totals.get("num_statements") or 0
+            if total > 0:
+                return (covered / total) * 100.0
+        # Format 1: totals list [covered_lines, num_statements, percent_covered, ...]
+        elif isinstance(totals, list) and len(totals) >= 3:
+            if totals[2] is not None:
+                return float(totals[2])
+            if totals[1]:
+                return (totals[0] / totals[1]) * 100.0
+        # Fallback: compute from per-file summaries (format 2/3)
+        files = coverage_data.get("files") or {}
+        covered = total = 0
+        for fdata in files.values():
+            if not isinstance(fdata, dict):
+                continue
+            summary = fdata.get("summary") or {}
+            covered += summary.get("covered_lines") or 0
+            total += summary.get("num_statements") or 0
+        if total > 0:
             return (covered / total) * 100.0
-    except (TypeError, ValueError, ZeroDivisionError):
+    except (AttributeError, KeyError, TypeError, ValueError, ZeroDivisionError):
         pass
     return None
 

@@ -358,3 +358,11 @@ After testing, each member will:
   - Known limitation: free tier ไม่เสถียร — เสนอพิจารณา paid model หรือตัด prompt ให้สั้นลง
   - Evidence: bus/evidence/2026-08-04/CMD-001-F-20260804-partial.json
   - เหลือ: host-level verify + dashboard (ORD-001-C) → ส่งต่อ architect-songsak
+- **UPDATE 11:20 — CMD-002-B ✅ (7 agents upgrade, P0/P1 ทั้งหมดเสร็จ):**
+  - ยกระดับ 7 specialist agents: cybersec (severity playbooks), content (output formats), legal (risk assessment HIGH/MED/LOW + escalation), neteng (domain SOPs), psychology (focus frameworks), web3 (security red-flag scan — เจอ reentrancy ในการทดสอบ), rd_lab (activity outputs)
+  - Pattern: _llm_usable() filter + rule-based fallback ที่ให้ผลงานจริง (ไม่ใช่ "รับทราบ") เมื่อ LLM ล้ม/empty
+  - Verify: 7/7 PASS กับ mock LLM down (think → empty) + py_compile + pytest -k agent 13 passed
+  - Bug ระหว่างทำ: nested function ถูกเรียกด้วย self. → AttributeError (5 ไฟล์) — แก้เป็น closure call
+  - Commits: 03f0178 (code), ac5d7c8 (evidence CMD-002-B-20260804.json)
+  - 📊 P0/P1 status: CMD-002-A ✅, CMD-002-B ✅, CMD-003-A ✅, CMD-004-T2 ✅, CMD-004-T3 → @qa (08-08), CMD-001-F partial (@architect-songsak, host-level verify)
+  - Open: 26 baseline test failures (Sprint 3 debt), gate evidence tests_passed เขียน string แทน int
