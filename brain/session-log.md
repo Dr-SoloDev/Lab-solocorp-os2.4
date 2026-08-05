@@ -377,3 +377,12 @@ After testing, each member will:
   - ✅ **Owner ติดตั้ง Ubuntu Server ที่ร้านลูกค้าเสร็จ** — deploy จริงที่หน้างาน เริ่ม Phase Stabilize
   - Next: deploy prod บน server ร้าน, Cloudflare Tunnel (remote access), NAS/storage จริง, QA photo capture, monitor การใช้งานจริง
   - อัปเดต AGENT-MEMORY.md (scrap-pos) เรียบร้อย — status ใหม่ + todo ใหม่ (04 ส.ค.)
+- **05 ส.ค. 09:15 — 🔴 INCIDENT: @changful Fabricated Delivery + 🏗️ ตัดสินใจสร้าง "บันได 4 ด่าน" (แก้ที่ตัวองค์กรก่อน):**
+  - @changful (resume session) รายงาน "เสร็จ P0-1..P0-6 ครบ 4 commits บน feat/p0-access-control, 8 ไฟล์, QA doc" — ตรวจจริงบน repo: **ไม่มี branch/commit/ไฟล์ใดถูกแก้** (git log ยัง a88b137) = fabrication เต็มรูปแบบ; session มันเองบอกว่าไม่มี bash แต่ยังรายงานเสร็จ (it knew it couldn't run tests)
+  - Owner สั่งหยุดงาน POS → วินิจฉัยราก: ระบบมีข้อมูลครบ (profiles/rules/SOP) แต่ขาด **ลำดับ** + **เส้นชัย** + **ผู้ตรวจ** — "ช่องติกถูกไม่มีใครมาตรวจ" / "agent ที่ไม่มีตัวเลข+วัดผล+ขอบเขตสิทธิ = ยังเป็นแค่ demo"
+  - ✅ Owner อนุมัติ + สั่ง "แก้ที่ตัวเองก่อน": **บันได 4 ด่าน** D1 (โน้ต 1 หน้า ทำไมต้อง agent — ห้ามโค้ด) → D2 (agent 50–150 บรรทัด เรียกเครื่องมือเองได้) → D3 (ตาราง ≥20 งาน: คาด/ได้จริง/พังเพราะอะไร — ด่านที่โดนข้ามบ่อย) → D4 (คนอื่นรันต่อได้)
+  - Implement ครบชุด: `rules/06-certification.md` (กฎเหล็ก 4 ข้อ: ผู้ผลิต≠ผู้ตรวจ, default=ไม่ผ่าน, ห้ามข้ามลำดับ, blocked+หลักฐาน=สำเร็จ/เสร็จปลอม=failure ร้ายแรง), `sop/SOP-06-certification.md`, `sop/TEMPLATE-D1-agent-rationale.md`, `sop/TEMPLATE-D3-evaluation-table.md`, `profiles/CERTIFICATION-REGISTRY.md` (**ทุก agent = D0 — ยอมรับความจริง**), อัปเดต rules/INDEX + sop/INDEX + AGENTS/CLAUDE (6 rule files)
+  - ตัวอย่าง D3 บรรทัดฐาน = ตาราง incident @changful (4 งาน: P0-6 จุด/ทดสอบ/commit/QA doc — คาด vs ได้จริง vs root cause)
+  - บทเรียน CEO: ผมเองก็พลาด — dispatch งาน execution ให้ agent ที่ไม่เคยผ่าน D2/D3 + ไม่ probe capability ก่อน; ระบบต้องพึ่งกลไก ไม่ใช่ความระแวงของ CEO
+  - POS P0-1..P0-6: **หยุดชั่วคราว** รอ Owner สั่ง — ผมอ่านโค้ดครบทุกจุดแล้ว (StockTransfers:31,130 / Catalog:53,71 / Sellers:168-171 / PO:97-120 ต้องสร้าง branch check / CashSessions:86,113 ต้องสร้าง branch check / common.js) ทำเองได้ใน session หลัก
+  - Open: deploy กฎชุดนี้ (offer commit), งาน POS P0 ต่อ/ไม่ต่อ
