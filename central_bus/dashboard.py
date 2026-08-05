@@ -187,6 +187,46 @@ def _profile_count() -> int:
     return len([d for d in PROFILES_DIR.iterdir() if d.is_dir() and d.name[0].isdigit()])
 
 
+# ── Automation Loops (loop_runner/state.db — single source of truth) ───
+_LOOP_INTERVALS = {"daily_brief": 20 * 60, "subscription_audit": 30 * 24 * 60,
+                   "brain_auto_commit": 30, "pipeline_executor": 30, "__scheduler__": 30}
+
+
+def _loops() -> dict:
+    """Read loop_runner state.db → RAG status per loop. Never raises (dashboard must not crash)."""
+    try:
+        from loop_runner.state import DB
+        import sqlite3
+        if not DB.exists():
+            return {"loops": [], "heartbeat": None}
+        with sqlite3.connect(DB) as c:
+            rows = c.execute("SELECT id, last_run, last_result, failures FROM loops").fetchall()
+    except Exception:
+        return {"loops": [], "heartbeat": None}
+
+    now = datetime.now(timezone.utc).timestamp()
+    loops = []
+    heartbeat = None
+    for loop_id, last_run, last_result, failures in rows:
+        try:
+            delta = (now - datetime.fromisoformat(last_run).timestamp()) / 60  # minutes
+        except Exception:
+            delta = float("inf")
+        interval = _LOOP_INTERVALS.get(loop_id, 30)
+        status = "✅" if delta <= interval else ("⏳" if delta <= 2 * interval else "🔴")
+        item = {
+            "loop_id": loop_id, "last_run": last_run,
+            "interval_min": interval, "status": status,
+            "failures": failures or 0,
+            "last_result": (last_result or "")[:120],
+        }
+        if loop_id == "__scheduler__":
+            heartbeat = item
+        else:
+            loops.append(item)
+    return {"loops": sorted(loops, key=lambda x: x["loop_id"]), "heartbeat": heartbeat}
+
+
 def owner_dashboard(format: str = "markdown") -> str | dict:
     """Generate Owner Dashboard — one-glance view."""
     disp = _count_dispatches()
@@ -196,6 +236,7 @@ def owner_dashboard(format: str = "markdown") -> str | dict:
     brain = _brain_stats()
     evidence = _evidence_count()
     profiles = _profile_count()
+    loops = _loops()
 
     # ── Compute RAG scores ───────────────────────────────────────────
     # System health score (0-100)
@@ -230,6 +271,7 @@ def owner_dashboard(format: str = "markdown") -> str | dict:
             "active_dispatches": active,
             "brain": brain,
             "profiles": profiles,
+            "loops": loops,
         }
 
     # Markdown output
@@ -260,6 +302,21 @@ def owner_dashboard(format: str = "markdown") -> str | dict:
     lines.append(f"| Evidence Records | {evidence} |")
     lines.append(f"| Brain Files | {brain['files']} |")
     lines.append(f"| Active Profiles | {profiles} |")
+    lines.append("")
+
+    # ─── Automation Loops ───────────────────────────────────────────
+    lines.append("## 🔁 Automation Loops")
+    lines.append("")
+    if loops["loops"] or loops["heartbeat"]:
+        lines.append(f"| Loop | Last Run | Interval | Status | Failures | Last Result |")
+        lines.append(f"|:-----|:---------|:---------|:------:|:--------:|:------------|")
+        if loops["heartbeat"]:
+            h = loops["heartbeat"]
+            lines.append(f"| `__scheduler__` (heartbeat) | {h['last_run']} | {h['interval_min']}m | {h['status']} | {h['failures']} | {h['last_result']} |")
+        for l in loops["loops"]:
+            lines.append(f"| `{l['loop_id']}` | {l['last_run']} | {l['interval_min']}m | {l['status']} | {l['failures']} | {l['last_result']} |")
+    else:
+        lines.append("_ยังไม่มีข้อมูล loop (state.db ว่างหรืออ่านไม่ได้)_")
     lines.append("")
 
     # ─── Quick Actions ──────────────────────────────────────────────
