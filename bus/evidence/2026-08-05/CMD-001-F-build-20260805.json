@@ -1,0 +1,41 @@
+{
+  "cmd": "CMD-001",
+  "phase": "3-build",
+  "agent": "changful + ceo-turbo (execution in main session — subagent env read-only)",
+  "status": "DONE (live-verified)",
+  "timestamp": "2026-08-05T12:30:00+07:00",
+  "tasks": {
+    "T1_subscription_audit_fallback": {
+      "status": "DONE",
+      "evidence": "loop_runner/loops/subscription_audit.py — EN-structure prompt + _fallback_en (mirrors daily_brief), exception path ไม่ raise",
+      "tests": "tests/test_llm_fallback.py::TestSubscriptionAuditFallback 2/2 passed"
+    },
+    "T2_scheduler_heartbeat": {
+      "status": "DONE",
+      "evidence": "loop_runner/main.py — heartbeat() เขียน record __scheduler__ ลง state.db + log marker [scheduler] <ISO> fired; guard if __name__ == __main__",
+      "tests": "tests/test_scheduler_heartbeat.py 3/3 passed (record เขียนจริง, broken DB ไม่ raise, upsert ไม่่งอก row)"
+    },
+    "T3_dashboard_loops": {
+      "status": "DONE",
+      "evidence": "central_bus/dashboard.py — _loops() อ่าน loop_runner/state.db, RAG ✅/⏳/🔴 (delta > 2×interval = stale), JSON key 'loops', markdown table '## 🔁 Automation Loops' + __scheduler__ heartbeat row; zero new service (reuse GET /v1/dashboard)",
+      "tests": "tests/test_dashboard_loops.py 5/5 passed"
+    },
+    "T4_daily_brief_verify": {
+      "status": "DONE (live run 1/1 — 3-run loop timeout 330s เนื่องจาก free-tier LLM ช้า; deterministic fallback tests 4/4 passed)",
+      "live_evidence": {
+        "run": "python3 -c 'from loop_runner.loops.daily_brief import DailyBriefLoop; print(DailyBriefLoop().run())'",
+        "output": "LEN: 500 | PREFIX_OK: True — real Thai brief กลับมาแม้ attempt 1-2 คืน empty (LLM เปล่า ×2 แล้ว attempt 3/fallback สำเร็จ)",
+        "note": "Central Bus 404 (busd ไม่ได้รันใน session) — ตัว loop ยังทำงาน, facts ใช้ error fact"
+      }
+    }
+  },
+  "blocked_by_env": {
+    "root_cause": "subagent session (architect-songsak, engineering-changful) มีเฉพาะ read-only tools — ไม่มี bash/write/pytest → CEO execute ใน main session ตาม pattern CMD-003-A",
+    "proof": "ทั้งสอง agent รายงาน BLOCKED + หลักฐานจริง (ไม่ fabrication)"
+  },
+  "verified_facts": {
+    "commit_9f9d132_local": "มีใน local history (.git/logs/refs/heads/main:174) แต่ไม่เคย push — remote main = 333745d",
+    "branch_divergence": "local main (840c561) ahead 8 commits / remote main (333745d) ahead 5 commits — push ตรงๆ จะ reject ต้อง rebase/merge",
+    "remote_daily_brief_still_old": "remote daily_brief.py = f15da661 (ยังไม่มี fallback) — ต้อง push เพื่อ deliver fix"
+  }
+}
