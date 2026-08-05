@@ -386,3 +386,13 @@ After testing, each member will:
   - บทเรียน CEO: ผมเองก็พลาด — dispatch งาน execution ให้ agent ที่ไม่เคยผ่าน D2/D3 + ไม่ probe capability ก่อน; ระบบต้องพึ่งกลไก ไม่ใช่ความระแวงของ CEO
   - POS P0-1..P0-6: **หยุดชั่วคราว** รอ Owner สั่ง — ผมอ่านโค้ดครบทุกจุดแล้ว (StockTransfers:31,130 / Catalog:53,71 / Sellers:168-171 / PO:97-120 ต้องสร้าง branch check / CashSessions:86,113 ต้องสร้าง branch check / common.js) ทำเองได้ใน session หลัก
   - Open: deploy กฎชุดนี้ (offer commit), งาน POS P0 ต่อ/ไม่ต่อ
+
+## 2026-08-05 (ค่ำ) — D4 PASS งานแรกขององค์กร + บทเรียน dispatch
+
+**Smart SMB CRM ผ่านบันได 4 ด่านครบ** — งานแรกใน SoloCorp ที่ปิด D4 ได้จริง
+- D1-D3: CEO ทำ (เหตุผล/โค้ด 43 tests/ตาราง D3 ระหว่างพัฒนา เจอ 2 failures แก้จริง)
+- D4: @qa ตรวจอิสระ 3 รอบ → **PASS** (Retry 1: honest BLOCKED + เจอ README ผิด 21/22 + cache ค้าง; Retry 2: NEEDS WORK README tree ยังเก่า; Retry 3: false REJECT ผิด repo → re-dispatch; สุดท้าย PASS)
+- Evidence: `docs/QA-D4-EVIDENCE.md` (38 บรรทัด รันจริง), cache สะอาด (lastfailed ว่าง, nodeids=43), commit 0ada1fa
+- บทเรียน: **กฎเหล็ก D4 พิสูจน์แล้ว** — QA รายงาน BLOCKED ซื่อสัตย์ (ต่างจาก @changful ที่รายงานเสร็จปลอม) + จับข้อบกพร่อง README จริง 2 จุดที่ผู้ผลิตมองข้าม
+
+**บทเรียน dispatch (สำคัญ):** subagent QA รอบ 3 ตรวจผิด repo (ไปดู Lab-solocorp-os2.4 cwd ของตัวเอง แทน smart-smb-crm) เพราะ CEO ส่ง prompt ไม่ระบุ absolute path → **กฎใหม่: ทุก handoff ที่ส่งให้ agent ตรวจ/ทำงาน ต้องระบุ absolute path ของ target repo ใน prompt ทุกครั้ง**
