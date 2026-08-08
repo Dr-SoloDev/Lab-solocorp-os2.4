@@ -396,3 +396,11 @@ After testing, each member will:
 - บทเรียน: **กฎเหล็ก D4 พิสูจน์แล้ว** — QA รายงาน BLOCKED ซื่อสัตย์ (ต่างจาก @changful ที่รายงานเสร็จปลอม) + จับข้อบกพร่อง README จริง 2 จุดที่ผู้ผลิตมองข้าม
 
 **บทเรียน dispatch (สำคัญ):** subagent QA รอบ 3 ตรวจผิด repo (ไปดู Lab-solocorp-os2.4 cwd ของตัวเอง แทน smart-smb-crm) เพราะ CEO ส่ง prompt ไม่ระบุ absolute path → **กฎใหม่: ทุก handoff ที่ส่งให้ agent ตรวจ/ทำงาน ต้องระบุ absolute path ของ target repo ใน prompt ทุกครั้ง**
+
+## 08 ส.ค. 2569 — Deploy Prep: Scrap POS (session กับ Owner)
+- Deploy SoloCorp OS: profiles 81 → dist, agents 86 validated, commit eb0bb56 (certification system SOP-06 + loop_runner LLM fallback + tests)
+- Consult 06 Product → วิเคราะห์ scrap-pos (ร้านรับซื้อของเก่า สุรินทร์ ดีล 40,000฿) → Readiness 8/10 GO พรุ่งนี้
+- แก้ 3 deploy blockers: B1 uploads dir (STEP 5.5 chown 33:33), B2 compose dev path (AGENT-MEMORY แก้ 4 จุด), B3 encryption key backup (STEP 6.5 mysqldump + zip เข้ารหัสในไดร์ DATA-BACKUP)
+- สร้าง DEPLOY-DAY-GUIDE.txt (22K) ในไดร์ DATA-BACKUP/solocorp-backup/ — คู่มือหน้างาน copy-paste ครบ STEP 1-8 + 5.5/6.5
+- Owner ตัดสินใจ: เก็บ key ในไดร์ก่อน (Bitwarden ศึกษาทีหลัง), ยังไม่มี domain → ใช้ IP + Tailscale ก่อน
+- รอ: Owner ไปร้าน 09 ส.ค. รัน runbook, นัดคีย์ข้อมูลเริ่มต้นกับลูกค้า, เปลี่ยน admin password หน้างาน
