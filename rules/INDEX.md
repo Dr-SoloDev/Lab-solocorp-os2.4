@@ -9,6 +9,7 @@ INDEX.md          ← คุณอยู่ตรงนี้ — behavior map
 03-session.md     ← เมื่อเริ่ม session: brain, memory, context
 04-safety.md      ← เมื่อต้องระวัง: secrets, destructive, prohibited
 05-env.md         ← เมื่อลงมือ: services, commands, tests, paths
+06-certification.md ← เมื่อตรวจชิ้นงาน: บันได 4 ด่าน, หลักฐาน, ผู้ตรวจ
 ```
 
 | ต้องการทำอะไร | เปิดไฟล์นี้ |
@@ -18,6 +19,7 @@ INDEX.md          ← คุณอยู่ตรงนี้ — behavior map
 | เริ่ม session ใหม่ / จำ context เก่า | → `03-session.md` |
 | Deploy / destructive ops / ระวัง secret | → `04-safety.md` |
 | เปิด busd / รัน test / หา path | → `05-env.md` |
+| ตรวจชิ้นงาน / ดูว่า agent ผ่านด่านไหน | → `06-certification.md` |
 
 ## Auto-Pilot Commands (Phase 8)
 

@@ -43,25 +43,47 @@ class SubscriptionAuditLoop(Loop):
         queue = ctx.get("queue", [])
         queue_depth = len(queue)
 
+        facts_text = "\n".join(
+            f"- [{f.get('id','?')}] {f.get('content','')[:200]}"
+            for f in facts[:20]
+        )
+
+        # NOTE: deepseek-v4-flash-free returns EMPTY on long Thai prompts
+        # (same bug class as daily_brief — verified 2026-08-04).
+        # Prompt uses EN structure + TH output instruction — stable. Fallback retries EN-only.
         prompt = (
-            f"คุณคือ CFO (meetoo) ของ SoloCorp OS\n\n"
-            f"ข้อมูลองค์กรปัจจุบัน:\n"
-            f"- จำนวน departments: 19\n"
-            f"- จำนวน queue tasks: {queue_depth}\n"
-            f"- facts ในระบบ: {len(facts)} รายการ\n\n"
-            f"กรุณาตรวจสอบค่าใช้จ่ายที่อาจซ้ำซ้อนหรือไม่จำเป็น:\n"
-            f"1. มี subscription/บริการใดที่อาจซ้ำซ้อน?\n"
-            f"2. มีค่าใช้จ่ายรายเดือนอะไรบ้าง?\n"
-            f"3. แนะนำการลดค่าใช้จ่าย\n\n"
-            f"ตอบสั้น ๆ ไม่เกิน 8 บรรทัด"
+            f"You are CFO of SoloCorp OS. Org status:\n{facts_text}\n\n"
+            f"Audit subscriptions for duplicates or unnecessary costs. Respond in Thai, max 8 lines:\n"
+            f"1. Duplicate subscriptions?\n2. Monthly recurring costs?\n3. Cost reduction recommendations"
         )
 
         try:
             loop = asyncio.new_event_loop()
             result = loop.run_until_complete(
-                think(prompt, system_prompt="คุณคือ CFO meetoo ของ SoloCorp OS")
+                think(prompt, system_prompt="You are CFO meetoo of SoloCorp OS. Output in Thai.")
             )
             loop.close()
+
+            # Fallback: EN-only short prompt if model returned empty (LLM ไม่พร้อม)
+            if result.startswith("⚠️ LLM ไม่พร้อม"):
+                result = self._fallback_en(facts_text)
             return f"## CFO Subscription Audit\n\n{result}"
         except Exception as e:
             return f"⚠️ subscription_audit: LLM ไม่พร้อม — {e}"
+
+    @staticmethod
+    def _fallback_en(facts_text: str) -> str:
+        """Retry with short EN-only prompt (verified working for long input)."""
+        prompt = (
+            f"SoloCorp OS subscription audit. Status:\n{facts_text[:500]}\n\n"
+            f"List duplicate subscriptions, monthly recurring costs, cost reduction ideas. Max 8 lines."
+        )
+        try:
+            loop = asyncio.new_event_loop()
+            result = loop.run_until_complete(
+                think(prompt, system_prompt="You are SoloCorp CFO. Be concise.", max_tokens=300)
+            )
+            loop.close()
+            return result
+        except Exception as e:
+            return f"⚠️ subscription_audit: fallback failed — {e}"
