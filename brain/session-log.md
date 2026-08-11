@@ -404,3 +404,22 @@ After testing, each member will:
 - สร้าง DEPLOY-DAY-GUIDE.txt (22K) ในไดร์ DATA-BACKUP/solocorp-backup/ — คู่มือหน้างาน copy-paste ครบ STEP 1-8 + 5.5/6.5
 - Owner ตัดสินใจ: เก็บ key ในไดร์ก่อน (Bitwarden ศึกษาทีหลัง), ยังไม่มี domain → ใช้ IP + Tailscale ก่อน
 - รอ: Owner ไปร้าน 09 ส.ค. รัน runbook, นัดคีย์ข้อมูลเริ่มต้นกับลูกค้า, เปลี่ยน admin password หน้างาน
+
+## 12 ส.ค. 2569 — SSH fix + เตรียมงานพรุ่งนี้ (Scrap POS session กับ Owner)
+- **SSH สำเร็จแล้ว**: สร้าง/ติดตั้ง ed25519 key (`solodev-pos-server`) ลง `/home/ragsaaad_v1/.ssh/authorized_keys` บน ragsaaadserver (192.168.1.113, Ubuntu, port 22 เดียว) → SSH จาก notebook เข้าได้แล้ว
+- **ปัญหาเปิดอยู่**: scrap-pos login แล้วเด้งออกทันที "เซสชั่นหมดอายุ กรุณาล็อกอินใหม่" — logs ยืนยัน `POST /api/index.php/auth/login` → 200 ทั้ง 2 ครั้ง (15:56 / 15:58) แต่ referrer มี `index.html?expired=1` = session ตายทันทีหลัง login
+  - โครงสร้าง: frontend เปิดที่ http://192.168.1.150:8080/ แต่ API อยู่ server .113 → สงสัย cross-origin/cookie (SameSite/domain) + session storage ใน container
+  - พรุ่งนี้เช็ค: session.save_path writable?, gc_maxlifetime, CodeIgniter config sess_expiration, cookie domain/SameSite, มี redis ไหม
+- **พรุ่งนี้ (13 ส.ค.)**: (1) แก้ session เด้งออก (2) เชื่อม domain `mkxmeme.xyz` (Cloudflare, ยังไม่หมดอายุ) — ตัวเลือก: Cloudflare Tunnel (ดีสุด ถ้า server ไม่มี public IP) vs A record + port forward; ต้องดูว่า .150/.113 โครงสร้าง network จริง
+- ต่อ 12 ส.ค.: Owner อยู่คนละ network กับ server (บ้าน vs ร้าน) — SSH ผ่าน LAN ไม่ได้ชั่วคราว, ไม่มี Tailscale บน laptop → ทางเข้าต้อง Cloudflare Tunnel (domain mkxmeme.xyz) + Tailscale สำหรับ SSH
+- ทฤษฎี session เด้ง: JWT secret mismatch (login 200 → verify 401 ทันที) — ตรวจด้วย Test 1-3: env ใน container vs .env vs compose mapping, grep random_bytes ในโค้ด, decode JWT payload ดู exp/iat เทียบกับ date server
+- ต่อ 12 ส.ค. (ค่ำ): ตรวจ domain mkxmeme.xyz ผ่าน RDAP → Active, หมดอายุ 2026-12-06, registrar=Cloudflare, NS=Cloudflare (lars/blakely), ไม่มี A record, มี MX→Google (ห้ามลบ) — พร้อมใช้โดยไม่ต้องย้าย
+- POS admin creds: **admin/admin** (ต้องเปลี่ยนหลังเปิด domain สาธารณะ — Phase 3)
+- แผนพรุ่งนี้: (1) แก้ session เด้ง (Test 1-3) + backup DB ก่อน (2) Cloudflare Tunnel: token จาก dashboard คืนนี้ (ชื่อ pos-tunnel, Docker env), public hostname pos.mkxmeme.xyz → localhost:8080 (3) Tailscale สำหรับ SSH ระยะไกล
+## แผนพรุ่งนี้ 13 ส.ค. (Owner วาง 4 เฟส — ห้ามข้ามเฟส)
+- **เฟส 0**: เปิดเครื่องร้าน → login console → hostname -I ต้องเห็น 192.168.1.150 → SSH จาก notebook → docker compose ps (db+web healthy, ถ้าไม่ขึ้น up -d) → จบเมื่อ SSH ได้ + container healthy
+- **เฟส 1**: diagnose JWT — เทียบ env container vs .env → grep โค้ด JWT_SECRET/generateToken/jwt_encode/jwt_decode → รู้สาเหตุ secret ไม่ตรง
+- **เฟส 2**: แก้ + up -d --force-recreate web → ทดสอบ login ต่อเนื่อง 5 นาที + logs ไม่มี 401
+- **เฟส 3**: Cloudflare Tunnel (หลังเฟส 0-2 เขียวเท่านั้น)
+- **เฟส 4**: ทดสอบจากนอก LAN, เปลี่ยน admin/admin, SSH key-only
+- POS creds: admin/admin (ต้องเปลี่ยน), domain พร้อมใช้ (exp 2026-12-06)
