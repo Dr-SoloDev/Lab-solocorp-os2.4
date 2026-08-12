@@ -440,3 +440,8 @@ After testing, each member will:
 - **แก้ sidebar ไม่ครบทุกหน้า (สาเหตุ: copy-paste ตกหล่น ไม่ใช่สิทธิ์)**: สร้าง sidebar มาตรฐาน 18 เมนู (เพิ่ม ตั้งค่าราคา + บันทึกการใช้งาน ที่ index.html เดิมไม่มี) แทนที่ 19 ไฟล์ admin/*.html ด้วย python script, backup /tmp/sidebar-backup/, active ตามหน้าปัจจุบันถูกต้อง
 - **สิทธิ์ super_manager**: เดิม $isAdmin=เฉพาะ admin → super_manager เข้าไม่ได้ 3 เมนู (price-tiers/branches/audit-log) + ฟีเจอร์ admin อีกหลายอย่าง — **Owner+ผู้ว่าจ้างอนุมัติ TEST-MODE ชั่วคราว**: `$isAdmin = in_array($role, ['admin','super_manager'])` (มีคอมเมนต์ // TEST-MODE ใน PermissionsController.php บรรทัด 8, backup /tmp/sidebar-backup/PermissionsController.php.bak) — บัญชี super_manager: Ketkaew (id=6, เกตุแก้ว ธุรานุช) — hidden pages = ไม่มี เห็นครบ 18
 - **⚠️ TODO หลังทดสอบระบบเสร็จ**: (1) คืนสิทธิ์ super_manager ตามเดิม (2) เปลี่ยน admin/admin เป็นรหัสแข็ง (เปิด domain สาธารณะแล้ว) (3) SSH key-only + ปิด password auth (4) พิจารณาเปลี่ยนรหัส Ketkaew
+
+## 13 ส.ค. 2569 (ต่อ) — สถานะ 3 ข้อจาก Owner
+- **admin/admin**: ⏸️ Owner สั่ง "ไว้แบบนี้ก่อน" — ยังไม่เปลี่ยน (⚠️ เปิด domain สาธารณะแล้ว — เหลือความเสี่ยง, revisit ทีหลัง)
+- **เครื่องแคชเชียร์**: ✅ ใช้ได้แล้วผ่าน https://pos.mkxmeme.xyz (เดิม LAN http://192.168.1.150:8080 เข้าไม่ได้ — ใช้ domain เป็นทางออก)
+- **SSH key-only + ปิด password auth**: ⏸️ Owner ขอคำอธิบายเพิ่มก่อนตัดสินใจ — จะอธิบายความเสี่ยง/ผลกระทบ/วิธีทำแล้วค่อยทำ
