@@ -423,3 +423,5 @@ After testing, each member will:
 - **เฟส 3**: Cloudflare Tunnel (หลังเฟส 0-2 เขียวเท่านั้น)
 - **เฟส 4**: ทดสอบจากนอก LAN, เปลี่ยน admin/admin, SSH key-only
 - POS creds: admin/admin (ต้องเปลี่ยน), domain พร้อมใช้ (exp 2026-12-06)
+- คืนนี้ Owner สร้าง tunnel สำเร็จ: ชื่อ pos-server, route pos.mkxmeme.xyz (ต้องยืนยัน service=HTTP localhost:8080), status inactive = ปกติ, token เก็บโดย Owner (ไม่เก็บใน repo)
+- พรุ่งนี้เฟส 3: ติดตั้ง .deb → sudo cloudflared service install <TOKEN เต็ม> → systemctl status cloudflared ต้อง active → dashboard เขียว
