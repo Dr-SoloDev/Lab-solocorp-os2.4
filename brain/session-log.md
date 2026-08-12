@@ -431,3 +431,12 @@ After testing, each member will:
 - หลักฐาน: Set-Cookie ไม่มี `secure` แล้ว, login→verify = "Token is valid" (API test ผ่าน), Owner ทดสอบ browser ผ่าน ไม่เด้ง
 - Backup: `base-pos/api/Controllers/AuthController.php.bak-2026-08-12` บน server
 - **สถานะ**: เฟส 0 ✅ เฟส 1-2 ✅ (รอ Owner ยืนยันเครื่องอื่น) → ถัดไปเฟส 3: cloudflared .deb + service install <TOKEN> + ทดสอบ pos.mkxmeme.xyz
+
+## 13 ส.ค. 2569 (ต่อ) — Cloudflare Tunnel เปิดใช้งาน + ข้อมูลจริง + สิทธิ์ TEST-MODE
+- **Cloudflare Tunnel ทำงานแล้ว**: ติดตั้ง cloudflared v2026.7.3 (binary ที่ ~/cloudflared, ไม่ต้อง sudo), token จาก Owner ใส่ใน ~/start-tunnel.sh, รันด้วย nohup → 4 connections registered (QUIC, Singapore edge sin14/20/22) → **https://pos.mkxmeme.xyz ใช้งานได้ทั่วโลก** (HTTP 200, login+catalog ผ่าน: 79 รายการ, cookie secure flag ทำงานถูกต้องบน HTTPS)
+- **Auto-start tunnel**: crontab @reboot (sleep 30 && start-tunnel.sh > tunnel.log) — reboot แล้วกลับมาเอง
+- **นำเข้าข้อมูลจริงจาก HDD**: catalog-data.sql (mysqldump data-only, USE comment ไว้) = categories 13 (id 2-14) + purchase_item_catalog 79 รายการ พร้อมราคา 3 ชั้นใน tier_prices JSON (เหล็กรวม 7/7.3/7.8, ทองแดง 240/240/242, เครื่องซักผ้า 260/260/270...) — ลบ data demo template (ของชำ/PO พ.ค.) หลัง backup ~/backup-pos-20260812-0320.sql (91K) — users 5 บัญชีเก็บครบ
+- **ลบผู้ขาย demo 8 ราย**: backup ~/backup-sellers-20260812-0428.sql, reset AUTO_INCREMENT=1 — พร้อมคีย์ผู้ขายจริงเริ่ม ID 1
+- **แก้ sidebar ไม่ครบทุกหน้า (สาเหตุ: copy-paste ตกหล่น ไม่ใช่สิทธิ์)**: สร้าง sidebar มาตรฐาน 18 เมนู (เพิ่ม ตั้งค่าราคา + บันทึกการใช้งาน ที่ index.html เดิมไม่มี) แทนที่ 19 ไฟล์ admin/*.html ด้วย python script, backup /tmp/sidebar-backup/, active ตามหน้าปัจจุบันถูกต้อง
+- **สิทธิ์ super_manager**: เดิม $isAdmin=เฉพาะ admin → super_manager เข้าไม่ได้ 3 เมนู (price-tiers/branches/audit-log) + ฟีเจอร์ admin อีกหลายอย่าง — **Owner+ผู้ว่าจ้างอนุมัติ TEST-MODE ชั่วคราว**: `$isAdmin = in_array($role, ['admin','super_manager'])` (มีคอมเมนต์ // TEST-MODE ใน PermissionsController.php บรรทัด 8, backup /tmp/sidebar-backup/PermissionsController.php.bak) — บัญชี super_manager: Ketkaew (id=6, เกตุแก้ว ธุรานุช) — hidden pages = ไม่มี เห็นครบ 18
+- **⚠️ TODO หลังทดสอบระบบเสร็จ**: (1) คืนสิทธิ์ super_manager ตามเดิม (2) เปลี่ยน admin/admin เป็นรหัสแข็ง (เปิด domain สาธารณะแล้ว) (3) SSH key-only + ปิด password auth (4) พิจารณาเปลี่ยนรหัส Ketkaew
