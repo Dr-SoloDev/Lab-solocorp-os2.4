@@ -425,3 +425,9 @@ After testing, each member will:
 - POS creds: admin/admin (ต้องเปลี่ยน), domain พร้อมใช้ (exp 2026-12-06)
 - คืนนี้ Owner สร้าง tunnel สำเร็จ: ชื่อ pos-server, route pos.mkxmeme.xyz (ต้องยืนยัน service=HTTP localhost:8080), status inactive = ปกติ, token เก็บโดย Owner (ไม่เก็บใน repo)
 - พรุ่งนี้เฟส 3: ติดตั้ง .deb → sudo cloudflared service install <TOKEN เต็ม> → systemctl status cloudflared ต้อง active → dashboard เขียว
+## 13 ส.ค. 2569 — ✅ แก้ session เด้งสำเร็จ (รากเหง้า: Secure cookie บน HTTP)
+- **สาเหตุที่แท้จริง**: APP_ENV=production → setcookie() ใน AuthController.php (บรรทัด 163 login, 242 logout) ใส่ flag `secure` → เบราว์เซอร์บน http://192.168.1.150:8080 ไม่เก็บ/ไม่ส่ง cookie → ทุก request 401 → ?expired=1 (ไม่ใช่ JWT secret — secret ตรงกัน 100%)
+- **การแก้**: แทนที่ด้วยการ detect โปรโตคอลจริง: `$secure = HTTPS || X-Forwarded-Proto=https` → LAN http ใช้ได้ + tunnel https ก็ secure flag กลับมา
+- หลักฐาน: Set-Cookie ไม่มี `secure` แล้ว, login→verify = "Token is valid" (API test ผ่าน), Owner ทดสอบ browser ผ่าน ไม่เด้ง
+- Backup: `base-pos/api/Controllers/AuthController.php.bak-2026-08-12` บน server
+- **สถานะ**: เฟส 0 ✅ เฟส 1-2 ✅ (รอ Owner ยืนยันเครื่องอื่น) → ถัดไปเฟส 3: cloudflared .deb + service install <TOKEN> + ทดสอบ pos.mkxmeme.xyz
