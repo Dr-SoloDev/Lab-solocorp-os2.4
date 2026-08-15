@@ -464,3 +464,9 @@ After testing, each member will:
 - **สถานะระบบทั้งหมด**: เฟส 0-4 ผ่าน (session fix, tunnel, data, sidebar, สิทธิ์), Git สะพาน ✅ (e061502 = bbedf1a sidebar/auth/permissions + e061502 cleanup), deploy key ✅, Tailscale ✅
 - **⚠️ TODO ค้าง**: (1) revoke GitHub token เดิม (ghp_...) ที่ Owner settings — ยัง valid (2) admin/admin ยังไม่เปลี่ยน (Owner สั่งไว้ก่อน) (3) SSH key-only ยังไม่ทำ (Owner ขออธิบายแล้วตัดสินใจ — อธิบายแล้ว รอการตัดสินใจ) (4) คืนสิทธิ์ super_manager หลังทดสอบเสร็จ (5) VS Code Remote-SSH ยังไม่ได้ตั้ง
 - **Session นี้เสร็จ**: งาน POS ทั้งหมดเขียว — Owner กลับบ้านได้ สบายใจ มีทางเข้า 2 ทาง (GitHub + Tailscale)
+
+## 15 ส.ค. 2569 (ต่อ) — ใช้ HTTPS domain เป็นหลักทั้งหมด + upload fix ขึ้น server จริง
+- **Owner กำหนด**: ใช้งานผ่าน `https://pos.mkxmeme.xyz` อย่างเดียวทุกจุด (PC/แคชเชียร์/มือถือ) — ✅ ตรวจผ่าน: login/sellers/catalog/admin = 200 หมด, latency ~0.33s
+- **Upload fix ขึ้น server จริงแล้ว**: root cause = compose ใช้ `docker/Dockerfile.php` (ไม่มี CMD) + volume mount `./uploads` ทับสิทธิ์ image → www-data เขียนไม่ได้ → mkdir fail → error จีน "ไม่สามารถสร้าง目录จัดเก็บได้" — แก้: `docker/entrypoint.sh` (ใหม่, chown www-data ทุก start) + `docker-compose.yml` (mount + entrypoint override, ใช้ได้ทันทีไม่ต้อง build) + `Dockerfile.php` (COPY+CMD สำหรับ build หน้า) + `railway-entrypoint.sh` (Railway) + error ไทย — commit **7bbe5b5** push แล้ว — container ใหม่ CMD=/entrypoint.sh healthy, log "Uploads ownership: www-data (fixed)" ✅
+- **บทเรียน**: root `Dockerfile` ≠ compose build (compose ใช้ `docker/Dockerfile.php`) — แก้ entrypoint ต้องดู docker-compose.yml ก่อนว่า build จากไหน + container inspect .Config.Cmd/Entrypoint เพื่อยืนยันของจริง
+- **⚠️ ยังค้าง**: admin/admin ยังไม่เปลี่ยน (Owner สั่งไว้ก่อน), SSH key-only ยังไม่ทำ, revoke token เก่า, คืนสิทธิ์ super_manager หลังทดสอบ
