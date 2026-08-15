@@ -453,3 +453,14 @@ After testing, each member will:
 - **🔄 ขั้น 3 server Tailscale**: `curl -fsSL https://tailscale.com/install.sh | sh` + `sudo tailscale up` → success, auth URL https://login.tailscale.com/a/b4ce902017b0f — **รอ: Owner ล็อกอิน + จด IP tailscale (tailscale ip -4)**
 - **🔄 ขั้น 4 notebook Tailscale**: ติดตั้ง package สำเร็จ (tailscale 1.102.2, Linux Mint 22.3 noble) — **รอ: Owner รัน `sudo tailscale up` ล็อกอินบัญชีเดียวกันกับ server**
 - ⏭️ ถัดไป: ทดสอบ SSH จาก notebook → server ผ่าน tailscale IP, ตั้ง VS Code Remote-SSH, ลง brain commit hash
+
+## 15 ส.ค. 2569 — 🎉 A+B Remote Access สำเร็จครบ + ปิด session (Owner กลับบ้านได้)
+- **Tailscale ครบทั้ง 2 เครื่อง**:
+  - SERVER (ร้าน, ragsaaadserver): ติดตั้ง + `sudo tailscale up` success (auth URL a/b4ce902017b0f) → **IP: 100.91.242.99**
+  - NOTEBOOK (Linux Mint 22.3, drsolodev-lenovo-z580): ติดตั้ง v1.102.2 + login → **IP: 100.118.218.73**
+  - บัญชี Tailscale: achaisirum@ (บัญชีเดียวกันทั้ง 2 เครื่อง — สำคัญ!)
+- **✅ ทดสอบ SSH ผ่าน Tailscale ผ่านจริง**: `ssh ragsaaad_v1@100.91.242.99` → เข้าได้, git=e061502 ตรง GitHub, POS web HTTP 200 — host key ใหม่ต้อง `StrictHostKeyChecking=accept-new` ครั้งแรก
+- **วิธีทำงานจากบ้าน** (จดไว้): (1) แก้โค้ด notebook → git push → server: `git pull` + `docker compose restart web` (2) แตะ server: `ssh ragsaaad_v1@100.91.242.99` (3) VS Code Remote-SSH เปิดโค้ดบน server ได้
+- **สถานะระบบทั้งหมด**: เฟส 0-4 ผ่าน (session fix, tunnel, data, sidebar, สิทธิ์), Git สะพาน ✅ (e061502 = bbedf1a sidebar/auth/permissions + e061502 cleanup), deploy key ✅, Tailscale ✅
+- **⚠️ TODO ค้าง**: (1) revoke GitHub token เดิม (ghp_...) ที่ Owner settings — ยัง valid (2) admin/admin ยังไม่เปลี่ยน (Owner สั่งไว้ก่อน) (3) SSH key-only ยังไม่ทำ (Owner ขออธิบายแล้วตัดสินใจ — อธิบายแล้ว รอการตัดสินใจ) (4) คืนสิทธิ์ super_manager หลังทดสอบเสร็จ (5) VS Code Remote-SSH ยังไม่ได้ตั้ง
+- **Session นี้เสร็จ**: งาน POS ทั้งหมดเขียว — Owner กลับบ้านได้ สบายใจ มีทางเข้า 2 ทาง (GitHub + Tailscale)
