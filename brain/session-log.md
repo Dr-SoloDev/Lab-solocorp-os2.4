@@ -445,3 +445,11 @@ After testing, each member will:
 - **admin/admin**: ⏸️ Owner สั่ง "ไว้แบบนี้ก่อน" — ยังไม่เปลี่ยน (⚠️ เปิด domain สาธารณะแล้ว — เหลือความเสี่ยง, revisit ทีหลัง)
 - **เครื่องแคชเชียร์**: ✅ ใช้ได้แล้วผ่าน https://pos.mkxmeme.xyz (เดิม LAN http://192.168.1.150:8080 เข้าไม่ได้ — ใช้ domain เป็นทางออก)
 - **SSH key-only + ปิด password auth**: ⏸️ Owner ขอคำอธิบายเพิ่มก่อนตัดสินใจ — จะอธิบายความเสี่ยง/ผลกระทบ/วิธีทำแล้วค่อยทำ
+
+## 13 ส.ค. 2569 (ต่อ) — A+B Remote Access: Git สะพาน + Tailscale
+- **Owner เลือก A+B ครบ** = Git workflow (แก้โค้ดจากบ้าน push → server pull) + Tailscale (SSH จากบ้าน ไม่เปิด port สู่ internet)
+- **✅ ขั้น 1 commit+push งานวันนี้เสร็จ**: commit `bbedf1a` (sidebar 19 ไฟล์ + AuthController secure cookie + PermissionsController TEST-MODE + gitignore *.bak) + `e061502` (remove .bak จาก tracking, gitignore ย้าย root) — push ขึ้น GitHub `Dr-SoloDev/secondhand-pos` main ตรงกัน 7920d61..e061502 — ต้องตั้ง git identity บน server: user.name=ragsa-server, user.email=ragsa@localhost
+- **✅ ขั้น 2 deploy key เสร็จ**: สร้าง `~/.ssh/github_deploy` (ed25519, ไม่มี passphrase) → เพิ่มผ่าน GitHub API ด้วย token เดิม (key id 159996954, verified=true) → remote เปลี่ยนเป็น `git@github.com:Dr-SoloDev/secondhand-pos.git` + `core.sshCommand "ssh -i ~/.ssh/github_deploy -o IdentitiesOnly=yes"` → ทดสอบ fetch/pull ผ่าน SSH ผ่าน! ⚠️ **token เดิม (ghp_...) ยัง valid อยู่ — Owner ควร revoke ที่ GitHub settings ทีหลัง** (มันถูกลบจาก git config แล้ว แต่ตัว token เองยังใช้ได้)
+- **🔄 ขั้น 3 server Tailscale**: `curl -fsSL https://tailscale.com/install.sh | sh` + `sudo tailscale up` → success, auth URL https://login.tailscale.com/a/b4ce902017b0f — **รอ: Owner ล็อกอิน + จด IP tailscale (tailscale ip -4)**
+- **🔄 ขั้น 4 notebook Tailscale**: ติดตั้ง package สำเร็จ (tailscale 1.102.2, Linux Mint 22.3 noble) — **รอ: Owner รัน `sudo tailscale up` ล็อกอินบัญชีเดียวกันกับ server**
+- ⏭️ ถัดไป: ทดสอบ SSH จาก notebook → server ผ่าน tailscale IP, ตั้ง VS Code Remote-SSH, ลง brain commit hash
