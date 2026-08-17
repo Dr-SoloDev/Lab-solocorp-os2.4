@@ -496,3 +496,16 @@ After testing, each member will:
   - **🔥 รอบ 2 — ปัญหา "พิมพ์ทีเดียวกระดาษหมดม้วน"** (Owner ทดสอบ Linux Mint จริง): ต้นตอ = `@page { size: 80mm auto }` — Chrome ตีความ `auto` เป็น Letter (216×279mm) → driver ส่งยาวทั้งม้วน; ทดสอบยืนยันด้วย puppeteer printToPDF: `80mm auto` = 216×279mm, `80mm var(--page-h)` = 80×112mm ตามค่า
   - **แก้**: `@page { size: 80mm var(--page-h, 100mm) }` + JS วัดความสูงบิลจริง (offsetHeight/3.7795 + 4mm เผื่อ) ตั้ง `--page-h` หลัง render (min 60mm) — deploy v2 (backup `.bak-thermal-v1`), QA: PO id=10 → --page-h=94mm → PDF 80mm×94mm ✅
   - ⚠️ ต้องพิมพ์ด้วย Chrome/Edge (Chromium) เท่านั้น — Firefox ไม่รองรับ @page size แบบนี้; ยังรอผลทดสอบพิมพ์จริง (Owner ปิดเครื่องพิมพ์ไปแล้ว)
+
+- **2026-08-17 06:36 — 🔌 เหตุการณ์ไฟดับที่ร้าน → ระบบกู้คืนเองทั้งหมด (DR test จริง!)**
+  - ร้านแจ้ง: ไฟดับ → เปิด server แล้ว → เข้าใช้ไม่ได้ — Owner อยู่บ้าน กลัวต้องเดินทางไปร้าน
+  - **ทางเข้าจากบ้านที่ใช้ได้ (ตอบ Owner: ไม่ต้องไปร้าน)**: SSH ผ่าน Tailscale `ragsaaad_v1@100.91.242.99` ✅ + ping ผ่าน
+  - **ตรวจจากบ้านครบ**: containers web+db Up (healthy) กลับมาเองหลัง reboot (restart policy) · login API ผ่าน · pos.mkxmeme.xyz HTTP 200 (cloudflared crontab @reboot ทำงาน) · Tailscale serve HTTP 200 (กลับมาเอง)
+  - 401 ใน log = curl ของผมเองไม่มี token — ไม่ใช่ปัญหา; verify 401 ทุก 10s = แท็บเว็บค้างของพนักงาน (session เก่า) — วิธีแก้ฝั่งพนักงาน: ปิดแท็บเก่า/เปิดหน้าใหม่
+  - **บทเรียนยืนยัน**: ระบบ remote access + auto-restart ที่ตั้งไว้ (Docker restart policy + cloudflared @reboot + Tailscale) = เต็มรูปแบบทำงานจริงหลังไฟดับ — Owner ไม่ต้องไปร้าน
+  - งานค้าง: thermal print (TEST-OK ค้างคิว printer + กระดาษม้วนสุดท้าย) ยังไม่จบ — รอ Owner ตัดสินใจต่อ
+
+- **2026-08-17 — ⏸️ งาน Thermal print (ES-8804) ถูกพักชั่วคราว — Owner ได้รับงานด่วนจากผู้ว่าจ้าง** (resume point เก็บไว้)
+  - สถานะค้าง: (1) งานทดสอบ `TEST-OK` (ESC/POS raw 24 bytes) ค้างในคิว CUPS printer `POS-80` ที่เครื่องบ้าน — เปิดเครื่องพิมพ์ = พิมพ์ทันที (2) กระดาษเหลือม้วนสุดท้าย (3) ยังไม่รู้ว่า ES-8804 รับ ESC/POS ดิบได้ไหม — นี่คือจุดตัดสินใจ: ถ้า TEST-OK ออก 1 บรรทัด+หยุด = printer รับ ESC/POS → ใช้ print server เดิม (`print_receipt.py` copy ไว้ที่ /tmp/opencode/print-server) พิมพ์บิลจริง; ถ้าม้วนไม่หยุด = ต้องไปทาง Windows driver อย่างเดียว
+  - โค้ดที่ deploy ไปแล้ว (ใช้ได้อยู่): `print-receipt-thermal.html` (80mm + --page-h) + ปุ่มแก้ใน purchase-orders.js — รอแค่ driver/การพิมพ์จริง
+  - คำสั่ง resume: เปิดเครื่องพิมพ์ → ดูผล TEST-OK (หรือ `sudo cupsenable POS-80` ถ้าคิวค้าง)
