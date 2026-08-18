@@ -1,7 +1,7 @@
 # Central Bus v0.6 — Dependencies
 # PRD Section 9: All versions pinned for reproducibility
 
-fastapi==0.115.0
+fastapi==0.139.0
 uvicorn[standard]>=0.31.1
 aiosqlite==0.20.0
 pydantic>=2.11.0
