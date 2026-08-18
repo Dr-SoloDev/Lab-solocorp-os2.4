@@ -509,3 +509,13 @@ After testing, each member will:
   - สถานะค้าง: (1) งานทดสอบ `TEST-OK` (ESC/POS raw 24 bytes) ค้างในคิว CUPS printer `POS-80` ที่เครื่องบ้าน — เปิดเครื่องพิมพ์ = พิมพ์ทันที (2) กระดาษเหลือม้วนสุดท้าย (3) ยังไม่รู้ว่า ES-8804 รับ ESC/POS ดิบได้ไหม — นี่คือจุดตัดสินใจ: ถ้า TEST-OK ออก 1 บรรทัด+หยุด = printer รับ ESC/POS → ใช้ print server เดิม (`print_receipt.py` copy ไว้ที่ /tmp/opencode/print-server) พิมพ์บิลจริง; ถ้าม้วนไม่หยุด = ต้องไปทาง Windows driver อย่างเดียว
   - โค้ดที่ deploy ไปแล้ว (ใช้ได้อยู่): `print-receipt-thermal.html` (80mm + --page-h) + ปุ่มแก้ใน purchase-orders.js — รอแค่ driver/การพิมพ์จริง
   - คำสั่ง resume: เปิดเครื่องพิมพ์ → ดูผล TEST-OK (หรือ `sudo cupsenable POS-80` ถ้าคิวค้าง)
+
+- **2026-08-18 — 🏆 WF-06 v2.1 (secondhand-pos): implement + clean start + DEPLOY ถึงร้านสำเร็จ**
+  - โมเดลตาม Owner 5 decisions: เปิด = rollover (ไม่กรอกยอด) / ปิด = ไม่ย้ายเงิน / bank ตัดยอดรวมผ่าน bank_net (ไม่แตะลิ้นชัก) / ย้ายลิ้นชัก↔เซฟ 2 ทาง (deposit 4 ประเภท) / เตือน "เงินสดในลิ้นชักไม่เพียงพอ" — Clean start baseline 0 (Owner อนุมัติ)
+  - โค้ด: CashSession (rollover/no-close-transfer/bank_net/recordBankMovement/transferDrawerOut/assertDrawerSufficient) + PO/Expense/SaleLot bank path + CashDepositRequest 4 types + migration 071 ENUM 4 ค่า + UI (open=rollover, deposit 4 options, stats รวม bank)
+  - Bugs ที่เจอระหว่างทาง (จำไว้กันซ้ำ): ENUM source_type 2 ค่าไม่พอ (แก้ 071), nested transaction ใน transferDrawerOut (ลบ — caller จัดการ), FK cash_session_id NOT NULL → bank ผูก session open/pending_close + movementTotal กรอง bank\_
+  - ทดสอบ: 70/70 cash + regression 254/255 (AUTH-52b pre-existing) + smoke 13/13 จำลอง production + UI QA CDP
+  - Deploy จริง: SSH `ragsaaad_v1@100.91.242.99` (key ใช้ได้ — **username 2 a** — docs เขียน 3 a ผิด!) — backup ก่อน → stash ไฟล์ร้านแก้เอง 2 อัน → pull 925853e → migration 071 → clean-start (ล้าง cash, baseline 0 ×4 สาขา, ข้อมูลธุรกิจครบ PO=11/sellers=5/lots=5) → restart web → verify passive (version 2, total 0)
+  - ⚠️ ระวัง: compose sandbox ต้อง `-f docker-compose.cash-sandbox.yml` เสมอ (รอบนี้ลืม → volume ผิด — เก็บกวาดแล้ว); ห้ามแตะไฟล์ร้าน M purchase-orders.js / ?? print-receipt-thermal.html
+  - ค้าง: Security TODO (admin/admin ยังไม่เปลี่ยน, revoke GitHub token, SSH key-only, คืนสิทธิ์ super_manager), Track A thermal print (ES-8804 — รอ Owner), commit ที่ร้าน = 925853e (docs 4ad44e0 ยังไม่ต้อง pull)
+  - หลักฐาน: main 925853e (deploy) + a026c37/4ad44e0 (docs) + backup 2 ไฟล์ที่ร้าน ~/secondhand-pos/backups/
