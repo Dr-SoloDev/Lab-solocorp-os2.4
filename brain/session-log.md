@@ -519,3 +519,24 @@ After testing, each member will:
   - ⚠️ ระวัง: compose sandbox ต้อง `-f docker-compose.cash-sandbox.yml` เสมอ (รอบนี้ลืม → volume ผิด — เก็บกวาดแล้ว); ห้ามแตะไฟล์ร้าน M purchase-orders.js / ?? print-receipt-thermal.html
   - ค้าง: Security TODO (admin/admin ยังไม่เปลี่ยน, revoke GitHub token, SSH key-only, คืนสิทธิ์ super_manager), Track A thermal print (ES-8804 — รอ Owner), commit ที่ร้าน = 925853e (docs 4ad44e0 ยังไม่ต้อง pull)
   - หลักฐาน: main 925853e (deploy) + a026c37/4ad44e0 (docs) + backup 2 ไฟล์ที่ร้าน ~/secondhand-pos/backups/
+
+- **2026-08-18/19 — ⌨️ Enter-add หน้ารับซื้อ (secondhand-pos): ลูกค้าขอปรับ UI + commit thermal fix**
+  - ลูกค้าขอ: กด Enter ที่น้ำหนัก/หัก = เพิ่มรายการ (แทนคลิกเมาส์) + loop เด้งกลับช่องรหัส — สำรวจโค้ดแล้วพบ: auto-select exact code + focus กลับช่องรหัส (focusItemName) **มีอยู่แล้ว** (WF-06) — เหลือเพิ่ม Enter handler จุดเดียว
+  - แก้: `assets/js/purchase-orders.js` +9 บรรทัด (keydown Enter → addItemToCart บน itemQuantity/itemWeightDeduct) + bump `?v=20260818b` — QA sandbox 13/13 (Enter เพิ่ม/error/คลิกปุ่ม regression/loop กลับ)
+  - Deploy **วิธี A (แก้ตรงร้าน ไม่ pull)** — เพราะ purchase-orders.js = M ร้าน (thermal fix 15 ส.ค. อยู่บรรทัด ~1224 — ไม่ชนตำแหน่งแทรก ~130): backup `.bak-enter-add-20260818` → แทรก python → restart web → verify domain (v ใหม่ + handler ในไฟล์จริง) — commit `8f96bfe`
+  - **Owner ถามทำไมไม่ commit thermal fix → อนุมัติ commit**: ดึง M diff + print-receipt-thermal.html (12,377B, md5 ตรงร้าน) จากร้าน → apply → node --check → commit `0b29c3c` — **repo = สิ่งที่ร้านใช้จริง 100% — M/?? หาย → ครั้งหน้า deploy pull ได้ clean**
+  - ⚠️ งานค้างเดิม: thermal ยังไม่จบ (รอทดสอบพิมพ์ ES-8804), security TODO (admin/admin, GitHub token, super_manager)
+  - หลักฐาน: main `8f96bfe` (Enter-add) + `0b29c3c` (thermal) — ร้าน `925853e` + แก้ตรง (วิธี A)
+
+- **2026-08-22 — 🖨️ พิมพ์ A4 รายละเอียด Lot ขาย (SO-BR) + 💰 เปิด-ปิดยอด Plan B**
+  - พิมพ์ A4 Lot: สร้าง `admin/print-sale-lot.html` (567 บรรทัด, A4 210×297mm, @page, auto-print) + ปุ่ม 🖨️ พิมพ์ A4 ใน `viewLot()` modal + bump `sale-lots.js?v=20260819a` — QA sandbox ผ่าน (modal+preview+A4) — Deploy pull clean (8 files) `e7b1b75` → verify domain `pos.mkxmeme.xyz` OK
+  - เปิด-ปิดยอด Plan B (5 UX — ไม่แตะ logic เงิน): 1) สมุดแยก `โอนธนาคาร` สีน้ำเงิน (bank_*) 2) คำขอ badge ไทย 3 สี 3) label `เงินเข้า-ออก ลิ้นชัก` เมื่อ v2 4) hint ปิดยอด live (0/50/150 → เขียว/น้ำเงิน/ส้ม) 5) placeholder เติมเงิน เปลี่ยนตาม 4 ประเภท — แก้ `cash-sessions.html/js/css` 60 บรรทัด `50e0d0a` — QA placeholder ผ่าน, v2 label/hint ตรวจที่ร้าน `v2 drawer 0 → ลิ้นชัก` ถูกต้อง — Deploy pull clean → verify `v20260819b` OK
+  - ตรวจแยกสาขา: Frontend `cashBranch` disabled ถ้าไม่ใช่ admin + Backend `resolveBranchId` 403 ถ้าข้ามสาขา + Model `WHERE branch_id=?` ทุกจุด — ทดสอบ Live เปิดสาขา 2 (`id=3`) แล้วสาขา 1 ยัง `open` ไม่กระทบ — ยืนยันแยกสาขา 100% — ลบทดสอบกลับเป็น `None` แล้ว
+
+- **2026-08-22 — 📸 ตรวจฟีเจอร์ถ่ายรูป 4 เคส + ถ่ายบัตรประชาชน + fix auto-capture**
+  - ตรวจโค้ด: `PhotoUploadController` (HMAC/JWT, 10MB, 1920px, 85%), `sellers/photo`, `purchase-orders` FAB/QR — โค้ดสมบูรณ์ WF-01
+  - ทดสอบจริง Sandbox 4 เคส: 1) ถ่ายบัตรผู้ขาย `POST /sellers/photo?id=7` → 692B JPEG 2) PO JWT×2 (`photo_id 1,2`) 3) QR HMAC (`token be0c52...`) → `photo_id 3` ไม่ต้อง cookie 4) ประวัติ `GET /photos?id=26` → 3 รูป — ทั้งหมด `200` + ไฟล์บน disk `/uploads/.../2026/08/` ครบ
+  - ถ่ายบัตร Flow ละเอียด: `pendingSellerIdPhoto` → `saveNewSeller()` → `POST /sellers/photo` → `UPDATE sellers.id_card_photo` → `photo-view?id=9 200` — ทดสอบสร้างผู้ขาย `id=9` ผ่าน `purchase-orders.html` UI (canvas 20×20) → `photo 707B` → DB/ไฟล์ตรงกัน — ยืนยันวิ่งถึงประวัติจริง
+  - ลูกค้าบ่นกดถ่ายแล้วค้าง: สาเหตุต้องกด 2 ครั้ง (ถ่าย→ใช้รูปนี้) — แก้ **Plan A** กดครั้งเดียวจบ: `capturePhoto()` auto-confirm หลัง 300ms (เช็ค `photoCaptured`+preview) + retry ยกเลิกได้ — QA mock video 640×480 → `pendingNewItemPhoto 2558B` auto-close ผ่าน, retry ยกเลิกผ่าน — Deploy `f149df1` `purchase-orders.js?v=20260822a` → verify domain OK
+  - ที่ร้านตอนนี้ `sellers_with_photo=0` (ยังไม่ใช้) / `po_photos=0` — บน Sandbox พิสูจน์พร้อมใช้ รอพนักงานลองบน PC จริง
+  - หลักฐาน: PO `PO-B1-20260822-001 id=26` 3 รูป, sellers `id=7,9` มีรูป, commit `f149df1` — sandbox ยังเปิด `scrap-pos-web` สำหรับทดสอบต่อ
