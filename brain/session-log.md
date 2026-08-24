@@ -540,3 +540,14 @@ After testing, each member will:
   - ลูกค้าบ่นกดถ่ายแล้วค้าง: สาเหตุต้องกด 2 ครั้ง (ถ่าย→ใช้รูปนี้) — แก้ **Plan A** กดครั้งเดียวจบ: `capturePhoto()` auto-confirm หลัง 300ms (เช็ค `photoCaptured`+preview) + retry ยกเลิกได้ — QA mock video 640×480 → `pendingNewItemPhoto 2558B` auto-close ผ่าน, retry ยกเลิกผ่าน — Deploy `f149df1` `purchase-orders.js?v=20260822a` → verify domain OK
   - ที่ร้านตอนนี้ `sellers_with_photo=0` (ยังไม่ใช้) / `po_photos=0` — บน Sandbox พิสูจน์พร้อมใช้ รอพนักงานลองบน PC จริง
   - หลักฐาน: PO `PO-B1-20260822-001 id=26` 3 รูป, sellers `id=7,9` มีรูป, commit `f149df1` — sandbox ยังเปิด `scrap-pos-web` สำหรับทดสอบต่อ
+
+- **2026-08-22 — 🧪 MVP เปิด-ปิดยอด (Excel Mode) — ซ่อนบัญชี เหลือ 2 ปุ่ม + แก้ขอบล่าง**
+  - Owner สั่ง MVP ให้ร้านซ้อมพรุ่งนี้ — ต้องง่ายเหมือน Excel: เปิดเช้า / เติมเงิน / ปิดเย็น — ซ่อน 3 กระเป๋า/4 ประเภท/2 ตาราง/เอกสาร
+  - ทำ MVP แบบซ่อน (ไม่ลบ logic): `MVP_SIMPLE=true` + `body.mvp-simple` + CSS `display:none` 7 จุด + JS ซ่อน `reserveStat/totalStat/ledgerTotal` เหลือ `drawerStat` 36px hero + `cashCountForm` ภาษาบ้านๆ (☀️ เปิดยอดวันนี้ / 🌙 ปิดยอดวันนี้) + `requestCashDeposit` ส่ง `reserve_transfer` อัตโนมัติ + สมุดย่อ 5 รายการ + banner MVP (Owner สั่งลบทิ้ง) — 3 ไฟล์ `html/js/css` 138 บรรทัด
+  - รันตัวอย่างบน Sandbox `localhost:8080` ให้ Owner ดูก่อน Deploy — screenshot 1280×800 ยืนยัน: `MVP banner True → ลบแล้ว gone`, `Drawer 36px`, `Reserve/Total hidden`, `Deposit 2 ช่อง`, `Session 🌙 ปิดร้าน` — Owner อนุมัติ
+  - Deploy MVP `18ea028` → pull clean → verify `v20260822b` + `JS-MVP-OK` + `CSS-MVP-OK` + `banner 0` — domain `pos.mkxmeme.xyz` 200
+  - แก้ขอบล่างหาย: `cash-sessions.html` ไม่มี `footer-powered` เหมือนหน้าอื่น — เติม `<div class="footer-powered">Powered by SoloCorp OS — Secondhand POS System</div>` + `main.css @import footer.css` มีอยู่แล้ว — Deploy `8032597` → verify `FOOTER-OK` + `DOMAIN-FOOTER-OK`
+  - ควรจำ: MVP ซ่อนด้วย `MVP_SIMPLE` flag + CSS `mvp-simple` — ถอด flag ออกคือกลับมาครบ (Phase 2) ไม่ต้อง migration — วิธี Deploy ยัง pull clean
+  - ควรปรับ: หลังร้านซ้อม 3 วัน เก็บ feedback ว่า 1) เปิดเช้าเข้าใจไหม 2) เติมเงินพอไหม 3) ปิดเย็นงงไหม — ค่อยเปิด 4 ประเภท/สำรอง/รวมคืนทีละขั้นตาม Roadmap Phase 1→2
+  - ควรบันทึก: คู่มือ 1 หน้า A4 วางข้างลิ้นชักยังไม่ได้ทำ (ตามเช็กลิสต์ 5 ข้อ) — ต้องทำก่อนให้ร้านซ้อมจริง — Thermal ES-8804 + Security TODO ยังค้าง
+  - หลักฐาน: `18ea028` MVP + `8032597` footer — `main 8032597 == shop 8032597` sync 100% — sandbox ยังเปิดสำหรับทดสอบ
