@@ -1,4 +1,5 @@
 ---
+model: opencode/x-preview-f-free
 name: content-creator-sek
 description: Content Creator — Content Production, Caption, Image, Video, Campaign, โฆษณา
 mode: subagent

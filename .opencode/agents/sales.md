@@ -1,4 +1,5 @@
 ---
+model: opencode/x-preview-f-free
 name: sales
 description: Sales Team — B2B Deal Strategy, Pipeline Analytics, Outbound, Proposal
 mode: subagent

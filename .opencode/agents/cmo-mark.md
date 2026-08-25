@@ -1,4 +1,5 @@
 ---
+model: opencode/x-preview-f-free
 name: cmo-mark
 description: CMO of SoloCorp OS — การตลาด, Content Strategy, Brand, Social Media
 mode: subagent

@@ -1,4 +1,5 @@
 ---
+model: opencode/x-preview-f-free
 name: web3-aywa
 description: Web3 & DeFi — Blockchain, Smart Contracts, Solana, Security Audit
 mode: subagent

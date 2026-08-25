@@ -1,4 +1,5 @@
 ---
+model: opencode/x-preview-f-free
 name: cron-pipeline
 description: Cron Pipeline Agent — Schedule, Durable Execution, Retry Pipeline Workflows
 mode: subagent

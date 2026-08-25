@@ -1,4 +1,5 @@
 ---
+model: opencode/x-preview-f-free
 name: cfo-meetoo
 description: CFO of SoloCorp OS — การเงิน, งบประมาณ, การลงทุน, cost analysis
 mode: subagent

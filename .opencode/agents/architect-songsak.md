@@ -1,4 +1,5 @@
 ---
+model: opencode/x-preview-f-free
 name: architect-songsak
 description: Head of Architect — ดูแล Central Bus, routing, pipeline, monitoring, exception handling
 mode: subagent

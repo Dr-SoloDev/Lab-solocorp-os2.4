@@ -1,4 +1,5 @@
 ---
+model: opencode/x-preview-f-free
 name: support
 description: Support Team — Customer Support, Analytics, Executive Summaries
 mode: subagent
