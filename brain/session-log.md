@@ -622,3 +622,7 @@ After testing, each member will:
   - สคริป ClawForge (11/108 static, เจอ space-bunny timeout 3 รอบ + token ตัด + validator จับ pilot หลุด 12 ท่อน) → Owner เคาะผ่าน gate → titles/cover → golden ตัวแรก 🥇
   - เตรียม Flow Pro 3 เดือน (189×3): รีเสิร์ชเครดิต (50/วัน+1000/เดือน, Omni 720p 10s=15 → ~15 EP/เดือน) + clone ศึกษา flowkit + แผน `bus/plans/flow-pro-3month.md`
   - สร้าง `media_daily` loop (date-gate ≥06:00, ≤2 ท่อน/วัน, approved-only) + `workers/flowkit_bridge.py` + queue/credits (dormant รอ Pro Day-1) — commit นี้
+- **2026-09-28 ~03:00 — 🏛️ ประกาศนามสกุล SoulLandCor (Owner, L5 vision)**
+  - "นี่จะเป็นนามสกุลของเรา — ไม่ใช่ชื่อผลิตภัณฑ์/ซอฟต์แวร์/โปรเจกต์ใด แต่ทุกสิ่งจากเราทั้งอดีต ปัจจุบัน อนาคต อยู่ใต้ร่มเงา SoulLandCor"
+  - ปิดงานคืนนี้ด้วยภาพ billboard: SoulLandCor — BUILDING WORLDS. SHAPING TOMORROW. (soullandcor.com)
+  - CEO รับทราบ: SoloCorp OS / ClawForge / EP series และทุกงานต่อจากนี้ = ภายใต้ SoulLandCor
