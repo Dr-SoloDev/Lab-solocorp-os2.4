@@ -608,3 +608,9 @@ After testing, each member will:
   - เทสรอบ 2: skip/lock/compat/heartbeat ผ่านหมด + เจอ P1: space-bunny ว่างกับ prompt ไทยยาว 3/3 (fallback รับมือได้, รอ Owner ตัดสิน per-loop primary) + P2: queue19 นิ่ง (ส่ง T2) + P3: facts1/rules0 (รอ T2)
   - Architect closure: ลด scope (A+B ทำเองแล้ว) + inbox นัด checkpoint 29 Sep + บันได escalate (REMINDER→Owner→CEO backup)
   - เอกสาร: ARCHITECTURE.md + CHANGELOG + session-log อัปเดท — commit นี้
+- **2026-09-27 ~23:00 — 🎧 ห้องฟังเสียงถาวร (Owner สั่งเซ็ต)**
+  - เทส image-gen: โค้ดกราฟิกได้ (PNG วงแดง verify pixel), vision input ได้ (`@path` + space-bunny อ่านถูก), diffusion ไม่ได้ (ไม่มี API key)
+  - เทส vision โปสเตอร์ EP.1: อ่านครบ 6 ตัวละคร + ข้อความ
+  - เทสวิดีโอ EP.3 (`Downloads/video.mp4` 10s): แยกเฟรมดู + ตั้ง faster-whisper ชั่วคราวถอดเสียงไทย (เปิด EP.3 แนะนำแผนกที่เหลือ)
+  - เซ็ตถาวร: venv `/data/venvs/speech` + models tiny/base/small + `scripts/transcribe.py` (รับเสียง/วิดีโอ, --model/--lang/--srt) — เทสผ่าน
+  - modalities (models.dev): space-bunny (text/image/video), muse-spark (+pdf/audio), longcat (text/image), mimo (+audio/video) — commit นี้
