@@ -614,3 +614,11 @@ After testing, each member will:
   - เทสวิดีโอ EP.3 (`Downloads/video.mp4` 10s): แยกเฟรมดู + ตั้ง faster-whisper ชั่วคราวถอดเสียงไทย (เปิด EP.3 แนะนำแผนกที่เหลือ)
   - เซ็ตถาวร: venv `/data/venvs/speech` + models tiny/base/small + `scripts/transcribe.py` (รับเสียง/วิดีโอ, --model/--lang/--srt) — เทสผ่าน
   - modalities (models.dev): space-bunny (text/image/video), muse-spark (+pdf/audio), longcat (text/image), mimo (+audio/video) — commit นี้
+- **2026-09-28 ~00:00-02:45 — 🎬 Media pipeline + Flow Pro เตรียมพร้อม (Owner ลุยด้วยกัน)**
+  - Forum 005 (6/6: product/engineering/content/cfo/cmo/qa) ถก media pipeline → synthesis ล้ม (space-bunny ว่างอีก) → กู้ด้วย muse-spark
+  - สร้าง `workers/media_pipeline.py` (ingest/script/titles/concat/cover) → ผลิต EP.4 (18 ท่อน cinematic, รอ gate)
+  - เคาะ 3 ฝ่าย (Notebook/EP.4/Owner): ตรวจข้อเท็จจริง 5 จุด (ผิด 3: 18/55 เก่า, <5s ครึ่งจริง, Discord ไม่มี) → อัปเกรดโรงงาน 6 ข้อ (schema v2/validator/2 โหมด/pilot-first/render contract)
+  - สร้าง skill `@solocorp/content/script-design` + `bus/media/fact-table.md` + EP.4 golden candidate
+  - สคริป ClawForge (11/108 static, เจอ space-bunny timeout 3 รอบ + token ตัด + validator จับ pilot หลุด 12 ท่อน) → Owner เคาะผ่าน gate → titles/cover → golden ตัวแรก 🥇
+  - เตรียม Flow Pro 3 เดือน (189×3): รีเสิร์ชเครดิต (50/วัน+1000/เดือน, Omni 720p 10s=15 → ~15 EP/เดือน) + clone ศึกษา flowkit + แผน `bus/plans/flow-pro-3month.md`
+  - สร้าง `media_daily` loop (date-gate ≥06:00, ≤2 ท่อน/วัน, approved-only) + `workers/flowkit_bridge.py` + queue/credits (dormant รอ Pro Day-1) — commit นี้

@@ -490,6 +490,8 @@ without human intervention.
 
 **Cron:** `*/30 * * * * cd /data/projects/Lab-solocorp-os2.4 && .venv/bin/python -m loop_runner.main >> logs/loop_runner_cron.log 2>&1` (installed 2026-09-27; was missing → scheduler silent 2026-08-26–09-27)
 
+**Loops (2026-09-28):** daily_brief (20h) · subscription_audit (30d) · brain_auto_commit (1h) · pipeline_executor (30m) · **media_daily (date-gate ≥06:00, ≤2 segs/day, approved-only)** — fires Flow generations via `workers/flowkit_bridge.py` (dormant until Pro Day-1), logs `bus/media/credits.md`, alerts inbox `__human__` on failure.
+
 **Reliability (2026-09-27):** `main.py` has fcntl single-flight lock (overlapping runs SKIP) + `--dry-run` flag. Loops fetch Bus via `X-API-Key` header with JSON body `{"agent_id":…, "keys":["*"]}` and normalize fact shape `{key,value}` → `{id,content}` (fail-open). busd accepts `X-API-Key` primary + legacy `Authorization: Bearer` compat until 2026-10-04.
 
 | Loop | Trust Lvl | Interval | Action |
