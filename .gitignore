@@ -108,3 +108,6 @@ DEVELOPMENT-PLAN-v0.3.md
 
 # Old root-level scripts (moved to scripts/)
 /_watchdog_run.py
+
+# Loop Runner single-flight lock (runtime, never commit)
+loop_runner/.main.lock

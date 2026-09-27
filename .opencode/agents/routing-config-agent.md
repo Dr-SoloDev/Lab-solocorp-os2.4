@@ -1,5 +1,5 @@
 ---
-model: opencode/x-preview-f-free
+model: opencode/space-bunny-free
 name: routing-config-agent
 description: Routing Config Agent — กำหนด routing rules, circuit breaker, DAG pipeline
 mode: subagent

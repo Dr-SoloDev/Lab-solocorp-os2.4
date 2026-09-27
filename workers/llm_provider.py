@@ -19,7 +19,24 @@ log = logging.getLogger(__name__)
 
 # ── Configuration ──────────────────────────────────────────────────────
 
-DEFAULT_MODEL = "opencode/deepseek-v4-flash-free"
+# Owner-ordered fallback chain (2026-09-27, CMD-005 follow-up):
+# 1. Space Bunny Free — text+image+video, ~80 tok/s (primary)
+# 2. Muse Spark 1.3 Free — สำรอง 1
+# 3. Longcat 2.5 Preview Free — สำรอง 2
+# 4. Mimo-2.6-Flash Free — สำรอง 3
+DEFAULT_MODEL = "opencode/space-bunny-free"
+MODEL_FALLBACKS = [
+    "opencode/space-bunny-free",
+    "opencode/muse-spark-1.3-contributor-free",
+    "opencode/longcat-2.5-preview-free",
+    "opencode/mimo-v2.6-flash-free",
+]
+# Dead models — ถ้ามี caller ส่งชื่อเก่ามา ให้ map เข้า fallback chain ทันที
+DEAD_MODELS = {
+    "opencode/x-preview-f-free",
+    "stealth/ox-alpha",
+    "opencode/deepseek-v4-flash-free",
+}
 _CMD = os.environ.get("OPENCODE_BIN", os.path.expanduser("~/.opencode/bin/opencode"))
 _MAX_CONCURRENT = 3
 _LLM_TIMEOUT = 60
@@ -48,7 +65,7 @@ async def think(
     Args:
         prompt: คำถาม/คำสั่งถึง LLM
         system_prompt: context/brief เพิ่มเติม (เช่น บทบาท agent)
-        model: ชื่อ model (default: deepseek-v4-flash-free)
+        model: ชื่อ model (default: space-bunny-free, fallback → muse-spark → longcat → mimo)
         max_tokens: ความยาวสูงสุดของคำตอบ
         temperature: (reserved) ไม่ได้ส่งไป opencode run โดยตรง
 
@@ -58,31 +75,48 @@ async def think(
     full_prompt = f"{system_prompt}\n\n{prompt}" if system_prompt else prompt
     last_error = ""
 
-    for attempt in range(1, _MAX_RETRIES + 1):
-        try:
-            async with _semaphore:
-                result = await _run_opencode(full_prompt, model)
+    # Build try-list: requested model first, then fallbacks (skip duplicates).
+    # Dead models map straight to full chain.
+    if model in DEAD_MODELS or model == DEFAULT_MODEL or model in MODEL_FALLBACKS:
+        try_list = list(MODEL_FALLBACKS)
+        # ถ้า caller เจาะจงตัวใน chain ให้เริ่มจากตัวนั้นก่อน
+        if model in MODEL_FALLBACKS:
+            try_list.remove(model)
+            try_list.insert(0, model)
+    else:
+        try_list = [model] + [m for m in MODEL_FALLBACKS if m != model]
 
-            if not result:
-                log.warning(f"LLM เปล่า (attempt {attempt})")
-                last_error = "empty response"
+    for model_name in try_list:
+        for attempt in range(1, _MAX_RETRIES + 1):
+            try:
+                async with _semaphore:
+                    result = await _run_opencode(full_prompt, model_name)
+
+                if not result:
+                    log.warning(f"LLM เปล่า ({model_name} attempt {attempt})")
+                    last_error = f"{model_name}: empty response"
+                    break  # เปล่า = เปลี่ยนโมเดลเลย ไม่ retry ตัวเดิมซ้ำ
+
+                if model_name != try_list[0]:
+                    log.info(f"LLM fallback สำเร็จด้วย {model_name}")
+                return result[:max_tokens]
+
+            except asyncio.TimeoutError:
+                log.warning(f"LLM timeout {model_name} attempt {attempt}/{_MAX_RETRIES}")
+                last_error = f"{model_name}: timeout ({_LLM_TIMEOUT}s)"
                 continue
 
-            return result[:max_tokens]
+            except Exception as e:
+                log.warning(f"LLM error {model_name} attempt {attempt}/{_MAX_RETRIES}: {e}")
+                last_error = f"{model_name}: {e}"
+                # Model not found = ข้ามไปตัวถัดไปทันที ไม่ต้อง retry ซ้ำ
+                if "Model not found" in str(e) or "model not found" in str(e).lower():
+                    break
+                if attempt < _MAX_RETRIES:
+                    await asyncio.sleep(attempt)
+                continue
 
-        except asyncio.TimeoutError:
-            log.warning(f"LLM timeout attempt {attempt}/{_MAX_RETRIES}")
-            last_error = f"timeout ({_LLM_TIMEOUT}s)"
-            continue
-
-        except Exception as e:
-            log.warning(f"LLM error attempt {attempt}/{_MAX_RETRIES}: {e}")
-            last_error = str(e)
-            if attempt < _MAX_RETRIES:
-                await asyncio.sleep(attempt * 2)
-            continue
-
-    log.error(f"LLM หมดโอกาส ({_MAX_RETRIES} attempts): {last_error}")
+    log.error(f"LLM หมดโอกาส (ลอง {len(try_list)} โมเดล): {last_error}")
     return f"⚠️ LLM ไม่พร้อม: {last_error}"
 
 

@@ -1,5 +1,5 @@
 ---
-model: opencode/x-preview-f-free
+model: opencode/space-bunny-free
 name: pipeline-auditor
 description: Pipeline Auditor — ตรวจสอบ audit trail ทุก handoff, compliance check, evidence verification
 mode: subagent

@@ -600,3 +600,11 @@ After testing, each member will:
   - Owner: เอกฉันท์ ไม่เห็นแย้ง เคาะตามเสียงมาก — บันทึกมติชั้น 2 (CEO+Owner) ลง docops plan
   - เปิด workstream ผ่าน inbox จริง (ceo→coo เจ้าภาพ, ceo→legal นำ template #1)
   - Task subagent กลางคืนเรียกไม่ได้ (free tier) → CEO ร่างโครงสัญญาจ้าง v0.1 เองด้วย contract-review skill → `bus/templates/svc-agreement-v01-draft.md` (10 ข้อ + ภาคผนวก scope + 5 จุดให้ทนายตรวจ, รอ Legal เช้า) — ซื่อสัตย์: ร่างนี้ยังไม่ผ่าน Legal ห้ามใช้จริง
+- **2026-09-27 ~21:00-22:45 — 🟢 Bus เขียว A+B v2 สำเร็จ (Owner สั่งลุยผ่าน Forum 004)**
+  - Owner ถาม daily_brief fail 26 Aug → CEO สืบ: model churn (deepseek→stealth→x-preview→muse-spark) + 3 จุด config ไม่ตรงกัน → ออก CMD-005 ให้ Architect วิเคราะห์ (due 30 Sep)
+  - Owner สั่ง fallback หลายโมเดล: 4 ตัว space-bunny→muse-spark→longcat→mimo (`workers/llm_provider.py` MODEL_FALLBACKS + DEAD_MODELS) + default ทั้งระบบเป็น space-bunny (`opencode.json` + 21 agents) — เทส live 4/4 PING + dead-model fallback ผ่าน
+  - Owner สั่งเปิด Forum 004 ถกแผน Bus เขียว: architect/engineering/qa/cfo 4/4 ตอบ → จับได้ 3 จุดที่แผน CEO ประมาท (สแกน client ทั้งหมด/compat window/lock+cost) → ปรับเป็น A+B v2 → Owner อนุมัติ
+  - ลงมือ A+B v2: grep Bearer (2 ไฟล์) → busd compat 2 headers (ถอด Bearer 04 Oct) → เจอแถม: loops ส่ง POST ไม่มี body (400) + parse fact ผิด shape → แก้พร้อมกัน → manual run รอบแรกตั้งแต่ 26 Aug (facts สด, commit 14 ไฟล์) → cron */30 + fcntl lock + dry-run → heartbeat 401 watch
+  - เทสรอบ 2: skip/lock/compat/heartbeat ผ่านหมด + เจอ P1: space-bunny ว่างกับ prompt ไทยยาว 3/3 (fallback รับมือได้, รอ Owner ตัดสิน per-loop primary) + P2: queue19 นิ่ง (ส่ง T2) + P3: facts1/rules0 (รอ T2)
+  - Architect closure: ลด scope (A+B ทำเองแล้ว) + inbox นัด checkpoint 29 Sep + บันได escalate (REMINDER→Owner→CEO backup)
+  - เอกสาร: ARCHITECTURE.md + CHANGELOG + session-log อัปเดท — commit นี้

@@ -19,18 +19,31 @@ def heartbeat() -> str:
     return marker
 
 
-def main() -> None:
-    print(heartbeat())
-    for loop in ALL_LOOPS:
-        if not loop.should_run():
-            continue
+def main(dry_run: bool = False) -> None:
+    import fcntl
+
+    # Single-flight: กัน cron รอบซ้อน (forum-20260927-004)
+    lock_path = Path(__file__).parent / ".main.lock"
+    with open(lock_path, "w") as lock_f:
         try:
-            result = loop.execute()
-            if result:
-                print(f"[{loop.loop_id}]\n{result}\n")
-        except Exception as e:
-            print(f"[{loop.loop_id}] SKIPPED: {e}")
+            fcntl.flock(lock_f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            print("[scheduler] SKIP: another run in progress (locked)")
+            return
+        print(heartbeat())
+        for loop in ALL_LOOPS:
+            if not loop.should_run():
+                continue
+            if dry_run:
+                print(f"[{loop.loop_id}] DRY-RUN: due — would execute")
+                continue
+            try:
+                result = loop.execute()
+                if result:
+                    print(f"[{loop.loop_id}]\n{result}\n")
+            except Exception as e:
+                print(f"[{loop.loop_id}] SKIPPED: {e}")
 
 
 if __name__ == "__main__":
-    main()
+    main(dry_run="--dry-run" in sys.argv)

@@ -1,5 +1,5 @@
 ---
-model: opencode/x-preview-f-free
+model: opencode/space-bunny-free
 name: ui-designer
 description: UI Designer — Interface Design, Component Library, Pixel-perfect UI
 mode: subagent

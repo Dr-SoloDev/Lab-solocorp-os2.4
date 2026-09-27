@@ -18,15 +18,24 @@ API_KEY = os.environ.get("SOLOCORP_API_KEY", "sk-solocorp-admin-local-dev-001")
 
 
 def _fetch_context() -> dict:
-    """ดึง context จาก Central Bus"""
+    """ดึง context จาก Central Bus (fail-open — normalize fact shape)"""
     try:
+        body = json.dumps({"agent_id": "cfo-subscription-audit", "keys": ["*"]}).encode()
         req = urllib.request.Request(
             f"{BUS_URL}/v1/context",
-            headers={"Authorization": f"Bearer {API_KEY}"},
+            data=body,
+            headers={"X-API-Key": API_KEY, "Content-Type": "application/json"},
             method="POST",
         )
         resp = json.loads(urllib.request.urlopen(req, timeout=10).read())
-        return resp
+        facts = []
+        for f in resp.get("facts", []):
+            facts.append({
+                "id": f.get("key", f.get("id", "?")),
+                "content": str(f.get("value", f.get("content", ""))),
+            })
+        return {"facts": facts, "queue": resp.get("queue", []),
+                "queue_pending": resp.get("queue_pending", 0)}
     except Exception as e:
         return {"facts": [], "queue": []}
 
@@ -35,7 +44,7 @@ class SubscriptionAuditLoop(Loop):
     loop_id = "subscription_audit"
     interval = timedelta(days=30)
     trust_level = 4  # L4 — auto-execute
-    model_hint = "opencode/deepseek-v4-flash-free"
+    model_hint = "stealth/ox-alpha"
 
     def run(self) -> str:
         ctx = _fetch_context()
@@ -48,7 +57,7 @@ class SubscriptionAuditLoop(Loop):
             for f in facts[:20]
         )
 
-        # NOTE: deepseek-v4-flash-free returns EMPTY on long Thai prompts
+        # NOTE: legacy deepseek free model returned EMPTY on long Thai prompts
         # (same bug class as daily_brief — verified 2026-08-04).
         # Prompt uses EN structure + TH output instruction — stable. Fallback retries EN-only.
         prompt = (

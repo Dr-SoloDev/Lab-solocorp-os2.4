@@ -1,6 +1,6 @@
 ---
 name: mcp-builder
-model: opencode/x-preview-f-free
+model: opencode/space-bunny-free
 description: "🔌 MCP Builder — สร้าง MCP servers ที่ extend capability ให้ AI agent ด้วย tools, resources, และ prompts แบบ production-ready"
 mode: primary
 agents_md: true

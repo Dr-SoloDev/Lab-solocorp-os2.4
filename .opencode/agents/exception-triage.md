@@ -1,5 +1,5 @@
 ---
-model: opencode/x-preview-f-free
+model: opencode/space-bunny-free
 name: exception-triage
 description: Exception Triage Agent — Triage, Root Cause Analysis, Auto-Resolve Pipeline Exceptions
 mode: subagent

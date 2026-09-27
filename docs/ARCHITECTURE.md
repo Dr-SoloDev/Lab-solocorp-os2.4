@@ -1,7 +1,7 @@
 # Lab-solocorp-os2.4 — Architecture Overview
 
 > System Architecture for SoloCorp OS
-> Designed: 2026-06-26 | Last Updated: 2026-07-12 | Version: 2.4
+> Designed: 2026-06-26 | Last Updated: 2026-09-27 | Version: 2.4
 
 ---
 
@@ -488,7 +488,9 @@ without human intervention.
       └── pipeline_executor.py   L4 — Pull queue → LLM execute → update status
 ```
 
-**Cron:** `*/30 * * * * python3 -m loop_runner.main`
+**Cron:** `*/30 * * * * cd /data/projects/Lab-solocorp-os2.4 && .venv/bin/python -m loop_runner.main >> logs/loop_runner_cron.log 2>&1` (installed 2026-09-27; was missing → scheduler silent 2026-08-26–09-27)
+
+**Reliability (2026-09-27):** `main.py` has fcntl single-flight lock (overlapping runs SKIP) + `--dry-run` flag. Loops fetch Bus via `X-API-Key` header with JSON body `{"agent_id":…, "keys":["*"]}` and normalize fact shape `{key,value}` → `{id,content}` (fail-open). busd accepts `X-API-Key` primary + legacy `Authorization: Bearer` compat until 2026-10-04.
 
 | Loop | Trust Lvl | Interval | Action |
 |:-----|:---------|:---------|:-------|
@@ -545,10 +547,11 @@ All agent workers use `workers/llm_provider.py` for LLM inference.
 | Parameter | Value |
 |:----------|:------|
 | CLI | `opencode run --pure --model <model>` |
-| Default model | `opencode/deepseek-v4-flash-free` |
+| Default model | `opencode/space-bunny-free` (2026-09-27, Owner-ordered) |
+| Fallback chain | space-bunny → muse-spark-1.3 → longcat-2.5-preview → mimo-v2.6-flash (`MODEL_FALLBACKS`; dead names in `DEAD_MODELS` map straight to chain; `Model not found` skips immediately) |
 | Max concurrent | 3 (asyncio.Semaphore) |
-| Timeout | 30s per call |
-| Max retries | 2 (exponential backoff) |
+| Timeout | 60s per call |
+| Max retries | 3 per model (exponential backoff) |
 | Prompt transport | stdin (prevents shell injection) |
 
 ### Usage

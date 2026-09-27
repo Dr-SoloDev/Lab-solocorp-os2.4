@@ -19,16 +19,32 @@ API_KEY = os.environ.get("SOLOCORP_API_KEY", "sk-solocorp-admin-local-dev-001")
 
 
 def _fetch_facts() -> list[dict]:
-    """ดึง facts จาก Central Bus เพื่อให้ LLM ใช้เป็นข้อมูล"""
+    """ดึง facts จาก Central Bus เพื่อให้ LLM ใช้เป็นข้อมูล (fail-open)"""
     try:
+        body = json.dumps({"agent_id": "cfo-daily-brief", "keys": ["*"]}).encode()
         req = urllib.request.Request(
             f"{BUS_URL}/v1/context",
-            headers={"Authorization": f"Bearer {API_KEY}"},
+            data=body,
+            headers={"X-API-Key": API_KEY, "Content-Type": "application/json"},
             method="POST",
         )
         resp = json.loads(urllib.request.urlopen(req, timeout=10).read())
-        return resp.get("facts", [])
+        facts = []
+        for f in resp.get("facts", []):
+            facts.append({
+                "id": f.get("key", f.get("id", "?")),
+                "content": str(f.get("value", f.get("content", ""))),
+            })
+        return facts
     except Exception as e:
+        # Heartbeat signal: นับ 401 ไว้ใน state.db ให้เห็นใน dashboard
+        if "401" in str(e) or "UNAUTHORIZED" in str(e):
+            try:
+                from ..state import record as _record
+                _record("bus_auth_watch", f"401 {BUS_URL}/v1/context: {e}"[:300],
+                        success=False)
+            except Exception:
+                pass
         return [{"id": "error", "content": f"ไม่สามารถเชื่อมต่อ Central Bus: {e}"}]
 
 
@@ -44,7 +60,7 @@ class DailyBriefLoop(Loop):
             for f in facts[:20]
         )
 
-        # NOTE: deepseek-v4-flash-free returns EMPTY on long Thai prompts (verified 2026-08-04).
+        # NOTE: legacy deepseek free model returned EMPTY on long Thai prompts (verified 2026-08-04); now on stealth/ox-alpha.
         # Prompt uses EN structure + TH output instruction — stable. Fallback retries EN-only.
         prompt = (
             f"You are CFO of SoloCorp OS. Org status:\n{facts_text}\n\n"

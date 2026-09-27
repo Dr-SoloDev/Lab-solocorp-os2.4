@@ -1,5 +1,5 @@
 ---
-model: opencode/x-preview-f-free
+model: opencode/space-bunny-free
 name: monitor-watchdog
 description: Monitor Watchdog — เฝ้าสุขภาพ pipeline real-time, health probe, SLA tracking
 mode: subagent

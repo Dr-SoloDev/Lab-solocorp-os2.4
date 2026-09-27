@@ -77,6 +77,13 @@
         "deadline": "2026-09-30"
       }
     ],
+    "closure_plan": {
+      "checkpoint": "2026-09-29 — CEO pings via inbox; Architect replies with % done + blockers (or asks for help)",
+      "deadline": "2026-09-30 — deliverable or escalation",
+      "escalation_ladder": "checkpoint silent → REMINDER (29 Sep) → deadline silent → escalate to Owner + CEO executes backup (narrowed scope already 70% done by CEO on 27 Sep)",
+      "narrowed_scope_2026_09_27": "A+B implemented+tested by CEO (ABv2-execution.md, ABv2-test-round2.md). Architect does NOT redo: only T1-verify vs evidence, T2-remaining (queue19/facts/routing), T3-review + space-bunny per-loop primary proposal (P1 in test-round2)",
+      "done_definition": "file bus/evidence/2026-09-27/CMD-005-analysis.md exists with T1+T2+T3 sections — auto-ack does not count"
+    },
     "evidence_output": "bus/evidence/2026-09-27/CMD-005-analysis.md",
     "evidence_reference": [
       "bus/evidence/2026-09-27/CMD-005-fallback-implement.md",

@@ -1,5 +1,5 @@
 ---
-model: opencode/x-preview-f-free
+model: opencode/space-bunny-free
 name: engineering-changful
 description: Head of Engineering — Development, Code, Architecture, Technology
 mode: subagent

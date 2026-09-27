@@ -63,7 +63,7 @@
 
   "agent": {
     "ceo-turbo": {
-      "model": "opencode/x-preview-f-free",
+      "model": "opencode/space-bunny-free",
       "description": "CEO of SoloCorp OS — Supreme AI Authority. รับ vision จาก Owner → ตัดสินใจ → delegate ไปยัง Department Heads",
       "mode": "primary",
       "color": "#FFD700"

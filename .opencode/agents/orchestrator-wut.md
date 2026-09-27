@@ -1,5 +1,5 @@
 ---
-model: opencode/x-preview-f-free
+model: opencode/space-bunny-free
 name: orchestrator-wut
 description: Orchestrator of SoloCorp OS — Auto-Pilot Pipeline Manager, ควบคุม pipeline ทั้งหมด
 mode: subagent

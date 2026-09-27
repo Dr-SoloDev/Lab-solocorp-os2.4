@@ -5,6 +5,21 @@
 
 ---
 
+## Unreleased (2026-09-27 — Bus green A+B v2, Owner-approved via Forum 004)
+
+### Added
+- **4-model LLM fallback** (`workers/llm_provider.py`) — `MODEL_FALLBACKS`: space-bunny → muse-spark-1.3 → longcat-2.5-preview → mimo-v2.6-flash; `DEAD_MODELS` map; skip on `Model not found`; empty response → next model
+- **Loop single-flight + dry-run** (`loop_runner/main.py`) — fcntl lock + `--dry-run`; cron `*/30` installed (was missing since 08-26)
+- **Bus Bearer compat** (`central_bus/main.py`) — accepts `X-API-Key` + legacy `Authorization: Bearer` until 2026-10-04
+- **401 watch** — `daily_brief` records `bus_auth_watch` to state.db on 401 (fail-open)
+- **Forum 004 + evidence** — `bus/forum/forum-20260927-004/`, `bus/evidence/2026-09-27/ABv2-*.md`, CMD-005 (+T3, closure_plan)
+
+### Changed
+- Default model → `opencode/space-bunny-free` (`opencode.json` + 21 agents); loops send `X-API-Key` + JSON body, normalize fact shape
+- `docs/ARCHITECTURE.md` — provider fallback, cron, auth compat documented
+
+---
+
 ## v0.7.0 (2026-07-12)
 
 ### Added
