@@ -103,6 +103,14 @@ async def api_key_auth(request: Request, call_next):
     ) or request.url.path.startswith("/v1/skills/"):
         return await call_next(request)
     api_key = request.headers.get("X-API-Key", "")
+    if not api_key:
+        # COMPAT (until 2026-10-04): accept legacy Authorization: Bearer <key>.
+        # TODO(2026-10-04): remove Bearer fallback — all clients on X-API-Key.
+        auth = request.headers.get("Authorization", "")
+        if auth.startswith("Bearer "):
+            api_key = auth[len("Bearer "):].strip()
+            log.warning("compat Bearer auth used on %s — migrate to X-API-Key",
+                        request.url.path)
     if api_key == _ADMIN_KEY:
         return await call_next(request)
     if api_key:

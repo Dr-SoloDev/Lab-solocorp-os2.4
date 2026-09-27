@@ -1,0 +1,103 @@
+{
+  "routes": {
+    "ceo": [
+      "__all__"
+    ],
+    "coo": [
+      "__all__"
+    ],
+    "__human__": [
+      "__all__"
+    ],
+    "__gateway__": [
+      "__all__"
+    ],
+    "architect": [
+      "ceo",
+      "coo",
+      "orchestrator",
+      "__human__"
+    ],
+    "orchestrator": [
+      "ceo",
+      "coo",
+      "architect",
+      "__human__"
+    ],
+    "cfo": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "cmo": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "product": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "engineering": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "design": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "ui-designer": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "qa": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "sales": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "support": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "legal": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "web3": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "content-creator": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "neteng": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "cybersec": [
+      "ceo",
+      "coo",
+      "__human__"
+    ],
+    "psychology": [
+      "ceo",
+      "coo",
+      "__human__"
+    ]
+  }
+}

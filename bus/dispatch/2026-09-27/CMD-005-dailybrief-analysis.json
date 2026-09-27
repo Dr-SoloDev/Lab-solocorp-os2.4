@@ -1,0 +1,99 @@
+{
+  "command": {
+    "id": "CMD-005",
+    "type": "CEO_DISPATCH",
+    "timestamp": "2026-09-27T00:00:00+07:00",
+    "priority": "P1",
+    "from": "CEO เทอโบ (Turbo)",
+    "to": "@architect-songsak (พี่ทรงศักดิ์ — Head of Architect)",
+    "title": "CMD-005 — daily_brief LLM Failure Analysis (วิเคราะห์ก่อน ห้ามแก้)",
+    "context": "Owner สั่งให้ตรวจสอบ daily_brief L1 20h ที่ fail ตั้งแต่ 2026-08-26 08:41 ด้วย error 'opencode run exit 1 UnknownError / Model not found (ref err_25ef8c00)'. CEO ตรวจสอบเบื้องต้นพบ model churn: deepseek-v4-flash-free → stealth/ox-alpha → x-preview-f-free (635701a 25 Aug) → muse-spark-1.3-contributor-free ปัจจุบัน และความไม่ตรงกัน 3 จุด (llm_provider.py vs profiles/01-ceo/config.yaml vs opencode.json). Loop ไม่รันมา 1 เดือน. งานนี้คือเฟสวิเคราะห์เท่านั้น — ยังไม่ให้แก้โค้ด",
+    "current_state_summary": "daily_brief ล้มเหลวหลัง retry 3 ครั้งใน workers/llm_provider.think() → _run_opencode(). Fallback EN-only ใน daily_brief.py ก็ล้มเพราะสาเหตุคือชื่อ model ไม่ใช่ prompt. brain_auto_commit + pipeline_executor ยังเขียววันเดียวกัน (08-26). Working tree มีไฟล์ dirty ใน loop_runner/loops/*.py และ profiles ทั้งหมด",
+    "tasks": [
+      {
+        "id": "CMD-005-T1",
+        "priority": "P1",
+        "status": "pending",
+        "description": "Reproduce + ยืนยันสาเหตุ daily_brief fail — อ่าน loop_runner/loops/daily_brief.py, workers/llm_provider.py, loop_runner/main.py, loop_runner/state.db (loops: daily_brief, __scheduler__)",
+        "deliverable": "หลักฐาน reproduce (log / คำสั่งที่รัน) + ชี้ชัดว่า fail ที่ชั้นไหน (model name / provider / prompt / bus)",
+        "acceptance_criteria": [
+          "ระบุ exact model string ที่ถูกเรียกวันที่ 08-26 และปัจจุบัน",
+          "ยืนยันว่า opencode run --pure --model <model> ตอบ Model not found จริง",
+          "แยกให้ชัดว่า prompt ไทยยาวมีผลหรือไม่ (เทียบกับ comment 2026-08-04 เรื่อง deepseek return ว่าง)"
+        ],
+        "deadline": "2026-09-30"
+      },
+      {
+        "id": "CMD-005-T2",
+        "priority": "P1",
+        "status": "pending",
+        "description": "Audit ความไม่ตรงกันของ model config ทั้งระบบ + เสนอแนวทางแก้ไข (ยังไม่ต้อง implement)",
+        "deliverable": "Analysis report + proposal ใน bus/evidence/2026-09-27/CMD-005-analysis.md พร้อมตารางเปรียบเทียบ",
+        "acceptance_criteria": [
+          "Audit ครบ 3 จุดเป็นอย่างน้อย: workers/llm_provider.py DEFAULT_MODEL, profiles/*/config.yaml, opencode.json + .opencode/agents/*.md frontmatter",
+          "เช็คว่า model ใดยัง alive บน provider (opencode models หรือเทียบเท่า) พร้อมหลักฐาน",
+          "เสนอ 2-3 ทางเลือกพร้อม effort / impact / risk (เช่น lock single model vs model fallback chain vs config single-source-of-truth)",
+          "ระบุว่า cron/scheduler หยุดด้วยหรือไม่ (last __scheduler__ 08-26) และควร restart อย่างไร",
+          "ชัดเจนว่าเฟสนี้ห้ามแก้โค้ด — รอ Owner สั่งหลังเห็นข้อสรุป"
+        ],
+        "deadline": "2026-09-30"
+      }
+    ],
+    "constraints": [
+      "เฟสนี้วิเคราะห์เท่านั้น — ห้ามแก้โค้ด / ห้ามเปลี่ยน model / ห้าม commit",
+      "ห้ามแตะ brain/*, .env, secrets",
+      "ทุกข้อสรุปต้องมีหลักฐาน (ไฟล์ + บรรทัด + log)"
+    ],
+    "artifacts": [
+      "loop_runner/loops/daily_brief.py",
+      "workers/llm_provider.py",
+      "loop_runner/main.py",
+      "loop_runner/state.db",
+      "profiles/01-ceo/config.yaml",
+      "opencode.json",
+      ".opencode/agents/*.md"
+    ],
+    "amendment_2026_09_27": {
+      "by": "Owner direct order via CEO",
+      "note": "CEO implemented 4-model fallback already (evidence CMD-005-fallback-implement.md, tested CMD-005-fallback-test.md 4/4 PASS + daily_brief PASS). Architect: do NOT re-implement fallback — review it. Added T3 below.",
+      "implemented": [
+        "workers/llm_provider.py fallback chain space-bunny → muse-spark → longcat → mimo",
+        "opencode.json + .opencode/agents 21 files → space-bunny-free",
+        "profiles/*/config.yaml untouched (MaxPlus, Architect to decide)"
+      ]
+    },
+    "tasks_extra": [
+      {
+        "id": "CMD-005-T3",
+        "priority": "P1",
+        "status": "pending",
+        "description": "ตรวจสอบ Bus 401 + space-bunny empty-response ที่เจอตอนเทส 27 Sep (หลักฐาน CMD-005-fallback-test.md)",
+        "deliverable": "เพิ่มใน analysis report: สาเหตุ + proposal",
+        "acceptance_criteria": [
+          "Bus 401: daily_brief._fetch_facts() ส่ง Authorization: Bearer แต่ busd ตอบให้ใช้ X-API-Key — ยืนยัน header ที่ถูกต้อง + เสนอแก้ (daily_brief.py vs busd auth) โดยยังไม่ต้องแก้โค้ด",
+          "Space Bunny empty: daily_brief prompt ไทยยาวแล้ว space-bunny attempt 1 ตอบว่าง (fallback รับมือได้) — ประเมินว่าเกี่ยวกับ prompt length / max_tokens หรือไม่ + เสนอแนวทาง (prompt sizing / per-model tokens)",
+          "Review fallback chain ที่ CEO implement แล้ว — เห็นด้วยหรือไม่ มีจุดเสี่ยงอะไร"
+        ],
+        "deadline": "2026-09-30"
+      }
+    ],
+    "evidence_output": "bus/evidence/2026-09-27/CMD-005-analysis.md",
+    "evidence_reference": [
+      "bus/evidence/2026-09-27/CMD-005-fallback-implement.md",
+      "bus/evidence/2026-09-27/CMD-005-fallback-test.md"
+    ],
+    "report_back": "ส่งข้อสรุป + proposal (T1+T2+T3) ภายใน 2026-09-30 แล้วรอคำสั่ง Owner ก่อนลงมือแก้"
+  },
+  "status": "dispatched",
+  "meta": {
+    "dispatch_id": "CMD-005",
+    "type": "CEO_DISPATCH",
+    "source": "ceo-dispatch",
+    "mirror_check": {
+      "result": "PASS",
+      "reason": "Owner สั่งโดยตรงให้ Architect วิเคราะห์ก่อนแก้ — pre-approved scope, เฟสวิเคราะห์ไม่มีความเสี่ยง destructive"
+    },
+    "escalation": "L3 — cross-dept analysis (CEO → Architect)",
+    "timestamp": "2026-09-27T00:00:00+07:00"
+  }
+}

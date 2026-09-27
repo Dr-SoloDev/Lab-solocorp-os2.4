@@ -551,3 +551,52 @@ After testing, each member will:
   - ควรปรับ: หลังร้านซ้อม 3 วัน เก็บ feedback ว่า 1) เปิดเช้าเข้าใจไหม 2) เติมเงินพอไหม 3) ปิดเย็นงงไหม — ค่อยเปิด 4 ประเภท/สำรอง/รวมคืนทีละขั้นตาม Roadmap Phase 1→2
   - ควรบันทึก: คู่มือ 1 หน้า A4 วางข้างลิ้นชักยังไม่ได้ทำ (ตามเช็กลิสต์ 5 ข้อ) — ต้องทำก่อนให้ร้านซ้อมจริง — Thermal ES-8804 + Security TODO ยังค้าง
   - หลักฐาน: `18ea028` MVP + `8032597` footer — `main 8032597 == shop 8032597` sync 100% — sandbox ยังเปิดสำหรับทดสอบ
+
+- **2026-09-25 — 📍 Owner ชี้ขาด Project Location: ยึด /data เป็นหลัก (HDD 824G ว่าง)**
+  - CEO ถาม: ไฟล์โปรเจกต์อยู่นี่ใช่ไหม `/home/drsolodev/projects_on_ssd/Lab-solocorp-os2.4` — ตรวจพบมี 2 ชุด (inode ต่าง, คนละ disk) แต่เนื้อหา identical (md5+HEAD 7c75f1a ตรงกัน)
+  - Owner ตัดสินใจ: ยึด `/data/projects/Lab-solocorp-os2.4` (HDD /dev/sdb1 916G, ว่าง 824G) เป็นหลัก — ไม่ต้อง sync กลับ SSD — SSD เก็บไว้เฉยๆ เลือกใช้บางโปรเจกต์
+  - Context: ย้ายเครื่องทำงานหลักมาเครื่องนี้แล้ว, Lenovo Z580 จะใช้เป็น Server — ประหยัดพื้นที่ SSD (/dev/sda2 เหลือ 105G/234G)
+  - CEO Action: ทำงานใน /data เท่านั้น, ไม่แตะ /home/...SSD, บันทึกเป็น Single Source of Truth — ขนาดโปรเจกต์ 443M ทั้ง 2 ที่
+
+- **2026-09-25 — 🖥️ ตรวจห้องเครื่อง + จดจำเครื่องหลักใหม่ (brain/machine-current.md)**
+  - Hostname `drsolodev-Lenovo-Z580` ⚠️ แต่ hardware จริง Acer TravelMate P643-M (2013) — ชื่อเก่าค้าง เสนอ rename กันสับสนกับ Lenovo Z580 ตัวจริงที่จะทำ Server
+  - OS Linux Mint 22.3 (Ubuntu 24.04 base) kernel 7.0.0-31, CPU i7-3632QM 4C/8T Ivy Bridge 2.2-3.2GHz, RAM 15Gi (ว่าง 11G), SSD 234G (เหลือ 105G) + HDD 916G /data (ว่าง 824G) ✅
+  - GPU Intel HD 4000 only (no NVIDIA), WiFi 192.168.1.17 + Tailscale 100.118.218.73 ✅, Docker 29.8.1 + scrap-pos 2 containers healthy, Python 3.12/Node 24, temp 55-62°C ปกติ
+  - CEO ประเมิน: ระดับ C+ (Mid-Low 2026) — ✅ Dev/SoloCorp/Docker/storage สบาย, ❌ ไม่เหมาะ train AI/LLM ใหญ่/render หนัก — บันทึกแผน Owner: เครื่องนี้=หลัก, Z580=Server
+
+- **2026-09-25 ~19:05 — ✅ Rename hostname สำเร็จ: drsolodev-Lenovo-Z580 → solocorp-main**
+  - CEO session ไม่มี sudo (no new privileges) — Owner รันเองใน terminal: `hostnamectl set-hostname solocorp-main + sed /etc/hosts`
+  - Verify: /etc/hostname + hostname + static + transient = solocorp-main, hosts 127.0.1.1 = solocorp-main ✅ — อัปเดต brain/machine-current.md แล้ว — เปิด terminal ใหม่ PS1 จะขึ้น solocorp-main
+- **2026-09-25 ~19:10 — 🔍 เจอ symlink สำคัญ + เตรียมสคริปต์หลัง reboot**
+  - busd/govctl รันจาก `/home/drsolodev/projects/...` — ตรวจแล้วคือ symlink → `/data/projects` (inode 47448066 เดียวกัน) = ไฟล์ชุดเดียวกับหลัก ✅ ไม่ขัดคำสั่ง Owner
+  - SSD `/home/.../projects_on_ssd/...` (inode 6691390) คือสำเนาแยก = archive ตามแผน ✅
+  - สร้าง `scripts/restart-solocorp.sh` (chmod +x) — หลัง reboot รันไฟล์เดียวสตาร์ท busd 8099 + govctl 8765 + เช็ค docker ให้
+- **2026-09-25 ~19:15 — ✅ Reboot + restart สำเร็จ ระบบกลับมาปกติ 100%**
+  - Hostname หลังบูต = solocorp-main ✅, uptime 3 min, PS1 ใหม่ drsolodev@solocorp-main ✅
+  - busd PID 4184 (401 UNAUTHORIZED = running+auth OK), govctl PID 4185 LISTENING, docker scrap-pos-web/db healthy (Up 3 min) — Owner รัน restart-solocorp.sh เองผ่าน
+- **2026-09-25 ~19:25 — 🧹 Docker cleanup ระดับเบา+กลาง สำเร็จ (Owner อนุมัติ)**
+  - ลบ 9 images: phpmyadmin×2 (1.9G) + php 8.2-cli/8.2-apache/8.3-cli + composer (2.5G) + sandbox ui/cash/pos-test-web×3 (2.4G) — ของรันอยู่ (code-web, mysql) ไม่แตะ
+  - builder prune ได้แค่ 53KB — buildx cache 4.42G ขึ้น 0B reclaimable (ล็อกโดย driver) — พื้นที่ /: 105G → 108G ว่าง (+3G จริง, layer แชร์กัน)
+  - solocorp-db (Hermes เก่า) ปล่อยหลับต่อตามสั่ง ไม่ลบ — สืบระดับหนักแล้ว: honcho = agent memory infra (มิ.ย. 2026, Hermes plugin, ค้าง API key) / papernova = doc management (invoice→PDF, Bun+Hono, 3 commits) — รอ Owner ตัดสินใจ
+- **2026-09-25 ~19:30 — 🗑️ ลบ images ระดับหนัก (honcho×2 + papernova) สำเร็จ**
+  - Owner ถามถูก: ตอนนี้ใช้ Brain แบบไฟล์ (ceo-memory.json + session-log + learnt + machine-current) ไม่ใช่ Honcho แล้ว — Honcho คือการทดลอง มิ.ย. ที่ไม่เคยขึ้น production (ติด API key) = ไม่จำเป็น
+  - ลบ 3 images (honcho-api+deriver แชร์ layer เดียวกัน 2.45G + papernova 1.26G) — images 10.39G → 3.19G, SSD ว่าง 105G → 111G (+6G รวมทั้งวัน) — volume/networks/โค้ดเก็บไว้ครบ ไม่แตะข้อมูล
+- **2026-09-25 ~19:40 — 🔍 Docling deep-dive เสร็จ (Owner สั่งขุดละเอียด)**
+  - Repo สดมาก: 67.9k⭐/4.9k forks, v2.130.0 ออก 22 ก.ย. (3 วันก่อน), MIT, LF AI & Data, Production/Stable, มี skills สำเร็จรูปให้ coding agents
+  - เจอสำคัญ: modular (slim ~50MB + extras), Python>=3.10 (เรา 3.12 ✅), MCP server + docling-serve, ฟีเจอร์ใหม่ chart/XBRL/video/email, OCR ไทยได้ (EasyOCR th + Tesseract tha) แต่ฟอร์มไทยต้อง spike
+  - เข้าเครื่องเรา: รัน CPU ได้ ไม่มี GPU แค่ช้า, โหลดแรก ~1-2GB ลง /data, pin version — จดเต็มที่ reference/docling-research.md — รอ Owner เลือก spike/backlog/พัก
+- **2026-09-25 ~20:00 — ✅ Docling ติดตั้งเสร็จ (Owner ไฟเขียว "ลุย" — เบอร์ 1)**
+  - Owner: "มัวแต่ลังเลกังวลกับสเปกเครื่องมันไม่ใช่เราเลย" — CEO ดึงสติกลับมาได้, สั่งติดตั้งก่อนแล้วค่อยวางแผนใช้ทีหลัง
+  - venv `/data/venvs/docling-spike` (py3.12, docling==2.130.0 standard: torch 2.14 + rapidocr + office + chunking, 6.2G) + cache /data/cache (3.1G) — ทั้งหมดบน HDD, SSD ไม่โดน ✅
+  - verify: import 2.130.0 + CLI convert/convert-remote พร้อม — ขั้นต่อไป: วางแผนร่วมกับ Owner (เทสต์เอกสารจริง 3 ใบ)
+- **2026-09-25 ~20:xx — 📁 PARK แผน DocOps → กลับไปต่อเติม SoloCorp OS ก่อน (Owner สั่ง)**
+  - Owner: งานเยอะ ต้องจดแผนเก็บไว้ก่อน (Owner จำไว้ จะรีบกลับมา) — เก็บที่ `bus/plans/docops-central-tool.md` (วิสัยทัศน์กลาง/3 ขา/6 templates/คำถามทีม A-B-C/งานค้าง 4 ข้อ/decision log)
+  - ค้าง: สแกนสัญญาตอนเช้า+รีวิว, อนุมัติ workstream เกราะ SoloCorp, เทสต์ Docling 3 ใบ, ตัดสินใจที่ตั้งทีม + ทดสอบ worker dispatch — Owner มีข้อมูล SoloCorp OS จะคุยต่อ
+- **2026-09-26 ~01:xx — 🏛️ Forum Room + Inbox ฝั่ง OpenCode บิลด์เสร็จ + เวทีจริงครั้งแรก 4/4 เสียง (Owner สั่งลุย)**
+  - Owner อธิบายต้นคิด forum (กันตาบอดด้านเดียว, ห้องไม่ลงมือทำ, CEO+Owner ย่อยชั้น 2) → ล็อก spec `bus/plans/forum-room-port.md` + ตัดสินใจสถาปัตย์: คิดด้วย OpenCode / จำด้วยไฟล์ / Bus เป็นสมุดบัญชี (ไม่พึ่ง busd)
+  - บิลด์: `scripts/inbox.py` (19 แผนก, ครบวงจรผ่าน) + `workers/forum_room.py` (fan-out think ขนาน + synthesis) — ซ่อมโมเดลตาย (stealth/ox-alpha → muse-spark-1.3-contributor-free)
+  - เวทีจริงแรก forum-20260926-003 (DocOps อยู่ใต้ทีมไหน): legal/sales/cfo/product ตอบครบ เอกฉันท์ B (COO + Legal กำกับ) — Hermes ไม่แตะเลย ✅
+- **2026-09-26 ~02:xx — ✅ มติ B อนุมัติ + เปิด workstream เกราะ SoloCorp + ร่างสัญญา v0.1 (Owner สั่ง "จัดการได้เลย")**
+  - Owner: เอกฉันท์ ไม่เห็นแย้ง เคาะตามเสียงมาก — บันทึกมติชั้น 2 (CEO+Owner) ลง docops plan
+  - เปิด workstream ผ่าน inbox จริง (ceo→coo เจ้าภาพ, ceo→legal นำ template #1)
+  - Task subagent กลางคืนเรียกไม่ได้ (free tier) → CEO ร่างโครงสัญญาจ้าง v0.1 เองด้วย contract-review skill → `bus/templates/svc-agreement-v01-draft.md` (10 ข้อ + ภาคผนวก scope + 5 จุดให้ทนายตรวจ, รอ Legal เช้า) — ซื่อสัตย์: ร่างนี้ยังไม่ผ่าน Legal ห้ามใช้จริง

@@ -160,8 +160,7 @@ def poll_recent_commits(repo: str, since_minutes: int = POLL_INTERVAL_MINUTES) -
             [
                 "gh", "api",
                 f"repos/{repo}/commits",
-                "-q", ".[0:3]",
-                "--jq", ".[].sha[:8]",
+                "--jq", ".[0:3][].sha[:8]",
             ],
             capture_output=True, text=True, timeout=15
         )
