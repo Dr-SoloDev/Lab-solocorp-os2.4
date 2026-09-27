@@ -1,0 +1,5 @@
+# Synthesis forum-20260928-005 (ชั้น 1 — รอ CEO+Owner ย่อยชั้น 2)
+
+จุดดีที่ทุกมุมเห็นตรงกันคือโครงนี้คิดถูกตั้งแต่ต้น ทั้งการสั่งผลิตเป็นชุด 10 ตอนให้มีคลังฮุกเทียบกันเอง การวาง Owner review gate ไว้ก่อนเจนซึ่งเป็นจุดเผาเครดิตแพงสุด และการ ingest จาก repo ทำให้ตรวจย้อนได้กับเอา config เดิมมาต่อยอดทุก EP แบบนี้มันเป็น engine ที่สร้างซ้ำได้ ไม่ใช่งานครั้งเดียวจบ
+
+จุดเสียที่ต้องถอดออกมาคือของที่ยังว่างอยู่เยอะ ฝั่ง CFO ขอ cost per published episode จริงรวมทั้ง subscription เครดิต storage กับเวลา review บวก hard cap กับ kill switch และต้องตอบให้ได้ว่ารีเจน EP.4 ได้กี่รอบถึงยังคุ้ม ฝั่ง Product บอก Definition of Done ของหนึ่งตอนกับ acceptance checklist ของ Owner gate ยังไม่ชัด ฝั่ง CMO บอกขาด distribution contract ตั้งแต่ก่อนเจนทั้ง hook 3 variant ปก title hashtag และ metric เดียวกันทุก EP ฝั่ง content เตือนว่า 3 นาทีต้องมีเรื่องจริง ถ้าคลังไม่หนาเนื้อจะเบาและ
