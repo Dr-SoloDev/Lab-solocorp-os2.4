@@ -74,6 +74,8 @@ exception-triage, pipeline-auditor, routing-config-agent, mcp-builder`
 
 ### กติกาห้อง autonomous (ทุกทีมต้องรู้)
 - ห้องที่ spawn มาสืบทอด permission จาก `opencode.json` (ask/deny ยังบังคับ) — ปลอดภัยเท่าแชทคน
+- **ห้อง headless เจอ `ask` = ถูก auto-reject ทันที** (ไม่มีคนกด) → ใน bundle ต้องสั่งชัด:
+  `อ่านไฟล์ด้วย Read/Glob/Grep เท่านั้น ห้ามใช้ bash เปิดไฟล์/pipe/redirect`
 - 1 ห้อง = 1 งานเหมือน manual · CEO ถือ sessionID ทุกห้อง · เสร็จแล้ว delete ปิดห้อง
 - ค่าใช้จ่าย: เปิด 1 ห้องโหลด context ทั้ง repo (~50k tokens) — รวมงานต่อห้อง อย่าเปิดพร่ำเพรื่อ
 
