@@ -87,6 +87,9 @@ See [`docs/GROK-SUPPORT.md`](./docs/GROK-SUPPORT.md) and [`.grok/README.md`](./.
 | `/audit [scope]` | Inspect audit trail |
 | `/deploy` | Deploy profiles and config |
 | `/brain <context>` | Save session to brain memory |
+| `/workspace [dept] [task]` | Open department workspace (แยกแชทพร้อมตัวตน+บริบท) |
+
+🏢 **Multi-chat workspaces:** 1 แผนก = 1 แชท — ดู [`docs/OPENCODE-GUIDE.md`](./docs/OPENCODE-GUIDE.md) (คน+agent อ่านได้ในไฟล์เดียว)
 
 ---
 
