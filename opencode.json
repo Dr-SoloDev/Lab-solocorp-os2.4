@@ -247,6 +247,10 @@
     "summary": {
       "description": "Auto-Brain Summary — สรุป session auto สิ้น session",
       "template": "python scripts/session-summary.py --save\n\nGenerate structured session summary + append to session-log.md"
+    },
+    "workspace": {
+      "description": "🏢 เปิดห้องทำงานแผนก — แชทแยกพร้อมตัวตน+บริบท (แทน subagent)",
+      "template": "Run @solocorp/cross-dept/dept-workspace skill for: department=$1, task=$2\n\nเปิดแชทใหม่ ตั้งชื่อแท็บ [แผนก]+งาน วาง context bundle แล้วทำในห้องนั้น ส่งรายงานกลับแชท CEO"
     }
   }
 }
