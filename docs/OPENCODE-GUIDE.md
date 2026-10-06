@@ -37,7 +37,12 @@ opencode "@ceo-turbo สวัสดี"
 - รายงานกลับแบบ: สรุป + ไฟล์ที่แตะ + ติดขัด + ส่งต่อให้ใคร
 - ห้าม commit `.env` / ไฟล์ runtime (`*.db-shm`, `*.db-wal`, logs)
 
-## 🏢 Multi-chat: 1 แผนก = 1 แชท (`/workspace`)
+## 🏢 Multi-chat: 1 แผนก = 1 ห้อง (`/workspace`)
+
+**Manual (คนเปิด):** เปิดแชทใหม่ ตั้งชื่อแท็บ `[แผนก]+งาน` วาง context bundle
+**Autonomous (ระบบเปิดเอง — พิสูจน์แล้ว):**
+`opencode run --agent <slug> --title "[แผนก] งาน" --format json "<bundle>"`
+(รันใน repo root · ตามงาน `session list` · เก็บ `export` · ปิด `session delete`)
 
 แทน subagent ภายนอก — เปิดแชทใหม่ใน OpenCode Desktop ตั้งชื่อแท็บ `[แผนก]+งาน`:
 

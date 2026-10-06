@@ -7,10 +7,11 @@ trigger: "/workspace"
 mirror_check: L1
 ---
 
-# 🏢 Dept Workspace — เปิดห้องทำงานให้แผนก (แชทแยกบน OpenCode)
+# 🏢 Dept Workspace — เปิดห้องทำงานให้แผนก (2 โหมด)
 
-> 1 แผนก = 1 แชทใหม่ พร้อมตัวตน + บริบท + งาน — ใช้แทน subagent ภายนอก
-> เปิดแชทใหม่ใน OpenCode Desktop (ปุ่ม +) แล้ววาง context bundle ที่สคริปต์นี้สร้างให้
+> 1 แผนก = 1 ห้อง พร้อมตัวตน + บริบท + งาน
+> - **Manual:** คนเปิดแชทใหม่เอง (ดูแล้วรู้ว่าใครทำอะไร — เหมาะกับ OpenCode Desktop)
+> - **Autonomous:** CEO/ทีมเปิดห้องเองผ่าน CLI (ไม่ต้องรอคน — พิสูจน์แล้วว่าใช้ได้จริง)
 
 ## Purpose
 เมื่อ Owner สั่งว่า "ให้ [แผนก] ทำ [งาน]" — แทนที่จะคุยปนในแชท CEO,
@@ -23,7 +24,7 @@ mirror_check: L1
 | `task` | Yes | งานที่จะให้ทำ (1 งานต่อ 1 ห้อง — ไม่ยัดหลายงาน) |
 | `context` | No | บริบทเพิ่มเติม (ไฟล์ที่เกี่ยวข้อง, ข้อจำกัด, ผลจากแผนกก่อนหน้า) |
 
-## Steps
+## Steps — Manual mode (คนเปิดห้องเอง)
 1. เปิด `profiles/INDEX.md` หา SOUL path ของแผนก
 2. ประกอบ **context bundle** (ด้านล่าง) — ยาวไม่เกิน 60 บรรทัด
 3. เปิดแชทใหม่ใน OpenCode → ตั้งชื่อแท็บ `[แผนก] + งานสั้นๆ` (เช่น `[ช่างฟูล] แก้บั๊กตาชั่ง`)
@@ -47,6 +48,34 @@ mirror_check: L1
 ⚠️ ติดขัด: [หรือ "ไม่มี"]
 ➡️ ส่งต่อ: [แผนกต่อไปต้องรู้อะไร]
 ```
+
+## Steps — Autonomous mode (CEO/ทีมเปิดห้องเอง ไม่รอคน)
+
+> พิสูจน์แล้ว (smoke test ผ่าน, sessionID ออก): bode นี้ใช้ `opencode run` เปิดห้อง headless
+
+```bash
+cd /data/projects/Lab-solocorp-os2.4   # ต้องรันใน repo (ห้าม /tmp — FileSystem กัน)
+opencode run --agent <slug> --title "[แผนก] งานสั้นๆ" --format json "<context bundle + task>"
+```
+
+- `--agent` = slug จากตารางด้านล่าง (`opencode agent list` ดูทั้งหมด)
+- `--title` = ชื่อห้อง (โผล่ใน Desktop เป็นแท็บ — ผู้ใช้เห็นว่าใครทำอะไร)
+- `--format json` = ได้ sessionID กลับมา → ตามงานด้วย `opencode session list`
+- เก็บบันทึก: `opencode export <sessionID>` · ปิดห้อง: `opencode session delete <sessionID>`
+- งานยาวครอบด้วย `timeout <วินาที> opencode run ...` กันค้าง
+
+### Agent slug map (dept → --agent)
+`ceo-turbo, qa, architect-songsak, engineering-changful, design-kreet, ui-designer,
+orchestrator-wut, product-produck, content-creator-sek, cfo-meetoo, cmo-mark,
+sales, support, legal-tulya, web3-aywa, cron-pipeline, monitor-watchdog,
+exception-triage, pipeline-auditor, routing-config-agent, mcp-builder`
+- แผนกที่ไม่มี slug (coo, psychology, game-dev) → ไม่ต้องใส่ `--agent`
+  (bundle มี SOUL path อยู่แล้ว agent หลักอ่านเอง)
+
+### กติกาห้อง autonomous (ทุกทีมต้องรู้)
+- ห้องที่ spawn มาสืบทอด permission จาก `opencode.json` (ask/deny ยังบังคับ) — ปลอดภัยเท่าแชทคน
+- 1 ห้อง = 1 งานเหมือน manual · CEO ถือ sessionID ทุกห้อง · เสร็จแล้ว delete ปิดห้อง
+- ค่าใช้จ่าย: เปิด 1 ห้องโหลด context ทั้ง repo (~50k tokens) — รวมงานต่อห้อง อย่าเปิดพร่ำเพรื่อ
 
 ## Rules
 - 1 ห้อง = 1 แผนก + 1 งาน — ห้ามคุยข้ามแผนกในห้องเดียวกัน (คุยผ่าน CEO เท่านั้น)
