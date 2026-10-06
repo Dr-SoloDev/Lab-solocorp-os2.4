@@ -36,7 +36,7 @@
 [![version](https://img.shields.io/badge/version-v2.4.0--pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases/tag/v2.4.0-pre)
 [![status](https://img.shields.io/badge/status-pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases)
 [![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
-[![license](https://img.shields.io/badge/license-Proprietary--red?style=flat-square)](LEGAL.md)
+[![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
 **Scale:**
 [![departments](https://img.shields.io/badge/departments-18-purple?style=flat-square)](profiles/INDEX.md)
@@ -48,7 +48,16 @@
 [![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex%20%2B%20Grok-orange?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4)
 [![grok](https://img.shields.io/badge/Grok%20pack-AGENTS.md%20%2B%20.grok-black?style=flat-square)](docs/GROK-SUPPORT.md)
 
-> **License:** Proprietary — free for personal and educational use. See [LEGAL.md](LEGAL.md) for details.
+> **License:** [MIT](LICENSE) — เอาไปใช้ ปรับ แจก ขายต่อได้อิสระ ขอแค่เก็บ copyright ไว้
+> ⭐ ถ้าชอบ ฝากกด **Star** เป็นกำลังใจ — แล้วเอาทีมของคุณมาอวดใน [Discussions](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/discussions)!
+
+## 🌱 หนึ่งแกน หลายตัวตน
+
+SoloCorp OS เกิดจากแกนเดียวกัน แต่**ไม่จำเป็นต้องเหมือนกัน** — fork ไป เปลี่ยนชื่อ
+ปรับแผนก เพิ่มลดได้ตามใจ ขอแค่ให้มัน*เข้ากับตัวคุณ* ระบบที่ดีคือระบบที่เจ้าของใช้แล้ว
+มีความสุข ไม่ใช่ระบบที่เหมือนต้นฉบับที่สุด — *แตกต่างไม่แตกแยก เป็นตัวของตัวเอง*
+
+ดูวัฒนธรรมการแบ่งปันที่ [`COMMUNITY.md`](./COMMUNITY.md) 💬
 
 ---
 
