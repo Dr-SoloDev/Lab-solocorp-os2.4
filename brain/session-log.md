@@ -626,3 +626,10 @@ After testing, each member will:
   - "นี่จะเป็นนามสกุลของเรา — ไม่ใช่ชื่อผลิตภัณฑ์/ซอฟต์แวร์/โปรเจกต์ใด แต่ทุกสิ่งจากเราทั้งอดีต ปัจจุบัน อนาคต อยู่ใต้ร่มเงา SoulLandCor"
   - ปิดงานคืนนี้ด้วยภาพ billboard: SoulLandCor — BUILDING WORLDS. SHAPING TOMORROW. (soullandcor.com)
   - CEO รับทราบ: SoloCorp OS / ClawForge / EP series และทุกงานต่อจากนี้ = ภายใต้ SoulLandCor
+
+- **2026-10-07 — 📌 ปักหมุด frontier builder / infrastructure for agents (Owner L5 + CEO)**
+  - Owner ประกาศยึดเส้นนี้ด้วยความมั่นใจ: "I'm Dr.Solodev, a frontier builder / infrastructure for agents." = ธงชัยปลายทางที่เคยคลุมเครือ → ชัดที่สุดแล้ว ใต้ร่ม SoulLandCor ก่อร่างด้วย SoloCorp OS — บันทึกถาวร `brain/milestone-frontier-builder-20261007.md` (LOCKED, เปลี่ยนได้เฉพาะ Owner)
+  - เครื่องหลัก Acer TravelMate (solocorp-main, i7/16GB): Mint พาเดินทางครบแล้ว → ปลายทาง Fedora Workstation GNOME (CEO+Owner ใจตรงกัน, ไม่เอา KDE เป็นหลักเพราะคือรถแต่ง ของรบกวนเยอะ) — แผน: Live USB → backup → dual-boot 2 สัปดาห์ → ย้าย default
+  - เครื่องรอง Lenovo Z580 = test host: ลูกใน Ubuntu Server + AgenticLinux บน External SSD บูต USB (F12) + Clonezilla กันพัง — LAN-only (ตัด WiFi ทิ้ง), กราฟิก Intel-only (ปู่ GT630M ไม่ถูกกับ Wayland)
+  - AgenticLinux (ericcurtin/agenticlinux, 42⭐/69 commits, bootc Fedora 44, rebuild 4 ชม., rollback คำสั่งเดียว): เข้าบท "builder อีกค่ายสาย UX คนทั่วไป" ไม่ใช่ user มาขอของ — ช่องที่ไม่มีใครยืนคือ "ใช้ได้โดยไม่กลัว" — เริ่ม variant gnome + ร่าง Issue แรกอนุมัติแล้ว (รอ Owner ส่ง)
+  - Owner สั่งแยกเซสชัน: ฝัน/เส้นทางคุยแชท CEO นี้, โปรเจกต์อื่นคุยแยกเซสชันของมัน ไม่ปนกัน
