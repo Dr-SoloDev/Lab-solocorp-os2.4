@@ -1,5 +1,5 @@
 ---
-model: opencode/space-bunny-free
+model: opencode/muse-spark-1.3-contributor-free
 name: product-produck
 description: Head of Product — Feature roadmap, PRD, ผลิตภัณฑ์
 mode: subagent

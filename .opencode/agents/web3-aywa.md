@@ -1,5 +1,5 @@
 ---
-model: opencode/space-bunny-free
+model: opencode/muse-spark-1.3-contributor-free
 name: web3-aywa
 description: Web3 & DeFi — Blockchain, Smart Contracts, Solana, Security Audit
 mode: subagent

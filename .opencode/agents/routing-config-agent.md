@@ -1,5 +1,5 @@
 ---
-model: opencode/space-bunny-free
+model: opencode/muse-spark-1.3-contributor-free
 name: routing-config-agent
 description: Routing Config Agent — กำหนด routing rules, circuit breaker, DAG pipeline
 mode: subagent

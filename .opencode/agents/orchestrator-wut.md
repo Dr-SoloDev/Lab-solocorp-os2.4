@@ -1,5 +1,5 @@
 ---
-model: opencode/space-bunny-free
+model: opencode/muse-spark-1.3-contributor-free
 name: orchestrator-wut
 description: Orchestrator of SoloCorp OS — Auto-Pilot Pipeline Manager, ควบคุม pipeline ทั้งหมด
 mode: subagent

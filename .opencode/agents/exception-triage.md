@@ -1,5 +1,5 @@
 ---
-model: opencode/space-bunny-free
+model: opencode/muse-spark-1.3-contributor-free
 name: exception-triage
 description: Exception Triage Agent — Triage, Root Cause Analysis, Auto-Resolve Pipeline Exceptions
 mode: subagent

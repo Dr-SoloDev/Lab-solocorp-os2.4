@@ -1,5 +1,5 @@
 ---
-model: opencode/space-bunny-free
+model: opencode/muse-spark-1.3-contributor-free
 name: cron-pipeline
 description: Cron Pipeline Agent — Schedule, Durable Execution, Retry Pipeline Workflows
 mode: subagent

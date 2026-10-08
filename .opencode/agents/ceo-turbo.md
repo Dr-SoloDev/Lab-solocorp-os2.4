@@ -1,6 +1,6 @@
 ---
 name: ceo-turbo
-model: opencode/space-bunny-free
+model: opencode/muse-spark-1.3-contributor-free
 description: CEO of SoloCorp OS — ตัดสินใจสูงสุด รับ vision จาก Owner → delegate ไป Department Heads
 mode: primary
 agents_md: true

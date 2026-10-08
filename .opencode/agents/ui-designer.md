@@ -1,5 +1,5 @@
 ---
-model: opencode/space-bunny-free
+model: opencode/muse-spark-1.3-contributor-free
 name: ui-designer
 description: UI Designer — Interface Design, Component Library, Pixel-perfect UI
 mode: subagent

@@ -1,5 +1,5 @@
 ---
-model: opencode/space-bunny-free
+model: opencode/muse-spark-1.3-contributor-free
 name: design-kreet
 description: Head of Design — UX Research, UX Architecture, Visual Design System, Brand Visual
 mode: subagent
