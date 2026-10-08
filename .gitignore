@@ -111,3 +111,6 @@ DEVELOPMENT-PLAN-v0.3.md
 
 # Loop Runner single-flight lock (runtime, never commit)
 loop_runner/.main.lock
+
+# Daemon PID files (runtime, never commit — daemon เขียนใหม่ทุกครั้งที่รัน)
+*.pid
