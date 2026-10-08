@@ -19,15 +19,15 @@ log = logging.getLogger(__name__)
 
 # ── Configuration ──────────────────────────────────────────────────────
 
-# Owner-ordered fallback chain (2026-09-27, CMD-005 follow-up):
-# 1. Space Bunny Free — text+image+video, ~80 tok/s (primary)
-# 2. Muse Spark 1.3 Free — สำรอง 1
+# Owner-ordered fallback chain (2026-10-08, stash review — รวมเป็นฟรีตัวเดียว):
+# 1. Muse Spark 1.3 Free — ตัวหลัก (พิสูจน์แล้วผ่าน opencode run ตรง)
+# 2. Space Bunny Free — สำรอง 1
 # 3. Longcat 2.5 Preview Free — สำรอง 2
 # 4. Mimo-2.6-Flash Free — สำรอง 3
-DEFAULT_MODEL = "opencode/space-bunny-free"
+DEFAULT_MODEL = "opencode/muse-spark-1.3-contributor-free"
 MODEL_FALLBACKS = [
-    "opencode/space-bunny-free",
     "opencode/muse-spark-1.3-contributor-free",
+    "opencode/space-bunny-free",
     "opencode/longcat-2.5-preview-free",
     "opencode/mimo-v2.6-flash-free",
 ]
@@ -65,7 +65,7 @@ async def think(
     Args:
         prompt: คำถาม/คำสั่งถึง LLM
         system_prompt: context/brief เพิ่มเติม (เช่น บทบาท agent)
-        model: ชื่อ model (default: space-bunny-free, fallback → muse-spark → longcat → mimo)
+        model: ชื่อ model (default: muse-spark-1.3, fallback → space-bunny → longcat → mimo)
         max_tokens: ความยาวสูงสุดของคำตอบ
         temperature: (reserved) ไม่ได้ส่งไป opencode run โดยตรง
 
