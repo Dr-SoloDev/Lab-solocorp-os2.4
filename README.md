@@ -288,11 +288,15 @@ Three departments now available as **standalone packs** — deploy them into you
 
 Each pack ships with **SOUL.md** identity, **sub-agent team**, **routing rules**, and **skills library**.
 
+> Specialist counts are **pre-release targets** — verified census before launch.
+
 > `@mention` any head to begin. No setup required.
 
 ---
 
 ## Development Status
+
+_Phases below are historical snapshots — counts reflect their version era, not today._
 
 | Phase | Content | Version | Status |
 |:------|:--------|:-------:|:------:|
