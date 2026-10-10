@@ -150,6 +150,16 @@ def update_phase(project_id: str, phase: str, status: PhaseStatus, owner: str = 
                         phase,
                         project_id,
                     )
+                    # P2 (switch): warn ก่อน + นับ DONE_WITHOUT_EVIDENCE ไว้พลิกเป็น reject ทีหลัง
+                    try:
+                        from loop_runner.verdict_log import append_verdict
+
+                        append_verdict(
+                            "qa_gate", "SKIP",
+                            detail=f"DONE_WITHOUT_EVIDENCE:{phase} project={project_id}",
+                        )
+                    except Exception:
+                        pass
         state["phases"][phase]["status"] = status
         if owner:
             state["phases"][phase]["owner"] = owner
@@ -160,6 +170,65 @@ def update_phase(project_id: str, phase: str, status: PhaseStatus, owner: str = 
         json.dump(state, f, indent=2)
         f.truncate()
         fcntl.flock(f, fcntl.LOCK_UN)
+    return state
+
+
+# ── Send-back loop (P2 — ช่อง 5→6): ตรวจไม่ผ่านแล้วงานไปไหนต่อ ──────────
+
+# Owner-approved (3 + switch): ตกครบ 3 รอบ → failed รอคน กัน loop ไม่รู้จบ
+SEND_BACK_MAX_ATTEMPTS = 3
+
+
+def send_back(project_id: str, phase: str, *, missing: list[str], by: str = "qa_gate") -> dict:
+    """ส่งงานกลับพร้อมเหตุผล — first-class send-back (ไม่เพิ่ม phase status ใหม่).
+
+    - phase กลับเป็น ``in_progress`` + ต่อท้าย ``blockers`` (เหตุผล/คนตรวจ/รอบที่/ts)
+    - attempt ครบ SEND_BACK_MAX_ATTEMPTS → phase เป็น ``failed`` + รอคน
+    - เขียน guard event ``send_back`` / ``send_back_exhausted`` (ย้อนดูได้ — เสา 7)
+    """
+    if phase not in PHASES:
+        raise ValueError(f"Invalid phase '{phase}'. Valid phases: {', '.join(PHASES)}")
+    now = datetime.now(timezone.utc).isoformat()
+    path = _state_path(project_id)
+    with open(path, "r+") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        state = json.load(f)
+        blockers = state.setdefault("blockers", [])
+        attempt = sum(
+            1 for b in blockers
+            if isinstance(b, dict) and b.get("phase") == phase and b.get("kind") == "send_back"
+        ) + 1
+        entry = {
+            "kind": "send_back",
+            "phase": phase,
+            "missing": list(missing),
+            "by": by,
+            "attempt": attempt,
+            "max_attempts": SEND_BACK_MAX_ATTEMPTS,
+            "ts": now,
+        }
+        blockers.append(entry)
+        if attempt >= SEND_BACK_MAX_ATTEMPTS:
+            state["phases"][phase]["status"] = "failed"
+            event, detail = "send_back_exhausted", (
+                f"Phase '{phase}' failed after {attempt} send-backs "
+                f"(missing: {missing}) — รอคน"
+            )
+        else:
+            state["phases"][phase]["status"] = "in_progress"
+            event, detail = "send_back", (
+                f"Phase '{phase}' ส่งกลับรอบที่ {attempt}/{SEND_BACK_MAX_ATTEMPTS} "
+                f"โดย {by} (missing: {missing})"
+            )
+        state["phase"] = _current_phase(state["phases"])
+        state["status"] = _project_status(state["phases"])
+        state["updated_at"] = now
+        f.seek(0)
+        json.dump(state, f, indent=2)
+        f.truncate()
+        fcntl.flock(f, fcntl.LOCK_UN)
+
+    _log_guard_event(project_id, {"ts": now, "event": event, "guard": by, "detail": detail})
     return state
 
 
