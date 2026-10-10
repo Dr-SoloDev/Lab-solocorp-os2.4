@@ -96,3 +96,18 @@ def redact_pii(text: str) -> tuple[str, bool]:
     out = _ID_CANDIDATE_RE.sub(_id_sub, text)
     out, n = _PHONE_RE.subn("[REDACTED:PHONE]", out)
     return out, found or n > 0
+
+
+def redact_obj(obj):
+    """redact PII แบบ recursive ใน dict/list/str — คงโครงสร้างไว้ ใส่ marker ที่ถูกตัด.
+
+    ใช้ชั่วคราวจนกว่า allowlist ต่อ builder (ขั้น 3) จะมาแทน (Owner-approved).
+    """
+    if isinstance(obj, str):
+        cleaned, _ = redact_pii(obj)
+        return cleaned
+    if isinstance(obj, dict):
+        return {k: redact_obj(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [redact_obj(v) for v in obj]
+    return obj

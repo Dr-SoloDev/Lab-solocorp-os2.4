@@ -65,6 +65,19 @@ def _write_evidence_file(task: dict, result: dict, evidence_id: str) -> str:
         "created_at": _now_iso(),
     }
 
+    # Governance (warn-first): ทุก evidence ต้องมีป้าย 2 แกน (default CONF)
+    try:
+        from central_bus.bus_tags import validate_tags
+
+        tags = validate_tags(
+            task.get("metadata") if isinstance(task.get("metadata"), dict) else {},
+            where=f"evidence:{evidence_id}",
+        )
+    except Exception:
+        tags = {"workstream": "SOLOCORP-CORE", "sensitivity": "CONF"}
+    evidence_doc["workstream"] = tags["workstream"]
+    evidence_doc["sensitivity"] = tags["sensitivity"]
+
     with open(file_path, "w") as f:
         json.dump(evidence_doc, f, indent=2, default=str)
 
