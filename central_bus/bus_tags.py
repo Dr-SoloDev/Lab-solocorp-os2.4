@@ -63,9 +63,22 @@ def log_access(*, who: str, key: str, tier: str) -> None:
 
 
 # ── PII patterns (standalone เท่านั้น + checksum กันทศนิยม coverage) ──
+#
+# เบอร์: 0XXXXXXXXX หรือ +66XXXXXXXXX (เว้นวรรค/ขีดคั่นได้ทีละตัว)
+# หมายเหตุ: 66 เปลือย (ไม่มี +) ก็จับ — นโยบายปลอดภัยไว้ก่อน (over-redact > leak)
+#   marker ทำให้เห็นว่าถูกตัด ถ้าผิดก็รู้ ไม่เงียบ
+_PHONE_RE = re.compile(
+    r"(?<![0-9+])(?:0|\+66[\s-]?|66[\s-]?)([689](?:[\s-]?\d){8})(?![0-9])"
+)
+# บัตร: 13 หลัก เว้นวรรค/ขีดคั่นได้ทีละตัว (เช่น 1-1007-00153-55-07)
+# ขอบท้ายกันเลขชุดยาวกว่า (เช่น 16 หลักจะไม่โดนตัดครึ่ง)
+_ID_CANDIDATE_RE = re.compile(
+    r"(?<![0-9.])([1-8](?:[\s-]?[0-9]){12})(?![\s-]?[0-9])"
+)
 
-_PHONE_RE = re.compile(r"(?<![0-9.])0[689][0-9]{8}(?![0-9])")
-_ID_CANDIDATE_RE = re.compile(r"(?<![0-9.])[1-8][0-9]{12}(?![0-9])")
+
+def _strip_sep(s: str) -> str:
+    return re.sub(r"[\s-]", "", s)
 
 
 def _thai_id_valid(digits: str) -> bool:
@@ -88,7 +101,8 @@ def redact_pii(text: str) -> tuple[str, bool]:
 
     def _id_sub(m: re.Match) -> str:
         nonlocal found
-        if _thai_id_valid(m.group(0)):
+        digits = _strip_sep(m.group(0))
+        if len(digits) == 13 and _thai_id_valid(digits):
             found = True
             return "[REDACTED:ID]"
         return m.group(0)  # checksum ไม่ผ่าน = ไม่ใช่บัตร (เช่น ทศนิยม) → คงไว้
