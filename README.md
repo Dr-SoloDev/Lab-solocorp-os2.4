@@ -154,7 +154,7 @@ Counted on the `main` tree. If a future commit changes a count, change this tabl
 | OpenCode agent files | 21 | `.opencode/agents/*.md` |
 | Primary agents registered in `opencode.json` | 4 | `ceo-turbo`, `build`, `plan`, `explore` |
 
-Copies of skills under `.claude/skills` and `.grok/skills` are platform packs, not a second catalog. Network (นีต), Cyber Security (ซาย), and Psychology (จิต) do not yet have a file in `.opencode/agents/`.
+Copies under `.claude/skills` and `.grok/skills` are platform packs, not a second copy of the canonical catalog: `.grok/skills/` holds 7 command skills (`audit`, `brain`, `deploy`, `handoff`, `pipeline`, `route`, `status`), and `.claude/skills/solocorp/` carries its own set (with extras like `agent-toolkit` and `ui-animation-review`, without `cross-dept/dept-workspace`). COO, R&D Lab, Network (นีต), Cyber Security (ซาย), and Psychology (จิต) do not yet have a file in `.opencode/agents/`.
 
 ---
 
@@ -254,13 +254,11 @@ CFO's three files are `meetoo/team/01-dana`, `02-riley`, `03-morgan`. Legal's th
 
 Each listed pack has a **SOUL.md** and routing rules. A skill library ships with the repo (`skills/@solocorp/`), not as a per-pack download.
 
-**CFO Pack is the only gated pack.** The rest of the OS is open: fork it. To evaluate the CFO Pack, open the repo and ask its Head to run the gate:
+All three packs are open: fork it, clone it, `@mention` the Head. There is no qualification gate in the tree (no such flow in `profiles/02-cfo` or the CFO agent file):
 
 ```bash
-opencode "@cfo-meetoo เริ่ม qualification gate สำหรับ CFO Pack"
+opencode "@cfo-meetoo ช่วยดูงบให้หน่อย"
 ```
-
-Legal and Content Creator have no qualification gate. `@mention` the Head after clone.
 
 ---
 
@@ -324,14 +322,14 @@ No percent bars. A row marked **In tree** means the files exist. It does not mea
 | Department profiles | 20 directories, 18 of them charted above | v0.5 | In tree |
 | Hermes shape | Profile files under `profiles/` | v0.5.1 | In tree — a live Hermes deploy is not proven by this repo |
 | Sub-agent teams | `team/*.SOUL.md` under most profiles | v0.6.1 | Partial — Content Creator has none |
-| Central Bus | `central_bus/` FastAPI daemon, SQLite queue | v0.6 | In tree, pre-release |
+| Central Bus | `central_bus/` FastAPI daemon, SQLite + JSONL compat (`use_sqlite` switch) | v0.6 | In tree, pre-release |
 | Multi-platform | Hermes · OpenCode · Claude Code · Codex · Grok docs | v0.7 | Partial |
 | Dashboard + compliance | Pipeline dashboard + audit UI | v0.7 | Planned |
 | Product packs | CFO · Legal · Content Creator profiles | v2.4.0 | Pre-release |
 | Public launch | GTM · content · skill docs | v0.7 | Partial — this README is part of that work |
 | Loop runner | `loop_runner/` cron auto-pilot | v0.5+ | In tree |
 
-`PROJECT.md` still says in one FAQ answer that the Central Bus is "in design" and that the system is production-ready. That answer is stale. Believe this table, then the code.
+`PROJECT.md` still says in one FAQ answer that the Central Bus is "in design" and that the system is production-ready (its own status table also marks the bus "Production Ready" in places). Those answers are stale. Believe this table, then the code.
 
 ---
 
@@ -345,7 +343,7 @@ No percent bars. A row marked **In tree** means the files exist. It does not mea
 **Reference docs:**
 
 - `profiles/INDEX.md` — profile index (reconcile it with the count table above before quoting it)
-- `ARCHITECTURE.md` — system design, principles, and flow
+- `docs/ARCHITECTURE.md` — system design, principles, and flow
 - `PROJECT.md` — longer tour; its status FAQ is stale where it disagrees with this page
 - `CHANGELOG.md` — version history and release notes
 - `COPILOT-SETUP.md` — GitHub Copilot Cloud Agent
