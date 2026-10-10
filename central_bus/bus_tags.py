@@ -26,6 +26,11 @@ DEFAULT_SENSITIVITY = "CONF"
 STRICT = os.environ.get("BUS_TAG_MODE", "warn").lower() == "reject"
 
 
+def _is_strict() -> bool:
+    # P1-3: เช็ค env ทุกครั้ง (กันกรณี set env หลัง import) + คง STRICT ไว้เพื่อ compat
+    return STRICT or os.environ.get("BUS_TAG_MODE", "warn").lower() == "reject"
+
+
 def _valid_workstream(ws: str) -> bool:
     if ws in WORKSTREAMS:
         return True
@@ -55,7 +60,7 @@ def validate_tags(metadata: dict | None, *, where: str = "?") -> dict:
 
     if problems:
         msg = f"[bus-tags:{where}] " + " | ".join(problems)
-        if STRICT:
+        if _is_strict():
             raise ValueError(msg)
         log.warning(msg)
     return meta
