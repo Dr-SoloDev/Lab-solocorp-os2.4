@@ -20,8 +20,13 @@ API_KEY = os.environ.get("SOLOCORP_API_KEY", "sk-solocorp-admin-local-dev-001")
 
 def _fetch_facts() -> list[dict]:
     """ดึง facts จาก Central Bus เพื่อให้ LLM ใช้เป็นข้อมูล (fail-open)"""
+    # P1-4: เลิก keys ["*"] — ใช้ explicit allowlist (กันดูดทั้ง bus)
+    # ครอบ finance/org/agent status ที่ CFO brief ต้องใช้จริง
     try:
-        body = json.dumps({"agent_id": "cfo-daily-brief", "keys": ["*"]}).encode()
+        body = json.dumps({
+            "agent_id": "cfo-daily-brief",
+            "keys": ["finance.*", "org.status.*", "agent.status.*"],
+        }).encode()
         req = urllib.request.Request(
             f"{BUS_URL}/v1/context",
             data=body,

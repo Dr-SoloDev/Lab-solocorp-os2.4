@@ -77,8 +77,14 @@ def test_id_spaced_dashed_valid():
 
 
 def test_id_bad_checksum_kept():
-    cleaned, found = redact_pii("เลข 110070009071 ครับ")
-    assert found is False and "110070009071" in cleaned
+    # P1-4: ใช้บัตร 13 หลัก checksum พังจริง (ของเดิม 110070009071 มีแค่ 12 หลัก regex เมินแต่แรก = เทสกลวง)
+    good = _make_valid_id("110070009070")
+    bad_last = str((int(good[-1]) + 1) % 10)
+    assert bad_last != good[-1]
+    bad = good[:-1] + bad_last
+    assert len(bad) == 13 and not _thai_id_valid(bad)
+    cleaned, found = redact_pii(f"เลข {bad} ครับ")
+    assert found is False and bad in cleaned
 
 
 def test_log_access_takes_no_value():

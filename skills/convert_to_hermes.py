@@ -9,7 +9,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO = Path("/home/drsolodev/projects/Lab-solocorp-os2.4")
+REPO = Path(__file__).resolve().parent.parent  # P1-4: dynamic (กัน hardcode /home/... vs /data/...)
 SRC_ROOT = REPO / "skills" / "@solocorp"
 DEST_ROOT = Path.home() / ".hermes" / "skills"
 

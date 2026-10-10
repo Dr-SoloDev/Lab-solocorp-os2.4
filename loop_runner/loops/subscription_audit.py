@@ -19,8 +19,12 @@ API_KEY = os.environ.get("SOLOCORP_API_KEY", "sk-solocorp-admin-local-dev-001")
 
 def _fetch_context() -> dict:
     """ดึง context จาก Central Bus (fail-open — normalize fact shape)"""
+    # P1-4: เลิก keys ["*"] — ใช้ explicit allowlist เช่นเดียวกับ daily_brief
     try:
-        body = json.dumps({"agent_id": "cfo-subscription-audit", "keys": ["*"]}).encode()
+        body = json.dumps({
+            "agent_id": "cfo-subscription-audit",
+            "keys": ["finance.*", "subscription.*", "agent.status.*"],
+        }).encode()
         req = urllib.request.Request(
             f"{BUS_URL}/v1/context",
             data=body,
