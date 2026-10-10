@@ -27,7 +27,8 @@ def _make_valid_id(base12: str, sep: str = "") -> str:
 
 def test_validate_fills_defaults_warn():
     m = validate_tags({}, where="t")
-    assert m["workstream"] == "SOLOCORP-CORE"
+    # P1-2: ป้ายขาด → UNCLASSIFIED (ห้ามแปะเป็น SOLOCORP-CORE เงียบ)
+    assert m["workstream"] == "UNCLASSIFIED"
     assert m["sensitivity"] == "CONF"
 
 

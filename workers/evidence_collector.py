@@ -66,6 +66,8 @@ def _write_evidence_file(task: dict, result: dict, evidence_id: str) -> str:
     }
 
     # Governance (warn-first): ทุก evidence ต้องมีป้าย 2 แกน (default CONF)
+    # P1-2: fallback เป็น UNCLASSIFIED (ห้ามแปะเป็น SOLOCORP-CORE)
+    # P1-3 TODO: ห้ามกลืน ValueError ตอน reject — ต้องให้ raise ทะลุ
     try:
         from central_bus.bus_tags import validate_tags
 
@@ -74,7 +76,7 @@ def _write_evidence_file(task: dict, result: dict, evidence_id: str) -> str:
             where=f"evidence:{evidence_id}",
         )
     except Exception:
-        tags = {"workstream": "SOLOCORP-CORE", "sensitivity": "CONF"}
+        tags = {"workstream": "UNCLASSIFIED", "sensitivity": "CONF"}
     evidence_doc["workstream"] = tags["workstream"]
     evidence_doc["sensitivity"] = tags["sensitivity"]
 

@@ -1,8 +1,11 @@
 """Central Bus — data-governance tags (warn-first).
 
 หลักการ (docs/DATA-GOVERNANCE.md): ทุกข้อมูลต้องมีป้าย 2 แกน
-  - workstream: SOLOCORP-CORE | CUSTOMER-{รหัส} | PERSONAL | OWN-BIZ | VERSION
+  - workstream: SOLOCORP-CORE | CUSTOMER-{รหัส} | PERSONAL | OWN-BIZ | VERSION | UNCLASSIFIED
   - sensitivity: PUB | INT | CONF (default ถ้าไม่ระบุ)
+
+  UNCLASSIFIED = ลืมติดป้าย — ห้ามเงียบแปะเป็นของระบบ (P1-2).
+  warn mode เติม UNCLASSIFIED + warn, reject mode raise.
 
 โหมด: warn (default) = เขียนได้แต่ log เตือน → เก็บข้อมูล 2-3 วันแล้วค่อยพลิกเป็น reject.
 เปลี่ยนโหมดด้วย env BUS_TAG_MODE=reject (ไม่ต้องแก้โค้ด).
@@ -16,7 +19,7 @@ import re
 
 log = logging.getLogger(__name__)
 
-WORKSTREAMS = frozenset({"SOLOCORP-CORE", "PERSONAL", "OWN-BIZ", "VERSION"})
+WORKSTREAMS = frozenset({"SOLOCORP-CORE", "PERSONAL", "OWN-BIZ", "VERSION", "UNCLASSIFIED"})
 SENSITIVITY_LEVELS = ("PUB", "INT", "CONF")
 DEFAULT_SENSITIVITY = "CONF"
 
@@ -41,8 +44,9 @@ def validate_tags(metadata: dict | None, *, where: str = "?") -> dict:
 
     ws = meta.get("workstream")
     if not ws or not _valid_workstream(ws):
-        problems.append(f"workstream ขาด/ผิด ({ws!r}) → ใส่ SOLOCORP-CORE")
-        meta["workstream"] = "SOLOCORP-CORE"
+        # P1-2: ป้ายขาดห้ามแปะเป็น SOLOCORP-CORE เงียบ — ใช้ UNCLASSIFIED แทน
+        problems.append(f"workstream ขาด/ผิด ({ws!r}) → ใส่ UNCLASSIFIED")
+        meta["workstream"] = "UNCLASSIFIED"
 
     sens = str(meta.get("sensitivity", "")).upper()
     if sens not in SENSITIVITY_LEVELS:

@@ -51,9 +51,10 @@ class TestGetSetFact:
         await facts.set_fact("agent.status.bob", "idle", metadata=meta)
         fetched = await facts.get_fact("agent.status.bob")
         # Governance: ของเดิมต้องอยู่ครบ + ป้าย default (warn-first ยังไม่ reject)
+        # P1-2: workstream ขาด → UNCLASSIFIED (ไม่ใช่ SOLOCORP-CORE)
         assert fetched["metadata"]["source"] == "onboarding"
         assert fetched["metadata"]["ttl"] == 3600
-        assert fetched["metadata"]["workstream"] == "SOLOCORP-CORE"
+        assert fetched["metadata"]["workstream"] == "UNCLASSIFIED"
         assert fetched["metadata"]["sensitivity"] == "CONF"
 
     async def test_version_increment(self, facts: FactsService) -> None:
