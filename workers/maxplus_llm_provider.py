@@ -33,8 +33,8 @@ load_env()
 
 # ── Configuration ──────────────────────────────────────────────────────
 
-DEFAULT_MODEL = os.environ.get("MAXPLUS_MODEL", "glm-5.2")
-BASE_URL = os.environ.get("MAXPLUS_BASE_URL", "https://api.maxplus-ai.cc/v1")
+DEFAULT_MODEL = os.environ.get("MAXPLUS_MODEL", "stealth/ox-alpha")
+BASE_URL = os.environ.get("MAXPLUS_BASE_URL", "https://api.maxplus-ai.cc/ox-alpha/v1")
 API_KEY = os.environ.get("MAXPLUS_API_KEY", "")
 
 _MAX_CONCURRENT = 5
@@ -60,7 +60,7 @@ async def think(
     Args:
         prompt: คำถาม/คำสั่งถึง LLM
         system_prompt: context/brief เพิ่มเติม
-        model: ชื่อ model (default: deepseek-v4-flash)
+        model: ชื่อ model (default: stealth/ox-alpha)
         max_tokens: ความยาวสูงสุดของคำตอบ
         temperature: ความสร้างสรรค์ (0.0-1.0)
 

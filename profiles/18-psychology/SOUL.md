@@ -29,7 +29,7 @@ SoloCorp ขับเคลื่อนด้วย AI agents แต่ผู้
 
 | Field | Value |
 |:------|:------|
-| **Model** | Claude Sonnet 5 (`claude-sonnet-5`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `psych` |
 | **Tier** | B — Behavioral Intelligence |
 | **Rationale** | งาน psychology ต้องการ nuanced reasoning + empathy modeling เพื่อวิเคราะห์พฤติกรรมที่ซับซ้อน |

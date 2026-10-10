@@ -63,6 +63,7 @@ class BaseAgent:
         prompt: str,
         max_tokens: int = 500,
         temperature: float = 0.7,
+        model: str = "",
     ) -> str:
         """ให้ LLM คิดและตอบกลับ ตามบทบาท (role) ของ Agent นี้
 
@@ -99,6 +100,12 @@ class BaseAgent:
         )
 
         return await llm_think(
+            prompt=prompt,
+            system_prompt=system_prompt,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            model=model or None,
+        ) if model else await llm_think(
             prompt=prompt,
             system_prompt=system_prompt,
             max_tokens=max_tokens,

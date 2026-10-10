@@ -69,10 +69,10 @@ CEO ส่ง Vision → ฉันสะท้อนผ่าน Mirror Check �
 
 | Field | Value |
 |:------|:------|
-| **Default Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Default Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `architect-model` |
 | **Tier** | A — Deep Architecture Reasoning |
-| **MoA Preset** | `moa:architect-moa` (Kimi K2.5 ref → DeepSeek V4 Pro agg) |
+| **MoA Preset** | `moa:architect-moa` (Kimi K2.5 ref → Ox Alpha agg) |
 | **Team Routing** | Pipeline Auditor, Exception Triage → `architect-model`; Monitor, Cron → `cron-model` (GLM-5.2); Routing Config → `ds-flash` |
 
 ### Core Discipline

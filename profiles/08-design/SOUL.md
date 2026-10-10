@@ -39,10 +39,10 @@ SoloCorp ต้องการมาตรฐานด้านดีไซน�
 
 | Field | Value |
 |:------|:------|
-| **Model** | GLM-5.2 (`glm-5.2` via `custom:maxplus-codex`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `design-model` |
 | **Tier** | B — Brand & Visual Design |
-| **Rationale** | GLM-5.2 รองรับภาษาไทยดี, cost-effective สำหรับ design review |
+| **Rationale** | Ox Alpha รองรับภาษาไทยดี, cost-effective สำหรับ design review |
 | **Vision** | ใช้ `glm52` alias สำหรับ design analysis |
 
 ---

@@ -2,7 +2,7 @@
 
 > Single source of truth for all skills. Every platform config must reference or be generated from this registry.
 
-**Version:** 1.3 | **Updated:** 2026-07-27
+**Version:** 1.3 | **Updated:** 2026-08-26
 
 ---
 
@@ -53,6 +53,27 @@ Think of them as "slash commands with memory."
 | **`budget-check`** 🆕 | **cfo** | **`@solocorp/cfo/budget-check/`** | **opencode + grok** | **🟢 Active** |
 | **`smoke-test`** 🆕 | **qa** | **`@solocorp/qa/smoke-test/`** | **opencode + grok + claude** | **🟢 Active** |
 | **`rfc`** 🆕 | **governance** | **`@solocorp/governance/rfc/`** | **opencode + grok** | **🟢 Active** |
+
+---
+
+## Hermes Skill Mapping
+
+The `@solocorp/*` OpenCode skills are also converted to Hermes standard format
+(`name` = lowercase-hyphen, no slash + one-line `description: "Use when ..."` trigger)
+and installed at `~/.hermes/skills/<hermes-name>/SKILL.md`.
+Body content is identical across platforms; only frontmatter differs.
+Conversion script: `skills/convert_to_hermes.py`.
+
+| OpenCode name | Category | Trigger | Hermes name | Install path |
+|:--------------|:---------|:--------|:------------|:-------------|
+| `@solocorp/ceo/sprint-plan` | ceo | `/sprint-plan` | `solocorp-ceo-sprint-plan` | `~/.hermes/skills/solocorp-ceo-sprint-plan/SKILL.md` |
+| `@solocorp/cfo/budget-check` | cfo | `/budget-check` | `solocorp-cfo-budget-check` | `~/.hermes/skills/solocorp-cfo-budget-check/SKILL.md` |
+| `@solocorp/coo/daily-ops` | coo | `/daily-ops` | `solocorp-coo-daily-ops` | `~/.hermes/skills/solocorp-coo-daily-ops/SKILL.md` |
+| `@solocorp/cross-dept/mirror-check` | cross-dept | `/mirror-check` | `solocorp-cross-dept-mirror-check` | `~/.hermes/skills/solocorp-cross-dept-mirror-check/SKILL.md` |
+| `@solocorp/cross-dept/pipeline-bridge` | cross-dept | `/pipeline-bridge` | `solocorp-cross-dept-pipeline-bridge` | `~/.hermes/skills/solocorp-cross-dept-pipeline-bridge/SKILL.md` |
+| `@solocorp/engineering/deploy` | engineering | `/deploy` | `solocorp-engineering-deploy` | `~/.hermes/skills/solocorp-engineering-deploy/SKILL.md` |
+| `@solocorp/governance/rfc` | governance | `/rfc-new` | `solocorp-governance-rfc` | `~/.hermes/skills/solocorp-governance-rfc/SKILL.md` |
+| `@solocorp/qa/smoke-test` | qa | `/smoke-test` | `solocorp-qa-smoke-test` | `~/.hermes/skills/solocorp-qa-smoke-test/SKILL.md` |
 
 ---
 

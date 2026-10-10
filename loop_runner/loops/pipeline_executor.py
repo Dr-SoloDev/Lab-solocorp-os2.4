@@ -25,11 +25,11 @@ AGENT_PERSONA = {
 # Map department → Hermes model_alias (from config.yaml)
 # Used when routing via Hermes; falls back to Claude CLI if hermes unavailable
 AGENT_MODEL = {
-    "engineering": "deepseek-v4-pro",
-    "ui_designer": "deepseek-v4-flash",
-    "qa":          "deepseek-v4-flash",
-    "design":      "deepseek-v4-flash",
-    "product":     "deepseek-v4-flash",
+    "engineering": "stealth/ox-alpha",
+    "ui_designer": "stealth/ox-alpha",
+    "qa":          "stealth/ox-alpha",
+    "design":      "stealth/ox-alpha",
+    "product":     "stealth/ox-alpha",
 }
 
 MAX_TASKS_PER_RUN = 2  # conservative — each task may take minutes
@@ -63,7 +63,7 @@ class PipelineExecutorLoop(Loop):
 
     def _dispatch(self, msg) -> str:
         persona = AGENT_PERSONA.get(msg.to_dept, f"คุณคือ {msg.to_dept} agent ของ SoloCorp")
-        model_alias = AGENT_MODEL.get(msg.to_dept, "deepseek-v4-flash")
+        model_alias = AGENT_MODEL.get(msg.to_dept, "stealth/ox-alpha")
         proj_path = PROJECT_PATHS.get(msg.project_id)
         task_id = msg.payload.get("task_id", "")
         desc = msg.payload.get("description", "")

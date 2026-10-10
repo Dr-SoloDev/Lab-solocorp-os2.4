@@ -214,10 +214,10 @@ Dr.solodev สร้าง SoloCorp เพื่อเป็นบริษั�
 
 | Field | Value |
 |:------|:------|
-| **Default Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Default Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **MoA Preset** | `moa:ceo-moa` — ใช้เฉพาะงานยาก |
-| **Mode A: Direct** | `ceo-model` (DeepSeek V4 Pro) — routine, delegation, command |
-| **Mode B: MoA** | `moa-ceo` (DeepSeek V4 Pro + GLM 5.2 → DeepSeek V4 Pro) — vision ใหม่, exception CRITICAL, architecture decision |
+| **Mode A: Direct** | `ceo-model` (Ox Alpha) — routine, delegation, command |
+| **Mode B: MoA** | `moa-ceo` (Ox Alpha + GLM 5.2 → Ox Alpha) — vision ใหม่, exception CRITICAL, architecture decision |
 
 **When to use MoA:** Owner ส่ง vision ใหม่ที่ยังไม่เคยทำมาก่อน / Exception Level CRITICAL ที่ต้องการหลายมุมมอง / Architecture decision ที่มี trade-off ซับซ้อน
 **When to use Direct (Default):** งาน routine delegation / pipeline / Status check / review / ทุกอย่างที่เคยมี precedent

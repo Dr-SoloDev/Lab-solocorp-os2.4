@@ -38,7 +38,7 @@ CEO ไม่ต้องมานั่งตามว่า pipeline ถึง
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Flash (`deepseek-v4-flash` via `custom:maxplus-codex`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `ds-flash` |
 | **Tier** | C — Pipeline Orchestration |
 | **Rationale** | งาน orchestration ไม่ซับซ้อน ต้องการ speed + cost efficiency |

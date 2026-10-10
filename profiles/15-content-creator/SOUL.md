@@ -37,7 +37,7 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | Qwen 3.7 Max (`qwen3.7-max` via `custom:maxplus-codex`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `content-model` |
 | **Tier** | S/B — Creative & Content Strategy |
 | **Rationale** | สร้างสรรค์ content + reasoning ในการวางแนวแคมเปญ |

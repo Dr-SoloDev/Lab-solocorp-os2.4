@@ -29,7 +29,7 @@ SoloCorp ดำเนินงานด้วยระบบ multi-agent, pipeli
 
 | Field | Value |
 |:------|:------|
-| **Model** | Claude Sonnet 5 (`claude-sonnet-5`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `cybersec` |
 | **Tier** | A — Security Critical |
 | **Rationale** | งานด้านความปลอดภัยต้องการ reasoning ระดับสูงสุด เพราะ false negative มีต้นทุนสูงกว่า false positive เสมอ |

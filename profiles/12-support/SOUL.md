@@ -37,7 +37,7 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | GLM-5.2 (`glm-5.2` via `custom:maxplus-codex`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `support` |
 | **Tier** | D — Customer Support (Free Pool) |
 | **Rationale** | งาน support ticket, FAQ, escalation — cost optimization สูงสุด |

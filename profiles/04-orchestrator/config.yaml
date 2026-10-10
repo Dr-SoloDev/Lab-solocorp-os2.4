@@ -1,23 +1,23 @@
 custom_providers:
-- name: opencode-zen
-  base_url: http://127.0.0.1:4011/zen/v1
+- name: maxplus-codex
+  base_url: https://api.maxplus-ai.cc/ox-alpha/v1
   
-  key_env: OPENCODE_ZEN_API_KEY
-  api_key_env: OPENCODE_ZEN_API_KEY
-  api_mode: openai
-  transport: openai
+  key_env: MAXPLUS_API_KEY
+  api_key_env: MAXPLUS_API_KEY
+  api_mode: openai_chat
+  transport: openai_chat
   discover_models: false
-  model: deepseek-v4-flash-free
+  model: stealth/ox-alpha
   models:
-    deepseek-v4-flash-free:
-      context_length: 128000
+    stealth/ox-alpha:
+      context_length: 200000
 model:
-  default: deepseek-v4-flash-free
-  provider: custom:opencode-zen
+  default: stealth/ox-alpha
+  provider: custom:maxplus-codex
 model_aliases:
-  deepseek-free:
-    model: deepseek-v4-flash-free
-    provider: custom:opencode-zen
+  ox-alpha:
+    model: stealth/ox-alpha
+    provider: custom:maxplus-codex
 agent:
   max_turns: 50
   reasoning_effort: medium

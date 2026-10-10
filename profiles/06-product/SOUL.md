@@ -37,7 +37,7 @@ CEO กับ Architect ไม่ควรต้อง spec ทุก feature �
 
 | Field | Value |
 |:------|:------|
-| **Model** | Minimax M3 (`minimax-m3` via `custom:maxplus-codex`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `default` (primary) |
 | **Tier** | B — Strategic Product Decision |
 | **Rationale** | ต้อง reasoning strong สำหรับ PRD, roadmap, stakeholder alignment |

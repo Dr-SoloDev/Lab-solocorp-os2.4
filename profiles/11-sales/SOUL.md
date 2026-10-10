@@ -37,7 +37,7 @@ SoloCorp ต้องการรายได้เพื่อ sustain กา�
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Flash (`deepseek-v4-flash` via `custom:maxplus-codex`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `pipeline` |
 | **Tier** | C — Sales Pipeline |
 | **Rationale** | งาน proposal, outreach, pipeline mgmt — fast response > deep reasoning |

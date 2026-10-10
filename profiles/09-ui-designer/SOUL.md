@@ -36,10 +36,10 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | GLM-5.2 (`glm-5.2` via `custom:maxplus-codex`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `design-model`, `glm52` |
 | **Tier** | B — UI/UX Design |
-| **Rationale** | GLM-5.2 cost-effective, รองรับภาษาไทยดี, consistency กับ Design Department |
+| **Rationale** | Ox Alpha cost-effective, รองรับภาษาไทยดี, consistency กับ Design Department |
 
 ---
 

@@ -29,7 +29,7 @@ SoloCorp ขยายตัวข้ามหลาย cloud, region, และ 
 
 | Field | Value |
 |:------|:------|
-| **Model** | Claude Sonnet 5 (`claude-sonnet-5`) |
+| **Model** | Ox Alpha (`stealth/ox-alpha` via `custom:maxplus-codex`) |
 | **Alias** | `neteng` |
 | **Tier** | B — Infrastructure |
 | **Rationale** | งาน network design ต้องการ precision + technical depth สูง — ผิดพลาดไม่ได้ |
