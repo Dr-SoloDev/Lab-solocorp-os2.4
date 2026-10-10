@@ -216,7 +216,7 @@
     },
     "status": {
       "description": "ดูสถานะภาพรวมของ SoloCorp OS pipeline",
-      "template": "Give me a full status report of SoloCorp OS.\n\nRead from: loop_runner/state.py, bus/projects/, ARCHITECTURE.md, bus/dispatch/"
+      "template": "Give me a full status report of SoloCorp OS.\n\nRead from: loop_runner/state.py, bus/projects/, docs/ARCHITECTURE.md, bus/dispatch/"
     },
     "audit": {
       "description": "ตรวจสอบ pipeline audit trail และ compliance",
