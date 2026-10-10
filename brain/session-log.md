@@ -700,3 +700,30 @@ State tracking files: 0
 - inbox runtime (bus/inbox/*) ค้าง modified — local state ห้าม commit
 
 ---
+## 2026-10-10 (ต่อ) — Backtest v2 + verdict log v0 (Owner อนุมัติ read-only + สั่งเริ่ม verdict log)
+
+**Mode:** Strategic → Command (Owner สั่งเริ่ม verdict log ทันที — "ทุกวันที่ไม่มี log คือข้อมูลที่ไม่มีวันได้คืน")
+**Commits:** `c03fdc7` (lock criteria) → `a9d6d4f` (report) → +3 นี้
+
+### Backtest v2 (read-only, เงื่อนไข Owner ครบ 3 ข้อ)
+- เกณฑ์ล็อกก่อนรันด้วย git ancestry (`c03fdc7`); รันบนสำเนา /tmp; output เฉพาะไฟล์รายงาน
+- ผล: sanity-check ผ่านทิศ (12d/∞ → ≤4d worst reading) — รายงานติดป้าย n=1 + partial ✅ ตรงๆ ไม่กลบ (digest เดี่ยวๆ เกิน 3 วันใน strict reading)
+- 29 ก.ย. VERIFIED เครื่องดับทั้งวัน (cron log + syslog.1 เป็น 0 ทั้งคู่ข้างๆ วันที่มีหลายพันบรรทัด) — silence rule พิสูจน์ค่าจากข้อมูลจริง
+- fingerprint: dataset ไร้ variance (raw=1/fp=1) → พิสูจน์ค่าไม่ได้จากเคสนี้ ต้อง canary known-pairs
+
+### Verdict log v0 — ลงมือแล้ว (loop_runner/verdict_log.py + hook ใน execute())
+- append-only `bus/verdicts/YYYY-MM-DD.jsonl`: {ts, loop_id, verdict(PASS/FAIL/SKIP/NOT_DUE), tier, fp_version, fingerprint, input_hash(null ใน v0), detail}
+- NOT_DUE = per-gate heartbeat; tier default T2 (T1 ต้อง Owner แต่งตั้ง); telemetry fail-safe (stderr ไม่ raise — swallow ตรงนี้ถูกต้องโดยออกแบบ เอกสารไว้ในโค้ด)
+- Verify: 4 paths ผ่าน + loop-related tests 35 passed; prod log สะอาด
+
+### ⚠️ Disclosure (CEO รายงานเอง): P0-2 ลบ `cron_central_bus.py` ที่ crontab */5 เรียกอยู่
+- ตั้งแต่ ~19:00 วันนี้ cron ทุก 5 นาที fail เงียบ (>/dev/null) — ผมเช็คแค่ imports ไม่ได้เช็ค crontab (บทเรียน: pre-delete checklist ต้องรวม cron/systemd references)
+- canonical แทนมีแล้ว: `scripts/_watchdog_run.py` (tracked) — รอ Owner เลือก: (ก) repoint */5 ไป canonical (ข) ตัด cron ทิ้งถ้า busd ครอบแล้ว — **ผมไม่แตะ crontab เอง**
+
+### Queued (ไม่หลุด — Owner สั่งจด)
+- [ ] restore drill สำเนา state.db
+- [ ] dead-man's switch ภายนอก (ทำตอนนี้ ไม่รอ)
+- [ ] เก็บ noise ต่อ 3–4 สัปดาห์ + known-pairs test ถาวรสำหรับ fingerprint
+- [ ] (ข) ตามลำดับ 4→1→2; canary จริงเมื่อ gate แรกบน verdict log พร้อม
+
+---
