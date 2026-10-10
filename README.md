@@ -1,10 +1,12 @@
 <!--
   SoloCorp OS — README
-  Designed: 2026-07-07 | UX Funnel: Hook → Try it → Proof → Details
+  Funnel: Hook → Prerequisite → Try → Evidence
+  Counts below are from the git tree. Do not put a number here that is not in the tree.
+  v2.4.0 is the product-pack line, not "the OS is finished".
 -->
 
 <details>
-<summary><strong>SoloCorp OS 2.4</strong> — ASCII banner (click to expand)</summary>
+<summary><strong>SoloCorp OS</strong> — ASCII banner (click to expand)</summary>
 
 ```text
 ================================================================================
@@ -14,13 +16,14 @@
        ██ ██    ██ ██      ██    ██ ██      ██    ██ ██   ██ ██      
   ███████  ██████  ███████  ██████   ██████  ██████  ██   ██ ██      
 
+
    ██████  ███████  ███████   ██   ██
   ██    ██ ██            ██   ██   ██
   ██    ██ ███████  ███████ █ ███████
   ██    ██      ██  ██      █      ██
    ██████  ███████  ███████        ██
 ================================================================================
-                     OPERATING SYSTEM  ===  VERSION 2.4
+              PACK LINE v2.4  ·  SYSTEM STILL PRE-RELEASE
 ================================================================================
 ```
 
@@ -28,34 +31,25 @@
 
 # SoloCorp OS
 
-**The Engine for Building Personal Digital Organizations**
+**Department Architecture for AI Agents** — turn a single AI into a workforce where every unit of work has a named owner, a specialist executor, and an explicit handoff.
 
-SoloCorp OS คือเครื่องจักรสำหรับสร้างองค์กรดิจิทัลส่วนบุคคล — ชั้นล่างเป็นระบบ Multi-Agent กลางที่ใครก็ใส่ตัวตนได้ ชั้นบนคือระบบปฏิบัติการองค์กรที่ผู้ใช้แต่ละคนออกแบบเอง
-
-SoloCorp OS มอบรากฐานสำหรับการประสานงานระหว่าง AI Agents ขณะที่เปิดอิสระให้แต่ละคนออกแบบโครงสร้างองค์กร บทบาท และวิธีดำเนินงานของตนเอง
-
-**One foundation. Unlimited organizational identities.**
-
-> SoloCorp ของเราเป็น Reference Instance หนึ่งตัวอย่าง ไม่ใช่แม่แบบที่คุณต้องทำตาม — ออกแบบองค์กรดิจิทัลของคุณเองได้อย่างอิสระ
-
-> นิยามฉบับเต็ม (LOCKED): [`brain/milestone-core-definition-20261010.md`](./brain/milestone-core-definition-20261010.md)
-
-<!-- Badges: grouped by category for visual hierarchy -->
+This repository is a **pre-release**. **v2.4.0 is the product-pack line** (CFO, Legal, Content Creator). It is not a claim that the operating system is finished.
 
 **Status:**
-[![version](https://img.shields.io/badge/version-v2.4.0--pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases/tag/v2.4.0-pre)
-[![status](https://img.shields.io/badge/status-pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases)
+[![version](https://img.shields.io/badge/packs-v2.4.0--pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases/tag/v2.4.0-pre)
+[![status](https://img.shields.io/badge/system-pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases)
 [![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
 [![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
-**Design:**
-[![2-layer](https://img.shields.io/badge/2--layer-core%20%2B%20instance-blue?style=flat-square)](#solocorp-os)
-[![model-agnostic](https://img.shields.io/badge/model--agnostic-any%20LLM-orange?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4)
+**In this tree, today:**
+[![profiles](https://img.shields.io/badge/profiles-20%20directories-purple?style=flat-square)](profiles/INDEX.md)
+[![skills](https://img.shields.io/badge/canonical%20skills-9-blueviolet?style=flat-square)](skills)
+[![agents](https://img.shields.io/badge/OpenCode%20agent%20files-21-%23008080?style=flat-square)](.opencode/agents)
 
 **Platform:**
-[![packs](https://img.shields.io/badge/product%20packs-3%20available-%23E74C3C?style=flat-square)](#product-packs)
+[![packs](https://img.shields.io/badge/product%20packs-3%20profiles-%23E74C3C?style=flat-square)](#product-packs--v240-pre-release)
 [![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex%20%2B%20Grok-orange?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4)
-[![grok](https://img.shields.io/badge/Grok%20pack-AGENTS.md%20%2B%20.grok-black?style=flat-square)](docs/GROK-SUPPORT.md)
+[![grok](https://img.shields.io/badge/Grok%20pack-docs%2FGROK--SUPPORT.md-black?style=flat-square)](docs/GROK-SUPPORT.md)
 
 > **License:** [MIT](LICENSE) — เอาไปใช้ ปรับ แจก ขายต่อได้อิสระ ขอแค่เก็บ copyright ไว้
 > ⭐ ถ้าชอบ ฝากกด **Star** เป็นกำลังใจ — แล้วเอาทีมของคุณมาอวดใน [Discussions](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/discussions)!
@@ -70,7 +64,20 @@ SoloCorp OS เกิดจากแกนเดียวกัน แต่**�
 
 ---
 
-## Try it in 30 seconds
+## Prerequisite
+
+The 30-second try assumes one tool is already installed.
+
+| You want | You need first |
+|:---------|:---------------|
+| Talk to the CEO | OpenCode CLI, so `opencode` is on your `PATH` |
+| Codex sub-agents | Python 3.10+ |
+| Grok project pack | Read [`docs/GROK-SUPPORT.md`](./docs/GROK-SUPPORT.md) first. This is not the 30-second path. |
+| Copilot Cloud Agent | [`COPILOT-SETUP.md`](./COPILOT-SETUP.md) |
+
+---
+
+## Try it
 
 ```bash
 git clone https://github.com/Dr-SoloDev/Lab-solocorp-os2.4.git
@@ -78,24 +85,20 @@ cd Lab-solocorp-os2.4
 opencode "@ceo-turbo เริ่มกันเลย"
 ```
 
-**For GitHub Copilot Cloud Agent:** Merge `.github/workflows/copilot-setup-steps.yml` to default branch.
-See [`COPILOT-SETUP.md`](./COPILOT-SETUP.md) for the full guide.
+The CEO routes from there. `@mention` a Head when you already know the department.
 
-**Or export all profiles as Codex CLI sub-agents:**
+**Codex CLI (optional):**
+
 ```bash
 python3 scripts/export-codex-agents.py
 codex
 ```
 
-**Or use Grok Build CLI (project pack):**
-```bash
-source .venv/bin/activate && export PYTHONPATH=.
-grok
-# then: /status  ·  /route <request>  ·  /pipeline <feature>
-```
-See [`docs/GROK-SUPPORT.md`](./docs/GROK-SUPPORT.md) and [`.grok/README.md`](./.grok/README.md).
+**Grok (optional, after the support doc):** skills for `/status`, `/route`, `/pipeline`, `/handoff`, `/audit`, `/deploy`, and `/brain` live in [`.grok/skills`](./.grok/skills).
 
-### Pipeline Commands (once inside)
+### Pipeline commands
+
+These names exist as commands in `opencode.json`.
 
 | Command | Action |
 |:--------|:-------|
@@ -113,14 +116,14 @@ See [`docs/GROK-SUPPORT.md`](./docs/GROK-SUPPORT.md) and [`.grok/README.md`](./.
 
 ## What is SoloCorp OS?
 
-SoloCorp OS is an **organizational operating system for AI agents** — a complete Department Architecture that gives every unit of work an owner, a specialist executor, and a defined handoff path.
+SoloCorp OS is an **organizational operating system for AI agents** — a Department Architecture that gives every unit of work an owner, a specialist executor, and a defined handoff path.
 
 Instead of a monolithic AI trying to do everything, SoloCorp OS gives you:
 
-- **20 Departments** — Each with a dedicated Head who owns outcomes, not just tasks
-- **55+ Specialist Agents** — Sub-agents who execute; Heads who lead
-- **Two-Tier Architecture** — Control flows Head-to-Head; data flows autonomously through a Central Bus
-- **Clear Chain of Command** — Human → CEO → C-Level → Department Heads → Specialist Teams
+- **A public chart of 18 named Heads** — listed below. The tree also has `profiles/02-coo` and `profiles/19-rd-lab`, which are not on that chart yet.
+- **Specialists per profile** — each `team/*.SOUL.md` is one specialist. There is no single counted roster in this repo, so this page does not print one.
+- **Two-Tier Architecture** — control flows Head-to-Head; data flows through a Central Bus.
+- **Clear Chain of Command** — Human → CEO → C-Level → Department Heads → Specialist Teams.
 
 The design is inspired by how real companies scale: clear hierarchy, delegated authority, and autonomous execution at every level. No orphan work. No ambiguous ownership.
 
@@ -139,30 +142,40 @@ SoloCorp OS replaces that single point of failure with a structured department h
 
 ---
 
-## Key Features
+## What is actually in the tree
 
-| Feature | Description |
-|:--------|:------------|
-| **Ownership Model** | Every department has a Head who owns outcomes |
-| **Delegation by Design** | Heads direct, escalate, and hand off — they do not implement |
-| **Two-Tier Architecture** | Control layer separated from data layer |
-| **Central Bus** | Async-first message routing between departments |
-| **Head-to-Head Handoff** | Work moves between departments without bottleneck |
-| **Skills Library** | Versioned skills integrated across departments (catalog in `skills/`) |
-| **21 OpenCode Agents** | Department heads + specialists, all `@mention`-ready |
-| **Codex CLI Export** | All profiles exportable as Codex CLI sub-agents |
-| **xGov Governance** | RFC → ADR → Guard Gates protocol |
-| **Loop Runner** | Cron auto-pilot — scheduled execution every 30 min |
+Counted on the `main` tree. If a future commit changes a count, change this table in the same commit.
+
+| Claim | Count | Where |
+|:------|------:|:------|
+| Profile directories | 20 | `profiles/01-ceo` … `profiles/19-rd-lab`, including both `02-cfo` and `02-coo` |
+| Named Heads on the chart below | 18 | This page. COO and R&D Lab are in the tree only. |
+| Canonical skills | 9 | `skills/@solocorp/**/SKILL.md` |
+| OpenCode agent files | 21 | `.opencode/agents/*.md` |
+| Primary agents registered in `opencode.json` | 4 | `ceo-turbo`, `build`, `plan`, `explore` |
+
+Copies of skills under `.claude/skills` and `.grok/skills` are platform packs, not a second catalog. Network (นีต), Cyber Security (ซาย), and Psychology (จิต) do not yet have a file in `.opencode/agents/`.
 
 ---
 
-## Reference Instance: SoloCorp Organization
+## Key Features
 
-> ส่วนนี้ทั้งหมด — Architecture, Chain of Command, Department Roster และตัวเลข —
-> คือองค์กรตัวอย่างที่ผู้สร้างประกอบขึ้นเพื่อพิสูจน์วิสัยทัศน์ ไม่ใช่ข้อบังคับของทุก instance
-> (ตัวเลขคือสถานะจริง: 20 departments · 61 specialist profiles · 21 OpenCode agents)
+| Feature | What you can verify |
+|:--------|:--------------------|
+| **Ownership Model** | Every charted department has a Head |
+| **Delegation by Design** | Heads direct, escalate, and hand off — they do not implement |
+| **Two-Tier Architecture** | Control layer separated from data layer |
+| **Central Bus** | `central_bus/` — FastAPI daemon in the tree. Pre-release, not a finished control plane. |
+| **Head-to-Head Handoff** | Work moves between departments without a single bottleneck |
+| **9 canonical skills** | `skills/@solocorp/` |
+| **21 OpenCode agent files** | `.opencode/agents/` — not all 20 profiles have one |
+| **Codex CLI Export** | `scripts/export-codex-agents.py` |
+| **xGov Governance** | RFC → ADR → Guard Gates, under `decisions/` and `gov/` |
+| **Loop Runner** | `loop_runner/` — cron auto-pilot intended every 30 min |
 
-### Architecture
+---
+
+## Architecture
 
 ```mermaid
 graph TD
@@ -185,11 +198,9 @@ graph TD
     NetEng["Network Engineer<br/>นีต<br/>Network / Infrastructure"]
     CyberSec["Cyber Security<br/>ซาย<br/>Threat / Vulnerability / IR"]
     Psych["Psychology<br/>จิต<br/>Behavior / Econ / Org"]
-    COO["COO<br/>กิจ (Kit)<br/>Daily Operations"]
-    RD["R&D Lab<br/>Lead Researcher<br/>Research / Prototyping"]
+
 
     Human --> CEO
-    CEO --> COO
     CEO --> CFO
     CEO --> CMO
     CEO --> Orch
@@ -207,8 +218,9 @@ graph TD
     Orch --> NetEng
     Orch --> CyberSec
     Orch --> Psych
-    Orch --> RD
 ```
+
+The chart is the 18 named Heads. Not drawn, but present in the tree: COO (`profiles/02-coo`) and R&D Lab (`profiles/19-rd-lab`).
 
 **Two-Tier Architecture**
 
@@ -216,6 +228,7 @@ graph TD
 CONTROL LAYER (Head-to-Head)
   Status · Goals · Exceptions · Approvals · Handoffs
   Head A ──(status/report)──→ Head B
+
 
 DATA LAYER (Autonomous)
   Code · Designs · Reports · Raw Outputs
@@ -225,9 +238,35 @@ DATA LAYER (Autonomous)
 
 ---
 
-### The Team
+## Product Packs — v2.4.0 Pre-release
 
-#### C-Level Executives
+v2.4.0 means these three profiles are being cut as packs. They are still directories inside this repository. Cloning the repo is the install. There is no separate package and no "no setup" path.
+
+Specialist counts are `team/*.SOUL.md` files, not including the Head.
+
+| Pack | Head | What it does | Team SOUL files |
+|:-----|:-----|:-------------|:---------------:|
+| **CFO Pack** `@cfo-meetoo` | meetoo | Budget control · Financial analysis · Audit trail · Tax strategy · FP&A | 3 |
+| **Legal Pack** `@legal-tulya` | ตุลย์ (Tul) | Contract review · License compliance · Risk assessment · Data governance | 3 |
+| **Content Creator Pack** `@content-creator-sek` | เสก (Sek) | Multi-platform content · Video production · Copywriting · Visual creation | 0 |
+
+CFO's three files are `meetoo/team/01-dana`, `02-riley`, `03-morgan`. Legal's three are under `tulya/team/`. Content Creator's directory currently has the Head only.
+
+Each listed pack has a **SOUL.md** and routing rules. A skill library ships with the repo (`skills/@solocorp/`), not as a per-pack download.
+
+**CFO Pack is the only gated pack.** The rest of the OS is open: fork it. To evaluate the CFO Pack, open the repo and ask its Head to run the gate:
+
+```bash
+opencode "@cfo-meetoo เริ่ม qualification gate สำหรับ CFO Pack"
+```
+
+Legal and Content Creator have no qualification gate. `@mention` the Head after clone.
+
+---
+
+## The Team
+
+### C-Level Executives
 
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
@@ -235,15 +274,14 @@ DATA LAYER (Autonomous)
 | 02 | CFO | meetoo | Finance, Budget, Investment |
 | 03 | CMO | มาร์ค (Mark) | Marketing, Content, Brand |
 
-#### System Pipeline
+### System Pipeline
 
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
-| 02 | COO | กิจ (Kit) | Daily Operations, L1–L3 Gatekeeper |
 | 04 | Orchestrator | พี่วุฒิ (Wut) | Cross-Department Pipeline Coordination |
 | 05 | Architect | พี่ทรงศักดิ์ (Songsak) | Central Bus, Routing, Monitoring |
 
-#### Product & Engineering
+### Product & Engineering
 
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
@@ -252,7 +290,7 @@ DATA LAYER (Autonomous)
 | 08 | Design | ครีเอท (Kreet) | UX Research, Brand Visual |
 | 09 | UI Designer | UI Designer | Interface, Component Library |
 
-#### Quality, Revenue & Customer
+### Quality, Revenue & Customer
 
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
@@ -260,7 +298,7 @@ DATA LAYER (Autonomous)
 | 11 | Sales | เซลส์ (Sales) | B2B Deal Strategy, Pipeline |
 | 12 | Support | ซัพพอร์ต (Support) | Customer Success, Analytics |
 
-#### Legal, Blockchain, Content & Research
+### Legal, Blockchain & Content
 
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
@@ -270,109 +308,58 @@ DATA LAYER (Autonomous)
 | 16 | Network Engineer | นีต (Neet) | Network Design, Infrastructure, CDN, VPN |
 | 17 | Cyber Security | ซาย (Sai) | Threat Detection, Vulnerability, Incident Response |
 | 18 | Psychology | จิต (Jit) | User Behavior, Behavioral Economics, Org Psychology |
-| 19 | R&D Lab | Lead Researcher | Research, Prototyping |
 
-**Total: 20 Department Heads · 61 Specialist Profiles · 21 OpenCode Agents** (reference snapshot — verified from repo)
-
----
-
-## Product Packs — v2.4.0 Pre-release
-
-Three departments now available as **standalone packs** — deploy them into your own agent workflow without importing the entire OS.
-
-| Pack | Head | What It Does | Specialists |
-|:-----|:-----|:-------------|:-----------:|
-| **CFO Pack** `@cfo-meetoo` | meetoo | Budget control · Financial analysis · Audit trail · Tax strategy · FP&A | 5 |
-| **Legal Pack** `@legal-tulya` | ตุลย์ (Tul) | Contract review · License compliance · Risk assessment · Data governance | 3 |
-| **Content Creator Pack** `@content-creator-sek` | เสก (Sek) | Multi-platform content · Video production · Copywriting · Visual creation | 10 |
-
-Each pack ships with **SOUL.md** identity, **sub-agent team**, **routing rules**, and **skills library**.
-
-> Specialist counts are **pre-release targets** — verified census before launch.
-
-> `@mention` any head to begin. No setup required.
+**On this chart: 18 named Heads.** Profile directories in the tree: 20. Specialist headcount is not printed here until a manifest exists.
 
 ---
 
 ## Development Status
 
-_Phases below are historical snapshots — counts reflect their version era, not today._
+No percent bars. A row marked **In tree** means the files exist. It does not mean done. The system line is still **pre-release**. v0.x is that system line. **v2.4.0 is only the pack line.**
 
 | Phase | Content | Version | Status |
 |:------|:--------|:-------:|:------:|
-| Foundation | ADRs + CEO Profile + Architecture | v0.1–v0.2 | Complete |
-| Pipeline Agents | Architect team — 5 pipeline agents | v0.3 | Complete |
-| Department Profiles | 18 Department Heads + Teams | v0.5 | Complete |
-| Deploy to Hermes | All profiles deployed to Hermes | v0.5.1 | Complete |
-| Sub-agent Teams | 42 specialist agents deployed | v0.6.1 | Complete |
-| Central Bus | FastAPI daemon + SQLite WAL + Guard + AAR | v0.6 | Complete |
-| Multi-Platform Support | Hermes · OpenCode · Claude Code · Codex CLI | v0.7 | In Progress |
-| Dashboard + Compliance | Pipeline Dashboard + Audit trail | v0.7 | Planned |
-| **Product Packs** | **CFO · Legal · Content Creator** | **v2.4.0** | **Pre-release** |
-| Public Launch | GTM · Content Campaign · Skill Docs | v0.7 | In Progress |
-| Loop Runner | Cron auto-pilot — every 30 min | v0.5+ | Active |
+| Foundation | ADRs + CEO profile + architecture docs | v0.1–v0.2 | In tree |
+| Pipeline agents | Architect-side pipeline agent files | v0.3 | In tree |
+| Department profiles | 20 directories, 18 of them charted above | v0.5 | In tree |
+| Hermes shape | Profile files under `profiles/` | v0.5.1 | In tree — a live Hermes deploy is not proven by this repo |
+| Sub-agent teams | `team/*.SOUL.md` under most profiles | v0.6.1 | Partial — Content Creator has none |
+| Central Bus | `central_bus/` FastAPI daemon, SQLite queue | v0.6 | In tree, pre-release |
+| Multi-platform | Hermes · OpenCode · Claude Code · Codex · Grok docs | v0.7 | Partial |
+| Dashboard + compliance | Pipeline dashboard + audit UI | v0.7 | Planned |
+| Product packs | CFO · Legal · Content Creator profiles | v2.4.0 | Pre-release |
+| Public launch | GTM · content · skill docs | v0.7 | Partial — this README is part of that work |
+| Loop runner | `loop_runner/` cron auto-pilot | v0.5+ | In tree |
 
-**Overall Progress**
-
-```
-Foundation      ████████████████████ 100%
-Profiles        ████████████████████ 100%
-Sub-Agents      ████████████████████ 100%
-Central Bus     ████████████████████ 100%
-Multi-Platform  ████████░░░░░░░░░░░░  40%
-Public Launch   ████████░░░░░░░░░░░░  40%
-Dashboard       ███████░░░░░░░░░░░░░  35%
-```
-
----
-
-## Qualify for Early Access
-
-Product Packs are in **controlled pre-release**. Not everyone should use SoloCorp OS — and that's by design.
-
-```
-1. Clone the repo
-2. Open with `opencode`
-3. @mention the pack head you want to evaluate
-4. The head will run a 3-question qualification gate
-```
-
-```bash
-# Example: qualify for CFO Pack
-opencode "@cfo-meetoo เริ่ม qualification gate สำหรับ CFO Pack"
-```
-
-> **You are not a customer. You are a potential operator.**  
-> SoloCorp OS doesn't sell software. It deploys organizational capability.
+`PROJECT.md` still says in one FAQ answer that the Central Bus is "in design" and that the system is production-ready. That answer is stale. Believe this table, then the code.
 
 ---
 
 ## Get Started
 
-The fastest path to a working multi-agent team:
-
-1. Clone the repo and open with `opencode`
-2. Start a conversation — the CEO (เทอโบ) routes your request to the right department
-3. Use `@mention` to reach a Head directly for specific work
-4. Run `/pipeline <feature>` for a full cross-department cycle
+1. Install OpenCode.
+2. Clone this repo and run `opencode "@ceo-turbo เริ่มกันเลย"`.
+3. Use `@mention` to reach a Head directly.
+4. Run `/pipeline <feature>` for a cross-department cycle.
 
 **Reference docs:**
 
-- `profiles/INDEX.md` — Index of all 20 department profiles and specialist teams
-- `ARCHITECTURE.md` — System design, principles, and flow
-- `PROJECT.md` — Getting started guide for newcomers
-- `CHANGELOG.md` — Version history and release notes
-- `COPILOT-SETUP.md` — GitHub Copilot Cloud Agent integration guide
+- `profiles/INDEX.md` — profile index (reconcile it with the count table above before quoting it)
+- `ARCHITECTURE.md` — system design, principles, and flow
+- `PROJECT.md` — longer tour; its status FAQ is stale where it disagrees with this page
+- `CHANGELOG.md` — version history and release notes
+- `COPILOT-SETUP.md` — GitHub Copilot Cloud Agent
 - `decisions/` — Architecture Decision Records (ADRs)
-- `dist/codex/README-CODEX-CLI.md` — Codex CLI export guide
+- `dist/codex/README-CODEX-CLI.md` — Codex CLI export
+- `docs/GROK-SUPPORT.md` — Grok pack
 
 ---
 
 <div align="center">
 
 **SoloCorp OS — System First, Everything Follows**  
-Proprietary software &copy; SoloCorp Organization. All Rights Reserved.  
-Free for personal and educational use.  
-Built by Dr.SoloDev &amp; เทอโบ ไชยศรีรัมย์
+[MIT License](LICENSE) · Copyright (c) 2026 SoloCorp Organization (Dr-SoloDev)  
+Use, modify, and sell copies. Keep this copyright notice.  
+Built by Dr.SoloDev & เทอโบ ไชยศรีรัมย์
 
 </div>
