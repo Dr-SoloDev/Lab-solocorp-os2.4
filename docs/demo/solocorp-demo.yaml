@@ -1,0 +1,61 @@
+# SoloCorp OS — ~40-second demo (ClawForge script)
+# Pipeline: YAML → Playwright (record) → edge-tts (narrate) → ffmpeg (render) → MP4
+# Run from docs/demo/:  node /data/projects/_legacy/clawforge/bin/clawforge.js /data/projects/Lab-solocorp-os2.4/docs/demo/solocorp-demo.yaml
+# Target: public GitHub repo page (no local services, deterministic).
+# Language: Thai narration (th-TH-PremwadeeNeural).
+
+project:
+  name: "SoloCorp OS Demo"
+  url: "https://github.com/Dr-SoloDev/Lab-solocorp-os2.4"
+  output: "output" # run from docs/demo/ (bare relative dodges composer double-join bug)
+  viewport:
+    width: 1280
+    height: 720
+  subtitles:
+    enabled: true
+    lang: "tha"
+    fontSize: 22
+
+voice:
+  engine: "edge-tts"
+  voice: "th-TH-PremwadeeNeural"
+  rate: "-5%"
+
+scenes:
+  - name: "hook"
+    narration: >
+      เอไอตัวเดียวพอเจองานซับซ้อน ทั้งคอนเท็กซ์พัง ทั้งไม่มีเจ้าของงาน ทั้งติดคอขวดที่หน้าต่างเดียว.
+      โซโลคอร์ปโอเอส เปลี่ยนเอไอตัวเดียวให้กลายเป็นบริษัท ที่มีแผนก มีหัวหน้า และมีเจ้าของงานทุกชิ้น.
+    actions:
+      - { type: "goto", url: "https://github.com/Dr-SoloDev/Lab-solocorp-os2.4" }
+      - { type: "wait", ms: 4000 }
+
+  - name: "proof"
+    narration: >
+      ตัวเลขในหน้านี้ นับจากต้นไม้จริง ยี่สิบโปรไฟล์ เก้าสกิล ไฟล์เอเจนต์ยี่สิบเอ็ดตัว.
+      ระบบยังเป็นพรีรีลีส เราเขียนไว้ตรงๆ ไม่มีแถบร้อยเปอร์เซ็นต์หลอกตา.
+    actions:
+      - { type: "goto", url: "https://github.com/Dr-SoloDev/Lab-solocorp-os2.4#what-is-actually-in-the-tree" }
+      - { type: "wait", ms: 5000 }
+      - { type: "scroll", dy: 300 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "try"
+    narration: >
+      ลองในสามสิบวินาที โคลน แล้วคุยกับซีอีโอเทอร์โบประโยคเดียว ที่เหลือเขาส่งงานต่อให้ถูกแผนกเอง.
+      คำสั่งรันจริงผ่าน โหมดไดร์รัน และตรวจสอบเอเจนต์แปดสิบหกตัวผ่านหมด.
+    actions:
+      - { type: "goto", url: "https://github.com/Dr-SoloDev/Lab-solocorp-os2.4#try-it" }
+      - { type: "wait", ms: 5000 }
+      - { type: "scroll", dy: 300 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "close"
+    narration: >
+      ไลเซนส์เอ็มไอที ฟอร์กแล้วเปลี่ยนชื่อได้ ขอแค่ให้เข้ากับตัวคุณ.
+      ถ้าชอบ ฝากกดสตาร์ แล้วเจอกันในดิสคัสชัน.
+    actions:
+      - { type: "goto", url: "https://github.com/Dr-SoloDev/Lab-solocorp-os2.4#product-packs--v240-pre-release" }
+      - { type: "wait", ms: 4000 }
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 2000 }

@@ -104,6 +104,10 @@ These names exist as commands in `opencode.json`.
 
 🏢 **Multi-chat workspaces:** 1 แผนก = 1 แชท — ดู [`docs/OPENCODE-GUIDE.md`](./docs/OPENCODE-GUIDE.md) (คน+agent อ่านได้ในไฟล์เดียว)
 
+**Watch the 40-second demo** (Thai narration, recorded from the public repo page with [ClawForge](https://github.com/Dr-SoloDev/clawforge) — script: [`docs/demo/solocorp-demo.yaml`](./docs/demo/solocorp-demo.yaml)):
+
+<video src="./docs/demo/output/output.mp4" width="100%" controls></video>
+
 **What a healthy run looks like (real output from this tree, trimmed):**
 
 ```text

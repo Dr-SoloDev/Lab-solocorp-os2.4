@@ -90,6 +90,13 @@ test-results/
 # Logs
 logs/
 
+# Demo render intermediates (keep script + output.mp4 + subtitles.srt only)
+docs/demo/output/audio/
+docs/demo/output/video/
+docs/demo/output/debug/
+docs/demo/output/narration.mp3
+docs/demo/.clawforge-checkpoints/
+
 # Bus runtime data
 bus/governance/
 bus/queue/
