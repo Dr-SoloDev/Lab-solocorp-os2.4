@@ -289,7 +289,7 @@ async def get_context(request: Request):
     # Governance (warn-first): wildcard "*" ยังให้ผ่าน แต่ warn + เก็บ log
     # (callers ปัจจุบัน: daily_brief, subscription_audit — แก้เป็น explicit
     #  หลังดู log 2-3 วัน แล้วค่อยปิด wildcard ตอนพลิกเป็น reject)
-    from central_bus.bus_tags import log_access
+    from central_bus.bus_tags import log_access, redact_obj
 
     all_facts = []
     for key_pattern in keys:
@@ -302,9 +302,10 @@ async def get_context(request: Request):
         log_access(who=agent_id or "?", key=key_pattern, tier=top)
 
     pending_count = await qm.count_pending()
+    # P1-1: redact ซ้ำตอนอ่าน (กันแถวเก่าที่ยังไม่ถูก redact ตอนเขียน)
     return {
         "trace_id": trace_id, "context_id": new_id(),
-        "facts": [{"key": f["key"], "value": f["value"], "version": f["version"]} for f in all_facts],
+        "facts": [{"key": f["key"], "value": redact_obj(f["value"]), "version": f["version"]} for f in all_facts],
         "queue_pending": pending_count, "agent_health": "ok",
     }
 

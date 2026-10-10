@@ -103,9 +103,11 @@ class FactsService:
         """
         # Governance (warn-first): ทุก fact ต้องมีป้าย workstream+sensitivity
         # ช่วงแรกแค่ warn + เติม default ให้ — พลิกเป็น reject ทีหลังด้วย BUS_TAG_MODE
-        from central_bus.bus_tags import validate_tags
+        # P1-1: redact PII ใน value ก่อนเก็บ (กัน leak ตั้งแต่ต้นทาง set_fact)
+        from central_bus.bus_tags import redact_obj, validate_tags
 
         metadata = validate_tags(metadata, where=f"set_fact:{key}")
+        value = redact_obj(value)
         value_str = json.dumps(value, ensure_ascii=False)
         metadata_str = json.dumps(metadata or {}, ensure_ascii=False)
         now = now_iso()
