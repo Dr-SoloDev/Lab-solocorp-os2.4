@@ -36,6 +36,8 @@ SoloCorp OS มอบรากฐานสำหรับการประส�
 
 **One foundation. Unlimited organizational identities.**
 
+> SoloCorp ของเราเป็น Reference Instance หนึ่งตัวอย่าง ไม่ใช่แม่แบบที่คุณต้องทำตาม — ออกแบบองค์กรดิจิทัลของคุณเองได้อย่างอิสระ
+
 > นิยามฉบับเต็ม (LOCKED): [`brain/milestone-core-definition-20261010.md`](./brain/milestone-core-definition-20261010.md)
 
 <!-- Badges: grouped by category for visual hierarchy -->
@@ -46,10 +48,9 @@ SoloCorp OS มอบรากฐานสำหรับการประส�
 [![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
 [![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
-**Scale:**
-[![departments](https://img.shields.io/badge/departments-18-purple?style=flat-square)](profiles/INDEX.md)
-[![agents](https://img.shields.io/badge/agents-55%2B%20specialists-blueviolet?style=flat-square)](profiles/INDEX.md)
-[![skills](https://img.shields.io/badge/skills-93%20integrations-%23008080?style=flat-square)](profiles/INDEX.md)
+**Design:**
+[![2-layer](https://img.shields.io/badge/2--layer-core%20%2B%20instance-blue?style=flat-square)](#solocorp-os)
+[![model-agnostic](https://img.shields.io/badge/model--agnostic-any%20LLM-orange?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4)
 
 **Platform:**
 [![packs](https://img.shields.io/badge/product%20packs-3%20available-%23E74C3C?style=flat-square)](#product-packs)
@@ -116,7 +117,7 @@ SoloCorp OS is an **organizational operating system for AI agents** — a comple
 
 Instead of a monolithic AI trying to do everything, SoloCorp OS gives you:
 
-- **18 Departments** — Each with a dedicated Head who owns outcomes, not just tasks
+- **20 Departments** — Each with a dedicated Head who owns outcomes, not just tasks
 - **55+ Specialist Agents** — Sub-agents who execute; Heads who lead
 - **Two-Tier Architecture** — Control flows Head-to-Head; data flows autonomously through a Central Bus
 - **Clear Chain of Command** — Human → CEO → C-Level → Department Heads → Specialist Teams
@@ -147,15 +148,21 @@ SoloCorp OS replaces that single point of failure with a structured department h
 | **Two-Tier Architecture** | Control layer separated from data layer |
 | **Central Bus** | Async-first message routing between departments |
 | **Head-to-Head Handoff** | Work moves between departments without bottleneck |
-| **93 Skills** | Integrated across all departments |
-| **20 OpenCode Agents** | 18 department heads + 5 architect specialists, all `@mention`-ready |
+| **Skills Library** | Versioned skills integrated across departments (catalog in `skills/`) |
+| **21 OpenCode Agents** | Department heads + specialists, all `@mention`-ready |
 | **Codex CLI Export** | All profiles exportable as Codex CLI sub-agents |
 | **xGov Governance** | RFC → ADR → Guard Gates protocol |
 | **Loop Runner** | Cron auto-pilot — scheduled execution every 30 min |
 
 ---
 
-## Architecture
+## Reference Instance: SoloCorp Organization
+
+> ส่วนนี้ทั้งหมด — Architecture, Chain of Command, Department Roster และตัวเลข —
+> คือองค์กรตัวอย่างที่ผู้สร้างประกอบขึ้นเพื่อพิสูจน์วิสัยทัศน์ ไม่ใช่ข้อบังคับของทุก instance
+> (ตัวเลขคือสถานะจริง: 20 departments · 61 specialist profiles · 21 OpenCode agents)
+
+### Architecture
 
 ```mermaid
 graph TD
@@ -178,8 +185,11 @@ graph TD
     NetEng["Network Engineer<br/>นีต<br/>Network / Infrastructure"]
     CyberSec["Cyber Security<br/>ซาย<br/>Threat / Vulnerability / IR"]
     Psych["Psychology<br/>จิต<br/>Behavior / Econ / Org"]
+    COO["COO<br/>กิจ (Kit)<br/>Daily Operations"]
+    RD["R&D Lab<br/>Lead Researcher<br/>Research / Prototyping"]
 
     Human --> CEO
+    CEO --> COO
     CEO --> CFO
     CEO --> CMO
     CEO --> Orch
@@ -197,6 +207,7 @@ graph TD
     Orch --> NetEng
     Orch --> CyberSec
     Orch --> Psych
+    Orch --> RD
 ```
 
 **Two-Tier Architecture**
@@ -214,6 +225,57 @@ DATA LAYER (Autonomous)
 
 ---
 
+### The Team
+
+#### C-Level Executives
+
+| # | Role | Name | Responsibility |
+|:-:|:-----|:-----|:--------------|
+| 01 | CEO | เทอโบ (Turbo Chaisriram) | Vision, Strategy, Final Decision |
+| 02 | CFO | meetoo | Finance, Budget, Investment |
+| 03 | CMO | มาร์ค (Mark) | Marketing, Content, Brand |
+
+#### System Pipeline
+
+| # | Role | Name | Responsibility |
+|:-:|:-----|:-----|:--------------|
+| 02 | COO | กิจ (Kit) | Daily Operations, L1–L3 Gatekeeper |
+| 04 | Orchestrator | พี่วุฒิ (Wut) | Cross-Department Pipeline Coordination |
+| 05 | Architect | พี่ทรงศักดิ์ (Songsak) | Central Bus, Routing, Monitoring |
+
+#### Product & Engineering
+
+| # | Role | Name | Responsibility |
+|:-:|:-----|:-----|:--------------|
+| 06 | Product | โปรดัค (Produck) | Feature Roadmap, PRD, Delivery |
+| 07 | Engineering | ช่างฟูล (Changful) | Backend, Frontend, Architecture |
+| 08 | Design | ครีเอท (Kreet) | UX Research, Brand Visual |
+| 09 | UI Designer | UI Designer | Interface, Component Library |
+
+#### Quality, Revenue & Customer
+
+| # | Role | Name | Responsibility |
+|:-:|:-----|:-----|:--------------|
+| 10 | QA | QA-ทีม (QA Team) | Testing, Quality, Evidence |
+| 11 | Sales | เซลส์ (Sales) | B2B Deal Strategy, Pipeline |
+| 12 | Support | ซัพพอร์ต (Support) | Customer Success, Analytics |
+
+#### Legal, Blockchain, Content & Research
+
+| # | Role | Name | Responsibility |
+|:-:|:-----|:-----|:--------------|
+| 13 | Legal | ตุลย์ (Tul) | Compliance, Contracts, Law |
+| 14 | Web3 | อัยวา (Aywa) | Blockchain, DeFi, Solana |
+| 15 | Content Creator | เสก (Sek) | Content, Creative, Media |
+| 16 | Network Engineer | นีต (Neet) | Network Design, Infrastructure, CDN, VPN |
+| 17 | Cyber Security | ซาย (Sai) | Threat Detection, Vulnerability, Incident Response |
+| 18 | Psychology | จิต (Jit) | User Behavior, Behavioral Economics, Org Psychology |
+| 19 | R&D Lab | Lead Researcher | Research, Prototyping |
+
+**Total: 20 Department Heads · 61 Specialist Profiles · 21 OpenCode Agents** (reference snapshot — verified from repo)
+
+---
+
 ## Product Packs — v2.4.0 Pre-release
 
 Three departments now available as **standalone packs** — deploy them into your own agent workflow without importing the entire OS.
@@ -227,55 +289,6 @@ Three departments now available as **standalone packs** — deploy them into you
 Each pack ships with **SOUL.md** identity, **sub-agent team**, **routing rules**, and **skills library**.
 
 > `@mention` any head to begin. No setup required.
-
----
-
-## The Team
-
-### C-Level Executives
-
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
-| 01 | CEO | เทอโบ (Turbo Chaisriram) | Vision, Strategy, Final Decision |
-| 02 | CFO | meetoo | Finance, Budget, Investment |
-| 03 | CMO | มาร์ค (Mark) | Marketing, Content, Brand |
-
-### System Pipeline
-
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
-| 04 | Orchestrator | พี่วุฒิ (Wut) | Cross-Department Pipeline Coordination |
-| 05 | Architect | พี่ทรงศักดิ์ (Songsak) | Central Bus, Routing, Monitoring |
-
-### Product & Engineering
-
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
-| 06 | Product | โปรดัค (Produck) | Feature Roadmap, PRD, Delivery |
-| 07 | Engineering | ช่างฟูล (Changful) | Backend, Frontend, Architecture |
-| 08 | Design | ครีเอท (Kreet) | UX Research, Brand Visual |
-| 09 | UI Designer | UI Designer | Interface, Component Library |
-
-### Quality, Revenue & Customer
-
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
-| 10 | QA | QA-ทีม (QA Team) | Testing, Quality, Evidence |
-| 11 | Sales | เซลส์ (Sales) | B2B Deal Strategy, Pipeline |
-| 12 | Support | ซัพพอร์ต (Support) | Customer Success, Analytics |
-
-### Legal, Blockchain & Content
-
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
-| 13 | Legal | ตุลย์ (Tul) | Compliance, Contracts, Law |
-| 14 | Web3 | อัยวา (Aywa) | Blockchain, DeFi, Solana |
-| 15 | Content Creator | เสก (Sek) | Content, Creative, Media |
-| 16 | Network Engineer | นีต (Neet) | Network Design, Infrastructure, CDN, VPN |
-| 17 | Cyber Security | ซาย (Sai) | Threat Detection, Vulnerability, Incident Response |
-| 18 | Psychology | จิต (Jit) | User Behavior, Behavioral Economics, Org Psychology |
-
-**Total: 18 Department Heads · 55+ Specialist Agents · 68+ Active Members**
 
 ---
 
@@ -341,7 +354,7 @@ The fastest path to a working multi-agent team:
 
 **Reference docs:**
 
-- `profiles/INDEX.md` — Index of all 18 department profiles and specialist teams
+- `profiles/INDEX.md` — Index of all 20 department profiles and specialist teams
 - `ARCHITECTURE.md` — System design, principles, and flow
 - `PROJECT.md` — Getting started guide for newcomers
 - `CHANGELOG.md` — Version history and release notes
