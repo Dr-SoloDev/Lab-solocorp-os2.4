@@ -3,7 +3,7 @@
 Forum 005 + Owner order (เช้า/2 ท่อน):
 - วิ่งวันละครั้งหลัง 06:00 (date-gate — ไม่ดริฟต์แบบ interval)
 - ยิงเฉพาะแถว ✅ approved ใน bus/media/queue.md, ไม่เกิน 2 ท่อน/วัน (hard cap)
-- flowkit ไม่พร้อม → SKIP + แจ้ง inbox human (ไม่พัง, ไม่เผาเครดิต)
+- flowkit ไม่พร้อม (ก่อน Pro Day-1) → SKIP เงียบ ไม่แจ้งซ้ำ (ไม่พัง, ไม่เผาเครดิต)
 - ทุกครั้งที่ยิง จด bus/media/credits.md; เสีย → inbox __human__
 """
 import re
@@ -13,6 +13,7 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from ..runner import Loop
+from ..state import last_run
 
 import sys as _sys
 _sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -30,18 +31,15 @@ class MediaDailyLoop(Loop):
     model_hint = None  # ไม่ใช้ LLM — ยิง API ตรง (ไม่เผาโทเคน)
 
     def should_run(self) -> bool:
-        try:
-            last = datetime.fromisoformat(self.last_run())
-            if last.date() >= date.today():
-                return False  # วันนี้ยิงแล้ว
-        except Exception:
-            pass
+        last = last_run(self.loop_id)
+        if last is not None and last.date() >= date.today():
+            return False  # วันนี้ยิงแล้ว
         return datetime.now().hour >= 6  # เช้าเท่านั้น
 
     def run(self) -> str:
         ok, why = is_ready()
         if not ok:
-            self._alert(f"media_daily SKIP — flowkit ไม่พร้อม: {why}")
+            # flowkit dormant จน Pro Day-1 (workers/flowkit_bridge.py) — SKIP เงียบ ไม่แจ้งซ้ำ
             return f"⏭ media_daily: SKIP ({why})"
         due = self._due_segments()
         if not due:
