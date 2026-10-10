@@ -633,3 +633,25 @@ After testing, each member will:
   - เครื่องรอง Lenovo Z580 = test host: ลูกใน Ubuntu Server + AgenticLinux บน External SSD บูต USB (F12) + Clonezilla กันพัง — LAN-only (ตัด WiFi ทิ้ง), กราฟิก Intel-only (ปู่ GT630M ไม่ถูกกับ Wayland)
   - AgenticLinux (ericcurtin/agenticlinux, 42⭐/69 commits, bootc Fedora 44, rebuild 4 ชม., rollback คำสั่งเดียว): เข้าบท "builder อีกค่ายสาย UX คนทั่วไป" ไม่ใช่ user มาขอของ — ช่องที่ไม่มีใครยืนคือ "ใช้ได้โดยไม่กลัว" — เริ่ม variant gnome + ร่าง Issue แรกอนุมัติแล้ว (รอ Owner ส่ง)
   - Owner สั่งแยกเซสชัน: ฝัน/เส้นทางคุยแชท CEO นี้, โปรเจกต์อื่นคุยแยกเซสชันของมัน ไม่ปนกัน
+
+## Session Auto-Summary — 2026-10-10 11:31 UTC
+
+### Git
+```
+98f7e92 chore(brain): auto-commit 3 brain files
+4810e12 docs(governance): เกณฑ์พลิก warn->reject 4 ข้อ + อายุ log (ไม่นับวัน)
+0ae9659 feat(governance): redact ครอบ spaced/dashed ID + เบอร์ +66/เว้นวรรค + เทส FP/FN 10 ข้อ
+8d5081c test(governance): อัปเดต test_set_with_metadata ให้ตรงสัญญาใหม่ (ของเดิมครบ + ป้าย default)
+3146ade feat(governance): evidence ทุกชิ้นมีป้าย workstream+sensitivity + redact_obj recursive
+eb00623 feat(governance): warn wildcard read + access log (who/key/tier) + redact re
+```
+Uncommitted: 71 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- Auto-Pilot 5 components deployed — ใช้งานจริงใน session ต่อไป
+
+---
