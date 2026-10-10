@@ -94,6 +94,10 @@ logs/
 bus/governance/
 bus/queue/
 bus/projects/
+bus/verdicts/
+bus/evidence/
+bus/inbox/
+bus/system/
 
 # Python cache (already tracked, force-untrack)
 __pycache__/

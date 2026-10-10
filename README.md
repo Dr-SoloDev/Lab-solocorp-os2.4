@@ -41,15 +41,7 @@ This repository is a **pre-release**. **v2.4.0 is the product-pack line** (CFO, 
 [![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
 [![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
-**In this tree, today:**
-[![profiles](https://img.shields.io/badge/profiles-20%20directories-purple?style=flat-square)](profiles/INDEX.md)
-[![skills](https://img.shields.io/badge/canonical%20skills-9-blueviolet?style=flat-square)](skills)
-[![agents](https://img.shields.io/badge/OpenCode%20agent%20files-21-%23008080?style=flat-square)](.opencode/agents)
-
-**Platform:**
-[![packs](https://img.shields.io/badge/product%20packs-3%20profiles-%23E74C3C?style=flat-square)](#product-packs--v240-pre-release)
-[![platform](https://img.shields.io/badge/platform-Hermes%20%2B%20OpenCode%20%2B%20Codex%20%2B%20Grok-orange?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4)
-[![grok](https://img.shields.io/badge/Grok%20pack-docs%2FGROK--SUPPORT.md-black?style=flat-square)](docs/GROK-SUPPORT.md)
+> Counts (20 profiles · 9 skills · 21 agent files · 4 primary agents) live in [What is actually in the tree](#what-is-actually-in-the-tree) — badges don't duplicate them. Platform matrix (Hermes · OpenCode · Codex · Grok) lives in [Development Status](#development-status).
 
 > **License:** [MIT](LICENSE) — เอาไปใช้ ปรับ แจก ขายต่อได้อิสระ ขอแค่เก็บ copyright ไว้
 > ⭐ ถ้าชอบ ฝากกด **Star** เป็นกำลังใจ — แล้วเอาทีมของคุณมาอวดใน [Discussions](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/discussions)!
