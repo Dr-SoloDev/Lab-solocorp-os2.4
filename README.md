@@ -104,6 +104,17 @@ These names exist as commands in `opencode.json`.
 
 🏢 **Multi-chat workspaces:** 1 แผนก = 1 แชท — ดู [`docs/OPENCODE-GUIDE.md`](./docs/OPENCODE-GUIDE.md) (คน+agent อ่านได้ในไฟล์เดียว)
 
+**What a healthy run looks like (real output from this tree, trimmed):**
+
+```text
+$ python -m loop_runner.main --dry-run
+[scheduler] 2026-10-10T22:20:09 fired
+[pipeline_executor] DRY-RUN: due — would execute
+
+$ python scripts/export-codex-agents.py --validate-only
+OK: validated 86 agents
+```
+
 ---
 
 ## What is SoloCorp OS?
