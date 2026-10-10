@@ -7,6 +7,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from loop_runner.loops import ALL_LOOPS
 from loop_runner.state import record
+from loop_runner.verdict_log import append_verdict
 
 
 def heartbeat() -> str:
@@ -33,6 +34,8 @@ def main(dry_run: bool = False) -> None:
         print(heartbeat())
         for loop in ALL_LOOPS:
             if not loop.should_run():
+                if not dry_run:
+                    append_verdict(loop.loop_id, "NOT_DUE")  # per-gate heartbeat
                 continue
             if dry_run:
                 print(f"[{loop.loop_id}] DRY-RUN: due — would execute")
