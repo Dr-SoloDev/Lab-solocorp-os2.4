@@ -222,6 +222,8 @@ graph TD
 
 The chart is the 18 named Heads. Not drawn, but present in the tree: COO (`profiles/02-coo`) and R&D Lab (`profiles/19-rd-lab`).
 
+> **Why the Orchestrator is not the bottleneck it looks like:** the arrows above are the *command* hierarchy (who reports to whom), not the data path. Work coordination between departments is Head-to-Head; the Orchestrator only sees status, goals, exceptions, and approvals. Actual payloads (code, designs, reports) never pass through it — they flow Specialist → Central Bus → Specialist, so there is no single context window to clog.
+
 **Two-Tier Architecture**
 
 ```
