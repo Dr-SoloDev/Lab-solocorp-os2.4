@@ -286,10 +286,20 @@ async def get_context(request: Request):
     facts_service = services["facts"]
     qm = services["queue"]
 
+    # Governance (warn-first): wildcard "*" ยังให้ผ่าน แต่ warn + เก็บ log
+    # (callers ปัจจุบัน: daily_brief, subscription_audit — แก้เป็น explicit
+    #  หลังดู log 2-3 วัน แล้วค่อยปิด wildcard ตอนพลิกเป็น reject)
+    from central_bus.bus_tags import log_access
+
     all_facts = []
     for key_pattern in keys:
+        if key_pattern == "*":
+            log.warning("[bus-tags:context] wildcard read by %s — ระบุ key ชัดเจนก่อนพลิกเป็น reject", agent_id)
         facts = await facts_service.list_facts(prefix=key_pattern, limit=100)
         all_facts.extend(facts)
+        tiers = [str((f.get("metadata") or {}).get("sensitivity", "CONF")) for f in facts]
+        top = "CONF" if "CONF" in tiers else ("INT" if "INT" in tiers else "PUB")
+        log_access(who=agent_id or "?", key=key_pattern, tier=top)
 
     pending_count = await qm.count_pending()
     return {
@@ -330,6 +340,12 @@ async def update_message(request: Request):
     services = await _get_services()
     qm = services["queue"]
 
+    # Governance (warn-first): redact PII ในผลลัพธ์ก่อนเก็บ (ใส่ marker ไม่ mutate เงียบ)
+    # ชั่วคราวจนกว่า allowlist ต่อ builder (ขั้น 3) จะมาแทน
+    from central_bus.bus_tags import redact_obj
+
+    result = redact_obj(result)
+    error = redact_obj(error)
     try:
         updated = await qm.update_status(
             message_id=queue_id, status=status, result=result, error=error, agent_id=agent_id,
