@@ -1,0 +1,3 @@
+{"ts": "2026-10-10T12:30:02.177030+00:00", "loop_id": "pipeline_executor", "verdict": "SKIP", "tier": "T2", "fp_version": 1, "fingerprint": "⏭ pipeline_executor: queue empty — nothing to run", "input_hash": null, "detail": "⏭ pipeline_executor: queue empty — nothing to run"}
+{"ts": "2026-10-10T13:00:01.989755+00:00", "loop_id": "daily_brief", "verdict": "NOT_DUE", "tier": "T2", "fp_version": 1, "fingerprint": "pass", "input_hash": null, "detail": ""}
+{"ts": "2026-10-10T13:00:01.990376+00:00", "loop_id": "subscription_audit", "verdict": "NOT_DUE", "tier": "T3", "fp_version": 1, "fingerprint": "pass", "input_hash": null, "detail": ""}
