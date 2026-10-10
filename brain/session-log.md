@@ -655,3 +655,48 @@ State tracking files: 0
 - Auto-Pilot 5 components deployed — ใช้งานจริงใน session ต่อไป
 
 ---
+
+## Session Auto-Summary — 2026-10-10 11:42 UTC
+
+### Git
+```
+65b8604 fix(loop): media_daily date-gate + quiet SKIP — หยุดสแปม inbox Owner ทุก 30 นาที
+0514885 chore(brain): session summary 2026-10-10 (governance + stash review + model unify)
+98f7e92 chore(brain): auto-commit 3 brain files
+4810e12 docs(governance): เกณฑ์พลิก warn->reject 4 ข้อ + อายุ log (ไม่นับวัน)
+0ae9659 feat(governance): redact ครอบ spaced/dashed ID + เบอร์ +66/เว้นวรรค + เทส FP/FN 10 ข้อ
+8d5081c test(governance): อัปเดต test_set_with_metadata ให้ตรงสัญญาใหม่ (ของเดิมครบ + ป้าย default)
+```
+Uncommitted: 4 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- Auto-Pilot 5 components deployed — ใช้งานจริงใน session ต่อไป
+
+---
+## 2026-10-10 — CEO Session: P0 inbox-spam fix + root cleanup + brain sync (Owner สั่งลุยตามสเต็ป)
+
+**Mode:** Command (P0 ชัด ด่วน) → delegate @changful วิเคราะห์ → CEO ลง patch เอง (specialist session ไม่มี shell)
+**Commits:** `65b8604` (fix loop + cleanup + เก็บของดี 3 ชิ้น)
+
+### Key Decisions
+| # | Decision | เหตุผล |
+|---|----------|--------|
+| 1 | media_daily SKIP เงียบ ไม่ inbox Owner | flowkit dormant จน Pro Day-1 = expected ไม่ใช่ incident; inbox โดนสแปมทุก 30 นาทีมา ~7 วัน |
+| 2 | ลบไฟล์ขยะ root 63 ไฟล์ + ย้าย rental-pilot-tmp/ → /tmp | สคริปต์ watchdog ซ้ำ ไม่มีใคร import; pilot 5 ต.ค. ไม่ลบแค่ย้าย |
+| 3 | เก็บเข้า git 3 ชิ้น: restart-solocorp.sh, docling-research.md, convert_to_hermes.py | ของดีปนขยะ ต้องแยกก่อนลบ |
+
+### Bug log (media_daily)
+- `should_run()` เรียก `self.last_run()` ที่ไม่มีจริง → `except: pass` กลืน AttributeError → gate เปิดค้างหลัง 06:00
+- ซ้ำชั้น 2: `last_run()` คืน datetime ไม่ใช่ str — patch ที่ใช้ `fromisoformat` ครอบจะพังซ้ำ (@changful จับได้ก่อน apply)
+- Verify: should_run=False, execute=None, dry-run เงียบ, inbox ค้าง 221 เท่าเดิม, pytest 5 passed
+
+### Pending next
+- เฝ้า cron รอบถัดไป: ต้องไม่มี msg media_daily ใหม่ใน inbox
+- rental-pilot-tmp/ ใน /tmp รอ Owner ตัดสิน (ลบ/ย้ายกลับเป็นโปรเจกต์แยก)
+- inbox runtime (bus/inbox/*) ค้าง modified — local state ห้าม commit
+
+---

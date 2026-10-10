@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-07-27T18:30:00Z",
+  "last_updated": "2026-10-10T18:45:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -358,98 +358,6 @@
   ],
   "sessions": [
     {
-      "date": "2026-07-09",
-      "duration": "active",
-      "summary": "Owner ไฟเขียว Agent Activation System — เริ่ม Pre-Activation July → Phase 1 August",
-      "key_decisions": [
-        "ADR-014: Agent Activation System Go-Live approved by Owner Dr.solodev",
-        "เลือก Hybrid (A + C) Method — OpenCode Agents + Python Worker",
-        "เริ่มที่ 5 กรมหลักก่อน: CFO, Architect, Engineering, Product, Orchestrator",
-        "July = Pre-Activation, August = Phase 1 Go-Live"
-      ],
-      "achievements": [
-        "ADR-014-agent-activation-go-live.md — decision record",
-        "Command Handoff → @architect-songsak — Worker Service Design",
-        "Command Handoff → @product-produck — PRD + Sprint Plan",
-        "Command Handoff → @changful — Agent Configs + Effort",
-        "Command Handoff → @orchestrator-wut — Timeline + Gates + Dry Run",
-        "Command Handoff → @cfo-meetoo — Resource + Budget Assessment",
-        "brain/ceo-memory.json — updated with ADR-014 + new session"
-      ],
-      "pending_next": [
-        "W1 Checkpoint 2026-07-16: รอ deliverables จาก 5 กรม",
-        "เริ่มสร้าง Agent Worker Service ทันทีที่ spec เสร็จ"
-      ]
-    },
-    {
-      "date": "2026-07-08",
-      "duration": "active",
-      "summary": "สร้าง CEO Brain Memory System + Cross-Platform Bootstrap + CEO Identity Manifest",
-      "key_decisions": [
-        "repo private = เก็บ .env.example + API key ใน git ได้",
-        "MCP configs ใช้ relative path (cwd: .) ข้าม platform",
-        "CEO ต้องจำเอง ไม่ต้องให้ Owner ปลูกความทรงจำ"
-      ],
-      "achievements": [
-        "brain/ceo-identity.md — identity manifest",
-        "brain/ceo-memory.json v2.0 — lessons_learned + sessions",
-        "brain/learnt.md — learning journal",
-        "brain/session-log.md — updated",
-        "scripts/ceo-session-start.sh — auto-load protocol",
-        "scripts/bootstrap-ceo.sh — cross-platform boot",
-        ".claude/settings.json, .cursor/mcp.json — new MCP configs",
-        ".codex/config.toml — fixed to relative paths",
-        "AGENTS.md — auto-load instructions added"
-      ],
-      "pending_next": [
-        "Agent Activation System (P0)",
-        "สร้าง Department API Keys (P1)",
-        "Agent Worker Service (P1)"
-      ]
-    },
-    {
-      "date": "2026-07-08 (ต่อ)",
-      "duration": "30min",
-      "summary": "Agent Activation Phase 2-4 — ครบ 18 Agents",
-      "achievements": [
-        "Phase 2: CMO, Design, QA, Sales, Support activated",
-        "Phase 3: Legal, Web3, Content, NetEng, CyberSec activated",
-        "Phase 4: Psychology, UI Designer, R&D Lab activated",
-        "18/18 Agents — 100% test pass single cycle"
-      ],
-      "pending_next": [
-        "Framework — ถอด content ออกเป็น Governance Designer"
-      ]
-    }
-  ],
-  "current_assessment": {
-    "overall_score": "90%",
-    "date": "2026-07-12",
-    "summary": "3 critical gaps ทั้งหมดถูกแก้แล้ว! 460/460 tests pass, 16 routing rules loaded, Agent Worker ทำงานจริง",
-    "breakdown": {
-      "architecture_design": "90%",
-      "infrastructure_services": "85%",
-      "agent_readiness": "85%",
-      "testing_quality": "100%",
-      "documentation": "80%",
-      "execution_readiness": "85%"
-    },
-    "critical_gaps": [
-      "✅ Routing rules: 16 rules ใน JSON → SQLite DB (map route_to → agent ID ถูกต้อง)",
-      "✅ Agent Worker: ใช้งานได้ (PID 195485) — nohup + python -u buffering fix",
-      "✅ Tests: 460/460 (386 main + 74 central_bus) — 0 errors",
-      "🎯 Cause of 3 tests error: Starlette 1.3.1 ไม่ compatible กับ FastAPI 0.115.0 → downgrade เป็น 0.38.6"
-    ],
-    "fixes_applied_this_session": [
-      "✅ Central Bus tests 74/74 — downgrade starlette 1.3.1 → 0.38.6",
-      "✅ Routing rules: import 16 rules จาก JSON → SQLite DB with correct agent ID mapping",
-      "✅ Agent Worker: restart with -u flag — process stays alive (was dying due to stdout buffering?)",
-      "✅ pydantic_settings installed — agent worker queue poll ไม่ fail อีก",
-      "✅ Agent Worker process: no longer zombie — can poll Central Bus queue"
-    ]
-  },
-  "sessions": [
-    {
       "date": "2026-07-12",
       "duration": "active",
       "summary": "Session #4 — Full System Audit + CEO Revied Assessment + Fix 3 bugs ใน tests",
@@ -588,34 +496,80 @@
       "pending_next": [
         "Auto-Pilot 5 components deployed — ใช้งานจริงใน session ต่อไป"
       ]
+    },
+    {
+      "date": "2026-10-10",
+      "duration": "single session",
+      "summary": "P0 inbox-spam fix (media_daily date-gate + quiet SKIP) + root cleanup (63 files) + brain sync",
+      "key_decisions": [
+        "media_daily SKIP silent while flowkit dormant — alert only on real gen failure",
+        "deleted 63 duplicate watchdog scripts at root; kept 3 legit files in git",
+        "rental-pilot-tmp/ moved to /tmp, not deleted — awaits Owner"
+      ],
+      "achievements": [
+        "commit 65b8604 (pre-commit hook clean)",
+        "verify: should_run=False, execute=None, inbox stable, 5 tests passed",
+        "session-log + learnt.md appended; ceo-memory.json synced (was stale since 2026-07-27)"
+      ],
+      "pending_next": [
+        "cron next run: no new media_daily inbox msg",
+        "rental-pilot-tmp/ in /tmp awaits Owner decision",
+        "bootstrap queue count false positive (high=3 vs empty jsonl) — fix counting"
+      ]
     }
   ],
-  "saved_at": "2026-07-27 18:30 UTC+7",
-  "latest_commit": "9ac90b5 deploy(profiles): build profiles v1.3 + export 86 agents + ship 4 new skills",
-  "state_snapshot": {
-    "date": "2026-07-27",
-    "services": {
-      "central_bus": {"status": "running", "port": 8099, "queue_completed": 75},
-      "agent_worker": {"status": "running", "agents": 18, "poll_interval": "5s"},
-      "loop_runner": {"status": "active", "loops": 4, "cron": "*/30 * * * *"}
+  "current_assessment": {
+    "overall_score": "90%",
+    "date": "2026-07-12",
+    "summary": "3 critical gaps ทั้งหมดถูกแก้แล้ว! 460/460 tests pass, 16 routing rules loaded, Agent Worker ทำงานจริง",
+    "breakdown": {
+      "architecture_design": "90%",
+      "infrastructure_services": "85%",
+      "agent_readiness": "85%",
+      "testing_quality": "100%",
+      "documentation": "80%",
+      "execution_readiness": "85%"
     },
-    "coo_activated": true,
-    "coo_head": "กิจ (Kit)",
-    "coo_files": [
-      "profiles/02-coo/SOUL.md",
-      "workers/agents/coo_dispatch_agent.py",
-      "workers/dept_proposal.py",
-      "workers/sop_compliance_check.py"
+    "critical_gaps": [
+      "✅ Routing rules: 16 rules ใน JSON → SQLite DB (map route_to → agent ID ถูกต้อง)",
+      "✅ Agent Worker: ใช้งานได้ (PID 195485) — nohup + python -u buffering fix",
+      "✅ Tests: 460/460 (386 main + 74 central_bus) — 0 errors",
+      "🎯 Cause of 3 tests error: Starlette 1.3.1 ไม่ compatible กับ FastAPI 0.115.0 → downgrade เป็น 0.38.6"
     ],
-    "coo_deployed_at": "2026-07-27 00:45 UTC+7",
-    "active_sprint": "Sprint 2: Master Synthesis Integration (bus/plans/sprint-master-synthesis-v2.md)",
-    "tasks_in_queue": 0,
-    "proposals": {
-      "PROP-0001": "deferred",
-      "PROP-0002": "deferred",
-      "PROP-0003": "completed",
-      "PROP-0004": "deferred",
-      "PROP-0005": "approved"
-    }
+    "fixes_applied_this_session": [
+      "✅ Central Bus tests 74/74 — downgrade starlette 1.3.1 → 0.38.6",
+      "✅ Routing rules: import 16 rules จาก JSON → SQLite DB with correct agent ID mapping",
+      "✅ Agent Worker: restart with -u flag — process stays alive (was dying due to stdout buffering?)",
+      "✅ pydantic_settings installed — agent worker queue poll ไม่ fail อีก",
+      "✅ Agent Worker process: no longer zombie — can poll Central Bus queue"
+    ]
+  },
+  "saved_at": "2026-10-10 18:45 UTC",
+  "latest_commit": "65b8604 fix(loop): media_daily date-gate + quiet SKIP",
+  "state_snapshot": {
+    "date": "2026-10-10",
+    "p0_fixes_today": {
+      "commit": "65b8604",
+      "media_daily_spam": "fixed — date-gate via last_run(loop_id), quiet SKIP, inbox stable at 221 msgs",
+      "root_cleanup": "63 junk files deleted, 3 legit kept in git, rental-pilot-tmp/ moved to /tmp"
+    },
+    "services": {
+      "central_bus": {
+        "status": "unknown — not probed this session"
+      },
+      "loop_runner": {
+        "cron": "*/30 * * * *",
+        "note": "media_daily will go quiet from next run"
+      },
+      "flowkit": {
+        "status": "down (Connection refused) — dormant until Pro Day-1, expected"
+      }
+    },
+    "git": "main 65b8604 — only bus/inbox runtime files modified (local, do not commit)",
+    "pending_watch": [
+      "cron next run: no new media_daily inbox msg",
+      "rental-pilot-tmp/ in /tmp awaits Owner decision",
+      "bootstrap queue count false positive (high=3 vs empty jsonl) — fix counting"
+    ]
   }
 }

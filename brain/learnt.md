@@ -184,3 +184,20 @@
 ### 📌 Pending
 - คลัง template เอกสารมาตรฐาน (Legal นำ: สัญญาจ้าง, ขอบเขตงาน, NDA, ใบเสนอราคา, ตรวจรับ, ใบแจ้งหนี้)
 - กฎเหล็ก: ไม่เริ่มงานก่อนตกลงสัญญา — ทุกครั้ง
+
+## Session 2026-10-10 — บทเรียนสแปม 7 วันที่ไม่มีใครเห็น
+
+### ❌ What happened
+- `media_daily` ส่ง SKIP inbox หา Owner ทุก 30 นาทีต่อเนื่อง ~7 วัน (28 ก.ย.–10 ต.ค.) — ไม่มีใครทักจน bootstrap วันนี้
+- root มีไฟล์ขยะ 67 ไฟล์ (สคริปต์ watchdog ซ้ำ 63 ไฟล์) — `git status` อ่านไม่รู้เรื่องมาพักใหญ่
+
+### 💡 Insights
+1. **`except: pass` คือที่ซ่อนบั๊ก** — AttributeError ถูกกลืน 7 วันเต็ม ไม่มี log ไม่มี signal; guard แบบ explicit (`if last is not None`) ดังกว่า try/except ใบ้
+2. **SKIP ที่ expected ห้ามแจ้งคน** — dormant จน Pro Day-1 = ไม่ใช่ incident; ทุก alert ต้องถามก่อนว่า "Owner ทำอะไรกับข้อมูลนี้ได้ไหม" ตอบไม่ได้ = อย่าส่ง
+3. **`should_run` ต้องไม่มี side effect แต่ต้อง test ผ่าน `execute`** — pure function เทสซ้ำได้ True,True หลอกให้คิดว่าพัง; verify ที่ถูกคือ execute→record→should_run
+4. **bootstrap นับ queue ผิด (`high=3` ทั้งที่ไฟล์ว่าง)** — ตัวเลขน่าสงสัยต้องเปิดไฟล์ดูจริงก่อนสั่งงาน (SOP > Memory, Dashboard ที่ผิดแย่กว่าไม่มี)
+5. **Head สั่งได้ แต่ถ้า specialist ไม่มี shell CEO ต้องลงมือเอง + จดข้อยกเว้นไว้** — วันนี้ @changful วิเคราะห์ (read-only) CEO apply+verify; หลักฐานแทนคำอ้างทุกครั้ง
+
+### 📌 Pending
+- แก้ `session-bootstrap.py` นับ queue ให้ตรง (อ่าน jsonl จริง ไม่ใช่ offset)
+- ทบทวน `except: pass` ทั้ง repo (grep) — หาจุดกลืนบั๊กตัวต่อไป
