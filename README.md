@@ -28,16 +28,15 @@
 
 # SoloCorp OS
 
-> **Core Definition:** SoloCorp OS คือเครื่องจักรสำหรับสร้างองค์กรดิจิทัลส่วนบุคคล —
-> ชั้นล่างเป็นระบบ Multi-Agent กลางที่ใครก็ใส่ตัวตนได้
-> ชั้นบนคือระบบปฏิบัติการองค์กรที่ผู้ใช้แต่ละคนออกแบบเอง
->
-> **ต่างจาก Multi-Agent ทั่วไปอย่างไร:** ระบบทั่วไปให้ "agent หลายตัว" —
-> SoloCorp OS ให้ "เครื่องจักรสร้างองค์กร": โครงสร้างองค์กร สถานะงาน กฎการทำงาน
-> สิทธิ์ การควบคุมต้นทุน การตรวจสอบผลลัพธ์ และกลไกฟื้นตัวเมื่อผิดพลาด —
-> นิยามฉบับเต็มที่ [`brain/milestone-core-definition-20261010.md`](./brain/milestone-core-definition-20261010.md)
+**The Engine for Building Personal Digital Organizations**
 
-**Department Architecture for AI Agents** — transform a single AI into a coordinated workforce of 18 specialized departments, each with its own Head, specialist team, and clear chain of command.
+SoloCorp OS คือเครื่องจักรสำหรับสร้างองค์กรดิจิทัลส่วนบุคคล — ชั้นล่างเป็นระบบ Multi-Agent กลางที่ใครก็ใส่ตัวตนได้ ชั้นบนคือระบบปฏิบัติการองค์กรที่ผู้ใช้แต่ละคนออกแบบเอง
+
+SoloCorp OS มอบรากฐานสำหรับการประสานงานระหว่าง AI Agents ขณะที่เปิดอิสระให้แต่ละคนออกแบบโครงสร้างองค์กร บทบาท และวิธีดำเนินงานของตนเอง
+
+**One foundation. Unlimited organizational identities.**
+
+> นิยามฉบับเต็ม (LOCKED): [`brain/milestone-core-definition-20261010.md`](./brain/milestone-core-definition-20261010.md)
 
 <!-- Badges: grouped by category for visual hierarchy -->
 
