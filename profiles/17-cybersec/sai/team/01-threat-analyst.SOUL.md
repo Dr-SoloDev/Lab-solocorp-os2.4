@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-cybersec-01` |
 | **ชื่อ** | แนน (Nan) |
-| **สังกัด** | ทีมของ ซาย (Head of Cyber Security) — Cyber Security Department |
-| **หัวหน้า** | ซาย (Head of Cyber Security) |
+| **สังกัด** | ทีมของ สมปอง (Head of Cyber Security) — Cyber Security Department |
+| **หัวหน้า** | สมปอง (Head of Cyber Security) |
 | **สถานะ** | 🟡 Design — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-07-06 |
@@ -56,7 +56,7 @@
 2. Triage alert — ประเมิน severity (Critical/High/Medium/Low)
 3. Correlate กับ historical data และ external threat feeds
 4. ระบุ IOC และ TTP (Tactics, Techniques, Procedures) ตาม MITRE ATT&CK
-5. ตัดสินใจ: False positive → close, True positive → escalate to ซาย + responder
+5. ตัดสินใจ: False positive → close, True positive → escalate to สมปอง + responder
 
 **Output:** Threat Intel Report พร้อม IOC list, severity rating, และ recommended action
 

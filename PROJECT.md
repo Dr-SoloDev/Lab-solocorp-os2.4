@@ -87,29 +87,29 @@ The chain of command flows from Human through CEO to C-Level, then to
 Department Heads, and finally to Specialist Teams:
 
 ```
-Dr.solodev (Human / Owner)
-  └── CEO — เทอโบ (Turbo Chaisriram)
+HUMAN (Human / Owner)
+  └── CEO — หนุมาน (Hanuman)
        │    Vision, Strategy, Final Decision
        │
-       ├── CFO — meetoo                    Finance, Budget, Investment
-       ├── CMO — มาร์ค                      Marketing, Content, Brand
-       └── Orchestrator — พี่วุฒิ (Wut)     System Pipeline Coordination
+       ├── CFO — ไตร                    Finance, Budget, Investment
+       ├── CMO — แซ็ก                      Marketing, Content, Brand
+       └── Orchestrator — น้าเน็ค (Neck)     System Pipeline Coordination
             │
             └── Department Heads (05-18)
-                 ├── 05-Architect     — พี่ทรงศักดิ์   — Central Bus
-                 ├── 06-Product       — โปรดัค        — Roadmap / PRD
-                 ├── 07-Engineering   — ช่างฟูล        — Code / Architecture
-                 ├── 08-Design        — ครีเอท         — UX / Brand Visual
-                 ├── 09-UI Designer   — UI Designer    — Interface
-                 ├── 10-QA            — QA-ทีม         — Testing / Quality
+                 ├── 05-Architect     — พี่ไก่   — Central Bus
+                 ├── 06-Product       — โคดัก        — Roadmap / PRD
+                 ├── 07-Engineering   — เฮียเป้อ        — Code / Architecture
+                 ├── 08-Design        — ไต๋         — UX / Brand Visual
+                 ├── 09-UI Designer   — อาเมน    — Interface
+                 ├── 10-QA            — ตำรวจโมส         — Testing / Quality
                  ├── 11-Sales         — เซลส์          — B2B Pipeline
                  ├── 12-Support       — ซัพพอร์ต       — Customer Success
                  ├── 13-Legal         — ตุลย์           — Compliance / Law
-                 ├── 14-Web3          — อัยวา          — Blockchain / DeFi
-                 ├── 15-Content       — เสก            — Content / Creative
-                 ├── 16-NetEng        — นีต            — Network / Infrastructure
-                 ├── 17-CyberSec      — ซาย            — Security / Threat / IR
-                 └── 18-Psychology    — จิต            — Behavior / Econ / Org
+                 ├── 14-Web3          — เชน          — Blockchain / DeFi
+                 ├── 15-Content       — พี่เต            — Content / Creative
+                 ├── 16-NetEng        — ไนท์            — Network / Infrastructure
+                 ├── 17-CyberSec      — สมปอง            — Security / Threat / IR
+                 └── 18-Psychology    — เต๋า            — Behavior / Econ / Org
 ```
 
 Communication rules:
@@ -166,24 +166,24 @@ simply see "Work Item X completed."
 
 | # | Department | Head | Core Function | Team Size |
 |:-:|:-----------|:-----|:--------------|:---------:|
-| 01 | CEO | เทอโบ | Vision, Strategy, Final Decision | 0 |
-| 02 | CFO | meetoo | Finance, Budget, Investment | 3 |
-| 03 | CMO | มาร์ค | Marketing, Content, Brand | 3 |
-| 04 | Orchestrator | พี่วุฒิ | Cross-Dept Pipeline Coordination | 3 |
-| 05 | Architect | พี่ทรงศักดิ์ | Central Bus, Routing, Monitoring | 5 |
-| 06 | Product | โปรดัค | Feature Roadmap, PRD, Delivery | 3 |
-| 07 | Engineering | ช่างฟูล | Backend, Frontend, Architecture | 3 |
-| 08 | Design | ครีเอท | UX Research, Brand Visual | 3 |
-| 09 | UI Designer | UI Designer | Interface, Component Library | 3 |
-| 10 | QA | QA-ทีม | Testing, Quality, Evidence | 3 |
+| 01 | CEO | หนุมาน | Vision, Strategy, Final Decision | 0 |
+| 02 | CFO | ไตร | Finance, Budget, Investment | 3 |
+| 03 | CMO | แซ็ก | Marketing, Content, Brand | 3 |
+| 04 | Orchestrator | น้าเน็ค | Cross-Dept Pipeline Coordination | 3 |
+| 05 | Architect | พี่ไก่ | Central Bus, Routing, Monitoring | 5 |
+| 06 | Product | โคดัก | Feature Roadmap, PRD, Delivery | 3 |
+| 07 | Engineering | เฮียเป้อ | Backend, Frontend, Architecture | 3 |
+| 08 | Design | ไต๋ | UX Research, Brand Visual | 3 |
+| 09 | UI Designer | อาเมน | Interface, Component Library | 3 |
+| 10 | QA | ตำรวจโมส | Testing, Quality, Evidence | 3 |
 | 11 | Sales | เซลส์ | B2B Deal Strategy, Pipeline | 3 |
 | 12 | Support | ซัพพอร์ต | Customer Success, Analytics | 3 |
 | 13 | Legal | ตุลย์ | Compliance, Contracts, Law | 3 |
-| 14 | Web3 | อัยวา | Blockchain, DeFi, Solana | 4 |
-| 15 | Content Creator | เสก | Content, Creative, Media | 10 refs |
-| 16 | Network Engineer | นีต | Network, Infrastructure, VPN, CDN, DNS | 3 |
-| 17 | Cyber Security | ซาย | Threat Detection, Vulnerability, Incident Response | 3 |
-| 18 | Psychology | จิต | User Behavior, Behavioral Economics, Org Psychology | 3 |
+| 14 | Web3 | เชน | Blockchain, DeFi, Solana | 4 |
+| 15 | Content Creator | พี่เต | Content, Creative, Media | 10 refs |
+| 16 | Network Engineer | ไนท์ | Network, Infrastructure, VPN, CDN, DNS | 3 |
+| 17 | Cyber Security | สมปอง | Threat Detection, Vulnerability, Incident Response | 3 |
+| 18 | Psychology | เต๋า | User Behavior, Behavioral Economics, Org Psychology | 3 |
 
 Each department has between 3-5 specialist agents who execute the
 actual work. Department Heads do not execute — they lead, prioritize,
@@ -218,12 +218,12 @@ specialists) and 6 pipeline commands.
 opencode
 ```
 
-Default agent is the CEO (เทอโบ). Speak naturally and the CEO will route
+Default agent is the CEO (หนุมาน). Speak naturally and the CEO will route
 you to the correct department. Or use @mention to go direct:
 
 ```bash
 opencode "@architect-songsak design a pipeline for the billing feature"
-opencode "@changful implement user registration API endpoint"
+opencode "@engineering-changful implement user registration API endpoint"
 opencode "@cfo-meetoo วิเคราะห์ผลประกอบการ Q3"
 opencode "@product-produck review the new feature PRD"
 ```
@@ -281,27 +281,27 @@ Lab-solocorp-os2.4/
 │
 ├── profiles/
 │   ├── INDEX.md                   Master index — start here
-│   ├── 01-ceo/                    CEO — เทอโบ
-│   ├── 02-cfo/                    CFO — meetoo
+│   ├── 01-ceo/                    CEO — หนุมาน
+│   ├── 02-cfo/                    CFO — ไตร
 │   │   ├── meetoo/
 │   │   │   └── team/              dana, riley, morgan
-│   ├── 03-cmo/                    CMO — มาร์ค
-│   ├── 04-orchestrator/           Orchestrator — พี่วุฒิ
-│   ├── 05-architect/              Architect — พี่ทรงศักดิ์
+│   ├── 03-cmo/                    CMO — แซ็ก
+│   ├── 04-orchestrator/           Orchestrator — น้าเน็ค
+│   ├── 05-architect/              Architect — พี่ไก่
 │   │   ├── phee-thongsak/
 │   │   │   └── team/              5 pipeline agents
-│   ├── 06-product/                Product — โปรดัค
+│   ├── 06-product/                Product — โคดัก
 │   │   ├── produck/
 │   │   │   └── team/              3 product specialists
-│   ├── 07-engineering/            Engineering — ช่างฟูล
-│   ├── 08-design/                 Design — ครีเอท
+│   ├── 07-engineering/            Engineering — เฮียเป้อ
+│   ├── 08-design/                 Design — ไต๋
 │   ├── 09-ui-designer/            UI Designer
-│   ├── 10-qa/                     QA — QA-ทีม
+│   ├── 10-qa/                     QA — ตำรวจโมส
 │   ├── 11-sales/                  Sales — เซลส์
 │   ├── 12-support/                Support — ซัพพอร์ต
 │   ├── 13-legal/                  Legal — ตุลย์
-│   ├── 14-web3/                   Web3 — อัยวา
-│   ├── 15-content-creator/        Content Creator — เสก
+│   ├── 14-web3/                   Web3 — เชน
+│   ├── 15-content-creator/        Content Creator — พี่เต
 │   └── default/                   Fallback profile
 │
 ├── loop_runner/                   Auto-pilot cron system
@@ -447,12 +447,12 @@ A: No. All communication goes through Department Heads. Sub-agents receive
 tasks from their Head and report back. This maintains clean accountability.
 
 **Q: What if I don't know which department I need?**
-A: Talk to the CEO (เทอโบ). The CEO will understand your request and route
+A: Talk to the CEO (หนุมาน). The CEO will understand your request and route
 it to the correct department.
 
 **Q: How do I escalate a blocked task?**
 A: If a sub-agent is blocked, they escalate to their Department Head. If the
-Head cannot resolve it, they escalate to the Orchestrator (พี่วุฒิ). Critical
+Head cannot resolve it, they escalate to the Orchestrator (น้าเน็ค). Critical
 issues go to the CEO.
 
 **Q: Is this production-ready?**

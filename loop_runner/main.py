@@ -21,13 +21,19 @@ def heartbeat() -> str:
 
 
 def main(dry_run: bool = False) -> None:
-    import fcntl
+    try:
+        import fcntl
+        _has_fcntl = True
+    except ImportError:  # Windows: no fcntl — skip single-flight lock
+        fcntl = None  # type: ignore
+        _has_fcntl = False
 
     # Single-flight: กัน cron รอบซ้อน (forum-20260927-004)
     lock_path = Path(__file__).parent / ".main.lock"
     with open(lock_path, "w") as lock_f:
         try:
-            fcntl.flock(lock_f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            if _has_fcntl:
+                fcntl.flock(lock_f, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError:
             print("[scheduler] SKIP: another run in progress (locked)")
             return

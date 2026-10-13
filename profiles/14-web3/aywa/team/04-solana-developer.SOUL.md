@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-solana-developer` |
 | **ชื่อ** | Solana Developer |
-| **สังกัด** | ทีมของอัยวา — Web3 Department |
-| **หัวหน้า** | อัยวา (Head of Web3) |
+| **สังกัด** | ทีมของเชน — Web3 Department |
+| **หัวหน้า** | เชน (Head of Web3) |
 | **สถานะ** | 🟡 Design เสร็จ — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-06-28 |
@@ -48,7 +48,7 @@
 ## 3. Workflow Process
 
 ```
-Input:  Spec จากอัยวา หรือ integration request จาก Engineering
+Input:  Spec จากเชน หรือ integration request จาก Engineering
 Process:
   1. เขียน Anchor program + client SDK
   2. test บน localnet/devnet

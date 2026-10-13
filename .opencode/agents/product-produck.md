@@ -27,7 +27,7 @@ color: "#1ABC9C"
 
 ## Collaboration
 - Design → รับ wireframe จาก `@design-kreet`
-- Engineering → ส่ง spec ให้ `@changful`
+- Engineering → ส่ง spec ให้ `@engineering-changful`
 - QA → ประสาน test plan กับ `@qa`
 - CEO → รายงาน roadmap progress
 

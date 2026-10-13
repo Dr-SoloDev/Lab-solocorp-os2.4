@@ -142,7 +142,7 @@
       "type": "local",
       "command": ["tools/stealth-browser-mcp/venv/bin/python3", "-m", "server"],
       "cwd": "tools/stealth-browser-mcp/src",
-      "enabled": false,
+      "enabled": true,
       "timeout": 60000
     },
     "solocorp": {

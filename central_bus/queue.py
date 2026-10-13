@@ -28,6 +28,27 @@ from central_bus.config import settings
 from central_bus.db import DbManager, new_id, now_iso
 from central_bus.models import BusMessage, Priority
 
+try:
+    import fcntl
+
+    def _lock_ex(f) -> None:
+        fcntl.flock(f, fcntl.LOCK_EX)
+
+    def _lock_sh(f) -> None:
+        fcntl.flock(f, fcntl.LOCK_SH)
+
+    def _unlock(f) -> None:
+        fcntl.flock(f, fcntl.LOCK_UN)
+except ImportError:  # Windows: no fcntl — single-process local dev, no-op lock
+    def _lock_ex(f) -> None:
+        pass
+
+    def _lock_sh(f) -> None:
+        pass
+
+    def _unlock(f) -> None:
+        pass
+
 log = logging.getLogger(__name__)
 
 # ── Backward-compat constants ───────────────────────────────────────────
@@ -57,7 +78,7 @@ def _offset_file(priority: Priority) -> Path:
 
 
 def _read_offset(priority: Priority) -> int:
-    import fcntl
+    pass  # portable file lock via top-level _lock_* shim
     f = _offset_file(priority)
     if not f.exists():
         return 0
@@ -72,19 +93,19 @@ def _write_offset(priority: Priority, offset: int) -> None:
 
 
 def _compact(path: Path, priority: Priority) -> None:
-    import fcntl
+    pass  # portable file lock via top-level _lock_* shim
     offset = _read_offset(priority)
     if offset == 0:
         return
     try:
         with open(path, "r+") as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
+            _lock_ex(f)
             lines = f.readlines()
             remaining = lines[offset:]
             f.seek(0)
             f.writelines(remaining)
             f.truncate()
-            fcntl.flock(f, fcntl.LOCK_UN)
+            _unlock(f)
         _write_offset(priority, 0)
     except OSError:
         pass
@@ -92,36 +113,36 @@ def _compact(path: Path, priority: Priority) -> None:
 
 def enqueue(msg: BusMessage) -> None:
     """JSONL enqueue — kept for backward compatibility."""
-    import fcntl
+    pass  # portable file lock via top-level _lock_* shim
     path = _queue_file(msg.priority)
     line = json.dumps(msg.__dict__) + "\n"
     with open(path, "a") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        _lock_ex(f)
         f.write(line)
-        fcntl.flock(f, fcntl.LOCK_UN)
+        _unlock(f)
 
 
 def dequeue(priority: Priority) -> BusMessage | None:
     """JSONL dequeue — kept for backward compatibility."""
-    import fcntl
+    pass  # portable file lock via top-level _lock_* shim
     path = _queue_file(priority)
     if not path.exists():
         return None
     with open(path, "r") as f:
-        fcntl.flock(f, fcntl.LOCK_SH)
+        _lock_sh(f)
         lines = f.readlines()
-        fcntl.flock(f, fcntl.LOCK_UN)
+        _unlock(f)
 
     offset = _read_offset(priority)
     while offset < len(lines) and not lines[offset].strip():
         offset += 1
     if offset >= len(lines):
         if offset > 0:
-            import fcntl
+            pass  # portable file lock via top-level _lock_* shim
             with open(path, "w") as f:
-                fcntl.flock(f, fcntl.LOCK_EX)
+                _lock_ex(f)
                 f.truncate(0)
-                fcntl.flock(f, fcntl.LOCK_UN)
+                _unlock(f)
             _write_offset(priority, 0)
         return None
     line = lines[offset]
@@ -144,7 +165,7 @@ def requeue(msg: BusMessage) -> bool:
 
 def _enqueue_dead_letter(msg: BusMessage, reason: str) -> None:
     """JSONL dead-letter enqueue — kept for backward compatibility."""
-    import fcntl
+    pass  # portable file lock via top-level _lock_* shim
     path = _queue_file(msg.priority, dead_letter=True)
     record = {
         "message": msg.__dict__,
@@ -153,14 +174,14 @@ def _enqueue_dead_letter(msg: BusMessage, reason: str) -> None:
         "moved_at": datetime.now(timezone.utc).isoformat(),
     }
     with open(path, "a") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        _lock_ex(f)
         f.write(json.dumps(record) + "\n")
-        fcntl.flock(f, fcntl.LOCK_UN)
+        _unlock(f)
 
 
 def list_dead_letters(priority: Priority | None = None) -> list[dict]:
     """JSONL list dead letters — kept for backward compatibility."""
-    import fcntl
+    pass  # portable file lock via top-level _lock_* shim
     results = []
     if priority:
         sources = [priority]

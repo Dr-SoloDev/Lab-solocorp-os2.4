@@ -1,6 +1,6 @@
 # SoloCorp OS — Master Operating Flow v1.0
 
-**Owner:** CEO เทอโบ ไชยศรีรัมย์  
+**Owner:** CEO หนุมาน  
 **Status:** ACTIVE — Organization-Wide Standard  
 **Updated:** 2026-07-06  
 **Scope:** ทุกแผนก · ทุกเครื่องมือ · ทุกอำนาจ · ทุก Output
@@ -24,10 +24,10 @@
 Human (Owner/Vision)
     │
     ▼
-CEO เทอโบ (Supreme Authority)
+CEO หนุมาน (Supreme Authority)
     │
     ▼
-Orchestrator พี่วุฒิ (Pipeline Coordination)
+Orchestrator น้าเน็ค (Pipeline Coordination)
     │
     ▼
 Department Heads (Domain Ownership)
@@ -56,9 +56,9 @@ Specialist Agents (Execution)
 
 ### มาตรา 5 — ผู้ก่อตั้งก็ไม่มีข้อยกเว้น
 
-> **"แม้แต่ Dr.solodev เอง — ก็จะไม่ละเมิดขั้นตอนและลำดับชั้นเช่นกัน"**
+> **"แม้แต่ HUMAN เอง — ก็จะไม่ละเมิดขั้นตอนและลำดับชั้นเช่นกัน"**
 
-ความเป็น Owner หรือ Founder ไม่ใช่ใบอนุญาตในการข้ามกฎ Dr.solodev เป็น **Vision/Owner** — มีบทบาทในการมอบหมายงานกว้างๆ เท่านั้น ไม่ใช่ผู้บริหาร ไม่มีอำนาจสั่งการข้าม CEO หรือกระบวนการ
+ความเป็น Owner หรือ Founder ไม่ใช่ใบอนุญาตในการข้ามกฎ HUMAN เป็น **Vision/Owner** — มีบทบาทในการมอบหมายงานกว้างๆ เท่านั้น ไม่ใช่ผู้บริหาร ไม่มีอำนาจสั่งการข้าม CEO หรือกระบวนการ
 
 ### มาตรา 6 — การตัดสินใจสำคัญโดยการโหวต
 
@@ -68,11 +68,11 @@ Specialist Agents (Execution)
 
 | ผู้โหวต | บทบาท | เสียง |
 |:--------|:------|:-----:|
-| Dr.solodev | Owner / Vision | 1 |
-| CEO เทอโบ | Supreme Authority | 1 |
-| CFO meetoo | Finance / Risk | 1 |
-| CMO มาร์ค | Market / Brand | 1 |
-| Orchestrator พี่วุฒิ | Operations / Pipeline | 1 |
+| HUMAN | Owner / Vision | 1 |
+| CEO หนุมาน | Supreme Authority | 1 |
+| CFO ไตร | Finance / Risk | 1 |
+| CMO แซ็ก | Market / Brand | 1 |
+| Orchestrator น้าเน็ค | Operations / Pipeline | 1 |
 
 **กระบวนการโหวต:**
 ```
@@ -81,11 +81,11 @@ Specialist Agents (Execution)
 3. Vote     → แต่ละคนโหวต Yes / No / Abstain
 4. Count    → เสียงข้างมาก (≥3/5) ชนะ
 5. Record   → บันทึกใน ADR พร้อม vote breakdown
-6. Execute  → CEO เทอโบ สั่งการตามผลโหวต
+6. Execute  → CEO หนุมาน สั่งการตามผลโหวต
 ```
 
 **กฎการโหวต:**
-- ไม่มีใครมีสิทธิ์ veto เพียงลำพัง — รวมถึง Dr.solodev และ CEO
+- ไม่มีใครมีสิทธิ์ veto เพียงลำพัง — รวมถึง HUMAN และ CEO
 - Tie (2-2-1 abstain) → ส่งกลับ Orchestrator เพื่อหา consensus ภายใน 24 ชั่วโมง
 - Emergency (security/legal) → CEO ตัดสินใจได้ทันที แต่ต้อง ratify โดย Council ภายใน 48 ชั่วโมง
 
@@ -95,7 +95,7 @@ Specialist Agents (Execution)
 
 1. [ภาพรวม Master Flow](#1-ภาพรวม-master-flow)
 2. [Layer 0: Entry Points](#2-layer-0-entry-points)
-3. [Layer 1: CEO Authority](#3-layer-1-ceo-authority--เทอโบ)
+3. [Layer 1: CEO Authority](#3-layer-1-ceo-authority--หนุมาน)
 4. [Layer 2: Orchestration + Architecture](#4-layer-2-orchestration--architecture)
 5. [Layer 3: Department Execution](#5-layer-3-department-execution)
 6. [Layer 4: Central Bus](#6-layer-4-central-bus-data-layer)
@@ -115,10 +115,10 @@ Specialist Agents (Execution)
 ┌─────────────────────────────────────────────────────────────────┐
 │  SOLOCORP OS — MASTER OPERATING FLOW                            │
 │                                                                 │
-│  Human Input ──► CEO เทอโบ ──► Complexity Assessment           │
+│  Human Input ──► CEO หนุมาน ──► Complexity Assessment           │
 │                     │                                           │
 │                     ▼                                           │
-│  Orchestrator พี่วุฒิ ──► Route ──► 18 Departments             │
+│  Orchestrator น้าเน็ค ──► Route ──► 18 Departments             │
 │                     │                    │                      │
 │                     ▼                    ▼                      │
 │              Central Bus ◄──────── Execution                   │
@@ -143,13 +143,13 @@ Specialist Agents (Execution)
 ```mermaid
 flowchart TD
     subgraph ENTRY["⌨️ LAYER 0: Entry Points"]
-        H["👤 Human\nDr.solodev — Owner"]
+        H["👤 Human\nHUMAN — Owner"]
         LR["⏱️ Loop Runner\nCron every 30min"]
         EXT["🌐 External API\nWebhook / Event"]
     end
 
     subgraph CEO_LAYER["👑 LAYER 1: CEO Authority"]
-        CEO["CEO เทอโบ\n100% Decision Authority"]
+        CEO["CEO หนุมาน\n100% Decision Authority"]
         CM{"Complexity Matrix\n3 Questions"}
         D0["🟢 Score 0\nDirect ADR → Execute"]
         D1["🟡 Score 1\nRFC → ADR → Execute"]
@@ -157,48 +157,48 @@ flowchart TD
     end
 
     subgraph ORCH_LAYER["⚙️ LAYER 2: Orchestration"]
-        ORCH["Orchestrator พี่วุฒิ\nPipeline Coordination · AAR"]
-        ARCH["Architect พี่ทรงศักดิ์\nCentral Bus · Routing · Monitor"]
+        ORCH["Orchestrator น้าเน็ค\nPipeline Coordination · AAR"]
+        ARCH["Architect พี่ไก่\nCentral Bus · Routing · Monitor"]
         CB[("🔀 Central Bus\nSQLite WAL · Async Queue\nhigh / normal / low priority")]
     end
 
     subgraph DEPT["🏢 LAYER 3: Department Execution"]
         subgraph PE["Product & Engineering"]
-            PROD["Product โปรดัค\nPRD · Sprint · Roadmap"]
-            ENG["Engineering ช่างฟูล\nBackend · Frontend · Deploy"]
-            DES["Design ครีเอท\nUX · Brand Visual"]
+            PROD["Product โคดัก\nPRD · Sprint · Roadmap"]
+            ENG["Engineering เฮียเป้อ\nBackend · Frontend · Deploy"]
+            DES["Design ไต๋\nUX · Brand Visual"]
             UI["UI Designer\nComponents · System"]
         end
         subgraph FL["Finance & Legal"]
-            CFO["CFO meetoo\nBudget · Investment · Forecast"]
-            LEGAL["Legal ตุลย์\nCompliance · Contracts · Law"]
+            CFO["CFO ไตร\nBudget · Investment · Forecast"]
+            LEGAL["Legal Disabled\nCEO รับแทน"]
         end
         subgraph SEC["Security & Infrastructure"]
-            CYBER["CyberSec ซาย\nThreat · Vuln · IR"]
-            NET["NetEng นีต\nNetwork · CDN · DNS · VPN"]
+            CYBER["CyberSec สมปอง\nThreat · Vuln · IR"]
+            NET["NetEng ไนท์\nNetwork · CDN · DNS · VPN"]
         end
         subgraph GR["Growth & Revenue"]
-            CMO["CMO มาร์ค\nMarketing · Brand · Campaign"]
-            SALES["Sales เซลส์\nB2B Pipeline · Deal Strategy"]
-            CONTENT["Content เสก\nContent · Creative · Media"]
-            SUP["Support ซัพพอร์ต\nCustomer Success · Analytics"]
+            CMO["CMO แซ็ก\nMarketing · Brand · Campaign"]
+            SALES["Sales Disabled\nCEO รับแทน"]
+            CONTENT["Content พี่เต\nContent · Creative · Media"]
+            SUP["Support Disabled\nCEO รับแทน"]
         end
         subgraph DOM["Domain Specialists"]
-            WEB3["Web3 อัยวา\nBlockchain · DeFi · Solana"]
-            PSYCH["Psychology จิต\nBehavior · Economics · Org"]
+            WEB3["Web3 เชน\nBlockchain · DeFi · Solana"]
+            PSYCH["Psychology เต๋า\nBehavior · Economics · Org"]
         end
     end
 
     subgraph QG["✅ LAYER 5: Quality & Governance"]
         PROD_SO["📋 Product Sign-off\nValidate vs PRD"]
-        QA["QA-ทีม\nTest · Verify · Evidence"]
+        QA["ตำรวจโมส\nTest · Verify · Evidence"]
         GUARD["Guard Runner\n9 Verification Checks"]
         AAR["🔁 AAR\nMandatory every cycle\n(Orchestrator triggers)"]
         GOV["xGov\nRFC · ADR · Guard Gates"]
     end
 
     subgraph FAIL_PATH["⚠️ FAILURE / EXCEPTION PATH"]
-        EXC["Exception Triage\nพี่ทรงศักดิ์\n80% auto-resolve"]
+        EXC["Exception Triage\nพี่ไก่\n80% auto-resolve"]
         RETRY["Retry / Escalate\n→ Orchestrator\n→ CEO if critical"]
     end
 
@@ -286,9 +286,9 @@ flowchart TD
 
 | ช่องทาง | แหล่งที่มา | ผู้รับ | Platform |
 |:--------|:----------|:------|:---------|
-| Human Direct | Dr.solodev พิมพ์ request | CEO เทอโบ | OpenCode · Claude Code · Hermes |
-| Loop Runner | Cron auto-trigger ทุก 30 นาที | Orchestrator พี่วุฒิ | Hermes |
-| External API | Webhook / event จาก external system | Architect พี่ทรงศักดิ์ | Central Bus |
+| Human Direct | HUMAN พิมพ์ request | CEO หนุมาน | OpenCode · Claude Code · Hermes |
+| Loop Runner | Cron auto-trigger ทุก 30 นาที | Orchestrator น้าเน็ค | Hermes |
+| External API | Webhook / event จาก external system | Architect พี่ไก่ | Central Bus |
 | Inter-Department | Department A ส่งงานให้ Department B | Central Bus | Central Bus async queue |
 | Scheduled Task | `govctl cron` ตาม ADR schedule | Cron Pipeline Agent | Hermes |
 
@@ -296,10 +296,10 @@ flowchart TD
 
 ---
 
-## 4. Layer 1: CEO Authority — เทอโบ
+## 4. Layer 1: CEO Authority — หนุมาน
 
 ### อำนาจ 100%
-CEO เทอโบ มีอำนาจตัดสินใจสูงสุดในองค์กร Dr.solodev เป็น Owner/Vision — ไม่ใช่ผู้บริหาร
+CEO หนุมาน มีอำนาจตัดสินใจสูงสุดในองค์กร HUMAN เป็น Owner/Vision — ไม่ใช่ผู้บริหาร
 
 ### 3 สิ่งที่ CEO ทำเมื่อรับ request
 
@@ -340,7 +340,7 @@ CEO เทอโบ มีอำนาจตัดสินใจสูงสุ
 
 ## 5. Layer 2: Orchestration + Architecture
 
-### พี่วุฒิ (Orchestrator) — Pipeline Coordinator
+### น้าเน็ค (Orchestrator) — Pipeline Coordinator
 
 ```
 CEO brief
@@ -365,7 +365,7 @@ Monitor progress ผ่าน Central Bus
 | Dept รับ brief แล้วไม่ respond | 2 ชั่วโมง | Orchestrator ping + escalate |
 | Pipeline step ค้างอยู่ | 4 ชั่วโมง | Exception Triage รับงาน |
 | Exception Triage ไม่ resolve | 1 ชั่วโมง | Escalate ไป Orchestrator + **แจ้ง CEO** |
-| Orchestrator ไม่ resolve | 30 นาที | **CEO เทอโบ รับงานโดยตรง** |
+| Orchestrator ไม่ resolve | 30 นาที | **CEO หนุมาน รับงานโดยตรง** |
 | Security incident (CyberSec) | **15 นาที** | **CEO + Orchestrator ทันที** |
 
 > **กฎสูงสุด:** ทุก escalation ต้องแจ้ง CEO ทราบ — Orchestrator ไม่มีอำนาจ re-queue โดย CEO ไม่รับรู้
@@ -376,7 +376,7 @@ AAR ไม่ใช่แค่ตอน Quality Gate — **Orchestrator trigger
 
 ```
 WHEN: pipeline complete / partial fail / timeout
-WHO:  Orchestrator พี่วุฒิ (triggers) + dept head ที่เกี่ยวข้อง
+WHO:  Orchestrator น้าเน็ค (triggers) + dept head ที่เกี่ยวข้อง
 TIME: 30 วินาที max
 
 QUESTIONS:
@@ -386,7 +386,7 @@ QUESTIONS:
 4. ปรับอะไรใน next cycle?
 
 STORED: brain/ + Central Bus audit trail
-REPORT TO: CEO เทอโบ ทุกครั้ง — ไม่มีข้อยกเว้น
+REPORT TO: CEO หนุมาน ทุกครั้ง — ไม่มีข้อยกเว้น
 ```
 
 **Specialists:**
@@ -394,7 +394,7 @@ REPORT TO: CEO เทอโบ ทุกครั้ง — ไม่มีข�
 - `studio-producer` — Creative portfolio, exec relationships
 - `studio-operations` — Daily ops, SOP, vendor management
 
-### พี่ทรงศักดิ์ (Architect) — Central Bus Manager
+### พี่ไก่ (Architect) — Central Bus Manager
 
 | Agent | หน้าที่ |
 |:------|:--------|
@@ -412,24 +412,24 @@ REPORT TO: CEO เทอโบ ทุกครั้ง — ไม่มีข�
 
 | # | Head | Output ที่สร้าง |
 |:-:|:-----|:--------------|
-| 01 | CEO เทอโบ | Decision, Brief, ADR |
-| 02 | CFO meetoo | Budget report, Forecast, Approval |
-| 03 | CMO มาร์ค | Campaign plan, GTM, Analytics |
-| 04 | Orch พี่วุฒิ | Pipeline plan, AAR, Status |
-| 05 | Arch พี่ทรงศักดิ์ | Routing config, Audit trail, Health |
-| 06 | Product โปรดัค | PRD, Sprint plan, Roadmap, Intake log |
-| 07 | Eng ช่างฟูล | Code, PR, Deploy |
-| 08 | Design ครีเอท | Design system, UX report, Components |
+| 01 | CEO หนุมาน | Decision, Brief, ADR |
+| 02 | CFO ไตร | Budget report, Forecast, Approval |
+| 03 | CMO แซ็ก | Campaign plan, GTM, Analytics |
+| 04 | Orch น้าเน็ค | Pipeline plan, AAR, Status |
+| 05 | Arch พี่ไก่ | Routing config, Audit trail, Health |
+| 06 | Product โคดัก | PRD, Sprint plan, Roadmap, Intake log |
+| 07 | Eng เฮียเป้อ | Code, PR, Deploy |
+| 08 | Design ไต๋ | Design system, UX report, Components |
 | 09 | UI Designer | Component library, Style guide |
-| 10 | QA QA-ทีม | Test report, Go/No-Go, Evidence |
-| 11 | Sales เซลส์ | Deal strategy, Pipeline report |
-| 12 | Support ซัพพอร์ต | Customer report, Executive summary |
-| 13 | Legal ตุลย์ | Compliance cert, Contract review |
-| 14 | Web3 อัยวา | Smart contract, Audit report, DeFi analysis |
-| 15 | Content เสก | LinkedIn/TikTok/IG/YT/Reddit content |
-| 16 | NetEng นีต | Network design, IaC, SLA report |
-| 17 | CyberSec ซาย | Threat report, Vuln scan, IR playbook |
-| 18 | Psychology จิต | Behavior report, Nudge design, Org health |
+| 10 | QA ตำรวจโมส | Test report, Go/No-Go, Evidence |
+| 11 | Sales Disabled | Deal strategy, Pipeline report — CEO รับแทน |
+| 12 | Support Disabled | Customer report, Executive summary — CEO รับแทน |
+| 13 | Legal Disabled | Compliance cert, Contract review — CEO รับแทน |
+| 14 | Web3 เชน | Smart contract, Audit report, DeFi analysis |
+| 15 | Content พี่เต | LinkedIn/TikTok/IG/YT/Reddit content |
+| 16 | NetEng ไนท์ | Network design, IaC, SLA report |
+| 17 | CyberSec สมปอง | Threat report, Vuln scan, IR playbook |
+| 18 | Psychology เต๋า | Behavior report, Nudge design, Org health |
 
 **กฎเหล็กของ Department Head:**
 - ห้ามทำงานเอง — delegate เท่านั้น
@@ -446,7 +446,7 @@ Psychology behavior report → Behavioral Economist insight
 Sales customer pain points → Deal Strategist report
         │
         ▼
-Product โปรดัค รวม inputs → RICE/MoSCoW prioritize
+Product โคดัก รวม inputs → RICE/MoSCoW prioritize
         │
         ▼
 Sprint Prioritizer → Sprint plan
@@ -556,26 +556,26 @@ SoloCorp OS ขยายตัวผ่าน self-reinforcing loop:
 │  Code/Feature Launch                    │
 │       │                                 │
 │       ▼                                 │
-│  Content Creator เสก                    │
+│  Content Creator พี่เต                    │
 │  (LinkedIn · TikTok · IG · YT · Reddit) │
 │       │                                 │
 │       ▼                                 │
-│  CMO มาร์ค → Brand Awareness            │
+│  CMO แซ็ก → Brand Awareness            │
 │       │                                 │
 │       ▼                                 │
-│  Sales เซลส์ → Inbound + Outbound       │
+│  Sales Disabled → CEO รับแทน       │
 │       │                                 │
 │       ▼                                 │
-│  Support ซัพพอร์ต → Customer Success    │
+│  Support Disabled → CEO รับแทน    │
 │       │                                 │
 │       ▼                                 │
-│  Psychology จิต → Behavior Analysis     │
+│  Psychology เต๋า → Behavior Analysis     │
 │       │                                 │
 │       ▼                                 │
-│  Product โปรดัค → Feedback → Roadmap   │
+│  Product โคดัก → Feedback → Roadmap   │
 │       │                                 │
 │       ▼                                 │
-│  CEO เทอโบ → Strategic Decision ────────┤
+│  CEO หนุมาน → Strategic Decision ────────┤
 │                                         │
 └─────────────────────────────────────────┘
 ```
@@ -632,16 +632,16 @@ Active Hermes Jobs:
 
 | Decision Type | Authority | Escalate To |
 |:-------------|:---------|:-----------|
-| Feature launch | CEO เทอโบ | — |
-| Budget >฿50K | CEO เทอโบ | — |
-| Public communication | CEO เทอโบ | — |
-| Architecture change | Architect พี่ทรงศักดิ์ | CEO |
-| Sprint plan | Product โปรดัค | Orchestrator |
-| Code merge | Engineering ช่างฟูล | QA |
-| Contract signing | Legal ตุลย์ | CEO |
+| Feature launch | CEO หนุมาน | — |
+| Budget >฿50K | CEO หนุมาน | — |
+| Public communication | CEO หนุมาน | — |
+| Architecture change | Architect พี่ไก่ | CEO |
+| Sprint plan | Product โคดัก | Orchestrator |
+| Code merge | Engineering เฮียเป้อ | QA |
+| Contract signing | Legal Disabled — CEO รับแทน | CEO |
 | Security incident | CyberSec ซาย | CEO (immediately) |
-| Content publish | CMO มาร์ค | CEO (if strategic) |
-| B2B deal > $5K | Sales เซลส์ | CEO |
+| Content publish | CMO แซ็ก | CEO (if strategic) |
+| B2B deal > $5K | Sales Disabled — CEO รับแทน | CEO |
 
 **กฎ:** ถ้าไม่แน่ใจ → escalate ไป CEO เสมอ อย่า assume
 
@@ -667,7 +667,7 @@ Active Hermes Jobs:
 | `@ceo-turbo` | OpenCode | CEO decisions |
 | `@orchestrator-wut` | OpenCode | Pipeline coordination |
 | `@architect-songsak` | OpenCode | Architecture, routing |
-| `@changful` | OpenCode | Code, backend, frontend |
+| `@engineering-changful` | OpenCode | Code, backend, frontend |
 | `@cfo-meetoo` | OpenCode | Finance, budget |
 | `@cmo-mark` | OpenCode | Marketing, content, brand |
 | `@product-produck` | OpenCode | Product, feature, roadmap |
@@ -691,10 +691,10 @@ Active Hermes Jobs:
 Human Request
     │
     ▼
-CEO เทอโบ ← 100% Authority
+CEO หนุมาน ← 100% Authority
     │ Complexity 0/1/2-3
     ▼
-Orchestrator พี่วุฒิ
+Orchestrator น้าเน็ค
     │ Pipeline plan
     ▼
 Central Bus ←→ 18 Departments
@@ -708,7 +708,7 @@ Output (Code · Content · Docs · Reports)
     ▼
 Growth Loop (Marketing → Sales → Support → Feedback)
     │
-    └──────────────────────────► CEO เทอโบ
+    └──────────────────────────► CEO หนุมาน
 ```
 
 > **SoloCorp OS — System First, Everything Follows**

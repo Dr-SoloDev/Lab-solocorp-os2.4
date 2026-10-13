@@ -8,14 +8,14 @@ An **organizational OS for AI agents**, not a normal codebase. The "product" is 
 @rules/INDEX.md   ← 30-sec behavior map (6 files: receive, work, session, safety, env, certification)
 ```
 
-Default agent is `ceo-turbo` (strategy + routing + final call). Owner (Dr.solodev) decides L5 only.
+Default agent is `ceo-turbo` (strategy + routing + final call). Owner (HUMAN) decides L5 only.
 
 ## Hierarchy + escalation (do-not-break)
 
 ```
 Owner — L5: vision / org / core product ONLY
-└── CEO (เทอโบ) — L4: strategy, cross-dept, roadmap
-    └── COO (กิจ) — L3 gatekeeper: daily ops, L1–L3
+└── CEO (หนุมาน) — L4: strategy, cross-dept, roadmap
+    └── COO (ด็อกกี้) — L3 gatekeeper: daily ops, L1–L3
         └── Department Heads — L2 · Loop Runner — L1 (auto)
 ```
 

@@ -3,7 +3,7 @@
 > **Version:** 1.0  
 > **Status:** ✅ Approved by Owner  
 > **Palette:** Navy Enterprise  
-> **Owner:** Design (ครีเอท) + CMO (มาร์ค)  
+> **Owner:** Design (ไต๋) + CMO (แซ็ก)  
 > **Date:** 2026-07-07
 
 ---
@@ -83,12 +83,12 @@
 
 | Touchpoint | Status | Owner |
 |:-----------|:-------|:------|
-| GitHub README | ❌ ยังไม่ apply | Content Creator (เสก) |
-| GitHub Org Profile | ❌ ยังไม่ apply | Content Creator (เสก) |
-| Docs Site | ❌ ยังไม่เริ่ม | Product (โปรดัค) |
-| Social Templates | ❌ ยังไม่เริ่ม | Content Creator (เสก) |
-| Presentation Deck | ❌ ยังไม่เริ่ม | CMO (มาร์ค) |
-| Pipeline UI | ❌ ยังไม่เริ่ม | Engineering (ช่างฟูล) |
+| GitHub README | ❌ ยังไม่ apply | Content Creator (พี่เต) |
+| GitHub Org Profile | ❌ ยังไม่ apply | Content Creator (พี่เต) |
+| Docs Site | ❌ ยังไม่เริ่ม | Product (โคดัก) |
+| Social Templates | ❌ ยังไม่เริ่ม | Content Creator (พี่เต) |
+| Presentation Deck | ❌ ยังไม่เริ่ม | CMO (แซ็ก) |
+| Pipeline UI | ❌ ยังไม่เริ่ม | Engineering (เฮียเป้อ) |
 
 ---
 

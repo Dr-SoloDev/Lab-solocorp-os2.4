@@ -220,5 +220,5 @@ git commit -m "Try to commit .env"
 ---
 
 **Last Updated:** 2026-07-27
-**Owner:** CEO (เทอโบ) + CyberSec Team
+**Owner:** CEO (หนุมาน) + CyberSec Team
 **Status:** ✅ Active Protection

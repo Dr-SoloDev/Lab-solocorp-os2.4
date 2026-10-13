@@ -1,6 +1,6 @@
 # WP5: Data Collector Tools — Recommendation Report
 
-**Owner:** @content-creator-sek (เสก)
+**Owner:** @content-creator-sek (พี่เต)
 **Source:** teammate-skill research repo
 **Date:** 2026-07-12
 **Plan ref:** `bus/plans/persona-engineering-upgrade-v1.md`
@@ -26,7 +26,7 @@
 
 **Would SoloCorp benefit?** Yes — strongly. This tool pulls PRs, reviews, and commits from GitHub. SoloCorp's Engineering (dept 07), QA (dept 10), and Architect (dept 05) all need visibility into code activity. Currently there's no automated pipeline to feed GitHub events into the Central Bus.
 
-**Department:** Engineering (ช่างฟูล), QA (QA-ทีม), Architect (พี่ทรงศักดิ์)
+**Department:** Engineering (เฮียเป้อ), QA (QA-ทีม), Architect (พี่ไก่)
 
 **Changes needed:**
 - Wrap as a Loop Runner loop (`loops/github_collector.py`) that fires every 15-30 min
@@ -42,7 +42,7 @@
 
 **Would SoloCorp benefit?** Yes. This parses JIRA/Linear exports. SoloCorp uses pipeline-based task tracking — importing JIRA/Linear tickets directly into Central Bus project state would unify task tracking across systems.
 
-**Department:** Orchestrator (พี่วุฒิ), Product (โปรดัค), Engineering (ช่างฟูล)
+**Department:** Orchestrator (น้าเน็ค), Product (โคดัก), Engineering (เฮียเป้อ)
 
 **Changes needed:**
 - Convert export records into Central Bus message format (`models.py` schema)
@@ -58,7 +58,7 @@
 
 **Would SoloCorp benefit?** Moderately. Auto-pulling messages from Slack API would help Psychology (dept 18) analyze team communication patterns and Support (dept 12) monitor customer threads. Not critical for MVP but valuable for org analytics.
 
-**Department:** Psychology (จิต), Support (ซัพพอร์ต)
+**Department:** Psychology (เต๋า), Support Disabled (CEO รับแทน)
 
 **Changes needed:**
 - Integrate with Central Bus as a loop with configurable channel list
@@ -74,7 +74,7 @@
 
 **Would SoloCorp benefit?** Moderately. Parses Slack export JSON (complement to slack_collector). Useful for batch-importing historical conversations during onboarding or audit.
 
-**Department:** Psychology (จิต), Legal (ตุลย์) for compliance audits
+**Department:** Psychology (เต๋า), Legal Disabled (CEO รับแทน) for compliance audits
 
 **Changes needed:**
 - Add a CLI entry point or `/import-slack-export` pipeline command
@@ -89,7 +89,7 @@
 
 **Would SoloCorp benefit?** Yes for Support workflows. Parses Gmail .mbox/.eml files. Support (dept 12) could use this to ingest customer email threads into Central Bus for triage and response tracking. Legal (dept 13) could use it for compliance review.
 
-**Department:** Support (ซัพพอร์ต), Legal (ตุลย์)
+**Department:** Support Disabled (CEO รับแทน), Legal Disabled (CEO รับแทน)
 
 **Changes needed:**
 - Route parsed emails through Legal vault PII scanner (WP6) before storage
@@ -105,7 +105,7 @@
 
 **Would SoloCorp benefit?** Yes. SoloCorp's Content Creator (dept 15) and Product (dept 06) likely use Notion for documentation and specs. Parsing Notion exports would bring external docs into the Central Bus knowledge graph.
 
-**Department:** Content Creator (เสก), Product (โปรดัค), Design (ครีเอท)
+**Department:** Content Creator (พี่เต), Product (โคดัก), Design (ไต๋)
 
 **Changes needed:**
 - Parse Markdown output into Central Bus fact format (`facts.py`)
@@ -120,7 +120,7 @@
 
 **Would SoloCorp benefit?** Yes. Similar value to Notion parser but for Confluence — relevant if Engineering or Product teams use Atlassian tools. Many enterprise workflows export architecture docs and PRDs from Confluence.
 
-**Department:** Engineering (ช่างฟูล), Product (โปรดัค), Architect (พี่ทรงศักดิ์)
+**Department:** Engineering (เฮียเป้อ), Product (โคดัก), Architect (พี่ไก่)
 
 **Changes needed:**
 - Same pattern as notion_parser: parse → convert → write to Central Bus
@@ -135,7 +135,7 @@
 
 **Would SoloCorp benefit?** Low priority. Parses Teams/Outlook exports. SoloCorp currently doesn't use Microsoft Teams as a primary channel. If the user base expands to enterprise clients using Teams, this becomes relevant.
 
-**Department:** Support (ซัพพอร์ต)
+**Department:** Support Disabled (CEO รับแทน)
 
 **Changes needed:**
 - Similar email-parser pattern with PII filtering

@@ -97,7 +97,7 @@ python -m legal_vault.mcp_server.server
 ## License
 
 โปรดดู `legal_vault/templates/` สำหรับเอกสารกฎหมายที่เกี่ยวข้อง
-SoloCorp OS architecture and design © Dr.solodev
+SoloCorp OS architecture and design © HUMAN
 
 ---
 

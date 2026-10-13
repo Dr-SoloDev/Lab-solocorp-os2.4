@@ -1,7 +1,7 @@
 # SoloCorp OS — Content Launch Plan
 
-**By:** เสก (Content Creator Head)
-**Authorized by:** CEO เทอโบ
+**By:** พี่เต (Content Creator Head)
+**Authorized by:** CEO หนุมาน
 **Date:** 2026-07-06
 
 ---
@@ -61,7 +61,7 @@ Three viral nerves: **Curiosity** ("How?") · **Aspiration** ("I want that.") ·
 | Thu Jul 9 | TikTok + LinkedIn | CFO spotlight + Sprint walkthrough carousel |
 | Fri Jul 10 | Instagram + Reddit | Pipeline reel + Model routing post |
 | Sat Jul 11 | TikTok | Day 1 build-in-public log |
-| Sun Jul 12 | Instagram | Quote card — meetoo (CFO) |
+| Sun Jul 12 | Instagram | Quote card — ไตร (CFO) |
 
 ## Week 2 Calendar
 
@@ -71,7 +71,7 @@ Three viral nerves: **Curiosity** ("How?") · **Aspiration** ("I want that.") ·
 | Tue Jul 14 | TikTok + YouTube | ตุลย์ Legal spotlight + 30-day story video |
 | Wed Jul 15 | Instagram | Carousel: "How a pipeline decision gets made" |
 | Thu Jul 16 | TikTok + Reddit | Build-in-public log + r/MachineLearning crosspost |
-| Fri Jul 17 | Instagram | Quote card — อัยวา (Web3) |
+| Fri Jul 17 | Instagram | Quote card — เชน (Web3) |
 | Sat Jul 18 | TikTok | "My AI CFO and Legal head argued. Here's who won." |
 | Sun Jul 19 | LinkedIn | Week 1 reflection — numbers + lessons |
 
@@ -89,6 +89,6 @@ Three viral nerves: **Curiosity** ("How?") · **Aspiration** ("I want that.") ·
 
 | Dependency | Owner | Deadline |
 |:-----------|:------|:---------|
-| Repo public + polished | ช่างฟูล (Engineering) | Before Mon Jul 6 |
-| Visual system ready | ครีเอท (Design) | Before first Instagram post |
-| README finalized | พี่วุฒิ (Orchestrator) | Done ✓ |
+| Repo public + polished | เฮียเป้อ (Engineering) | Before Mon Jul 6 |
+| Visual system ready | ไต๋ (Design) | Before first Instagram post |
+| README finalized | น้าเน็ค (Orchestrator) | Done ✓ |

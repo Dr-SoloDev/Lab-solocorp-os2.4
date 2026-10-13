@@ -161,7 +161,7 @@ Counted on the `main` tree. If a future commit changes a count, change this tabl
 | OpenCode agent files | 21 | `.opencode/agents/*.md` |
 | Primary agents registered in `opencode.json` | 4 | `ceo-turbo`, `build`, `plan`, `explore` |
 
-Copies under `.claude/skills` and `.grok/skills` are platform packs, not a second copy of the canonical catalog: `.grok/skills/` holds 7 command skills (`audit`, `brain`, `deploy`, `handoff`, `pipeline`, `route`, `status`), and `.claude/skills/solocorp/` carries its own set (with extras like `agent-toolkit` and `ui-animation-review`, without `cross-dept/dept-workspace`). COO, R&D Lab, Network (นีต), Cyber Security (ซาย), and Psychology (จิต) do not yet have a file in `.opencode/agents/`.
+Copies under `.claude/skills` and `.grok/skills` are platform packs, not a second copy of the canonical catalog: `.grok/skills/` holds 7 command skills (`audit`, `brain`, `deploy`, `handoff`, `pipeline`, `route`, `status`), and `.claude/skills/solocorp/` carries its own set (with extras like `agent-toolkit` and `ui-animation-review`, without `cross-dept/dept-workspace`). COO does not yet have a file in `.opencode/agents/`.
 
 ---
 
@@ -186,25 +186,25 @@ Copies under `.claude/skills` and `.grok/skills` are platform packs, not a secon
 
 ```mermaid
 graph TD
-    Human["Human<br/>(Dr.solodev — Owner / Vision)"]
-    CEO["CEO<br/>เทอโบ ไชยศรีรัมย์<br/>Supreme AI Authority"]
-    CFO["CFO<br/>meetoo<br/>Finance / Budget"]
-    CMO["CMO<br/>มาร์ค<br/>Marketing / Brand"]
-    Orch["Orchestrator<br/>พี่วุฒิ<br/>Pipeline Coordination"]
-    Arch["Architect<br/>พี่ทรงศักดิ์<br/>Central Bus / Routing"]
-    Prod["Product<br/>โปรดัค<br/>Roadmap / PRD"]
-    Eng["Engineering<br/>ช่างฟูล<br/>Backend / Frontend"]
-    Des["Design<br/>ครีเอท<br/>UX / Brand Visual"]
+    Human["Human<br/>(HUMAN — Owner / Vision)"]
+    CEO["CEO<br/>หนุมาน<br/>Supreme AI Authority"]
+    CFO["CFO<br/>ไตร<br/>Finance / Budget"]
+    CMO["CMO<br/>แซ็ก<br/>Marketing / Brand"]
+    Orch["Orchestrator<br/>น้าเน็ค<br/>Pipeline Coordination"]
+    Arch["Architect<br/>พี่ไก่<br/>Central Bus / Routing"]
+    Prod["Product<br/>โคดัก<br/>Roadmap / PRD"]
+    Eng["Engineering<br/>เฮียเป้อ<br/>Backend / Frontend"]
+    Des["Design<br/>ไต๋<br/>UX / Brand Visual"]
     UI["UI Designer<br/>UI Designer<br/>Interface / Components"]
-    QA["QA<br/>QA-ทีม<br/>Testing / Quality"]
+    QA["QA<br/>ตำรวจโมส<br/>Testing / Quality"]
     Sales["Sales<br/>เซลส์<br/>B2B Pipeline"]
     Sup["Support<br/>ซัพพอร์ต<br/>Customer Success"]
     Legal["Legal<br/>ตุลย์<br/>Compliance / Contracts"]
-    Web3["Web3<br/>อัยวา<br/>Blockchain / DeFi / Solana"]
-    Content["Content Creator<br/>เสก<br/>Content / Creative / Media"]
-    NetEng["Network Engineer<br/>นีต<br/>Network / Infrastructure"]
-    CyberSec["Cyber Security<br/>ซาย<br/>Threat / Vulnerability / IR"]
-    Psych["Psychology<br/>จิต<br/>Behavior / Econ / Org"]
+    Web3["Web3<br/>เชน<br/>Blockchain / DeFi / Solana"]
+    Content["Content Creator<br/>พี่เต<br/>Content / Creative / Media"]
+    NetEng["Network Engineer<br/>ไนท์<br/>Network / Infrastructure"]
+    CyberSec["Cyber Security<br/>สมปอง<br/>Threat / Vulnerability / IR"]
+    Psych["Psychology<br/>เต๋า<br/>Behavior / Econ / Org"]
 
 
     Human --> CEO
@@ -255,9 +255,9 @@ Specialist counts are `team/*.SOUL.md` files, not including the Head.
 
 | Pack | Head | What it does | Team SOUL files |
 |:-----|:-----|:-------------|:---------------:|
-| **CFO Pack** `@cfo-meetoo` | meetoo | Budget control · Financial analysis · Audit trail · Tax strategy · FP&A | 3 |
+| **CFO Pack** `@cfo-meetoo` | ไตร | Budget control · Financial analysis · Audit trail · Tax strategy · FP&A | 3 |
 | **Legal Pack** `@legal-tulya` | ตุลย์ (Tul) | Contract review · License compliance · Risk assessment · Data governance | 3 |
-| **Content Creator Pack** `@content-creator-sek` | เสก (Sek) | Multi-platform content · Video production · Copywriting · Visual creation | 0 |
+| **Content Creator Pack** `@content-creator-sek` | พี่เต (Te) | Multi-platform content · Video production · Copywriting · Visual creation | 0 |
 
 CFO's three files are `meetoo/team/01-dana`, `02-riley`, `03-morgan`. Legal's three are under `tulya/team/`. Content Creator's directory currently has the Head only.
 
@@ -277,31 +277,31 @@ opencode "@cfo-meetoo ช่วยดูงบให้หน่อย"
 
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
-| 01 | CEO | เทอโบ (Turbo Chaisriram) | Vision, Strategy, Final Decision |
-| 02 | CFO | meetoo | Finance, Budget, Investment |
-| 03 | CMO | มาร์ค (Mark) | Marketing, Content, Brand |
+| 01 | CEO | หนุมาน (Hanuman) | Vision, Strategy, Final Decision |
+| 02 | CFO | ไตร | Finance, Budget, Investment |
+| 03 | CMO | แซ็ก (Zack) | Marketing, Content, Brand |
 
 ### System Pipeline
 
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
-| 04 | Orchestrator | พี่วุฒิ (Wut) | Cross-Department Pipeline Coordination |
-| 05 | Architect | พี่ทรงศักดิ์ (Songsak) | Central Bus, Routing, Monitoring |
+| 04 | Orchestrator | น้าเน็ค (Neck) | Cross-Department Pipeline Coordination |
+| 05 | Architect | พี่ไก่ (Kai) | Central Bus, Routing, Monitoring |
 
 ### Product & Engineering
 
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
-| 06 | Product | โปรดัค (Produck) | Feature Roadmap, PRD, Delivery |
-| 07 | Engineering | ช่างฟูล (Changful) | Backend, Frontend, Architecture |
-| 08 | Design | ครีเอท (Kreet) | UX Research, Brand Visual |
-| 09 | UI Designer | UI Designer | Interface, Component Library |
+| 06 | Product | โคดัก (Kodak) | Feature Roadmap, PRD, Delivery |
+| 07 | Engineering | เฮียเป้อ (Pao) | Backend, Frontend, Architecture |
+| 08 | Design | ไต๋ (Tai) | UX Research, Brand Visual |
+| 09 | UI Designer | อาเมน | Interface, Component Library |
 
 ### Quality, Revenue & Customer
 
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
-| 10 | QA | QA-ทีม (QA Team) | Testing, Quality, Evidence |
+| 10 | QA | ตำรวจโมส (Most) | Testing, Quality, Evidence |
 | 11 | Sales | เซลส์ (Sales) | B2B Deal Strategy, Pipeline |
 | 12 | Support | ซัพพอร์ต (Support) | Customer Success, Analytics |
 
@@ -310,11 +310,11 @@ opencode "@cfo-meetoo ช่วยดูงบให้หน่อย"
 | # | Role | Name | Responsibility |
 |:-:|:-----|:-----|:--------------|
 | 13 | Legal | ตุลย์ (Tul) | Compliance, Contracts, Law |
-| 14 | Web3 | อัยวา (Aywa) | Blockchain, DeFi, Solana |
-| 15 | Content Creator | เสก (Sek) | Content, Creative, Media |
-| 16 | Network Engineer | นีต (Neet) | Network Design, Infrastructure, CDN, VPN |
-| 17 | Cyber Security | ซาย (Sai) | Threat Detection, Vulnerability, Incident Response |
-| 18 | Psychology | จิต (Jit) | User Behavior, Behavioral Economics, Org Psychology |
+| 14 | Web3 | เชน (Chain) | Blockchain, DeFi, Solana |
+| 15 | Content Creator | พี่เต (Te) | Content, Creative, Media |
+| 16 | Network Engineer | ไนท์ (Night) | Network Design, Infrastructure, CDN, VPN |
+| 17 | Cyber Security | สมปอง (Sompong) | Threat Detection, Vulnerability, Incident Response |
+| 18 | Psychology | เต๋า (Tao) | User Behavior, Behavioral Economics, Org Psychology |
 
 **On this chart: 18 named Heads.** Profile directories in the tree: 20. Specialist headcount is not printed here until a manifest exists.
 
@@ -367,6 +367,6 @@ No percent bars. A row marked **In tree** means the files exist. It does not mea
 **SoloCorp OS — System First, Everything Follows**  
 [MIT License](LICENSE) · Copyright (c) 2026 SoloCorp Organization (Dr-SoloDev)  
 Use, modify, and sell copies. Keep this copyright notice.  
-Built by Dr.SoloDev & เทอโบ ไชยศรีรัมย์
+Built by HUMAN & หนุมาน
 
 </div>

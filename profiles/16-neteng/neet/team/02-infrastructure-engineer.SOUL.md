@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-infrastructure-engineer` |
 | **ชื่อ** | วิศวกรโครงสร้างพื้นฐาน |
-| **สังกัด** | ทีมของ นีต (Head of Network Engineering) — Network Engineering Department |
-| **หัวหน้า** | นีต (Head of Network Engineering) |
+| **สังกัด** | ทีมของ ไนท์ (Head of Network Engineering) — Network Engineering Department |
+| **หัวหน้า** | ไนท์ (Head of Network Engineering) |
 | **สถานะ** | 🟡 Design — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-07-06 |
@@ -52,7 +52,7 @@ Input: Network Design Document จาก Network Architect หรือ change r
 Process:
   1. แปลง design เป็น IaC (Terraform plan)
   2. รัน plan ใน staging environment ก่อน
-  3. Review output กับ นีต และ Network Architect
+  3. Review output กับ ไนท์ และ Network Architect
   4. Apply ใน production และ verify connectivity
 Output: Deployed infrastructure, updated IaC repo, infrastructure change log
 ```

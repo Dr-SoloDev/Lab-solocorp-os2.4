@@ -11,7 +11,7 @@ cd Lab-solocorp-os2.4
 opencode "@ceo-turbo สวัสดี"
 ```
 
-1. คุยกับ **CEO เทอโบ** ก่อนเสมอ — บอกงานภาษาคนได้เลย
+1. คุยกับ **CEO หนุมาน** ก่อนเสมอ — บอกงานภาษาคนได้เลย
 2. งานใหญ่ → CEO จะแตกงานแล้วเปิด **ห้องแยกให้แต่ละแผนก** (ดูหัวข้อ multi-chat)
 3. ไม่ต้องรู้คำสั่งเยอะ — เริ่มด้วย `/status` (ดูสุขภาพ) และ `/workspace` (เปิดห้องแผนก)
 
@@ -47,7 +47,7 @@ opencode "@ceo-turbo สวัสดี"
 แทน subagent ภายนอก — เปิดแชทใหม่ใน OpenCode Desktop ตั้งชื่อแท็บ `[แผนก]+งาน`:
 
 ```
-/workspace [แผนก] [งาน]     เช่น /workspace ช่างฟูล แก้บั๊กตาชั่ง
+/workspace [แผนก] [งาน]     เช่น /workspace เฮียเป้อ แก้บั๊กตาชั่ง
 ```
 
 skill `skills/@solocorp/cross-dept/dept-workspace/SKILL.md` จะประกอบ

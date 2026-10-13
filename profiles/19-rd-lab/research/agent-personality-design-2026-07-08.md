@@ -116,5 +116,5 @@
 
 ---
 
-*R&D Lab — แล็บของ Dr.solodev*  
+*R&D Lab — แล็บของ HUMAN*  
 *Research Report v1.0 — AI Research Scientist + Knowledge Curator*

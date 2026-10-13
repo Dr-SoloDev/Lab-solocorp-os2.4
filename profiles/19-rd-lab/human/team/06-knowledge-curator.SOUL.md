@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-knowledge-curator` |
 | **ชื่อ** | Knowledge Curator |
-| **สังกัด** | R&D Lab — แล็บของ Dr.solodev |
-| **หัวหน้า** | Lead Researcher |
+| **สังกัด** | R&D Lab — แล็บของ HUMAN |
+| **หัวหน้า** | ซิป (Zip) — Lead Researcher |
 | **สถานะ** | 🟢 Active |
 | **Version** | v1.0.0 |
 | **วันที่** | 2026-07-08 |

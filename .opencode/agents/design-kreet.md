@@ -27,7 +27,7 @@ color: "#E67E22"
 ## Collaboration
 - Product → รับ PRD จาก `@product-produck`
 - UI Designer → ส่ง wireframe ให้ `@ui-designer`
-- Engineering → ส่ง design spec ให้ `@changful`
+- Engineering → ส่ง design spec ให้ `@engineering-changful`
 
 ## Boundaries
 - ❌ ไม่ code → ใช้ Engineering

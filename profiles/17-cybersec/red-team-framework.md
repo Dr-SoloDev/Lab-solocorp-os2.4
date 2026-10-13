@@ -1,7 +1,7 @@
 # 🔴 SoloCorp Red Team Framework
 
 > Test our defenses before attackers do  
-> ภายใต้การดูแลของ **ซาย (Sai)** — Head of Cyber Security
+> ภายใต้การดูแลของ **สมปอง (Sompong)** — Head of Cyber Security
 
 ---
 
@@ -44,7 +44,7 @@
 | ระดับ | ใคร | อนุมัติอะไร |
 |:------|:----|:------------|
 | **🟢 Campaign ปกติ** | `@red-team-operator` ตัดสินใจเองได้ | Quarterly, Point-Release, Purple Team — ตาม schedule |
-| **🟡 Campaign พิเศษ** | `@cybersec-sai` (ซาย) | นอก schedule, ขยาย scope, ใช้เทคนิคใหม่ |
+| **🟡 Campaign พิเศษ** | `@cybersec-sai` (สมปอง) | นอก schedule, ขยาย scope, ใช้เทคนิคใหม่ |
 | **🔴 Campaign กระทบ production** | `@ceo-turbo` + `@cybersec-sai` | ทดสอบ production จริง, ทดสอบ client-facing system |
 | **🛑 เปลี่ยน Rules of Engagement** | `@ceo-turbo` | แก้ไขขอบเขตว่าอะไรทำได้/ไม่ได้ |
 

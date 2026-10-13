@@ -46,7 +46,7 @@ jj git init
 jj bookmark track main --remote=origin
 
 # 3. ตั้งชื่อ + email (ครั้งเดียว — global config)
-jj config set --user user.name "Dr.solodev"
+jj config set --user user.name "HUMAN"
 jj config set --user user.email "drsolodev@gmail.com"
 
 # 4. เริ่มทำงาน

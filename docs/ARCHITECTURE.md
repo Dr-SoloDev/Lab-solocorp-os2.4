@@ -177,27 +177,27 @@ It flows autonomously through the Central Bus — Heads never pass files.
 ## Hierarchy & Chain of Command
 
 ```
-  Dr.solodev (Human / Owner)
-    └── CEO (เทอโบ — Supreme AI Authority / Vision)
-         ├── CFO (meetoo — Finance / Budget)
-         ├── CMO (มาร์ค — Marketing / Content / Brand)
-         └── Orchestrator (พี่วุฒิ — System Pipeline Coordination)
+  HUMAN (Human / Owner)
+    └── CEO (หนุมาน — Supreme AI Authority / Vision)
+         ├── CFO (ไตร — Finance / Budget)
+         ├── CMO (แซ็ก — Marketing / Content / Brand)
+         └── Orchestrator (น้าเน็ค — System Pipeline Coordination)
                └── Department Heads (05-19)
-                     ├── 05-Architect (พี่ทรงศักดิ์)
-                    ├── 06-Product (โปรดัค)
-                    ├── 07-Engineering (ช่างฟูล)
-                    ├── 08-Design (ครีเอท)
+                     ├── 05-Architect (พี่ไก่)
+                    ├── 06-Product (โคดัก)
+                    ├── 07-Engineering (เฮียเป้อ)
+                    ├── 08-Design (ไต๋)
                     ├── 09-UI Designer
-                    ├── 10-QA (QA-ทีม)
+                    ├── 10-QA (ตำรวจโมส)
                     ├── 11-Sales (เซลส์)
                     ├── 12-Support (ซัพพอร์ต)
                     ├── 13-Legal (ตุลย์)
-                    ├── 14-Web3 (อัยวา)
-                    ├── 15-Content Creator (เสก)
-                    ├── 16-Network Engineer (นีต)
-                     ├── 17-Cyber Security (ซาย)
-                     ├── 18-Psychology (จิต)
-                     └── 19-R&D Lab (Lead Researcher)
+                    ├── 14-Web3 (เชน)
+                    ├── 15-Content Creator (พี่เต)
+                    ├── 16-Network Engineer (ไนท์)
+                     ├── 17-Cyber Security (สมปอง)
+                     ├── 18-Psychology (เต๋า)
+                     └── 19-R&D Lab (ซิป)
 ```
 
 **Communication Flow Rules:**
@@ -220,30 +220,30 @@ It flows autonomously through the Central Bus — Heads never pass files.
 
 | # | Profile | Head | Responsibility | Status |
 |:-:|:--------|:-----|:--------------|:------:|
-| 01 | CEO | เทอโบ (Turbo Chaisriram) | Vision, Strategy, Final Decision | Active |
-| 02 | CFO | meetoo | Finance, Budget, Investment | Active |
-| 03 | CMO | มาร์ค | Marketing, Content, Brand | Active |
-| 04 | Orchestrator | พี่วุฒิ (Wut) | System Pipeline Coordination | Active |
+| 01 | CEO | หนุมาน (Hanuman) | Vision, Strategy, Final Decision | Active |
+| 02 | CFO | ไตร | Finance, Budget, Investment | Active |
+| 03 | CMO | แซ็ก | Marketing, Content, Brand | Active |
+| 04 | Orchestrator | น้าเน็ค (Neck) | System Pipeline Coordination | Active |
 
 ### Department Heads (05-19)
 
 | # | Profile | Head | Responsibility | Status |
 |:-:|:--------|:-----|:--------------|:------:|
-| 05 | Architect | พี่ทรงศักดิ์ | Central Bus, Routing, Monitoring | Active |
-| 06 | Product | โปรดัค | Feature Roadmap, PRD, Delivery | Active |
-| 07 | Engineering | ช่างฟูล | Backend, Frontend, Architecture | Active |
-| 08 | Design | ครีเอท | UX Research, Brand Visual | Active |
-| 09 | UI Designer | UI Designer | Interface, Component Library | Active |
-| 10 | QA | QA-ทีม | Testing, Quality, Evidence | Active |
+| 05 | Architect | พี่ไก่ | Central Bus, Routing, Monitoring | Active |
+| 06 | Product | โคดัก | Feature Roadmap, PRD, Delivery | Active |
+| 07 | Engineering | เฮียเป้อ | Backend, Frontend, Architecture | Active |
+| 08 | Design | ไต๋ | UX Research, Brand Visual | Active |
+| 09 | UI Designer | อาเมน | Interface, Component Library | Active |
+| 10 | QA | ตำรวจโมส | Testing, Quality, Evidence | Active |
 | 11 | Sales | เซลส์ | B2B Deal Strategy, Pipeline | Active |
 | 12 | Support | ซัพพอร์ต | Customer Success, Analytics | Active |
 | 13 | Legal | ตุลย์ | Compliance, Contracts, Law | Active |
-| 14 | Web3 | อัยวา | Blockchain, DeFi, Solana | Active |
-| 15 | Content Creator | เสก | Content, Creative, Media | Active |
-| 16 | Network Engineer | นีต | Network, Infrastructure, VPN, CDN, DNS | Active |
-| 17 | Cyber Security | ซาย | Threat Detection, Incident Response | Active |
-| 18 | Psychology | จิต | User Behavior, Cognitive Bias, Org Health | Active |
-| 19 | R&D Lab | Lead Researcher | Curiosity-driven research, experimental prototypes | Active |
+| 14 | Web3 | เชน | Blockchain, DeFi, Solana | Active |
+| 15 | Content Creator | พี่เต | Content, Creative, Media | Active |
+| 16 | Network Engineer | ไนท์ | Network, Infrastructure, VPN, CDN, DNS | Active |
+| 17 | Cyber Security | สมปอง | Threat Detection, Incident Response | Active |
+| 18 | Psychology | เต๋า | User Behavior, Cognitive Bias, Org Health | Active |
+| 19 | R&D Lab | ซิป (Zip) | Curiosity-driven research, experimental prototypes | Active |
 
 ### Base Profile
 
@@ -255,7 +255,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 
 ## Specialist Sub-Agents
 
-### 02 — CFO Department (Team of meetoo)
+### 02 — CFO Department (Team of ไตร)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -263,7 +263,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 02 | Riley | FP&A Analyst — budget, rolling forecast, variance analysis | Active |
 | 03 | Morgan | Financial Analyst — financial models, scenario analysis, cash-flow insight | Active |
 
-### 03 — CMO Department (Team of มาร์ค)
+### 03 — CMO Department (Team of แซ็ก)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -271,7 +271,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 02 | Social Media Strategist | LinkedIn/Twitter brand authority, community, B2B pipeline | Active |
 | 03 | Content Creator | Multi-channel content, SEO, video scripts, editorial | Active |
 
-### 04 — Orchestrator Department (Team of พี่วุฒิ)
+### 04 — Orchestrator Department (Team of น้าเน็ค)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -279,7 +279,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 02 | Studio Producer | Creative portfolio management, executive relationships | Active |
 | 03 | Studio Operations | Daily operations, SOP design, vendor management, efficiency | Active |
 
-### 05 — Architect Department (Team of พี่ทรงศักดิ์)
+### 05 — Architect Department (Team of พี่ไก่)
 
 | # | Agent | Role | Protocol/Pattern | Status |
 |:-:|:------|:-----|:-----------------|:------:|
@@ -289,7 +289,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 04 | Exception Triage Agent | Auto-classification, RCA, auto-resolve (80%) | AXME + MagiC + chief-of-staff + workflow-optimizer | Active |
 | 05 | Cron Pipeline Agent | Scheduled execution, durable retry queue | Temporal + n8n | Active |
 
-### 06 — Product Department (Team of โปรดัค)
+### 06 — Product Department (Team of โคดัก)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -297,7 +297,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 02 | Product Feedback Synthesizer | Multi-channel feedback analysis, RICE/MoSCoW/Kano prioritization | Active |
 | 03 | Product Sprint Prioritizer | Agile sprint planning, dependency/risk management, velocity | Active |
 
-### 07 — Engineering Department (Team of ช่างฟูล)
+### 07 — Engineering Department (Team of เฮียเป้อ)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -305,7 +305,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 02 | นักพัฒนาอาวุโส | Full-stack senior dev — Laravel, Livewire, FluxUI, Three.js | Active |
 | 03 | สถาปนิกซอฟต์แวร์ | Domain-driven design, microservices, event-driven, ADRs | Active |
 
-### 08 — Design Department (Team of ครีเอท)
+### 08 — Design Department (Team of ไต๋)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -321,7 +321,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 02 | UX Architect | CSS design system + layout framework, component hierarchy, light/dark theme | Active |
 | 03 | UX Researcher | Quantitative/qualitative UX research, usability testing, design recommendations | Active |
 
-### 10 — QA Department (Team of QA-ทีม)
+### 10 — QA Department (Team of ตำรวจโมส)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -353,7 +353,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 02 | Legal Document Review | Contract review, agreement analysis, severity-based risk assessment | Active |
 | 03 | Legal Client Intake | Screening, case data collection, conflict of interest check | Active |
 
-### 14 — Web3 Department (Team of อัยวา)
+### 14 — Web3 Department (Team of เชน)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -362,14 +362,14 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 03 | DeFi Protocol Analyst | DeFi market analysis, tokenomics design, on-chain analytics, risk | Active |
 | 04 | Solana Developer | Anchor programs (Rust), Web3.js/Solana.js, devnet/mainnet deploy | Active |
 
-### 15 — Content Creator Department (Team of เสก)
+### 15 — Content Creator Department (Team of พี่เต)
 
 | # | Agent | Reference | Status |
 |:-:|:------|:---------|:------:|
 | 01 | Content Specialist | Referenced from agency-agents library | Active |
 | 02-10 | Social, Twitter, TikTok, Video, Growth, Trend, Design + others | Referenced from agency-agents library | Active |
 
-### 16 — Network Engineering Department (Team of นีต)
+### 16 — Network Engineering Department (Team of ไนท์)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -378,7 +378,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 03 | Network Ops | 24/7 monitoring, incident response, SLA tracking, bandwidth optimization | Design |
 | 04 | MCP Builder | MCP server design & implementation — expose SoloCorp OS to external coding agents | Design |
 
-### 17 — Cyber Security Department (Team of ซาย)
+### 17 — Cyber Security Department (Team of สมปอง)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -387,7 +387,7 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 03 | Incident Responder | Full IR lifecycle, containment, forensics, RCA, playbooks | Design |
 | 04 | Red Team Operator | Offensive security — MCP auth bypass, Central Bus abuse, SOUL.md integrity, HackAgent campaigns | Design |
 
-### 18 — Psychology Department (Team of จิต)
+### 18 — Psychology Department (Team of เต๋า)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
@@ -395,11 +395,11 @@ It flows autonomously through the Central Bus — Heads never pass files.
 | 02 | Behavioral Economist | Nudge theory, prospect theory, pricing psychology, choice architecture | Design |
 | 03 | Organizational Psychologist | AI agent team health, communication patterns, conflict resolution, motivation systems | Design |
 
-### 19 — R&D Lab (Team of Lead Researcher)
+### 19 — R&D Lab (Team of ซิป)
 
 | # | Agent | Role | Status |
 |:-:|:------|:-----|:------:|
-| 01 | Lead Researcher | รับไอเดีย → จัดทีม → ลงมือ — ปกป้องทีมจากระบบ | Active |
+| 01 | ซิป (Zip) — Lead Researcher | รับไอเดีย → จัดทีม → ลงมือ — ปกป้องทีมจากระบบ | Active |
 | 02 | AI Research Scientist | ติดตาม frontier AI — ทดลอง tech ใหม่ๆ ก่อนใคร | Active |
 | 03 | Prototyper / Builder | เปลี่ยน idea → prototype เร็วที่สุดเท่าที่จะทำได้ | Active |
 | 04 | Experiment Designer | ออกแบบ methodology, metrics, evaluation | Active |

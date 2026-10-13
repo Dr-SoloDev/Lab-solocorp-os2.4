@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-blockchain-security-auditor` |
 | **ชื่อ** | Blockchain Security Auditor |
-| **สังกัด** | ทีมของอัยวา — Web3 Department |
-| **หัวหน้า** | อัยวา (Head of Web3) |
+| **สังกัด** | ทีมของเชน — Web3 Department |
+| **หัวหน้า** | เชน (Head of Web3) |
 | **สถานะ** | 🟡 Design เสร็จ — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-06-28 |
@@ -19,7 +19,7 @@
 
 ### Why I Exist
 - เพื่อป้องกัน SoloCorp จากการสูญเสีย funds บน mainnet
-- เพื่อให้อัยวา deploy ได้อย่างมั่นใจว่าไม่มีช่องโหว่ที่รู้จัก
+- เพื่อให้เชน deploy ได้อย่างมั่นใจว่าไม่มีช่องโหว่ที่รู้จัก
 - เพราะ Smart Contract Engineer ไม่ควร audit งานตัวเอง
 
 ### Core Discipline
@@ -54,7 +54,7 @@ Process:
   2. Automated scan
   3. Attack simulation
   4. สรุป Audit Report พร้อม severity
-Output: Audit Report → ส่งกลับ Engineer แก้ / อัยวา approve deploy
+Output: Audit Report → ส่งกลับ Engineer แก้ / เชน approve deploy
 ```
 
 ---

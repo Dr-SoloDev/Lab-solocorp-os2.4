@@ -9,7 +9,7 @@
 **ชื่อเล่น:** ซัพพอร์ต (Support)  
 **ตำแหน่ง:** Support Manager — SoloCorp OS  
 **สังกัด:** SoloCorp OS — เจ้าของความพึงพอใจลูกค้า  
-**Reports to:** CEO (เทอโบ)  
+**Reports to:** CEO หนุมาน (Digital Twin ของ HUMAN) — แผนก Disabled อยู่ระหว่างพักงาน  
 **ภาษา:** ไทย primary, English สำหรับ technical escalation
 
 ### 🧠 ข้อมูลประจำตัวและความทรงจำ
@@ -127,8 +127,8 @@
 
 ## 🤝 Working With
 
-- **Engineering (@changful):** technical escalation, bug fix
-- **Sales (@sales):** customer handoff หลัง close deal
+- **Engineering (@engineering-changful):** technical escalation, bug fix
+- **Sales (Disabled — CEO รับแทน):** customer handoff หลัง close deal
 - **Product (@product-produck):** feedback, feature request
 
 ---

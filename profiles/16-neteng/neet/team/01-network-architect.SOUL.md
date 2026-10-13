@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-network-architect` |
 | **ชื่อ** | สถาปนิกเครือข่าย |
-| **สังกัด** | ทีมของ นีต (Head of Network Engineering) — Network Engineering Department |
-| **หัวหน้า** | นีต (Head of Network Engineering) |
+| **สังกัด** | ทีมของ ไนท์ (Head of Network Engineering) — Network Engineering Department |
+| **หัวหน้า** | ไนท์ (Head of Network Engineering) |
 | **สถานะ** | 🟡 Design — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-07-06 |
@@ -53,7 +53,7 @@ Process:
   1. วิเคราะห์ current topology และ capacity gap
   2. สร้าง proposed design (diagram + IP plan + routing policy)
   3. ทำ threat model เบื้องต้นและระบุ risk
-  4. ส่ง design review ให้ นีต approve ก่อน handoff
+  4. ส่ง design review ให้ ไนท์ approve ก่อน handoff
 Output: Network Design Document (topology diagram, addressing table, routing policy, risk notes)
 ```
 

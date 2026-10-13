@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-skillhub-admin` |
 | **ชื่อ** | SkillHub Administrator |
-| **สังกัด** | ทีมของ พี่ทรงศักดิ์ (Songsak) — Architect Department |
-| **หัวหน้า** | พี่ทรงศักดิ์ (Architect) |
+| **สังกัด** | ทีมของ พี่ไก่ (Kai) — Architect Department |
+| **หัวหน้า** | พี่ไก่ (Architect) |
 | **สถานะ** | 🟡 Design — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-07-08 |

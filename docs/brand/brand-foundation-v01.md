@@ -1,7 +1,7 @@
 # SoloCorp OS — Brand Foundation Document v0.1
 
 > **Status:** Draft — ยังไม่ approve  
-> **Owner:** CEO (เทอโบ) + CMO (มาร์ค)  
+> **Owner:** CEO (หนุมาน) + CMO (แซ็ก)  
 > **Version:** 0.1  
 > **Date:** 2026-07-07  
 > **Next Review:** [รอ CEO กำหนด]
@@ -274,16 +274,16 @@ SoloCorp OS จะเป็น:
 
 | Asset | Status | Owner |
 |:------|:-------|:------|
-| Brand Foundation Doc | ✅ v0.1 Draft | CMO (มาร์ค) |
-| Logo | ❌ ยังไม่เริ่ม | Design (ครีเอท) |
-| Color Palette | 🔷 เสนอแล้ว รอ approve | Design (ครีเอท) |
-| Typography | 🔷 เสนอแล้ว รอ approve | Design (ครีเอท) |
-| Guidelines PDF | ❌ ยังไม่เริ่ม | Design (ครีเอท) |
-| GitHub Social Preview | ❌ ยังไม่เริ่ม | Content Creator (เสก) |
-| Website / Docs Site | ❌ ยังไม่เริ่ม | Product (โปรดัค) |
-| Social Templates | ❌ ยังไม่เริ่ม | Content Creator (เสก) |
+| Brand Foundation Doc | ✅ v0.1 Draft | CMO (แซ็ก) |
+| Logo | ❌ ยังไม่เริ่ม | Design (ไต๋) |
+| Color Palette | 🔷 เสนอแล้ว รอ approve | Design (ไต๋) |
+| Typography | 🔷 เสนอแล้ว รอ approve | Design (ไต๋) |
+| Guidelines PDF | ❌ ยังไม่เริ่ม | Design (ไต๋) |
+| GitHub Social Preview | ❌ ยังไม่เริ่ม | Content Creator (พี่เต) |
+| Website / Docs Site | ❌ ยังไม่เริ่ม | Product (โคดัก) |
+| Social Templates | ❌ ยังไม่เริ่ม | Content Creator (พี่เต) |
 
 ---
 
-**Brand Foundation v0.1** — Draft by CMO (มาร์ค) || Reviewed by CEO (เทอโบ)  
+**Brand Foundation v0.1** — Draft by CMO (แซ็ก) || Reviewed by CEO (หนุมาน)  
 **รอ CEO + Owner อนุมัติก่อนประกาศใช้**

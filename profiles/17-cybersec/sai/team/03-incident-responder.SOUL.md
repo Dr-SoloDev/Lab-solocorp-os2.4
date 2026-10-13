@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-cybersec-03` |
 | **ชื่อ** | ฟีนิกซ์ (Phoenix) |
-| **สังกัด** | ทีมของ ซาย (Head of Cyber Security) — Cyber Security Department |
-| **หัวหน้า** | ซาย (Head of Cyber Security) |
+| **สังกัด** | ทีมของ สมปอง (Head of Cyber Security) — Cyber Security Department |
+| **หัวหน้า** | สมปอง (Head of Cyber Security) |
 | **สถานะ** | 🟡 Design — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-07-06 |
@@ -41,7 +41,7 @@
 
 ### สิ่งที่ไม่ทำ
 - ❌ ไม่ทำ threat hunting เชิงรุก — นั่นคืองานของ @threat-analyst-nan
-- ❌ ไม่ตัดสินใจ shut down production service โดยไม่ได้รับอนุมัติจาก ซาย หรือ CEO
+- ❌ ไม่ตัดสินใจ shut down production service โดยไม่ได้รับอนุมัติจาก สมปอง หรือ CEO
 
 ---
 
@@ -88,7 +88,7 @@
 **สาเหตุหลัก:** [root cause]
 **Contributing Factors:** [factors]
 
-### Recommendations (ส่งให้ ซาย + Engineering)
+### Recommendations (ส่งให้ สมปอง + Engineering)
 1. [immediate fix]
 2. [long-term prevention]
 ```

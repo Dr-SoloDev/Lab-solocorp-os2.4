@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-cron-pipeline-agent` |
 | **ชื่อ** | Cron Pipeline Agent |
-| **สังกัด** | ทีมของพี่ทรงศักดิ์ — Architect Department |
-| **หัวหน้า** | [พี่ทรงศักดิ์ (Head of Architect)](../01-head-of-architect.md) |
+| **สังกัด** | ทีมของพี่ไก่ — Architect Department |
+| **หัวหน้า** | [พี่ไก่ (Head of Architect)](../01-head-of-architect.md) |
 | **สถานะ** | 🔴 Design เสร็จ — รอ Implement |
 | **Version** | v0.3.0 |
 | **วันที่** | 2026-06-26 |
@@ -25,7 +25,7 @@ Pipeline Auditor ตรวจสอบ "หลัง" handoff, Routing Config �
 - **Durable Execution** — ถ้ารัน fail → retry + queue (Temporal pattern)
 - **Workflow Automation** — chain tasks แบบ multi-step (n8n pattern)
 - **Execution History** — log ทุก run + result
-- **Schedule Management** — รับ schedule จากพี่ทรงศักดิ์ → deploy + monitor
+- **Schedule Management** — รับ schedule จากพี่ไก่ → deploy + monitor
 
 ### Core Discipline
 
@@ -215,7 +215,7 @@ STAGE 3 — QUEUED (persistent):
   → ถ้า deadline ผ่าน → go STAGE 4
 
 STAGE 4 — ESCALATED:
-  → 🚨 แจ้งพี่ทรงศักดิ์
+  → 🚨 แจ้งพี่ไก่
   → Pipeline marked FAILED
   → Exception Triage Agent จัดการต่อ
 ```
@@ -240,7 +240,7 @@ Structure:
       "state": "ACTIVE | PAUSED | FAILED"
     }
   ]
-Purpose: พี่ทรงศักดิ์ดูว่ามี schedule อะไรบ้างที่ active
+Purpose: พี่ไก่ดูว่ามี schedule อะไรบ้างที่ active
 ```
 
 ### Deliverable 2: Execution History
@@ -289,7 +289,7 @@ Process:
   3. Step-by-step execution:
      a. TRIGGER_PIPELINE → แจ้ง Central Bus "เริ่ม PRJ-001"
      b. WAIT_COMPLETION → poll status ทุก 30s
-     c. NOTIFY_RESULT → แจ้งผลให้พี่ทรงศักดิ์
+     c. NOTIFY_RESULT → แจ้งผลให้พี่ไก่
   4. ถ้า step fail → apply retry policy
   5. ถ้า retry ทั้งหมด fail → queue + escalate
 Output: Execution Log + (ถ้าสำเร็จ) Notification / (ถ้า fail) Alert
@@ -308,7 +308,7 @@ Process:
 Output: Catch-up run + Missed Tick Record
 ```
 
-### 5.3 Manual Trigger (On Demand — พี่ทรงศักดิ์เรียก)
+### 5.3 Manual Trigger (On Demand — พี่ไก่เรียก)
 
 ```
 Input:  "รัน PRJ-001 เลยเดี๋ยวนี้"
@@ -323,7 +323,7 @@ Output: Full pipeline execution
 
 ## 6. Communication Format
 
-### Scheduled Run Complete (ถึงพี่ทรงศักดิ์)
+### Scheduled Run Complete (ถึงพี่ไก่)
 
 ```text
 ⏰ Pipeline Run Complete

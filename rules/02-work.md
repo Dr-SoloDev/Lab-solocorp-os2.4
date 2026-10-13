@@ -5,25 +5,25 @@
 ## 1. Hierarchy — ใครอยู่ตรงไหนใน chain
 
 ```
-Dr.solodev (Owner) — Vision + Final Say (L5 only)
-  └── CEO (เทอโบ) — Supreme AI Authority
-        ├── CFO (meetoo)
-        ├── CMO (มาร์ค)
-        ├── Orchestrator (พี่วุฒิ)
-        ├── Architect (พี่ทรงศักดิ์)
-        ├── Product (โปรดัค)
-        ├── Engineering (ช่างฟูล)
-        ├── Design (ครีเอท)
-        ├── UI Designer
-        ├── QA
-        ├── Sales (เซลส์)
-        ├── Support (ซัพพอร์ต)
-        ├── Legal (ตุลย์)
-        ├── Web3 (อัยวา)
-        ├── Content Creator (เสก)
-        ├── NetEng (นีต)
-        ├── CyberSec (ซาย)
-        ├── Psychology (จิต)
+HUMAN (Owner) — Vision + Final Say (L5 only)
+  └── CEO (หนุมาน) — Supreme AI Authority
+        ├── CFO (ไตร)
+        ├── CMO (แซ็ก)
+        ├── Orchestrator (น้าเน็ค)
+        ├── Architect (พี่ไก่)
+        ├── Product (โคดัก)
+        ├── Engineering (เฮียเป้อ)
+        ├── Design (ไต๋)
+        ├── UI Designer (อาเมน)
+        ├── QA (ตำรวจโมส)
+        ├── Sales — Disabled (CEO รับแทน)
+        ├── Support — Disabled (CEO รับแทน)
+        ├── Legal — Disabled (CEO รับแทน)
+        ├── Web3 (เชน)
+        ├── Content Creator (พี่เต)
+        ├── NetEng (ไนท์)
+        ├── CyberSec (สมปอง)
+        ├── Psychology (เต๋า)
         └── R&D Lab
 ```
 
@@ -65,7 +65,7 @@ Dr.solodev (Owner) — Vision + Final Say (L5 only)
 - `solocorp_get_department` ผ่าน MCP — ดึง SOUL.md ของ department
 - `solocorp_get_team_members(dept_id)` — ดูลูกทีม specialist
 
-## 6. ส่วนขยาย — Architect Team (under พี่ทรงศักดิ์)
+## 6. ส่วนขยาย — Architect Team (under พี่ไก่)
 
 | บทบาท | Agent | ไว้ทำอะไร |
 |:------|:------|:----------|

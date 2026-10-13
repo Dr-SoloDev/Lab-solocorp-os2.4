@@ -28,23 +28,23 @@
 
 ## Owner Direct — R&D Lab
 
-> 🔬 **แล็บของ Dr.solodev** — ไม่ผ่าน pipeline, ไม่มี deadline, อยากวิจัยอะไรเมื่อไหร่ก็ได้
+> 🔬 **แล็บของ HUMAN** — ไม่ผ่าน pipeline, ไม่มี deadline, อยากวิจัยอะไรเมื่อไหร่ก็ได้
 
 | # | Profile | Head | Responsibility | Status |
 |:-:|:--------|:-----|:--------------|:------:|
-| `19-rd-lab` | **R&D Lab** | [Lead Researcher](19-rd-lab/solodev/team/01-lead-researcher.SOUL.md) | Curiosity-driven research, experimental prototypes, special projects | 🟢 Active |
+| `19-rd-lab` | **R&D Lab** | [ซิป (Zip)](19-rd-lab/human/team/01-lead-researcher.SOUL.md) | Curiosity-driven research, experimental prototypes, special projects | 🟢 Active |
 
 ### Specialists — R&D Lab Team
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
-| 01 | [Lead Researcher](19-rd-lab/solodev/team/01-lead-researcher.SOUL.md) | 🧭 รับไอเดีย → จัดทีม → ลงมือ — ปกป้องทีมจากระบบ | 🟢 Active |
-| 02 | [AI Research Scientist](19-rd-lab/solodev/team/02-ai-research-scientist.SOUL.md) | 🤖 ติดตาม frontier AI — ทดลอง tech ใหม่ๆ ก่อนใคร | 🟢 Active |
-| 03 | [Prototyper / Builder](19-rd-lab/solodev/team/03-prototyper.SOUL.md) | 🏗️ เปลี่ยน idea → prototype เร็วที่สุดเท่าที่จะทำได้ | 🟢 Active |
-| 04 | [Experiment Designer](19-rd-lab/solodev/team/04-experiment-designer.SOUL.md) | 📐 ออกแบบ methodology, metrics, evaluation | 🟢 Active |
-| 05 | [Tool Smith](19-rd-lab/solodev/team/05-tool-smith.SOUL.md) | 🔧 สร้าง tooling — scraper, automation, integration | 🟢 Active |
-| 06 | [Knowledge Curator](19-rd-lab/solodev/team/06-knowledge-curator.SOUL.md) | 📚 บันทึก, จัดระเบียบ, แชร์ความรู้จากแล็บ | 🟢 Active |
-| 07 | [Wild Card](19-rd-lab/solodev/team/07-wild-card.SOUL.md) | 🃏 ทำทุกอย่างที่ไม่มีตำแหน่งรองรับ — special request โดยตรง | 🟢 Active |
+| 01 | [ซิป (Zip) — Lead Researcher](19-rd-lab/human/team/01-lead-researcher.SOUL.md) | 🧭 รับไอเดีย → จัดทีม → ลงมือ — ปกป้องทีมจากระบบ | 🟢 Active |
+| 02 | [AI Research Scientist](19-rd-lab/human/team/02-ai-research-scientist.SOUL.md) | 🤖 ติดตาม frontier AI — ทดลอง tech ใหม่ๆ ก่อนใคร | 🟢 Active |
+| 03 | [Prototyper / Builder](19-rd-lab/human/team/03-prototyper.SOUL.md) | 🏗️ เปลี่ยน idea → prototype เร็วที่สุดเท่าที่จะทำได้ | 🟢 Active |
+| 04 | [Experiment Designer](19-rd-lab/human/team/04-experiment-designer.SOUL.md) | 📐 ออกแบบ methodology, metrics, evaluation | 🟢 Active |
+| 05 | [Tool Smith](19-rd-lab/human/team/05-tool-smith.SOUL.md) | 🔧 สร้าง tooling — scraper, automation, integration | 🟢 Active |
+| 06 | [Knowledge Curator](19-rd-lab/human/team/06-knowledge-curator.SOUL.md) | 📚 บันทึก, จัดระเบียบ, แชร์ความรู้จากแล็บ | 🟢 Active |
+| 07 | [Wild Card](19-rd-lab/human/team/07-wild-card.SOUL.md) | 🃏 ทำทุกอย่างที่ไม่มีตำแหน่งรองรับ — special request โดยตรง | 🟢 Active |
 
 ## System Pipeline
 
@@ -58,7 +58,7 @@
 |:-:|:--------|:-----|:--------------|:------:|
 | `05-architect` | **Architect** | [พี่ไก่](05-architect/01-head-of-architect.md) | Central Bus, Routing, Monitoring | Active |
 | `06-product` | **Product** | [โคดัก](06-product/SOUL.md) | Feature Roadmap, PRD, Delivery | Active |
-| `07-engineering` | **Engineering** | [เฮียเต้อ](07-engineering/SOUL.md) | Backend, Frontend, Architecture | Active |
+| `07-engineering` | **Engineering** | [เฮียเป้อ](07-engineering/SOUL.md) | Backend, Frontend, Architecture | Active |
 | `08-design` | **Design** | [ไต๋](08-design/SOUL.md) | UX Research, Brand Visual | Active |
 | `09-ui-designer` | **UI Designer** | [อาเมน](09-ui-designer/SOUL.md) | Interface, Component Library | Active |
 | `10-qa` | **QA** | [ตำรวจโมส](10-qa/SOUL.md) | Testing, Quality, Evidence | Active |
@@ -66,10 +66,10 @@
 | `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | Customer Success, Analytics | Disabled |
 | `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | Compliance, Contracts, Law | Disabled |
 | `14-web3` | **Web3 & DeFi** | [เชน](14-web3/SOUL.md) | Blockchain, DeFi, Solana | Active |
-| `15-content-creator` | **Content Creator** | [เสก](15-content-creator/SOUL.md) | Content, Creative, Media | Active |
-| `16-neteng` | **Network Engineer** | [นีต (Neet)](16-neteng/SOUL.md) | Network Design, Infrastructure, CDN, VPN, DNS | Active |
-| `17-cybersec` | **Cyber Security** | [ซาย (Sai)](17-cybersec/SOUL.md) | Threat Detection, Vulnerability Assessment, Incident Response | Active |
-| `18-psychology` | **Psychology** | [จิต (Jit)](18-psychology/SOUL.md) | User Behavior, Behavioral Economics, Organizational Psychology | Active |
+| `15-content-creator` | **Content Creator** | [พี่เต](15-content-creator/SOUL.md) | Content, Creative, Media | Active |
+| `16-neteng` | **Network Engineer** | [ไนท์ (Night)](16-neteng/SOUL.md) | Network Design, Infrastructure, CDN, VPN, DNS | Active |
+| `17-cybersec` | **Cyber Security** | [สมปอง (Sompong)](17-cybersec/SOUL.md) | Threat Detection, Vulnerability Assessment, Incident Response | Active |
+| `18-psychology` | **Psychology** | [เต๋า (Tao)](18-psychology/SOUL.md) | User Behavior, Behavioral Economics, Organizational Psychology | Active |
 
 ## Base Profile
 
@@ -79,7 +79,7 @@
 
 ---
 
-## Team — 05-architect (พี่ทรงศักดิ์)
+## Team — 05-architect (พี่ไก่)
 
 | # | Agent | Protocol/Pattern | Responsibility | Status |
 |:-:|:------|:-----------------|:--------------|:------:|
@@ -94,7 +94,7 @@
 
 ---
 
-## Team — 02-cfo (meetoo)
+## Team — 02-cfo (ไตร)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -102,7 +102,7 @@
 | 02 | [riley](02-cfo/meetoo/team/02-riley.SOUL.md) | FP&A Analyst — budget, rolling forecast, variance analysis, early warnings | Active |
 | 03 | [morgan](02-cfo/meetoo/team/03-morgan.SOUL.md) | Financial Analyst — financial models, scenario analysis, cash-flow insights | Active |
 
-## Team — 03-cmo (มาร์ค)
+## Team — 03-cmo (แซ็ก)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -110,7 +110,7 @@
 | 02 | [social-media-strategist](03-cmo/mark/team/02-social-media-strategist.SOUL.md) | LinkedIn/Twitter brand authority, community building, B2B pipeline | Active |
 | 03 | [content-creator](03-cmo/mark/team/03-content-creator.SOUL.md) | Multi-channel content, SEO, video scripts, editorial strategy | Active |
 
-## Team — 04-orchestrator (พี่วุฒิ)
+## Team — 04-orchestrator (น้าเน็ค)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -118,7 +118,7 @@
 | 02 | [studio-producer](04-orchestrator/orchestrator/team/02-studio-producer.SOUL.md) | Creative portfolio management, executive relationship management | Active |
 | 03 | [studio-operations](04-orchestrator/orchestrator/team/03-studio-operations.SOUL.md) | Daily operations, SOP design, vendor management, >=95% efficiency | Active |
 
-## Team — 06-product (โปรดัค)
+## Team — 06-product (โคดัก)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -126,7 +126,7 @@
 | 02 | [product-feedback-synthesizer](06-product/produck/team/02-product-feedback-synthesizer.SOUL.md) | Multi-channel feedback analysis, RICE/MoSCoW/Kano prioritization | Active |
 | 03 | [product-sprint-prioritizer](06-product/produck/team/03-product-sprint-prioritizer.SOUL.md) | Agile sprint planning, dependency/risk management, velocity optimization | Active |
 
-## Team — 07-engineering (ช่างฟูล)
+## Team — 07-engineering (เฮียเป้อ)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -134,7 +134,7 @@
 | 02 | [นักพัฒนาอาวุโส](07-engineering/changful/team/02-นักพัฒนาอาวุโส.SOUL.md) | Full-stack senior dev — Laravel, Livewire, FluxUI, Three.js, animations | Active |
 | 03 | [สถาปนิกซอฟต์แวร์](07-engineering/changful/team/03-สถาปนิกซอฟต์แวร์.SOUL.md) | Domain-driven design, microservices/modular monolith, event-driven, ADRs | Active |
 
-## Team — 08-design (ครีเอท)
+## Team — 08-design (ไต๋)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -182,7 +182,7 @@
 | 02 | [legal-document-review](13-legal/tulya/team/02-legal-document-review.SOUL.md) | Contract review, agreement analysis, severity-based risk assessment summaries | Active |
 | 03 | [legal-client-intake](13-legal/tulya/team/03-legal-client-intake.SOUL.md) | Screening, case data collection, conflict of interest check, attorney routing | Active |
 
-## Team — 14-web3 (อัยวา)
+## Team — 14-web3 (เชน)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -191,7 +191,7 @@
 | 03 | [defi-protocol-analyst](14-web3/aywa/team/03-defi-protocol-analyst.SOUL.md) | DeFi market analysis, tokenomics design, on-chain analytics, risk assessment | Active |
 | 04 | [solana-developer](14-web3/aywa/team/04-solana-developer.SOUL.md) | Anchor programs (Rust), Web3.js/Solana.js, devnet/mainnet deployment | Active |
 
-## Team — 15-content-creator (เสก)
+## Team — 15-content-creator (พี่เต)
 
 Content Creator department references 10 specialist profiles from the
 agency-agents library for content production across multiple platforms.
@@ -209,7 +209,7 @@ solocorp-mark-workflow, content creation pipeline
 
 ---
 
-## Team — 16-neteng (นีต)
+## Team — 16-neteng (ไนท์)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -218,7 +218,7 @@ solocorp-mark-workflow, content creation pipeline
 | 03 | [Network Ops](16-neteng/neet/team/03-network-ops.SOUL.md) | 24/7 monitoring, incident response, SLA tracking, bandwidth optimization | Design |
 | 04 | [MCP Builder](16-neteng/neet/team/04-mcp-builder.SOUL.md) | 🔌 MCP server design & implementation — expose SoloCorp OS to external coding agents via MCP protocol | Design |
 
-## Team — 17-cybersec (ซาย)
+## Team — 17-cybersec (สมปอง)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -227,7 +227,7 @@ solocorp-mark-workflow, content creation pipeline
 | 03 | [Incident Responder](17-cybersec/sai/team/03-incident-responder.SOUL.md) | Full IR lifecycle, containment, forensics, RCA, playbooks | Design |
 | 04 | [Red Team Operator](17-cybersec/sai/team/04-red-team-operator.SOUL.md) 🆕 | 🔴 Offensive security — MCP auth bypass, Central Bus abuse, SOUL.md integrity, HackAgent campaigns | Design |
 
-## Team — 18-psychology (จิต)
+## Team — 18-psychology (เต๋า)
 
 | # | Agent | Responsibility | Status |
 |:-:|:------|:--------------|:------:|
@@ -248,7 +248,7 @@ solocorp-mark-workflow, content creation pipeline
 | 04 Orchestrator | น้าเน็ค | 3 | 4 |
 | 05 Architect | พี่ไก่ | 5 | 6 |
 | 06 Product | โคดัก | 3 | 4 |
-| 07 Engineering | เฮียเต้อ | 3 | 4 |
+| 07 Engineering | เฮียเป้อ | 3 | 4 |
 | 08 Design | ไต๋ | 3 | 4 |
 | 09 UI Designer | อาเมน | 3 | 4 |
 | 10 QA | ตำรวจโมส | 3 | 4 |
@@ -256,10 +256,10 @@ solocorp-mark-workflow, content creation pipeline
 | 12 Support | ซัพพอร์ต (Disabled) | 3 | 4 |
 | 13 Legal | ตุลย์ (Disabled) | 3 | 4 |
 | 14 Web3 | เชน | 4 | 5 |
-| 15 Content Creator | เสก | (10 refs) | 1 |
-| 16 Network Engineer | นีต | 4 | 5 |
-| 17 Cyber Security | ซาย | 3 | 4 |
-| 18 Psychology | จิต | 3 | 4 |
+| 15 Content Creator | พี่เต | (10 refs) | 1 |
+| 16 Network Engineer | ไนท์ | 4 | 5 |
+| 17 Cyber Security | สมปอง | 3 | 4 |
+| 18 Psychology | เต๋า | 3 | 4 |
 | — | Default (Fallback) | — | 1 |
 | **Total** | **19 Departments** | **58+ Specialists** | **72+ Active Members** |
 

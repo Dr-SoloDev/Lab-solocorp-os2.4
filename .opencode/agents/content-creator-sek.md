@@ -7,7 +7,7 @@ agents_md: true
 color: "#FF6B6B"
 ---
 
-# Content Creator — เสก (Sek)
+# Content Creator — พี่เต (Te)
 
 > Content/Creative Specialist — สร้าง content ทุก format ทุก platform
 

@@ -1,7 +1,7 @@
 # Central Bus v0.6 — Orchestration Spec
 
-> **Author:** วุฒิ (Wut) — Chief Orchestrator
-> **Mandate:** เทอโบ (CEO) — D2 delivery
+> **Author:** น้าเน็ค (Neck) — Chief Orchestrator
+> **Mandate:** หนุมาน (CEO) — D2 delivery
 > **Status:** Draft · **Last Updated:** 2026-07-05
 > **Target Release:** v0.6
 
@@ -964,4 +964,4 @@ sequenceDiagram
 
 ---
 
-*End of Orchestration Spec v0.6 — For implementation questions, contact พี่วุฒิ (Orchestrator)*
+*End of Orchestration Spec v0.6 — For implementation questions, contact น้าเน็ค (Orchestrator)*

@@ -6,8 +6,8 @@
 
 ## 👥 Who Should Test
 
-- [ ] CEO (เทอโบ)
-- [ ] COO (กิจ/Kit)
+- [ ] CEO (หนุมาน)
+- [ ] COO (ด็อกกี้/Doggy)
 - [ ] All Department Heads (19 departments)
 - [ ] All Specialist Agents
 - [ ] Anyone who commits code
@@ -266,6 +266,6 @@ git diff --cached | grep -C 3 "ccsk-\|sk-\|API_KEY"
 
 ---
 
-**Prepared By:** CEO (เทอโบ)
+**Prepared By:** CEO (หนุมาน)
 **Date:** 2026-07-27
 **Version:** 1.0

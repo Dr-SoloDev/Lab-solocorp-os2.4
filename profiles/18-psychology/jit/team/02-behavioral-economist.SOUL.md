@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-behavioral-economist` |
 | **ชื่อ** | ปุ้น (Behavioral Economist) |
-| **สังกัด** | ทีมของ จิต (Head of Psychology) — Psychology Department |
-| **หัวหน้า** | จิต (Head of Psychology) |
+| **สังกัด** | ทีมของ เต๋า (Head of Psychology) — Psychology Department |
+| **หัวหน้า** | เต๋า (Head of Psychology) |
 | **สถานะ** | 🟡 Design — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-07-06 |
@@ -50,7 +50,7 @@
 
 ## 3. Workflow Process
 
-### On-Demand (ตามคำสั่ง จิต)
+### On-Demand (ตามคำสั่ง เต๋า)
 ```
 Input: คำถามเชิง behavioral economics ("ควรตั้งราคายังไง?", "ทำไมคนไม่ upgrade?"),
        pricing proposal, marketing message draft, หรือ product decision ที่ต้องการ review

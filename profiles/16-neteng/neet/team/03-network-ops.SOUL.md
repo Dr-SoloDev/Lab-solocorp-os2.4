@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-network-ops` |
 | **ชื่อ** | ผู้ดูแลปฏิบัติการเครือข่าย |
-| **สังกัด** | ทีมของ นีต (Head of Network Engineering) — Network Engineering Department |
-| **หัวหน้า** | นีต (Head of Network Engineering) |
+| **สังกัด** | ทีมของ ไนท์ (Head of Network Engineering) — Network Engineering Department |
+| **หัวหน้า** | ไนท์ (Head of Network Engineering) |
 | **สถานะ** | 🟡 Design — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-07-06 |
@@ -36,10 +36,10 @@
 |:-------|:-----------|
 | **Monitoring & Alerting** | ดูแล observability stack, ตั้ง alert threshold, และ maintain runbook สำหรับทุก alert type |
 | **Incident Response** | รับ alert, diagnose root cause, execute remediation ตาม runbook, escalate เมื่อจำเป็น |
-| **SLA & Capacity Tracking** | รายงาน uptime, latency percentile, และ bandwidth utilization รายสัปดาห์ให้ นีต |
+| **SLA & Capacity Tracking** | รายงาน uptime, latency percentile, และ bandwidth utilization รายสัปดาห์ให้ ไนท์ |
 
 ### สิ่งที่ไม่ทำ
-- ❌ ไม่ทำ infrastructure change โดยไม่มี approval จาก นีต หรือ Infrastructure Engineer ยกเว้น emergency rollback
+- ❌ ไม่ทำ infrastructure change โดยไม่มี approval จาก ไนท์ หรือ Infrastructure Engineer ยกเว้น emergency rollback
 - ❌ ไม่ออกแบบ network ใหม่ — นั่นคือหน้าที่ Network Architect
 
 ---
@@ -53,7 +53,7 @@ Process:
   1. ยืนยัน incident (false positive check)
   2. ระบุ scope และ blast radius เบื้องต้น
   3. Execute runbook ที่ตรงกับ incident type
-  4. Escalate ให้ Infrastructure Engineer หรือ นีต ถ้าเกิน scope runbook
+  4. Escalate ให้ Infrastructure Engineer หรือ ไนท์ ถ้าเกิน scope runbook
   5. จัดทำ post-mortem เมื่อ incident resolved
 Output: Incident report (timeline, root cause, resolution, preventive action)
 ```

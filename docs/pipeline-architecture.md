@@ -1,6 +1,6 @@
 # SoloCorp OS — E2E Pipeline Architecture
 
-> **Author:** Software Architect (พี่ทรงศักดิ์) · **Phase:** 3-4 Pipeline + API Design
+> **Author:** Software Architect (พี่ไก่) · **Phase:** 3-4 Pipeline + API Design
 > **Status:** Accepted · **Last Updated:** 2026-07-05
 
 ---

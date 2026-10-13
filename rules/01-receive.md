@@ -41,28 +41,28 @@ System รัน mirror check auto สำหรับ L3+ — ผมไม่ต
 
 | คำสำคัญ | แผนก | เรียก |
 |:--------|:-----|:------|
-| vision, strategy, decision | CEO (เทอโบ) | `@ceo-turbo` |
-| การเงิน, งบ, cost, budget | CFO (meetoo) | `@cfo-meetoo` |
-| การตลาด, brand, content, social | CMO (มาร์ค) | `@cmo-mark` |
-| pipeline, orchestration, workflow | Orchestrator (พี่วุฒิ) | `@orchestrator-wut` |
-| architecture, bus, routing, system | Architect (พี่ทรงศักดิ์) | `@architect-songsak` |
-| product, feature, PRD, roadmap | Product (โปรดัค) | `@product-produck` |
-| code, backend, frontend, implement | Engineering (ช่างฟูล) | `@changful` |
-| UX, design system, brand visual | Design (ครีเอท) | `@design-kreet` |
+| vision, strategy, decision | CEO (หนุมาน) | `@ceo-turbo` |
+| การเงิน, งบ, cost, budget | CFO (ไตร) | `@cfo-meetoo` |
+| การตลาด, brand, content, social | CMO (แซ็ก) | `@cmo-mark` |
+| pipeline, orchestration, workflow | Orchestrator (น้าเน็ค) | `@orchestrator-wut` |
+| architecture, bus, routing, system | Architect (พี่ไก่) | `@architect-songsak` |
+| product, feature, PRD, roadmap | Product (โคดัก) | `@product-produck` |
+| code, backend, frontend, implement | Engineering (เฮียเป้อ) | `@engineering-changful` |
+| UX, design system, brand visual | Design (ไต๋) | `@design-kreet` |
 | UI, component, interface | UI Designer | `@ui-designer` |
 | test, QA, bug, quality | QA | `@qa` |
 | sales, deal, pipeline | CEO (หนุมาน — Sales Disabled, fallback) | `@ceo-turbo` |
 | support, customer | CEO (หนุมาน — Support Disabled, fallback) | `@ceo-turbo` |
 | legal, compliance, contract | CEO (หนุมาน — Legal Disabled, fallback) | `@ceo-turbo` |
-| blockchain, solana, DeFi, smart contract | Web3 (อัยวา) | `@web3-aywa` |
-| content, caption, video, campaign | Content (เสก) | `@content-creator-sek` |
-| network, CDN, VPN, DNS, infra | NetEng (นีต) | `@neteng-neet` |
-| security, threat, incident, IR | CyberSec (ซาย) | `@cybersec-sai` |
-| psychology, behavior, bias, UX research | Psychology (จิต) | `@psych-jit` |
+| blockchain, solana, DeFi, smart contract | Web3 (เชน) | `@web3-aywa` |
+| content, caption, video, campaign | Content (พี่เต) | `@content-creator-sek` |
+| network, CDN, VPN, DNS, infra | NetEng (ไนท์) | `@neteng-neet` |
+| security, threat, incident, IR | CyberSec (สมปอง) | `@cybersec-sai` |
+| psychology, behavior, bias, UX research | Psychology (เต๋า) | `@psych-jit` |
 | research, prototype, experiment | R&D Lab | `@rd-lab` |
 
 **กฏ:**
-- request ไม่อยู่ใน scope ไหน → route ไป CEO (เทอโบ)
+- request ไม่อยู่ใน scope ไหน → route ไป CEO (หนุมาน)
 - request ข้ามหลายแผนก → ระบุ department ที่ต้องประสาน
 - ทำงานใน **บทบาทหัวหน้า** ไม่ใช่ specialist
 

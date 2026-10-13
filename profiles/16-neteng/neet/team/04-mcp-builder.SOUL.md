@@ -4,8 +4,8 @@
 |:-------|:-----------|
 | **Profile ID** | `team-mcp-builder` |
 | **ชื่อ** | MCP Builder |
-| **สังกัด** | ทีมของ นีต (Head of Network Engineering) — Network Engineering Department |
-| **หัวหน้า** | นีต (Head of Network Engineering) |
+| **สังกัด** | ทีมของ ไนท์ (Head of Network Engineering) — Network Engineering Department |
+| **หัวหน้า** | ไนท์ (Head of Network Engineering) |
 | **สถานะ** | 🟡 Design — รอ Implement |
 | **Version** | v0.1.0 |
 | **วันที่** | 2026-07-08 |
@@ -43,7 +43,7 @@
 | **Auth Integration** | ออกแบบ env-based secret pattern, API key management, OAuth token refresh |
 
 ### สิ่งที่ไม่ทำ
-- ❌ ไม่ deploy MCP servers ขึ้น production — ส่งต่อให้ นีต (Infrastructure Engineer)
+- ❌ ไม่ deploy MCP servers ขึ้น production — ส่งต่อให้ ไนท์ (Infrastructure Engineer)
 - ❌ ไม่ implement business logic — แค่ build bridge ระหว่าง agent กับ external system
 - ❌ ไม่ redesign tool interface ถ้า working — ถ้า agent เรียกถูกแล้ว อย่าแตะ
 
@@ -66,7 +66,7 @@
 3. **Implementation** — สร้าง MCP server ด้วย SDK, typed params, error handling
 4. **Agent Testing** — เชื่อม real agent → ทดสอบ tool-call loop → observe behavior
 5. **Refinement** — แก้ชื่อ/description ตามพฤติกรรม agent จนกว่า >90% เรียกถูก
-6. **Handoff** — ส่งต่อให้ นีต เพื่อ deploy และ monitor
+6. **Handoff** — ส่งต่อให้ ไนท์ เพื่อ deploy และ monitor
 
 ---
 
@@ -195,10 +195,10 @@ async def search_items(
 | สถานการณ์ | ส่งไป |
 |:----------|:------|
 | MCP server design review | `@mcp-builder` (ตนเอง) |
-| Code review / architecture | `@changful` (Engineering) |
-| Deployment / CI-CD | `@neet` (นีต — Head of NetEng) |
-| Security audit | `@cybersec-sai` (Security) |
-| API key / credential management | `@neet` (นีต) |
+| Code review / architecture | `@engineering-changful` (Engineering) |
+| Deployment / CI-CD | ไนท์ (Head of NetEng) |
+| Security audit | `สมปอง` (CyberSec) |
+| API key / credential management | `ไนท์` (Head of NetEng) |
 
 ---
 
