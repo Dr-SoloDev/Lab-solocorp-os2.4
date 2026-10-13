@@ -1,5 +1,4 @@
 ---
-model: opencode/muse-spark-1.3-contributor-free
 name: sales
 description: Sales Team — B2B Deal Strategy, Pipeline Analytics, Outbound, Proposal
 mode: subagent

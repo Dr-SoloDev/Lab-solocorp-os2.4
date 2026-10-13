@@ -1,5 +1,4 @@
 ---
-model: opencode/muse-spark-1.3-contributor-free
 name: legal-tulya
 description: Legal — Compliance, Contract Review, Legal Document Review, Client Intake
 mode: subagent

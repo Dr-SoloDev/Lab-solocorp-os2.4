@@ -1,5 +1,4 @@
 ---
-model: opencode/muse-spark-1.3-contributor-free
 name: support
 description: Support Team — Customer Support, Analytics, Executive Summaries
 mode: subagent
