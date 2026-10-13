@@ -96,6 +96,20 @@ System รัน mirror check auto สำหรับ L3+ — ผมไม่ต
 - context pack — ตัดสินใจอะไรไปแล้วบ้าง
 - receiver confirmation
 
+### Delegation บน OpenCode Desktop — นโยบายชั่วคราว (ADR-017)
+
+> ด่าน free-tier ของ OpenCode (Desktop v1.18.34) บล็อก child session ทุกตัวที่ **ไม่ใช่ `@explore`**
+> (Task/`@mention` ไป `general` หรือ dept agent โดนเตะหมด — เป็นบั๊ก upstream แก้จาก repo ไม่ได้)
+
+| งานแบบไหน | ใช้ทางไหน | ทำไม |
+|:----------|:----------|:-----|
+| ค้นโค้ด / วิจัยแบบ read-only | `@explore` | ตัวเดียวที่รอดด่าน |
+| **งานข้ามแผนกทุกอย่าง** (implement, รีวิว, วางแผน) | **`/workspace [แผนก] [งาน]`** | เปิดห้องแชทแยกพร้อม context bundle — ไม่ผ่านด่าน child-session |
+| `@mention` dept agent ตรงๆ (`@changful` ฯลฯ) | ❌ **ห้ามชั่วคราว** | โดน gate เตะ → เสียรอบฟรี |
+
+**สัญญาณว่าต้องเปลี่ยนทาง:** เห็นแถวแดง `งาน ...` + fallback → เลิก Task ทันที ย้ายไป `/workspace`
+**คืนค่าเมื่อ:** upstream patch แล้วรันเมทริกซ์เทสต์ผ่าน (`@general` + custom รอด) — ดู ADR-017
+
 ## 5. Pillars — ข้อห้ามตอนทำงาน
 
 - ❌ **Head ลงมือ implement เอง** — delegate ให้ specialist เสมอ
