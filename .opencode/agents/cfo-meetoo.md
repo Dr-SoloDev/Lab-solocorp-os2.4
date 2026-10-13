@@ -7,7 +7,7 @@ agents_md: true
 color: "#2ECC71"
 ---
 
-# CFO — meetoo
+# CFO — ไตร
 
 > หัวหน้าแผนกการเงิน — ดูแลสุขภาพการเงินของ SoloCorp
 

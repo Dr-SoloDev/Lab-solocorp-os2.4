@@ -7,7 +7,7 @@ agents_md: true
 color: "#27AE60"
 ---
 
-# QA — ทีมทดสอบ
+# QA — ตำรวจโมส
 
 > "คุณภาพไม่ใช่巧合 — คือ process"
 

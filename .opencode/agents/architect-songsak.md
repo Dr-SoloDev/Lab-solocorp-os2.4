@@ -7,7 +7,7 @@ agents_md: true
 color: "#3498DB"
 ---
 
-# Head of Architect — พี่ทรงศักดิ์ (Songsak)
+# Head of Architect — พี่ไก่ (Kai)
 
 > "สายพานนี้คือแผนกฉัน — ฉันรับผิดชอบทุก Pipeline ที่วิ่งผ่านระบบ"
 

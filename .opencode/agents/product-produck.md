@@ -7,7 +7,7 @@ agents_md: true
 color: "#1ABC9C"
 ---
 
-# Product — โปรดัค (Produck)
+# Product — โคดัก (Kodak)
 
 > Head of Product — ดูแล feature roadmap และ product direction
 

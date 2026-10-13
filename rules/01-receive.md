@@ -51,9 +51,9 @@ System รัน mirror check auto สำหรับ L3+ — ผมไม่ต
 | UX, design system, brand visual | Design (ครีเอท) | `@design-kreet` |
 | UI, component, interface | UI Designer | `@ui-designer` |
 | test, QA, bug, quality | QA | `@qa` |
-| sales, deal, pipeline | Sales (เซลส์) | `@sales` |
-| support, customer | Support (ซัพพอร์ต) | `@support` |
-| legal, compliance, contract | Legal (ตุลย์) | `@legal-tulya` |
+| sales, deal, pipeline | CEO (หนุมาน — Sales Disabled, fallback) | `@ceo-turbo` |
+| support, customer | CEO (หนุมาน — Support Disabled, fallback) | `@ceo-turbo` |
+| legal, compliance, contract | CEO (หนุมาน — Legal Disabled, fallback) | `@ceo-turbo` |
 | blockchain, solana, DeFi, smart contract | Web3 (อัยวา) | `@web3-aywa` |
 | content, caption, video, campaign | Content (เสก) | `@content-creator-sek` |
 | network, CDN, VPN, DNS, infra | NetEng (นีต) | `@neteng-neet` |

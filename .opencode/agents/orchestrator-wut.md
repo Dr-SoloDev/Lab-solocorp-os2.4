@@ -7,7 +7,7 @@ agents_md: true
 color: "#9B59B6"
 ---
 
-# Orchestrator — พี่วุฒิ (Wut)
+# Orchestrator — น้าเน็ค (Neck)
 
 > "ผู้ควบคุมที่รัน pipeline ทั้งหมดตั้งแต่ spec จนถึง ship"
 

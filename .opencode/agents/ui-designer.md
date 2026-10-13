@@ -7,7 +7,7 @@ agents_md: true
 color: "#8E44AD"
 ---
 
-# UI Designer
+# UI Designer — อาเมน
 
 > Specialist — สร้างและ maintain component library, pixel-perfect implementation
 

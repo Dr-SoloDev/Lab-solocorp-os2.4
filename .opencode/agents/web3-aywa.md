@@ -7,7 +7,7 @@ agents_md: true
 color: "#00D084"
 ---
 
-# Web3 & DeFi — อัยวา (Aywa)
+# Web3 & DeFi — เชน (Chain)
 
 > หัวหน้าฝ่าย Web3 — ดูแล blockchain, DeFi protocols, smart contracts
 

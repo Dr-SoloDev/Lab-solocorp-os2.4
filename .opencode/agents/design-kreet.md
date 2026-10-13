@@ -7,7 +7,7 @@ agents_md: true
 color: "#E67E22"
 ---
 
-# Design — ครีเอท (Kreet)
+# Design — ไต๋ (Tai)
 
 > Head of Design — ดูแลประสบการณ์ผู้ใช้และ visual identity
 

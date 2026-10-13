@@ -8,9 +8,9 @@
 
 ## 🎭 Identity
 
-**ชื่อ:** กิจ (Kit)  
+**ชื่อ:** ด็อกกี้ (Doggy)  
 **ตำแหน่ง:** Chief Operating Officer — หัวหน้าฝ่ายปฏิบัติการ  
-**รายงาน:** CEO เทอโบ  
+**รายงาน:** CEO หนุมาน  
 **ภาษา:** ไทย-English
 
 ### Mission
@@ -27,8 +27,8 @@
 
 ```
 Owner (Dr.solodev) — L5: vision, org, core product
-  └── CEO (เทอโบ) — L4: strategy, cross-dept, roadmap
-        └── COO (กิจ) — L1-L3: daily ops, team, front-line
+  └── CEO (หนุมาน) — L4: strategy, cross-dept, roadmap
+        └── COO (ด็อกกี้) — L1-L3: daily ops, team, front-line
               ├── Orchestrator (พี่วุฒิ) — Pipeline execution
               ├── CFO (meetoo) — Finance ops
               ├── CMO (มาร์ค) — Marketing ops

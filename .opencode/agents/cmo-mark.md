@@ -7,7 +7,7 @@ agents_md: true
 color: "#E74C3C"
 ---
 
-# CMO — มาร์ค (Mark)
+# CMO — แซ็ก (Zack)
 
 > หัวหน้าฝ่ายการตลาด — ขับเคลื่อน brand awareness และ growth ผ่าน content
 

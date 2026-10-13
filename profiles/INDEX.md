@@ -21,10 +21,10 @@
 
 | # | Profile | Name | Responsibility | Status |
 |:-:|:--------|:-----|:--------------|:------:|
-| `01-ceo` | **CEO** | [เทอโบ ไชยศรีรัมย์ (Turbo)](01-ceo/SOUL.md) | Vision, Strategy, Final Decision | Active |
-| `02-coo` | **COO** | [กิจ (Kit)](02-coo/SOUL.md) | Daily Operations, L1-L3 Gatekeeper, Team Control | 🆕 Active |
-| `02-cfo` | **CFO** | [meetoo](02-cfo/SOUL.md) | Finance, Budget, Investment | Active |
-| `03-cmo` | **CMO** | [มาร์ค](03-cmo/SOUL.md) | Marketing, Content, Brand | Active |
+| `01-ceo` | **CEO** | [หนุมาน (Hanuman)](01-ceo/SOUL.md) | Vision, Strategy, Final Decision | Active |
+| `02-coo` | **COO** | [ด็อกกี้ (Doggy)](02-coo/SOUL.md) | Daily Operations, L1-L3 Gatekeeper, Team Control | 🆕 Active |
+| `02-cfo` | **CFO** | [ไตร](02-cfo/SOUL.md) | Finance, Budget, Investment | Active |
+| `03-cmo` | **CMO** | [แซ็ก](03-cmo/SOUL.md) | Marketing, Content, Brand | Active |
 
 ## Owner Direct — R&D Lab
 
@@ -50,22 +50,22 @@
 
 | # | Profile | Name | Responsibility | Status |
 |:-:|:--------|:-----|:--------------|:------:|
-| `04-orchestrator` | **Orchestrator** | [พี่วุฒิ (Wut)](04-orchestrator/SOUL.md) | System Pipeline Coordination | Active |
+| `04-orchestrator` | **Orchestrator** | [น้าเน็ค (Neck)](04-orchestrator/SOUL.md) | System Pipeline Coordination | Active |
 
 ## Department Heads
 
 | # | Profile | Head | Responsibility | Status |
 |:-:|:--------|:-----|:--------------|:------:|
-| `05-architect` | **Architect** | [พี่ทรงศักดิ์ (Songsak)](05-architect/01-head-of-architect.md) | Central Bus, Routing, Monitoring | Active |
-| `06-product` | **Product** | [โปรดัค](06-product/SOUL.md) | Feature Roadmap, PRD, Delivery | Active |
-| `07-engineering` | **Engineering** | [ช่างฟูล](07-engineering/SOUL.md) | Backend, Frontend, Architecture | Active |
-| `08-design` | **Design** | [ครีเอท](08-design/SOUL.md) | UX Research, Brand Visual | Active |
-| `09-ui-designer` | **UI Designer** | [UI-Designer](09-ui-designer/SOUL.md) | Interface, Component Library | Active |
-| `10-qa` | **QA** | [QA-ทีม](10-qa/SOUL.md) | Testing, Quality, Evidence | Active |
-| `11-sales` | **Sales** | [เซลส์](11-sales/SOUL.md) | B2B Deal Strategy, Pipeline | Active |
-| `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | Customer Success, Analytics | Active |
-| `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | Compliance, Contracts, Law | Active |
-| `14-web3` | **Web3 & DeFi** | [อัยวา](14-web3/SOUL.md) | Blockchain, DeFi, Solana | Active |
+| `05-architect` | **Architect** | [พี่ไก่](05-architect/01-head-of-architect.md) | Central Bus, Routing, Monitoring | Active |
+| `06-product` | **Product** | [โคดัก](06-product/SOUL.md) | Feature Roadmap, PRD, Delivery | Active |
+| `07-engineering` | **Engineering** | [เฮียเต้อ](07-engineering/SOUL.md) | Backend, Frontend, Architecture | Active |
+| `08-design` | **Design** | [ไต๋](08-design/SOUL.md) | UX Research, Brand Visual | Active |
+| `09-ui-designer` | **UI Designer** | [อาเมน](09-ui-designer/SOUL.md) | Interface, Component Library | Active |
+| `10-qa` | **QA** | [ตำรวจโมส](10-qa/SOUL.md) | Testing, Quality, Evidence | Active |
+| `11-sales` | **Sales** | [เซลส์](11-sales/SOUL.md) | B2B Deal Strategy, Pipeline | Disabled |
+| `12-support` | **Support** | [ซัพพอร์ต](12-support/SOUL.md) | Customer Success, Analytics | Disabled |
+| `13-legal` | **Legal** | [ตุลย์](13-legal/SOUL.md) | Compliance, Contracts, Law | Disabled |
+| `14-web3` | **Web3 & DeFi** | [เชน](14-web3/SOUL.md) | Blockchain, DeFi, Solana | Active |
 | `15-content-creator` | **Content Creator** | [เสก](15-content-creator/SOUL.md) | Content, Creative, Media | Active |
 | `16-neteng` | **Network Engineer** | [นีต (Neet)](16-neteng/SOUL.md) | Network Design, Infrastructure, CDN, VPN, DNS | Active |
 | `17-cybersec` | **Cyber Security** | [ซาย (Sai)](17-cybersec/SOUL.md) | Threat Detection, Vulnerability Assessment, Incident Response | Active |
@@ -241,21 +241,21 @@ solocorp-mark-workflow, content creation pipeline
 
 | Department | Head | Specialists | Total |
 |:-----------|:-----|:-----------:|:-----:|
-| 01 CEO | เทอโบ | 0 | 1 |
-| 02 COO | กิจ (Kit) | 3 | 4 |
-| 02 CFO | meetoo | 3 | 4 |
-| 03 CMO | มาร์ค | 3 | 4 |
-| 04 Orchestrator | พี่วุฒิ | 3 | 4 |
-| 05 Architect | พี่ทรงศักดิ์ | 5 | 6 |
-| 06 Product | โปรดัค | 3 | 4 |
-| 07 Engineering | ช่างฟูล | 3 | 4 |
-| 08 Design | ครีเอท | 3 | 4 |
-| 09 UI Designer | UI-Designer | 3 | 4 |
-| 10 QA | QA-ทีม | 3 | 4 |
-| 11 Sales | เซลส์ | 3 | 4 |
-| 12 Support | ซัพพอร์ต | 3 | 4 |
-| 13 Legal | ตุลย์ | 3 | 4 |
-| 14 Web3 | อัยวา | 4 | 5 |
+| 01 CEO | หนุมาน | 0 | 1 |
+| 02 COO | ด็อกกี้ (Doggy) | 3 | 4 |
+| 02 CFO | ไตร | 3 | 4 |
+| 03 CMO | แซ็ก | 3 | 4 |
+| 04 Orchestrator | น้าเน็ค | 3 | 4 |
+| 05 Architect | พี่ไก่ | 5 | 6 |
+| 06 Product | โคดัก | 3 | 4 |
+| 07 Engineering | เฮียเต้อ | 3 | 4 |
+| 08 Design | ไต๋ | 3 | 4 |
+| 09 UI Designer | อาเมน | 3 | 4 |
+| 10 QA | ตำรวจโมส | 3 | 4 |
+| 11 Sales | เซลส์ (Disabled) | 3 | 4 |
+| 12 Support | ซัพพอร์ต (Disabled) | 3 | 4 |
+| 13 Legal | ตุลย์ (Disabled) | 3 | 4 |
+| 14 Web3 | เชน | 4 | 5 |
 | 15 Content Creator | เสก | (10 refs) | 1 |
 | 16 Network Engineer | นีต | 4 | 5 |
 | 17 Cyber Security | ซาย | 3 | 4 |
