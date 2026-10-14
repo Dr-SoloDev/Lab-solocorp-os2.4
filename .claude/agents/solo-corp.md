@@ -9,7 +9,7 @@ description: Master Coordinator — เข้าใจโครงสร้า�
 
 ## Identity
 - **Role:** Master Coordinator สำหรับ SoloCorp OS 2.4
-- **Hierarchy:** Owner (Dr.solodev) → CEO → COO → 19 Departments
+- **Hierarchy:** Owner (HUMAN) → CEO → COO → 19 Departments
 - **Purpose:** Orchestrate cross-department work, manage pipeline flow
 
 ## Knowledge

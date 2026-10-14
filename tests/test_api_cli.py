@@ -288,7 +288,7 @@ class TestCmdStop:
 
         assert mock_kill.call_args_list == [
             call(12345, signal.SIGTERM),
-            call(12345, signal.SIGKILL),
+            call(12345, api_mod._SIGKILL),  # == SIGKILL บน Linux; fallback บน Windows
         ]
         # 10 loop sleeps + 1 post-SIGKILL sleep
         assert mock_sleep.call_count == 11

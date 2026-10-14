@@ -24,6 +24,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from central_bus.state import PROJECTS_DIR
+
 # ── Backward Compat: keep old functions ───────────────────────────────
 STATUS_ICON = {"pending": "⏳", "in_progress": "🔄", "done": "✅", "failed": "❌"}
 
@@ -44,7 +46,6 @@ def summary(project_id: str) -> dict:
     }
 
 def all_projects() -> list[dict]:
-    from central_bus.state import PROJECTS_DIR
     if not PROJECTS_DIR.exists():
         return []
     return [summary(p.name) for p in sorted(PROJECTS_DIR.iterdir()) if p.is_dir()]

@@ -1,6 +1,6 @@
 ---
 name: mirror-check
-description: Mirror Check Protocol — ตรวจสอบ decision สะท้อน Dr.solodev Owner
+description: Mirror Check Protocol — ตรวจสอบ decision สะท้อน HUMAN Owner
 ---
 
 # Mirror Check

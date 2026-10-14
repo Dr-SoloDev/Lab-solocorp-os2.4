@@ -68,7 +68,7 @@
       "template": "Pipeline Bridge: ส่ง task from $1 to $2 for: $3\n\nMirror Check ก่อนส่ง — ถ้า L3+ ต้องผ่าน filter ใน 01-receive.md"
     },
     "mirror-check": {
-      "description": "🪞 Mirror Check — ตรวจสอบ decision สะท้อน Dr.solodev Owner",
+      "description": "🪞 Mirror Check — ตรวจสอบ decision สะท้อน HUMAN Owner",
       "template": "/mirror-check\n\nDecision: $ARGUMENTS\n\nProtocol in 01-receive.md (Escalation Filter L1-L5)\n1. 3 Mirror Check Questions\n2. alignment score\n3. Audit Trail\n4. PASS / FAIL / ESCALATE"
     },
     "bootstrap": {

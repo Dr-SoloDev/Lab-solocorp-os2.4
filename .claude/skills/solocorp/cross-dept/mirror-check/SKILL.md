@@ -8,10 +8,10 @@ trigger: "/mirror-check"
 
 # 🪞 Mirror Check — Cross-Department Skill
 
-> "decision นี้สะท้อน Dr.solodev Owner หรือไม่?"
+> "decision นี้สะท้อน HUMAN Owner หรือไม่?"
 
 ## Purpose
-เมื่อ department head กำลังจะตัดสินใจสำคัญ ให้รัน `/mirror-check` เพื่อตรวจสอบว่า decision สอดคล้องกับตัวตน ค่านิยม และวิธีคิดของ Dr.solodev Owner
+เมื่อ department head กำลังจะตัดสินใจสำคัญ ให้รัน `/mirror-check` เพื่อตรวจสอบว่า decision สอดคล้องกับตัวตน ค่านิยม และวิธีคิดของ HUMAN Owner
 
 ## Inputs
 | Field | Required | Description |
@@ -22,8 +22,8 @@ trigger: "/mirror-check"
 | `context` | No | context เพิ่มเติม |
 
 ## Mirror Check Questions
-1. "Dr.solodev จะทำแบบนี้ไหม?"
-2. "Decision นี้สะท้อนตัวตนของ Dr.solodev หรือไม่?"
+1. "HUMAN จะทำแบบนี้ไหม?"
+2. "Decision นี้สะท้อนตัวตนของ HUMAN หรือไม่?"
 3. "ถ้า Owner เห็น decision นี้ จะ approve หรือ reject?"
 
 ## Steps

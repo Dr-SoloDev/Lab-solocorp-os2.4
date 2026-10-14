@@ -25,7 +25,7 @@ mirror_check: L3
 | `priority` | No | P0/P1/P2/P3 |
 
 ## Steps
-1. Mirror Check — ตรวจสอบว่าการส่งงานนี้สะท้อน Dr.solodev Owner หรือไม่
+1. Mirror Check — ตรวจสอบว่าการส่งงานนี้สะท้อน HUMAN Owner หรือไม่
 2. สร้าง structured handoff payload
 3. ส่งเข้า Bus Queue (topic: skill.invoke)
 4. บันทึก Audit Trail

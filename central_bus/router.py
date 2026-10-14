@@ -302,7 +302,9 @@ class BehaviorRouter:
         if not payload_text:
             return route(msg)
         behavior_id, confidence = self.classifier.classify(payload_text)
-        if confidence >= 0.9:
+        # ADR-017: เชื่อ classifier เมื่อมี signal (>0) — gate 0.9 เดิมทำให้ v2
+        # ไม่เคย route เลยใน data regime ปัจจุบัน (confidence สูงสุด ~0.4)
+        if confidence > 0.0:
             route_map = await self._load_route_map()
             dept = route_map.get(behavior_id, fallback_department)
             if audit and self._db:
@@ -317,7 +319,8 @@ class BehaviorRouter:
         if not payload_text:
             return fallback_department
         behavior_id, confidence = self.classifier.classify(payload_text)
-        if confidence >= 0.9:
+        # ADR-017: เช่นเดียวกับ async path — เชื่อเมื่อมี signal (>0)
+        if confidence > 0.0:
             from central_bus.behavior_classifier import BEHAVIOR_DEPT_MAP
             return BEHAVIOR_DEPT_MAP.get(behavior_id, fallback_department)
         return fallback_department
