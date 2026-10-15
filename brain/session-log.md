@@ -762,3 +762,25 @@ State tracking files: 0
 - ต่อไป: Owner สั่งล็อกเมื่อพร้อม; ห้ามใช้ไฟล์นี้เป็นใบสั่งงานจนกว่าจะมีแผนพัฒนาจริง
 
 ---
+
+## 2026-10-15 (ต่อ) — 🔒 ย่อยชั้น 2 + ล็อก vision คนตัวเล็ก (Owner สั่ง "เอาข้อ 1 เลย")
+
+**Mode:** Strategic CEO ↔ Owner → Command (Owner ให้อิสระ CEO นำตามสมควร)
+**Decisions:** Owner อนุมัติ (1) ประกาศ + ฝาก GitHub (2) Forum/Inbox ทั้งองค์กร (3) ย่อยชั้น 2 เป็นกรอบกลาง + ล็อก
+
+### ที่ทำไป
+- Commit `c278c2f` + push main (vision-small-people + session-log + learnt, secrets ผ่าน)
+- Inbox `msg-20261015-00259`: ceo → __all__ ครบ 19 แผนก
+- Forum `forum-20261015-006`: 7/7 ตอบ (product, cmo, content-creator, design, psychology, legal, cfo) → synthesis ชั้น 1 ที่ `bus/forum/forum-20261015-006/`
+
+### ย่อยชั้น 2 → กรอบกลาง 3 ข้อ (เติม §7 ใน vision file แล้วล็อก)
+1. **เดาแล้วแก้ได้** (Guess→Show→Fix) — รับ product (No spec=no build) + psych (ถอนตัวเงียบ): เดาได้แต่ต้องโชว์เป็นภาษาคน + แก้ใน 1 แตะ; สิ่งที่เดา = draft spec รอแตะยืนยัน; นิ่ง/ข้าม = red flag ไม่ใช่ consent
+2. **ยืดหยุ่นแต่ไม่แตก** (Water in banks) — รับ design (WCAG AA + consistency) + content (โทนแตก) + cmo (สื่อไม่ขายฝันพลาด = ถูกอ่านว่าไม่โต): ตลิ่ง 3 ชั้น (โทน 3 คำ/ขั้นต่ำ accessibility+สีฟอนต์/นิยามคำว่าโต) + specialist ใหม่ inherit อัตโนมัติ
+3. **เล่นสะอาด** (Clean origin) — รับ legal (UGC ละเมิด IP): กฎ 3 ข้อภาษาชาวบ้าน + ใช้เฉพาะของมีสิทธิ + origin log ทุกชิ้น + checklist 1 หน้าก่อนเผยแพร่
+- CFO ถามรายได้ (ไม่ขายฝันแล้วเก็บเงินจากอะไร) — **พักไว้ตามคำสั่ง Owner** ยังไม่แตะ Budget/Revenue
+
+### สถานะไฟล์
+- `brain/vision-small-people-20261015.md` — DRAFT-RECORDED → **🔒 LOCKED** (เปลี่ยนได้เฉพาะ Owner)
+- แก่น 3 ชั้นครบ: frontier-builder-20261007 🔒 + core-definition-20261010 🔒 + vision-small-people-20261015 🔒
+
+---
