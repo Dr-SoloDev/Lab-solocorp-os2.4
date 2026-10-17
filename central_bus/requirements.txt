@@ -2,7 +2,7 @@
 # PRD Section 9: All versions pinned for reproducibility
 
 fastapi==0.115.0
-uvicorn[standard]>=0.31.1
+uvicorn[standard]>=0.51.0
 aiosqlite==0.20.0
 pydantic>=2.11.0
 starlette>=0.37.2,<0.39.0       # Pinned: v1.x breaks fastapi 0.115.0 APIRouter (on_startup removed)
