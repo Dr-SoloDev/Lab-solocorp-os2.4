@@ -63,7 +63,7 @@
 
   "agent": {
     "ceo-turbo": {
-      "model": "opencode/muse-spark-1.3-contributor-free",
+      "model": "opencode/glm-5.3-flash-free",
       "description": "CEO of SoloCorp OS — Supreme AI Authority. รับ vision จาก Owner → ตัดสินใจ → delegate ไปยัง Department Heads",
       "mode": "primary",
       "color": "#FFD700"
@@ -164,6 +164,29 @@
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_PERSONAL_ACCESS_TOKEN}"
       }
+    },
+    "concat": {
+      "type": "local",
+      "command": ["C:\\Users\\Lenovo\\AppData\\Local\\Programs\\Concat\\concat.exe", "--mcp"],
+      "enabled": true,
+      "timeout": 120000
+    },
+    "earshot": {
+      "type": "local",
+      "command": ["C:\\Users\\Lenovo\\Desktop\\earshot\\.venv\\Scripts\\python.exe", "-m", "earshot", "mcp"],
+      "cwd": "C:\\Users\\Lenovo\\Desktop\\earshot",
+      "enabled": true,
+      "timeout": 180000,
+      "env": {
+        "EARSHOT_THREADS": "3"
+      }
+    },
+    "vectorcraft": {
+      "type": "local",
+      "command": ["tools/vectorcraft/vectorcraft-cli.exe", "mcp", "--headless", "--automation-read-root", "bus/evidence/vectorcraft", "--automation-write-root", "bus/evidence/vectorcraft"],
+      "cwd": ".",
+      "enabled": true,
+      "timeout": 180000
     }
   },
 

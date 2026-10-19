@@ -1,0 +1,35 @@
+{
+  "project": "thokchai-001",
+  "location": "C:/Users/Lenovo/Desktop/คริป",
+  "output": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/export/thokchai-001.mp4",
+  "video": { "width": 1080, "height": 1920, "fps": 30 },
+  "crf": 20,
+  "background": { "kind": "color", "color": "#1C1008" },
+  "font": { "family": "Leelawadee UI", "path": "C:\\Windows\\Fonts\\LeelawUI.ttf" },
+  "cards": [
+    { "start": 0.0,  "end": 4.5,  "text": "เต่ากับไก่", "size": 0.13, "weight": 800, "color": "#E8B65A" },
+    { "start": 4.5,  "end": 10.5, "text": "ไก่: ฉันวิ่งเร็วที่สุด\nในป่านี้เลย!" },
+    { "start": 10.5, "end": 16.5, "text": "เต่า: ฉันช้ากว่า\nแต่ฉันจะไม่หยุด" },
+    { "start": 16.5, "end": 23.0, "text": "ไก่: ฮะฮะ!\nเต่าจะมาเสร็จเมื่อไหร่" },
+    { "start": 23.0, "end": 29.5, "text": "เต่า: ฉันแค่เดินไปเรื่อยๆ\nแล้วดูว่าจะเป็นยังไง" },
+    { "start": 29.5, "end": 35.5, "text": "ไก่: อืม...\nขอพักสักครู่" },
+    { "start": 35.5, "end": 42.0, "text": "เต่า: ฉันยังเดินต่อ" },
+    { "start": 42.0, "end": 48.5, "text": "เต่า: อีกนิดเดียว\nถึงเส้นชัยแล้ว" },
+    { "start": 48.5, "end": 54.5, "text": "ไก่: เฮ้ย!\nเต่าอยู่ตรงนี้ได้ยัง?" },
+    { "start": 54.5, "end": 60.5, "text": "เต่า: ความพยายาม\nอยู่เสมอครับ" },
+    { "start": 60.5, "end": 66.0, "text": "คนเราชนะกัน\nด้วยความพยายาม\nไม่ใช่ความเร็ว", "weight": 800, "color": "#1C1008", "plate": "#E8B65A", "width": 0.78 }
+  ],
+  "sounds": [
+    { "start": 0.0,  "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/bell_C5.wav", "volume": 0.26 },
+    { "start": 4.5,  "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/tick_1.wav", "volume": 0.30 },
+    { "start": 10.5, "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/tick_1.wav", "volume": 0.30 },
+    { "start": 16.5, "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/tick_1.wav", "volume": 0.30 },
+    { "start": 23.0, "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/tick_1.wav", "volume": 0.30 },
+    { "start": 29.5, "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/bell_G4.wav", "volume": 0.22 },
+    { "start": 35.5, "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/tick_1.wav", "volume": 0.30 },
+    { "start": 42.0, "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/whoosh-short_1.wav", "volume": 0.24 },
+    { "start": 48.5, "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/tick_1.wav", "volume": 0.30 },
+    { "start": 54.5, "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/tick_1.wav", "volume": 0.30 },
+    { "start": 60.5, "file": "C:/Users/Lenovo/Desktop/คริป/thokchai-001/audio/kit/bell_C5.wav", "volume": 0.28 }
+  ]
+}
