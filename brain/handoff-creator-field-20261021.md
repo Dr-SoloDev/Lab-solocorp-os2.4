@@ -120,6 +120,29 @@ python scripts/make_broll_clip.py --script X.script.md --library <โฟลเ�
 
 **เครื่องมือใหม่:** `scripts/split_clips.py` (ตัดคลิปยาวเป็นท่อน ≤179 วิ ตาม Terms §4(a))
 
+## ✅ Voice Clone ใช้ได้จริง (2026-10-21) — OmniVoice บน CPU
+
+**แก้ torchaudio ได้แล้ว** (ติดตั้งครั้งแรกล้มเพราะ 2 อย่างพร้อมกัน):
+1. `torchaudio` จาก PyPI = CUDA build → ต้อง `--index-url https://download.pytorch.org/whl/cpu` + เวอร์ชันให้ตรงกับ torch
+2. `LD_LIBRARY_PATH` ต้องชี้ไปที่ `torch/lib` (ไม่งั้นหา libc10.so ไม่เจอ)
+
+```
+/data/venvs/omnivoice    torch 2.11.0+cpu · torchaudio 2.11.0+cpu · omnivoice 0.2.1
+โมเดล: ~/.cache/huggingface/hub/models--k2-fsa--OmniVoice (2.5GB, cache ครบ)
+เครื่องมือ: scripts/voice_clone.py  (ref-audio 3-10 วิ + ref-text → เสียง 24kHz)
+```
+
+**ผลทดสอบ:** ref = 10 วิ จาก Loop_Engineering (ศัพท์เดียวกับเป้าหมาย) → ผลลัพธ์ 5.2 วิ
+ตรวจด้วย whisper: *"สวัสดีครับ วันนี้ผมจะเล่าให้ฟังว่า SoloCorp OS ทำอะไรได้บ้าง"* → **ถูกต้องอ่านออก**
+
+### ⚠️ ข้อจำกัดสำคัญ: RTF 165 บน CPU
+```
+5.2 วิ เสียเวลา 858 วิ  →  คลิป 40 วิ จะใช้ ~1.8 ชั่วโมง
+```
+→ **เปลี่ยนวิธี: คิดเสียงทั้งสัปดาห์ล่วงหน้าในตอนกลางคืน (batch)**
+   คืนนี้คิด 7 คลิป ≈ 4 ชม. → เช้ามาตัด b-roll + ซับ + โพสต์ → ได้วันละ 1 แบบไม่ต้องรอ
+→ ต้องมี worker ที่ทำงานตอนกลางคืน (cron) + คิว
+
 ## 🔄 กำลังทำ (ค้างไว้)
 
 **ติดตั้ง OmniVoice (voice cloning) แบบ CPU** — ⚠️ **ติดปัญหา torchaudio**
