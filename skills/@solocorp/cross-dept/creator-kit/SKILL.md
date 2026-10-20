@@ -74,6 +74,17 @@ build_package(p, script, Path("bus/media/creator/<slug>/<วันที่>/"))
 ```
 ได้ 5 ไฟล์: `.script.md` `.shots.md` `.caption.md` `.origin.md` `.checklist.md`
 
+### 4b · ทำคลิปจริง (ถ้าต้องการ)
+```bash
+python scripts/make_clip.py --script <xxx.script.md> --out <xxx.mp4>
+```
+→ mp4 **1080x1920** พร้อมเสียงพูดไทย + ซับไตเติล (piper + ffmpeg/libass) แล้วตรวจเงื่อนไขโปรแกรมให้อัตโนมัติ
+ติดตั้งเสียงครั้งแรก: `scripts/setup_tts.sh`
+รายละเอียดทั้งหมด: `docs/MEDIA-TOOLKIT.md`
+
+> ⚠️ **คลิปที่เสียงสังเคราะห์ = ไม่นับในโปรแกรม X** — ครีเอเตอร์ต้องพูด/ถ่ายเอง
+> เครื่องมือชุดนี้เหมาะกับ "ครีเอเตอร์ถ่ายเอง เราช่วยคิด+เขียน+ตัด+ซับ"
+
 ### 5 · เตรียมลง TikTok (แบบ draft — คนกดยืนยัน 1 คลิก)
 ใช้ `stealth-browser` (Chrome จริง เก็บ cookie ได้):
 ```
