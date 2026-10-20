@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# web-read — อ่านเว็บที่ต้อง render JavaScript โดยไม่ต้องมี display
+#
+# ใช้แทน Chrome/stealth-browser เมื่อแค่ต้อง "อ่านเนื้อหา" ไม่ต้อง interact
+#   RAM ~46MB (เทียบ Chrome ~1.4GB)  ·  ไม่ต้องมี Xorg  ·  ไม่เก็บ cookie
+#
+# ใช้:
+#   tools/carbonyl/web-read <url>
+#   tools/carbonyl/web-read <url> --wait 20        # เว็บช้า รอนานกว่า
+#   tools/carbonyl/web-read <url> --cols 160        # กว้างกว่า = ได้ข้อความเยอะกว่า
+#
+# Env:
+#   WEB_READ_WAIT   วินาทีที่รอให้หน้าโหลด (default 12)
+#   WEB_READ_IMAGE  ชื่อ image (default solocorp/carbonyl-reader:latest)
+
+set -euo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+IMAGE="${WEB_READ_IMAGE:-solocorp/carbonyl-reader:latest}"
+WAIT="${WEB_READ_WAIT:-12}"
+COLS="${WEB_READ_COLS:-120}"
+ROWS="${WEB_READ_ROWS:-40}"
+
+URL="${1:-}"
+if [[ -z "$URL" ]]; then
+  echo "usage: web-read <url> [--wait N] [--cols N] [--rows N] [--network MODE]" >&2
+  exit 2
+fi
+shift
+
+NETWORK=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --wait) WAIT="$2"; shift 2 ;;
+    --cols) COLS="$2"; shift 2 ;;
+    --rows) ROWS="$2"; shift 2 ;;
+    --network) NETWORK="$2"; shift 2 ;;
+    *) echo "unknown option: $1" >&2; exit 2 ;;
+  esac
+done
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "[web-read] ไม่พบ docker — ต้องมี docker เพื่อรัน carbonyl" >&2
+  exit 127
+fi
+
+if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
+  echo "[web-read] กำลัง build image: $IMAGE ..." >&2
+  docker build -q -t "$IMAGE" "$HERE" >/dev/null
+fi
+
+# --rm = ลบ container ทิ้งทันทีหลังจบ ไม่เหลือ residue
+RAW="$(docker run --rm \
+  ${NETWORK:+--network "$NETWORK"} \
+  -e "CARBONYL_WAIT=$WAIT" \
+  -e "CARBONYL_COLS=$COLS" \
+  -e "CARBONYL_ROWS=$ROWS" \
+  "$IMAGE" "$URL" 2>/dev/null || true)"
+
+if [[ -z "$RAW" ]]; then
+  echo "[web-read] ไม่ได้ output — เว็บอาจโหลดไม่ทันหรือถูกบล็อก (ลอง --wait 20)" >&2
+  exit 1
+fi
+
+printf '%s' "$RAW" | python3 "$HERE/extract.py"

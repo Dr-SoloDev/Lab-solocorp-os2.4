@@ -1,0 +1,33 @@
+[skill]
+name = "@solocorp/engineering/web-read"
+version = "0.1.0"
+description = "อ่านเว็บที่ต้อง render JavaScript — ใช้ Chromium จริงใน container ที่ไม่มี display (47.5MB RAM)"
+category = "engineering"
+
+[dept]
+owner = "engineering"
+consumers = ["engineering", "ceo", "cmo", "content-creator", "sales", "support"]
+
+[bus]
+endpoint = "/v1/skills/engineering/web-read"
+queue_topic = "skill.eng.web_read"
+lifecycle = "skill_invoke → web_read_exec → complete"
+
+[mirror]
+minimum_level = "L1"
+check_on_invoke = false
+description = "อ่านเว็บอย่างเดียว ไม่แก้ไขอะไร → L1 ไม่ต้อง Mirror Check"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/web-read"
+description = "อ่านเนื้อหาเว็บที่ render ด้วย JavaScript (ตัวที่ HTTP ธรรมดาดึงไม่ได้)"
+platforms = ["opencode", "grok"]
+
+[resources]
+tool = "tools/carbonyl/web-read"
+image = "solocorp/carbonyl-reader:latest"
+upstream = "https://github.com/fathyb/carbonyl (BSD-3-Clause)"

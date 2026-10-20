@@ -53,6 +53,7 @@ Think of them as "slash commands with memory."
 | **`budget-check`** 🆕 | **cfo** | **`@solocorp/cfo/budget-check/`** | **opencode + grok** | **🟢 Active** |
 | **`smoke-test`** 🆕 | **qa** | **`@solocorp/qa/smoke-test/`** | **opencode + grok + claude** | **🟢 Active** |
 | **`rfc`** 🆕 | **governance** | **`@solocorp/governance/rfc/`** | **opencode + grok** | **🟢 Active** |
+| **`web-read`** 🆕 | **engineering** | **`@solocorp/engineering/web-read/`** | **opencode + grok** | **🟢 Active** |
 
 ---
 
