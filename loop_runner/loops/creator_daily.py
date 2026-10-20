@@ -208,12 +208,29 @@ class CreatorDailyLoop(Loop):
             return "⏭ creator_daily: ยังไม่มีครีเอเตอร์ที่ enroll — " \
                    "(สร้างที่ bus/programs/x-kickstart/<slug>/tracker.json)"
 
+        from solocorp_skills.cadence import DEFAULT_CADENCE_PATH, load_cadence
+
         news = _recent_news()
         prepared = 0
         skipped = 0
         lines = []
+        plan_lines = []
 
         for slug in creators:
+            # ── จังหวะ: ระบบเป็นคนเสนอ เจ้าของแค่กดอนุมัติ ──
+            per_creator = DEFAULT_CADENCE_PATH.parent / slug / "cadence.md"
+            cadence = load_cadence(per_creator if per_creator.exists()
+                                  else DEFAULT_CADENCE_PATH)
+            plan = cadence.plan_for(datetime.now().date())
+            plan_lines.append(f"· {slug}: "
+                              f"{'โพสต์ข้อความ' if plan['post_text'] else 'วันพัก'}"
+                              f"{' + คลิป' if plan['post_clip'] else ''}"
+                              f" — {plan['reason']}")
+
+            if not plan["post_text"]:
+                skipped += 1
+                continue
+
             tracker = PostingTracker(creator=slug).load()
             s = tracker.status()
             if not s["enrolled"]:
@@ -292,6 +309,8 @@ class CreatorDailyLoop(Loop):
 
         summary = (f"✅ creator_daily: เตรียมให้ {prepared} ครีเอเตอร์ · "
                    f"ข้าม {skipped}")
+        if plan_lines:
+            summary += "\nแผนวันนี้:\n" + "\n".join(plan_lines)
         if lines:
             summary += "\n" + "\n".join(lines)
         return summary
