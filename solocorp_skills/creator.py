@@ -315,10 +315,12 @@ def build_package(profile: CreatorProfile, script: dict[str, Any],
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    title = script.get("title") or "คลิป"
-    safe = re.sub(r"[^\w฀-๿-]+", "-", title).strip("-") or "clip"
+    # ชื่อไฟล์: slug ของครีเอเตอร์ + เวลา — ไม่ใช้ชื่อเรื่อง (ภาษาไทยยาวและชนกันได้)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    safe = f"{profile.slug}-{stamp}"
 
     # script.md
+    title = script.get("title") or "คลิป"
     s = [f"# 🎬 {title}", ""]
     if script.get("why"):
         s += [f"> **ทำไมเรื่องนี้:** {script['why']}", ""]
