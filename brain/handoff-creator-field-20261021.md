@@ -61,6 +61,18 @@ ffmpeg -f x11grab -i :0 -f pulse -ac 1 ref.wav   # จับหน้าจอ +
 + ตัดคลิปยาว 447 วิ (screen recording) → 3 ท่อน
 ══════════════════════════════════════
 รวม 11 คลิป (ต้องตรวจลายน้ำ/ซ้ำเชิงเนื้อหาด้วยตาอีกรอบ) · ขาดอีก 4
+
+**คลิปพร้อมซับไทยแล้ว 5 ตัว** (ใน bus/media/creator/dr-solodev/clips/ — ไม่ commit):
+| ไฟล์ | ขนาด |
+|:--|:--|
+| Loop_Engineering_FULL_2m20s_9x16_SUB.mp4 | 35.2MB |
+| SoloCorp_OS_Full_Evolution_108s_SUB.mp4 | 25.4MB |
+| ScreenRec_20261020_part1_SUB.mp4 | 35.9MB |
+| ScreenRec_20261020_part2_SUB.mp4 | 36.9MB |
+| ScreenRec_20261020_part3_SUB.mp4 | 38.3MB |
+
+💡 เนื้อหาใน screen recording = คุณคุยกับ CEO เทอโบเรื่องงานจริง (ADR-021 / Model Health Check)
+→ คือ "เรื่องราวของเรา" ในรูปวิดีโอพอดี
 ```
 
 **เครื่องมือใหม่:** `scripts/split_clips.py` (ตัดคลิปยาวเป็นท่อน ≤179 วิ ตาม Terms §4(a))
