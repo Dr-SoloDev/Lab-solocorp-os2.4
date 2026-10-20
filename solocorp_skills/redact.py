@@ -195,7 +195,8 @@ def redact(text: str, *, strip_banned: bool = False) -> RedactionResult:
 
 _EVIDENCE_RE = re.compile(
     r"(https?://\S+|\b[0-9a-f]{7,40}\b|decisions/[\w\-./]+\.md|bus/[\w\-./]+\.json|"
-    r"scripts/[\w\-./]+\.py|tests/[\w\-./]+\.py|git\s+[0-9a-f]{7,10})",
+    r"scripts/[\w\-./]+\.py|tests/[\w\-./]+\.py|git\s+[0-9a-f]{7,10}|"
+    r"\bADR-\d{2,4}\b|\bADR-\d{2,4}-[\w\-]+\.md\b)",
     re.I,
 )
 _NOTDONE_RE = re.compile(
