@@ -107,6 +107,7 @@ bus/evidence/
 bus/inbox/
 bus/system/
 bus/news/seen.json
+bus/programs/x-kickstart/*/tracker.json
 
 # Python cache (already tracked, force-untrack)
 __pycache__/

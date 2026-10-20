@@ -307,6 +307,7 @@ def _checklist(profile: CreatorProfile, script: dict[str, Any]) -> str:
 
 def build_package(profile: CreatorProfile, script: dict[str, Any],
                   out_dir: Path, *, origin: Optional[list[dict[str, str]]] = None,
+                  suffix: str = "",
                   ) -> dict[str, Any]:
     """เขียนแพ็กเกจพร้อมโพสต์ลงโฟลเดอร์
 
@@ -317,7 +318,7 @@ def build_package(profile: CreatorProfile, script: dict[str, Any],
 
     # ชื่อไฟล์: slug ของครีเอเตอร์ + เวลา — ไม่ใช้ชื่อเรื่อง (ภาษาไทยยาวและชนกันได้)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-    safe = f"{profile.slug}-{stamp}"
+    safe = f"{profile.slug}-{stamp}" + (f"-{suffix}" if suffix else "")
 
     # script.md
     title = script.get("title") or "คลิป"

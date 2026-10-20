@@ -17,6 +17,7 @@ import os
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 log = logging.getLogger(__name__)
 
@@ -200,6 +201,7 @@ async def think(
     model: str = DEFAULT_MODEL,
     max_tokens: int = 500,
     temperature: float = 0.7,
+    timeout: Optional[int] = None,
 ) -> str:
     """ให้ LLM คิดและตอบกลับ — ใช้ได้จากทุก Agent
 
@@ -209,6 +211,7 @@ async def think(
         model: ชื่อ model (default: muse-spark-1.3, fallback → space-bunny → longcat → mimo)
         max_tokens: ความยาวสูงสุดของคำตอบ
         temperature: (reserved) ไม่ได้ส่งไป opencode run โดยตรง
+        timeout: override timeout (วินาที) — prompt ยาว/ภาษาไทยต้องใช้เวลานาน
 
     Returns:
         str: ข้อความตอบกลับจาก LLM (ตัด max_tokens แล้ว)
@@ -231,7 +234,7 @@ async def think(
         for attempt in range(1, _MAX_RETRIES + 1):
             try:
                 async with _semaphore:
-                    result = await _run_opencode(full_prompt, model_name)
+                    result = await _run_opencode(full_prompt, model_name, timeout=timeout)
 
                 if not result:
                     log.warning(f"LLM เปล่า ({model_name} attempt {attempt})")
@@ -244,7 +247,7 @@ async def think(
 
             except asyncio.TimeoutError:
                 log.warning(f"LLM timeout {model_name} attempt {attempt}/{_MAX_RETRIES}")
-                last_error = f"{model_name}: timeout ({_LLM_TIMEOUT}s)"
+                last_error = f"{model_name}: timeout ({timeout or _LLM_TIMEOUT}s)"
                 continue
 
             except Exception as e:
@@ -261,7 +264,7 @@ async def think(
     return f"⚠️ LLM ไม่พร้อม: {last_error}"
 
 
-async def _run_opencode(full_prompt: str, model: str) -> str:
+async def _run_opencode(full_prompt: str, model: str, *, timeout: Optional[int] = None) -> str:
     """เรียก LLM ผ่าน opencode run CLI (core)
 
     spawn subprocess → ส่ง prompt ผ่าน stdin → อ่าน stdout
@@ -280,7 +283,7 @@ async def _run_opencode(full_prompt: str, model: str) -> str:
     try:
         stdout, stderr = await asyncio.wait_for(
             proc.communicate(input=full_prompt.encode("utf-8")),
-            timeout=_LLM_TIMEOUT,
+            timeout=timeout or _LLM_TIMEOUT,
         )
     except asyncio.TimeoutError:
         _safe_kill(proc)

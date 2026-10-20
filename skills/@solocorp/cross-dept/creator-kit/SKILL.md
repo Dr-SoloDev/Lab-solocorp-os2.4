@@ -107,6 +107,37 @@ metadata: {workstream: "OWN-BIZ", sensitivity: "INT"}
 | **ตลิ่งโทน** | 3 คำนามที่เจ้าของเลือก — ทุกประโยคต้องใช้เสียงนี้ | `checklist.md` |
 | **ตลิ่งที่มา** | ที่มาของภาพ/เพลง/ฟอนต์ — ใช้ของที่มีสิทธิ์เท่านั้น | `origin.md` |
 
+## โปรแกรม X Video Kickstart Bonus (ถ้าเข้าร่วม)
+
+เงื่อนไขจริงจาก **Terms ทางการ** (Terms คุมเหนือ Help Page) — ดู ADR-023
+
+| เงื่อนไข | ค่า |
+|:--|:--|
+| คลิปที่นับ | แนวตั้ง **9:16** · **< 3 นาที** · **ของครีเอเตอร์เอง** · ไม่มีลายน้ำ · ไม่ใช่ branded/paid |
+| เป้าหมาย | **15 คลิป บน 15 วันที่แตกต่างกัน** (ตาม **Pacific Time**) ภายใน ~30 วัน |
+| รอบแรก | 15 ต.ค. – 14 พ.ย. 2026 (PT) · enroll deadline **30 ต.ค. 23:59 PT** |
+| ได้ | $1,000–$5,000 (ตาม follower tier) + **Premium+ ฟรี 1 ปี** + fast-track OCR |
+
+**🚫 ข้อห้ามจาก Terms §4(a) — อันนี้ทำให้พลาดทั้งรอบ**
+- **AI ทำคลิปให้ = ไม่นับ** ("must be yours" + "not mass-produced")
+- **โพสต์อัตโนมัติ = เสี่ยง** ("not posted solely through unauthorized automation")
+- คลิปซ้ำ/ใกล้เคียงกัน = นับแค่ 1 · ลบ/ทำ protected = หลุดนับ
+- โพสต์ต้องคงอยู่ (public + ไม่แก้) **อีก 30 วันหลังจบรอบ**
+
+**บทบาทของเรา = ผู้เตรียม · ผู้ตรวจ · ผู้จัดการเวลา** (ไม่ผลิตคลิป ไม่กดโพสต์แทน)
+
+```python
+from solocorp_skills.programs.x_kickstart import (
+    PostingTracker, check_video, clip_checklist_md, safe_posting_window_th)
+
+t = PostingTracker(creator="slug").load()
+print(t.status())              # วันนี้โพสต์แล้วไหม / เหลือกี่วัน / เก็บโพสต์ถึงเมื่อไร
+print(safe_posting_window_th())  # ('15:00', '23:59') ← โพสต์หลัง 15:00 ไทย = วัน PT ตรงกัน
+print(check_video("clip.mp4"))   # ตรวจ 9:16 + <3 นาที ด้วย ffprobe
+```
+
+> ⏰ **Pacific Time:** ไทย = PT + 15 ชม. → โพสต์ตี 2-3 ทุ่มไทย = นับเป็น**เมื่อวาน** ตาม PT → กินวันของเมื่อวานทิ้งเปล่า
+
 ## ข้อห้าม (มาจาก vision)
 
 - ❌ ไม่ขายฝันยอดขาย
