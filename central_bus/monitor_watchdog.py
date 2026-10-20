@@ -136,6 +136,30 @@ def process_queue(max_messages: int = 10) -> int:
     return processed
 
 
+def check_model_health(use_cache: bool = True) -> dict:
+    """ตรวจว่าโมเดลใน LLM fallback chain ยังมีอยู่จริงไหม
+
+    โมเดลฟรีของ opencode ถูกเปลี่ยนชื่อ/ลบไปเรื่อย ๆ → ทุกโมเดลคืน
+    "empty response" → agent 19 ตัว "ตาบอด" โดยไม่มี error ชัดเจน
+    ตัวตรวจนี้กันไม่ให้เกิดซ้ำแบบเงียบ ๆ (ดู ADR-021)
+
+    Returns:
+        dict: ผลจาก workers.llm_provider.audit_models()
+              + {"skipped": True, "error": str} เมื่อตรวจไม่ได้
+    """
+    try:
+        from workers.llm_provider import audit_models
+    except Exception as e:  # pragma: no cover
+        return {"ok": True, "skipped": True, "error": f"import ไม่ได้: {e}"}
+
+    try:
+        report = audit_models(use_cache=use_cache)
+    except Exception as e:  # pragma: no cover
+        return {"ok": True, "skipped": True, "error": f"ตรวจไม่ได้: {e}"}
+
+    return report
+
+
 def check_dead_letters() -> list[dict]:
     """Check dead letter queue for stuck messages."""
     return list_dead_letters()
