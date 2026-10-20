@@ -10,6 +10,7 @@ Carbonyl เป็นเบราว์เซอร์ที่วาดลง�
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 
@@ -132,21 +133,38 @@ def clean(lines: list[str]) -> str:
 
 
 def main() -> int:
-    args = [a for a in sys.argv[1:] if a != "--raw"]
+    as_json = "--json" in sys.argv[1:]
     raw = sys.stdin.read()
     if not raw.strip():
-        print("[web-read] ไม่ได้ output — เว็บอาจโหลดไม่ทันหรือถูกบล็อก", file=sys.stderr)
+        err = "ไม่ได้ output — เว็บอาจโหลดไม่ทันหรือถูกบล็อก"
+        if as_json:
+            print(json.dumps({"ok": False, "error": err}, ensure_ascii=False))
+        else:
+            print(f"[web-read] {err}", file=sys.stderr)
         return 1
 
     feed(raw)
     text = clean(build_lines())
     if not text:
-        print("[web-read] แปลงเป็นข้อความไม่ได้ (หน้าว่าง?)", file=sys.stderr)
+        err = "แปลงเป็นข้อความไม่ได้ (หน้าว่าง?)"
+        if as_json:
+            print(json.dumps({"ok": False, "error": err}, ensure_ascii=False))
+        else:
+            print(f"[web-read] {err}", file=sys.stderr)
         return 1
 
-    if title:
-        print(f"# {title}\n")
-    print(text)
+    if as_json:
+        print(json.dumps({
+            "ok": True,
+            "title": title,
+            "text": text,
+            "chars": len(text),
+            "lines": len(text.splitlines()),
+        }, ensure_ascii=False))
+    else:
+        if title:
+            print(f"# {title}\n")
+        print(text)
     return 0
 
 

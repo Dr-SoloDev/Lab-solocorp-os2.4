@@ -22,8 +22,9 @@ COLS="${WEB_READ_COLS:-120}"
 ROWS="${WEB_READ_ROWS:-40}"
 
 URL="${1:-}"
+JSON_OUT=0
 if [[ -z "$URL" ]]; then
-  echo "usage: web-read <url> [--wait N] [--cols N] [--rows N] [--network MODE]" >&2
+  echo "usage: web-read <url> [--wait N] [--cols N] [--rows N] [--network MODE] [--json]" >&2
   exit 2
 fi
 shift
@@ -35,6 +36,7 @@ while [[ $# -gt 0 ]]; do
     --cols) COLS="$2"; shift 2 ;;
     --rows) ROWS="$2"; shift 2 ;;
     --network) NETWORK="$2"; shift 2 ;;
+    --json) JSON_OUT=1; shift ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
 done
@@ -58,8 +60,16 @@ RAW="$(docker run --rm \
   "$IMAGE" "$URL" 2>/dev/null || true)"
 
 if [[ -z "$RAW" ]]; then
-  echo "[web-read] ไม่ได้ output — เว็บอาจโหลดไม่ทันหรือถูกบล็อก (ลอง --wait 20)" >&2
+  if [[ "$JSON_OUT" == "1" ]]; then
+    echo '{"ok": false, "error": "ไม่ได้ output — เว็บอาจโหลดไม่ทันหรือถูกบล็อก (ลอง --wait 20)"}'
+  else
+    echo "[web-read] ไม่ได้ output — เว็บอาจโหลดไม่ทันหรือถูกบล็อก (ลอง --wait 20)" >&2
+  fi
   exit 1
 fi
 
-printf '%s' "$RAW" | python3 "$HERE/extract.py"
+if [[ "$JSON_OUT" == "1" ]]; then
+  printf '%s' "$RAW" | python3 "$HERE/extract.py" --json
+else
+  printf '%s' "$RAW" | python3 "$HERE/extract.py"
+fi

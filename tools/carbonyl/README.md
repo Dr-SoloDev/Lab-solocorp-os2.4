@@ -6,7 +6,7 @@
 ## ใช้ยังไง
 
 ```bash
-tools/carbonyl/web-read <url> [--wait N] [--cols N] [--rows N] [--network MODE]
+tools/carbonyl/web-read <url> [--wait N] [--cols N] [--rows N] [--network MODE] [--json]
 ```
 
 | Option | Default | ความหมาย |
@@ -15,6 +15,18 @@ tools/carbonyl/web-read <url> [--wait N] [--cols N] [--rows N] [--network MODE]
 | `--cols` | 120 | ความกว้างเทอร์มินัล → ยิ่งกว้าง ยิ่งได้ข้อความเยอะ |
 | `--rows` | 40 | ความสูงเทอร์มินัล |
 | `--network` | (default bridge) | ใช้ `host` เมื่อ URL เป็น localhost |
+| `--json` | — | ผลลัพธ์แบบ JSON (สำหรับเครื่องมือ/สคริปต์) |
+
+## 3 ทางเข้าสำหรับ agent
+
+| ทาง | ใครใช้ | เรียกยังไง |
+|:--|:--|:--|
+| **MCP** | OpenCode / Codex / Grok | `solocorp_web_read(url)` · `solocorp_web_search(query)` |
+| **Worker** | python agent | `await agent.web_read(url)` · `await agent.web_search(query)` |
+| **Bus** | ทุกอย่าง | `POST /v1/web-read {"url":...}` หรือ `{"query":...}` |
+
+Core client อยู่ที่ `solocorp_skills/web.py` — ใช้ร่วมกันทั้ง 3 ทาง (ไม่มี logic ซ้ำ)
+ดูรายละเอียด: `skills/@solocorp/engineering/web-read/SKILL.md` · `decisions/ADR-019-web-capability-v1-integration.md`
 
 ## Ladder — เลือกให้ถูกขั้น
 

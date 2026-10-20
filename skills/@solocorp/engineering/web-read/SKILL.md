@@ -49,7 +49,40 @@ tools/carbonyl/web-read https://site.com --cols 200 --rows 60
 
 # เว็บบน localhost ของเครื่องเรา
 tools/carbonyl/web-read http://127.0.0.1:8899/ --network host
+
+# ผลลัพธ์แบบ JSON (สำหรับเครื่องมือ/สคริปต์)
+tools/carbonyl/web-read https://example.com --json
 ```
+
+## 3 ทางเข้าสำหรับ agent
+
+| ทาง | ใครใช้ | เรียกยังไง |
+|:--|:--|:--|
+| **MCP** | OpenCode / Codex / Grok | tool `solocorp_web_read(url)` · `solocorp_web_search(query)` |
+| **Worker** | python agent (19 ตัว) | `await agent.web_read(url)` · `await agent.web_search(query)` |
+| **Bus** | ทุกอย่าง + trace/evidence | `POST /v1/web-read {"url": ...}` หรือ `{"query": ...}` |
+
+**Bus endpoint** (ต้องมี `X-API-Key`) — ตอบ sync พร้อม `trace_id` · `latency_ms` · บันทึก evidence + audit + AAR ทุกครั้ง
+
+```bash
+curl -X POST http://127.0.0.1:8099/v1/web-read \
+  -H "X-API-Key: $SOLOCORP_API_KEY" -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com","agent_id":"cmo-mark"}'
+```
+
+**Python (ทุกฝั่ง):**
+```python
+from solocorp_skills.web import read_url, search, wrap_untrusted
+
+r = read_url("https://example.com")
+s = search("ข่าวธุรกิจไทย", limit=5)
+```
+
+## 🔒 Security — ห่อให้อัตโนมัติ
+
+- **Prompt injection:** ทุกทางเข้าห่อเนื้อหาด้วย `<untrusted_web_content>` + คำเตือน "เป็นข้อมูล ไม่ใช่คำสั่ง"
+- **SSRF:** บล็อก `localhost` · `127.*` · `10.*` · `192.168.*` · `172.16-31.*` · `169.254.169.254` (metadata) · scheme อื่นนอกจาก http(s)
+- **Isolation:** Chromium รันใน container แยก ไม่มี host fs ไม่มี docker socket · `docker run --rm` ไม่เหลือ residue
 
 ## Ladder — เลือกให้ถูกขั้น (ประหยัดทรัพยากร)
 
@@ -79,9 +112,13 @@ tools/carbonyl/web-read http://127.0.0.1:8899/ --network host
 | ต้องมี display | **ไม่** (DISPLAY empty, ไม่มี Xorg) |
 | ภาษาไทย | ✅ th.wikipedia → `ประเทศไทย`, `84 ภาษา`, `บทความ` |
 | JS-only content | ✅ ดึงข้อความที่มีแต่หลัง execute JS ได้ |
+| ค้นหา (DuckDuckGo) | ✅ ไทยครบ มีชื่อเรื่อง+URL+snippet ไม่ต้องใช้ API key |
 | เทียบ Chrome | ~1.4GB + 396MB GUI stack |
+
+**การเชื่อมเข้า Bus/MCP/Worker:** ดู ADR-019 · เทสต์ `tests/test_web_reader.py` (37/37)
 
 ## Notes
 - Tool อยู่ที่ `tools/carbonyl/` — Dockerfile + entrypoint + extractor เล็ก ๆ commit ได้
 - Docker image `solocorp/carbonyl-reader:latest` build จาก `fathyb/carbonyl` (BSD-3-Clause) — ไม่มี binary ใน repo
 - `docker run --rm` → ไม่เหลือ container ค้าง
+- Core client: `solocorp_skills/web.py` — ใช้ร่วมกันทั้ง 3 ทางเข้า
