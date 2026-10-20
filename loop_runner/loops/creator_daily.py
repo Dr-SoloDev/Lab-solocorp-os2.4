@@ -263,8 +263,19 @@ class CreatorDailyLoop(Loop):
                     story_like = {"evidence": idea.get("source", ""), "problem": idea.get("problem", ""),
                                   "fix": idea.get("fix", ""), "why": idea.get("why", "")}
                     from solocorp_skills.worklog import build_text_post
+                    post_text = build_text_post(story_like)
                     (out_dir / f"{pkg['slug']}.post.md").write_text(
-                        build_text_post(story_like), encoding="utf-8")
+                        post_text, encoding="utf-8")
+                    # 🚦 publish gate — ต้องผ่านก่อนเอาไปโพสต์
+                    from solocorp_skills.redact import (
+                        gate_report_md, publish_gate, redact)
+                    red = redact(post_text)
+                    gate = publish_gate(red.text, redaction=red)
+                    (out_dir / f"{pkg['slug']}.gate.md").write_text(
+                        gate_report_md(red, gate), encoding="utf-8")
+                    if not gate.passed:
+                        lines.append(f"   ⚠️ {pkg['slug']}: gate ไม่ผ่าน "
+                                     f"({len(gate.failures())} ข้อ) — ต้องแก้ก่อนโพสต์")
                 made.append(pkg["slug"])
 
             prepared += 1
