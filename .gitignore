@@ -96,6 +96,7 @@ docs/demo/output/video/
 docs/demo/output/debug/
 docs/demo/output/narration.mp3
 docs/demo/output/.clawforge-checkpoints/
+docs/demo/.clawforge-checkpoints/
 
 # Bus runtime data
 bus/governance/
