@@ -330,6 +330,81 @@ async def list_ceo_alerts(acknowledged: str = "all", limit: int = 50):
     return {"count": len(rows), "alerts": [dict(r) for r in rows]}
 
 
+# ══════════════════════════════════════════════════════════════════════
+# POST /v1/facts  ·  GET /v1/facts
+# ══════════════════════════════════════════════════════════════════════
+# facts store = คลังความรู้ของ agent (อ่านผ่าน /v1/context)
+# เดิมอ่านได้อย่างเดียว — ไม่มีทางเขียน → คลังว่างเปล่า (1 แถว test)
+# endpoint นี้ทำให้ agent/loop เขียนความรู้กลับเข้าคลังได้
+
+
+@app.post("/v1/facts")
+async def upsert_fact(request: Request):
+    """เขียน/อัปเดต fact เข้าคลังความรู้ (upsert + version++)
+
+    Body:
+    ```json
+    {
+        "key": "news.cmo.2026-10-20",
+        "value": "...",
+        "metadata": {"workstream": "OWN-BIZ", "sensitivity": "PUB"},
+        "updated_by": "news_daily"
+    }
+    ```
+    """
+    try:
+        payload = await request.json()
+    except Exception:
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request body must be valid JSON",
+            detail={"reason": "invalid JSON"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+
+    key = payload.get("key")
+    if not key or not isinstance(key, str):
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request payload validation failed",
+            detail={"field": "key", "reason": "missing or not a string"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+    if len(key) > 200:
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="key ยาวเกิน 200 ตัวอักษร",
+            detail={"field": "key"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+
+    services = await _get_services()
+    try:
+        row = await services["facts"].set_fact(
+            key=key,
+            value=payload.get("value"),
+            metadata=payload.get("metadata") or {},
+            updated_by=payload.get("updated_by") or request.headers.get("X-Agent-Id", "unknown"),
+        )
+    except ValueError as e:
+        # bus_tags strict mode — ป้าย workstream/sensitivity ไม่ผ่าน
+        return JSONResponse(status_code=400, content=_error_response(
+            code="FACT_TAGS_INVALID", message=str(e),
+            detail={"field": "metadata"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+
+    return {"status": "ok", "key": key, "version": row.get("version"),
+            "updated_at": row.get("updated_at")}
+
+
+@app.get("/v1/facts")
+async def list_facts(prefix: str = "", limit: int = 100):
+    """อ่าน facts ตาม key pattern (prefix/glob)"""
+    services = await _get_services()
+    rows = await services["facts"].list_facts(
+        prefix=prefix or None, limit=max(1, min(int(limit), 500))
+    )
+    return {"count": len(rows), "facts": rows}
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # POST /v1/context
 # ═══════════════════════════════════════════════════════════════════════
