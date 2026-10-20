@@ -128,3 +128,6 @@ loop_runner/.main.lock
 
 # Daemon PID files (runtime, never commit — daemon เขียนใหม่ทุกครั้งที่รัน)
 *.pid
+
+# คลิปของครีเอเตอร์ (ใหญ่) — เก็บในเครื่อง ไม่ commit
+bus/media/creator/*/clips/

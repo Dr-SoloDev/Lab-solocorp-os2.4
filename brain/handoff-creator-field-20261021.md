@@ -24,15 +24,29 @@
 
 ---
 
+## ✅ A เสร็จ — ซับไทย (2026-10-21)
+
+| ไฟล์ | ผล |
+|:--|:--|
+| `bus/media/creator/dr-solodev/clips/Loop_Engineering_FULL_2m20s_9x16_SUB.mp4` | 720x1280 · 140.1วิ · 35.2MB ✅ |
+| `bus/media/creator/dr-solodev/clips/SoloCorp_OS_Full_Evolution_108s_SUB.mp4` | 720x1280 · 88.3วิ · 25.4MB ✅ |
+
+เครื่องมือ: `scripts/burn_subs.py` (ใหม่) — ตัดหัว markdown ออกจาก SRT ก่อน (libass อ่านไม่ได้) · MarginV=60 → ซับลงล่างพอดี 9:16
+วิธีทำซ้ำ: `transcribe.py --model small --lang th --srt` → `burn_subs.py IN.mp4 --srt x.srt --out OUT.mp4`
+(clips ไม่ commit — gitignore `bus/media/creator/*/clips/`)
+
 ## 🔄 กำลังทำ (ค้างไว้)
 
-**ติดตั้ง OmniVoice (voice cloning) แบบ CPU** — สั่ง background ไว้
+**ติดตั้ง OmniVoice (voice cloning) แบบ CPU** — ⚠️ **ติดปัญหา torchaudio**
 ```
-/data/venvs/omnivoice        ← venv (torch CPU ติดแล้ว ✅ / omnivoice กำลังติดตั้ง)
-โมเดล: ~/.cache/huggingface/hub/models--k2-fsa--OmniVoice (3.1GB, cache ครบแล้ว ✅)
+/data/venvs/omnivoice   ← venv (torch CPU ✅ / omnivoice ❌)
+โมเดล: ~/.cache/huggingface/hub/models--k2-fsa--OmniVoice (3.1GB, cache ครบ ✅)
 log:   /tmp/opencode/omnivoice_install.log
+สาเหตุ: OSError: Could not load this library: .../torchaudio/lib/_torchaudio.abi3.so
+→ ต้องจับคู่เวอร์ชัน torch/torchaudio ให้ตรงกัน (ลอง torch==2.8.0 + torchaudio==2.8.0)
+→ แล้วรันบน CPU: device_map="cpu", dtype=torch.float32/bfloat16
 ```
-ตรวจสถานะ: `tail -3 /tmp/opencode/omnivoice_install.log`
+⚠️ **หมายเหตุ: background job ต้องใช้ `setsid` ไม่ใช่แค่ nohup** — tool ตัด process group ตอน timeout
 
 **ข้อจำกัดของเครื่องนี้:** ไม่มี GPU · RAM 15GB (ว่าง ~9GB) · โมเดล 2.45GB → CPU ได้แต่ช้า
 
