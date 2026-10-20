@@ -19,23 +19,37 @@ log = logging.getLogger(__name__)
 
 # ── Configuration ──────────────────────────────────────────────────────
 
-# Owner-ordered fallback chain (2026-10-08, stash review — รวมเป็นฟรีตัวเดียว):
-# 1. Muse Spark 1.3 Free — ตัวหลัก (พิสูจน์แล้วผ่าน opencode run ตรง)
-# 2. Space Bunny Free — สำรอง 1
-# 3. Longcat 2.5 Preview Free — สำรอง 2
-# 4. Mimo-2.6-Flash Free — สำรอง 3
-DEFAULT_MODEL = "opencode/muse-spark-1.3-contributor-free"
+# Fallback chain (2026-10-20 — ทดสอบจาก repo root จริงทุกตัว):
+# 1. Minimax M3.1 Flash Free   — ตัวหลัก (~12s)
+# 2. DeepSeek V4.1 Flash Free  — สำรอง 1
+# 3. Nemotron 3.5 Lightning    — สำรอง 2
+# 4. Longcat 2.5 Preview Free  — สำรอง 3 (~46s ช้า)
+# 5. Mimo 2.6 Flash Free       — สำรอง 4
+#
+# ⚠️ โมเดลที่ถูกลบออก (ไม่มีใน opencode models แล้ว → "Model not found"):
+#    muse-spark-1.3-contributor-free, space-bunny-free
+# ⚠️ โมเดลที่มีอยู่แต่ใช้ไม่ได้จาก repo root:
+#    beam-free (gateway ปฏิเสธ agents_md), glm-5.3-flash-free (unknown_parameter)
+DEFAULT_MODEL = "opencode/minimax-m3.1-flash-free"
+# ยืนยันแล้วว่าใช้ได้จริงจาก repo root (2026-10-20) — ทดสอบทีละตัว
 MODEL_FALLBACKS = [
-    "opencode/muse-spark-1.3-contributor-free",
-    "opencode/space-bunny-free",
-    "opencode/longcat-2.5-preview-free",
+    "opencode/minimax-m3.1-flash-free",        # ~12s · เร็วสุดในชุดที่ใช้ได้
+    "opencode/deepseek-v4.1-flash-free",
+    "opencode/nemotron-3.5-lightning-free",
+    "opencode/longcat-2.5-preview-free",       # ~46s · ช้า
     "opencode/mimo-v2.6-flash-free",
 ]
 # Dead models — ถ้ามี caller ส่งชื่อเก่ามา ให้ map เข้า fallback chain ทันที
 DEAD_MODELS = {
+    # ยังไม่มีใน opencode models (Model not found)
     "opencode/x-preview-f-free",
-    "stealth/ox-alpha",
+    "opencode/muse-spark-1.3-contributor-free",
+    "opencode/space-bunny-free",
     "opencode/deepseek-v4-flash-free",
+    "stealth/ox-alpha",
+    # มีอยู่แต่ gateway free-tier ปฏิเสธ agents_md / unknown_parameter
+    "opencode/beam-free",
+    "opencode/glm-5.3-flash-free",
 }
 _CMD = os.environ.get("OPENCODE_BIN", os.path.expanduser("~/.opencode/bin/opencode"))
 _MAX_CONCURRENT = 3

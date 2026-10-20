@@ -22,7 +22,7 @@ import json
 import os
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal, Optional
 
@@ -139,6 +139,87 @@ def process_queue(max_messages: int = 10) -> int:
 def check_dead_letters() -> list[dict]:
     """Check dead letter queue for stuck messages."""
     return list_dead_letters()
+
+
+# ── Orphan detection (กัน "ตายเงียบ") ────────────────────────────────
+# ข้อความที่ยัง pending/routed แต่ target_agent ไม่มีในรายชื่อที่ worker
+# service ลงทะเบียนไว้ → ไม่มีใครมารับ → จะค้างตลอดไปโดยไม่มีใครรู้
+# (เจอกรณีนี้จริง: skill dispatch เขียน target เป็น "ชื่อแผนก" ไม่ใช่ agent_id
+#  → 19 ข้อความค้างเงียบ ๆ ตั้งแต่ ก.ค. — ดู ADR-019)
+
+_ORPHAN_STUCK_MINUTES = 15
+
+
+def _registered_agent_ids() -> set[str]:
+    """รายชื่อ agent ที่ worker service ลงทะเบียนไว้ (consumer ตัวจริง)"""
+    try:
+        from workers.agent_worker_service import AGENT_IDS
+        return set(AGENT_IDS)
+    except Exception:
+        return set()
+
+
+def check_orphaned_messages(minutes: int = _ORPHAN_STUCK_MINUTES) -> list[dict]:
+    """หาข้อความที่ค้างและไม่มีใครจะมารับ (silent failure guard)
+
+    คืน list ของ dict: {id, agent_id, target_agent, status, age_minutes, reason}
+    """
+    import sqlite3
+
+    from central_bus.config import settings
+
+    db_file = Path(settings.db_path)
+    if not db_file.is_absolute():
+        db_file = Path(__file__).parent.parent / db_file
+    if not db_file.exists():
+        return []
+
+    cutoff = (
+        datetime.now(timezone.utc) - timedelta(minutes=minutes)
+    ).isoformat()
+
+    try:
+        conn = sqlite3.connect(f"file:{db_file}?mode=ro", uri=True)
+        conn.row_factory = sqlite3.Row
+        rows = [dict(r) for r in conn.execute(
+            "SELECT id, agent_id, target_agent, status, created_at "
+            "FROM queue WHERE status IN ('pending','routed') AND created_at < ? "
+            "ORDER BY created_at ASC",
+            (cutoff,),
+        )]
+        conn.close()
+    except Exception as e:
+        print(f"  ⚠️ orphan check failed: {e}", file=sys.stderr)
+        return []
+
+    known = _registered_agent_ids()
+    orphans: list[dict] = []
+    for r in rows:
+        target = r.get("target_agent")
+        age = 0
+        try:
+            created = datetime.fromisoformat(r.get("created_at", ""))
+            age = int((datetime.now(timezone.utc) - created).total_seconds() // 60)
+        except Exception:
+            pass
+        if not target:
+            reason = "ไม่มี target_agent — ไม่มีใครรู้ว่าจะส่งให้ใคร"
+        elif known and target not in known:
+            reason = f"target_agent '{target}' ไม่มีในรายชื่อ agent ที่ลงทะเบียน"
+        else:
+            reason = (
+                f"ค้างมา {age} นาที ยังไม่มี worker หยิบ "
+                "(worker service ไม่ได้รัน?)"
+            )
+        orphans.append({
+            "id": r["id"],
+            "agent_id": r.get("agent_id"),
+            "target_agent": target,
+            "status": r.get("status"),
+            "age_minutes": age,
+            "reason": reason,
+        })
+    return orphans
 
 
 def watchdog_loop(max_iterations: int = 10):
