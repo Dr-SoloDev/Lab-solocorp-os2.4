@@ -55,6 +55,7 @@ Think of them as "slash commands with memory."
 | **`rfc`** 🆕 | **governance** | **`@solocorp/governance/rfc/`** | **opencode + grok** | **🟢 Active** |
 | **`web-read`** 🆕 | **engineering** | **`@solocorp/engineering/web-read/`** | **opencode + grok** | **🟢 Active** |
 | **`news-feed`** 🆕 | **engineering** | **`@solocorp/engineering/news-feed/`** | **opencode + grok** | **🟢 Active** |
+| **`creator-kit`** 🆕 | **cross-dept** | **`@solocorp/cross-dept/creator-kit/`** | **opencode + grok** | **🟢 Active** |
 
 ---
 
