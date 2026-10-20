@@ -118,6 +118,45 @@ metadata: {workstream: "OWN-BIZ", sensitivity: "INT"}
 | **ตลิ่งโทน** | 3 คำนามที่เจ้าของเลือก — ทุกประโยคต้องใช้เสียงนี้ | `checklist.md` |
 | **ตลิ่งที่มา** | ที่มาของภาพ/เพลง/ฟอนต์ — ใช้ของที่มีสิทธิ์เท่านั้น | `origin.md` |
 
+## โหมด A · สร้างตัวตนจากงานจริงของเรา (ครีเอเตอร์คนแรก = Dr.Solodev)
+
+> Owner ตัดสิน 2026-10-20: *"ใช้เราทำเรื่องราวของเราเป็นแบบตัวอย่างไปเลย"*
+> → เนื้อหาไม่ได้คิดขึ้นเอง แต่ **ขุดออกจากงานที่เราทำจริง**
+
+**แหล่งข้อมูล (มีอยู่ใน repo แล้ว):**
+| แหล่ง | ที่อยู่ | ได้อะไร |
+|:--|:--|:--|
+| ADR | `decisions/ADR-*.md` | บริบท (ปัญหา) → การตัดสินใจ (แก้) → ผลกระทบ (เพื่ออะไร) |
+| session log | `brain/session-log.md` | งานรายวัน + Owner Request |
+| git log | `git log` | commit ที่แก้ปัญหาจริง |
+| evidence | `bus/evidence/*.json` | เคสที่พังแล้วแก้ (expected/actual) |
+
+```python
+from solocorp_skills.worklog import collect_stories, story_to_idea, build_text_post
+
+for s in collect_stories(days=14, limit=5):
+    print(s.kind, s.score, s.title)
+
+idea = story_to_idea(stories[0])      # → ไอเดียในรูป 4 ท่อน
+post = build_text_post(stories[0])    # → โพสต์ข้อความสไตล์ประกาศเรซูเม่
+```
+
+**รูปแบบโพสต์ข้อความ (ไม่ต้องเป็นคลิปทุกอัน — X โพสต์ข้อความได้):**
+```
+เจอปัญหา: ระหว่างซ่อม F1+F2 พบว่า LLM fallback chain ใช้ชื่อโมเดลที่ไม่มีจริง 2 ตัว
+แก้: watchdog → POST /v1/observe → bus เขียน ceo_alerts + ปิดสถานะ
+เพราะ: โมเดลหาย → เตือนภายใน 6 ชั่วโมง (ไม่ใช่เมื่อมีคนเจอ)
+หลักฐาน: decisions/ADR-021-model-health-check.md
+
+— Dr.Solodev · frontier builder / infrastructure for agents
+```
+
+**โปรไฟล์ครีเอเตอร์คนแรก (บันทึกใน facts แล้ว):**
+`creator.dr-solodev.profile` — 4 ท่อน + ตลิ่งโทน `จริงใจ · ชัด · มือช่าง`
+
+> 💡 เนื้อหาที่มี **รอยแผลจริง + เหตุผล** เท่านั้นที่ถูกหยิบมาเล่า
+> (vision: สายสร้างตัวตนวัดซื่อสัตย์ — ความสม่ำเสมอ + ความชัดตัวตน + โอกาสที่เข้ามา)
+
 ## โปรแกรม X Video Kickstart Bonus (ถ้าเข้าร่วม)
 
 เงื่อนไขจริงจาก **Terms ทางการ** (Terms คุมเหนือ Help Page) — ดู ADR-023

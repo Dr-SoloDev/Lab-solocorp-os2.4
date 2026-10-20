@@ -128,6 +128,31 @@ def _generate_ideas(profile: CreatorProfile, recent_news: str) -> list[dict[str,
     if raw.startswith("⚠️ LLM ไม่พร้อย"):
         return []
     return _parse_json_array(raw)
+
+
+def _worklog_ideas(limit: int = IDEA_COUNT, days: int = 14) -> list[dict[str, str]]:
+    """ไอเดียจาก **งานจริงของเราเอง** (ขุดจาก ADR / session-log / git / evidence)
+
+    นี่คือแกนของโหมด "สร้างตัวตน" — เนื้อหาไม่ได้คิดขึ้นเอง
+    แต่มาจากสิ่งที่เราทำจริง: เจอปัญหาอะไร · แก้อะไร · เพื่ออะไร
+    """
+    from solocorp_skills.worklog import collect_stories, story_to_idea
+
+    try:
+        stories = collect_stories(days=days, limit=limit * 3)
+    except Exception:
+        return []
+
+    out: list[dict[str, str]] = []
+    for s in stories:
+        idea = story_to_idea(s)
+        # ต้องมีรอยแผลจริง + เหตุผล ถึงเล่าได้ (vision: เรื่องที่ดีต้องมีทั้งสองอย่าง)
+        if not idea.get("problem") or not idea.get("why"):
+            continue
+        out.append(idea)
+        if len(out) >= limit:
+            break
+    return out
     try:
         start, end = raw.find("["), raw.rfind("]")
         if start == -1 or end == -1:
@@ -212,7 +237,11 @@ class CreatorDailyLoop(Loop):
                 lines.append(f"· {slug}: ยังไม่มีโปรไฟล์ 4 ท่อนที่ครบ — ข้าม")
                 continue
 
-            ideas = _generate_ideas(profile, news)
+            ideas = _worklog_ideas(limit=IDEA_COUNT)
+            source = "จากงานจริงของเรา (work log)"
+            if not ideas:
+                ideas = _generate_ideas(profile, news)
+                source = "จากข่าว + 4 ท่อน"
             if not ideas:
                 skipped += 1
                 lines.append(f"· {slug}: LLM ไม่พร้อย — ยังไม่ได้เตรียมไอเดีย")
@@ -229,11 +258,18 @@ class CreatorDailyLoop(Loop):
                     clip_checklist_md(profile.name, idea.get("title", ""),
                                      tracker_status=tracker.status()),
                     encoding="utf-8")
+                # โพสต์ข้อความคู่ (X โพสต์ข้อความได้ — ไม่ต้องเป็นคลิปทุกอัน)
+                if idea.get("source"):
+                    story_like = {"evidence": idea.get("source", ""), "problem": idea.get("problem", ""),
+                                  "fix": idea.get("fix", ""), "why": idea.get("why", "")}
+                    from solocorp_skills.worklog import build_text_post
+                    (out_dir / f"{pkg['slug']}.post.md").write_text(
+                        build_text_post(story_like), encoding="utf-8")
                 made.append(pkg["slug"])
 
             prepared += 1
             lines.append(
-                f"· {slug}: เตรียม {len(made)} ไอเดีย → {out_dir} "
+                f"· {slug}: เตรียม {len(made)} ไอเดีย ({source}) → {out_dir} "
                 f"(วันนี้ยังไม่โพสต์ · {s['days_used']}/{s['days_needed']} วัน)")
 
         if prepared:
