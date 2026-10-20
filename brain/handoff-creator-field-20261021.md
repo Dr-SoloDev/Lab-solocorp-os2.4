@@ -35,6 +35,36 @@
 วิธีทำซ้ำ: `transcribe.py --model small --lang th --srt` → `burn_subs.py IN.mp4 --srt x.srt --out OUT.mp4`
 (clips ไม่ commit — gitignore `bus/media/creator/*/clips/`)
 
+## 🎙 เครื่องมืออัดเสียงบนเครื่องนี้ (ตรวจแล้ว 2026-10-21)
+
+| เครื่องมือ | ที่อยู่ | ใช้ทำอะไร |
+|:--|:--|:--|
+| `ffmpeg` | `~/.local/bin/ffmpeg` | บันทึกหน้าจอ/เสียงผ่าน X11 หรือ PulseAudio + ตัด/เบิร์นซับ |
+| `arecord` | `/usr/bin/arecord` | อัดไมค์ตรงจาก ALSA (การ์ด CX20588 Analog) |
+| `pactl` / `pavucontrol` | `/usr/bin/` | ดู/ปรับระดับเสียง + เลือกอุปกรณ์อัด (PulseAudio) |
+| `gst-launch-1.0` | `/usr/bin/` | GStreamer pipeline (อัดจาก X11/ไมค์) |
+| `simplescreenrecorder` | `/usr/bin/` | บันทึกหน้าจอ (มีอยู่แล้ว) |
+
+**ไม่มี:** obs / audacity / kdenlive / shotcut → ใช้ ffmpeg แทน
+**อุปกรณ์อัด:** `card 0: PCH [HDA Intel PCH], device 0: CX20588 Analog`
+
+คำสั่งอัดเสียงไมค์ (ทางเลือกที่ไม่ต้องเปิด GUI):
+```bash
+arecord -f cd -d 30 -c 1 -t wav ref.wav          # 30 วิ mono 44.1k
+ffmpeg -f x11grab -i :0 -f pulse -ac 1 ref.wav   # จับหน้าจอ + เสียงระบบ
+```
+
+## 🎬 คลิปที่นับโบนัสได้ (อัปเดต 2026-10-21)
+
+```
+~/Videos (19 ไฟล์)  → ผ่านขนาด+เวลา 10 → ไม่ซ้ำจริง 8
++ ตัดคลิปยาว 447 วิ (screen recording) → 3 ท่อน
+══════════════════════════════════════
+รวม 11 คลิป (ต้องตรวจลายน้ำ/ซ้ำเชิงเนื้อหาด้วยตาอีกรอบ) · ขาดอีก 4
+```
+
+**เครื่องมือใหม่:** `scripts/split_clips.py` (ตัดคลิปยาวเป็นท่อน ≤179 วิ ตาม Terms §4(a))
+
 ## 🔄 กำลังทำ (ค้างไว้)
 
 **ติดตั้ง OmniVoice (voice cloning) แบบ CPU** — ⚠️ **ติดปัญหา torchaudio**
