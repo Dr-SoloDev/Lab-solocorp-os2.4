@@ -116,11 +116,11 @@ def clean(lines: list[str]) -> str:
     out = []
     for line in lines:
         line = BLOCKS.sub("", line)
+        # เศษจากการ kill process — ข้อความจาก shell อาจโผล่กลางบรรทัดได้
+        # (ใช้ ASCII boundary เพราะ \b ใน Python ไม่แยกเลยไทยกับอังกฤษ)
+        line = re.sub(r"(?<![A-Za-z])(Killed|Terminated|Aborted)(?![A-Za-z])", "", line)
         line = re.sub(r"[ \t]+", " ", line).strip()
         if not line:
-            continue
-        # เศษจากการ kill process (ข้อความจาก shell) — ไม่ใช่เนื้อหาเว็บ
-        if line in ("Killed", "Terminated", "Quit", "Aborted"):
             continue
         out.append(line)
     # ตัดบรรทัดซ้ำติดกัน (carbonyl วาดทับหลายรอบ → เกิดข้อความซ้ำ)
