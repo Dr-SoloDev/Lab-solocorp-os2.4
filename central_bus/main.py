@@ -256,7 +256,78 @@ async def observe(request: Request):
          json.dumps({"route_to": route_to, "priority": priority}), now_iso()),
     )
 
+    # ── report_back = รายงานถึง CEO (ไม่ใช่งานที่ต้องรอ consumer) ──
+    # เดิมปล่อยให้ค้างเป็น 'routed' ตลอด → สะสมในคิวโดยไม่มีใครปิดสถานะ
+    # (พบ 18 แถวค้างจาก ก.ค. ในรอบตรวจสอบ 2026-10-20)
+    if msg_payload.get("action") == "report_back":
+        alert_id = await _record_ceo_alert(
+            source_agent=source_agent,
+            status=msg_payload.get("status", "completed"),
+            summary=msg_payload.get("summary", ""),
+            details=msg_payload.get("details") or {},
+            trace_id=trace_id,
+        )
+        await qm.update_status(msg_id, "completed")
+        return {
+            "trace_id": trace_id, "queue_id": msg_id, "status": "completed",
+            "route_to": route_to, "alert_id": alert_id,
+            "hops": ["queue", "route", "report_back"],
+        }
+
     return {"trace_id": trace_id, "queue_id": msg_id, "status": "routed", "route_to": route_to, "hops": ["queue", "route"]}
+
+
+async def _record_ceo_alert(
+    *,
+    source_agent: str,
+    status: str,
+    summary: str,
+    details: dict,
+    trace_id: str,
+) -> str:
+    """บันทึกรายงานจาก agent เข้า ceo_alerts (ให้ CEO อ่าน/ack ได้)"""
+    alert_id = new_id()
+    severity = "HIGH" if status == "failed" else "NORMAL"
+    alert_type = "agent_report_failed" if status == "failed" else "agent_report"
+    try:
+        services = await _get_services()
+        await services["db"].execute(
+            """
+            INSERT INTO ceo_alerts
+                (id, alert_type, severity, source, title, detail,
+                 acknowledged, acknowledged_by, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                alert_id, alert_type, severity, source_agent,
+                (summary or "(ไม่มี summary)")[:200],
+                json.dumps({"details": details, "trace_id": trace_id},
+                           ensure_ascii=False)[:2000],
+                0, None, now_iso(),
+            ),
+        )
+    except Exception as e:  # pragma: no cover — หลักฐานล้มเหลวไม่ควรทำให้ report พัง
+        log.warning("Failed to record ceo_alert: %s", e)
+    return alert_id
+
+
+@app.get("/v1/ceo-alerts")
+async def list_ceo_alerts(acknowledged: str = "all", limit: int = 50):
+    """รายงานจาก agent ทั้งหมด (ceo_alerts) — CEO ใช้ดูว่าใครรายงานอะไร
+
+    Query:
+        acknowledged: all (default) | true | false
+    """
+    services = await _get_services()
+    sql = "SELECT * FROM ceo_alerts"
+    params: list = []
+    if acknowledged in ("true", "false"):
+        sql += " WHERE acknowledged = ?"
+        params.append(1 if acknowledged == "true" else 0)
+    sql += " ORDER BY created_at DESC LIMIT ?"
+    params.append(max(1, min(int(limit), 500)))
+    rows = await services["db"].fetch_all(sql, tuple(params))
+    return {"count": len(rows), "alerts": [dict(r) for r in rows]}
 
 
 # ═══════════════════════════════════════════════════════════════════════
