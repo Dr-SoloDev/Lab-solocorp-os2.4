@@ -3,10 +3,12 @@
 
 fastapi==0.115.0
 uvicorn[standard]>=0.31.1
-aiosqlite==0.20.0
 pydantic>=2.11.0
 starlette>=0.37.2,<0.39.0       # Pinned: v1.x breaks fastapi 0.115.0 APIRouter (on_startup removed)
 pydantic_settings>=2.0.0        # For central_bus.config.BaseSettings
+aiosqlite>=0.21.0,<0.23.0       # Pinned: 0.20 vs 0.21+ ต่างกันตรงโครงสร้าง Thread
+                             #   (0.21+ ห่อ _thread / 0.20 สืบทอด Thread ตรง)
+                             #   ทำให้ fix daemon ใช้ได้ทั้งสองแบบ
 
 # ── Runtime deps ที่ถูก import ในโค้ดจริง แต่เคยไม่ถูก declare ──
 # (deep health check 21 ต.ค. 2569 — CI แดงเพราะ collect ไม่ผ่าน)
@@ -14,7 +16,9 @@ numpy>=1.26.0                   # central_bus/semantic.py, central_bus/behavior_
 tomli-w>=1.0.0                  # govctl_cli/api/routes/governance.py (เขียน ADR เป็น TOML)
 typer>=0.12.0                   # govctl_cli/adr.py, govctl_cli/ao_cmd.py (CLI)
 rich>=13.0.0                    # govctl_cli/dashboard/dashboard.py
-mcp>=1.0.0                      # solocorp_mcp/server.py, legal_vault/mcp_server/server.py
+mcp>=1.28.1,<2.0.0             # solocorp_mcp/server.py, legal_vault/mcp_server/server.py
+                             # ⚠️ ห้ามปล่อย 2.x — API ของ _tool_manager เปลี่ยน → test_web_reader fail
+                             #   และ MCP server ค้างไม่ปิด process → CI hang ตอนจบ run
 PyYAML>=6.0                     # routing.yaml / config.yaml loading
 requests>=2.31.0                # workers/maxplus_llm_provider.py
 python-dotenv>=1.0.0            # โหลด .env

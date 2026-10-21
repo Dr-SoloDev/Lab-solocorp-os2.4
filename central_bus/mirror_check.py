@@ -165,21 +165,33 @@ async def _evaluate_mirror_question(question: str, decision: str, department: st
 
     Calls the LLM provider to check if the decision aligns with
     what Dr.solodev Owner would do.
+
+    ⚠️ ข้อควรระวัง (ADR-028): prompt ต้อง "ปิดช่องโหว่" ไว้
+    ถ้า prompt เปิดโอกาสให้โมเดล "ตรวจสอบเพิ่ม" โมเดลจะไปขอสิทธิ์ bash/git/read
+    → permission ถูก auto-reject → stdout ว่าง → provider คืน "LLM เปล่า"
+    → mirror check ได้ NO ทุกครั้ง (fail-silent) = ไม่มีสัญญาณอะไรเลย
+    ดังนั้น prompt ต้องระบุชัด: ห้ามใช้เครื่องมือ · ตอบคำเดียว · ตัดสินจากบริบทที่ให้มา
     """
     try:
         from workers.llm_provider import think
 
         prompt = (
-            f"คุณคือ Mirror Check Protocol ของ SoloCorp OS\n"
-            f"Department: {department}\n"
-            f"Decision ที่ต้องตรวจสอบ: {decision}\n\n"
-            f"Mirror Question: {question}\n\n"
-            f"ตอบแค่ YES หรือ NO เท่านั้น:\n"
-            f"YES = decision สอดคล้องกับสิ่งที่ Dr.solodev Owner จะทำ\n"
-            f"NO = decision ไม่สอดคล้อง"
+            f"คุณคือผู้ตัดสินใจแบบข้อความล้วน\n\n"
+            f"⛔ ห้ามใช้เครื่องมือใด ๆ ทั้งสิ้น — ห้ามอ่านไฟล์ ห้ามรันคำสั่ง ห้ามตรวจสอบอะไรเพิ่ม\n"
+            f"⛔ ตอบด้วยคำเดียวเท่านั้น: YES หรือ NO — ไม่มีคำอธิบาย ไม่มี markdown\n\n"
+            f"คำถาม: {question}\n\n"
+            f"สถานการณ์: {decision}\n\n"
+            f"ตอบ:"
         )
         result = await think(prompt, max_tokens=10)
         answer = result.strip().upper() if result else "NO"
+        if not answer.startswith(("Y", "N")):
+            # โมเดลตอบอย่างอื่น (เช่น ขอใช้เครื่องมือ / คำอธิบายยาว) → ถือว่าล้มเหลว
+            # อย่าเดาผลลัพธ์ — ให้ log ไว้เพื่อหา root cause
+            log.warning(
+                "Mirror LLM returned unexpected answer (expected YES/NO): %r", result[:120]
+            )
+            return False
         return answer.startswith("Y")
     except Exception as exc:
         log.warning("Mirror LLM evaluation failed: %s — defaulting to FAIL", exc)

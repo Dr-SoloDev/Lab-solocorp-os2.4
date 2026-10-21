@@ -231,6 +231,7 @@ async def think(
         try_list = [model] + [m for m in MODEL_FALLBACKS if m != model]
 
     for model_name in try_list:
+        stop_chain = False
         for attempt in range(1, _MAX_RETRIES + 1):
             try:
                 async with _semaphore:
@@ -256,9 +257,22 @@ async def think(
                 # Model not found = ข้ามไปตัวถัดไปทันที ไม่ต้อง retry ซ้ำ
                 if "Model not found" in str(e) or "model not found" in str(e).lower():
                     break
+                # Free tier gate = ทุกโมเดลจะล้มเหมือนกัน (ADR-017)
+                # ไม่ต้อง retry ทั้ง chain (7 โมเดล × 3 ครั้ง = ~7 นาทีที่เสียเปล่า)
+                # → หยุดทั้ง chain ทันทีแล้วบอก root cause ให้ชัด
+                if "free tier" in str(e).lower():
+                    last_error = (
+                        "free-tier gate: การเรียกโมเดลผ่าน opencode run ถูกจำกัดสิทธิ์ "
+                        "(ADR-017) — ต้องรันจากภายใน OpenCode client หรือใช้โมเดลที่อนุญาต"
+                    )
+                    log.error("LLM free-tier gate — หยุด chain ไม่ retry ซ้ำ")
+                    stop_chain = True
+                    break
                 if attempt < _MAX_RETRIES:
                     await asyncio.sleep(attempt)
                 continue
+        if stop_chain:
+            break
 
     log.error(f"LLM หมดโอกาส (ลอง {len(try_list)} โมเดล): {last_error}")
     return f"⚠️ LLM ไม่พร้อม: {last_error}"

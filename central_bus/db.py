@@ -19,6 +19,35 @@ from central_bus.config import settings
 
 log = logging.getLogger(__name__)
 
+
+# ---------------------------------------------------------------------------
+# Connection factory — จุดเดียวที่สร้าง aiosqlite connection ทั้งระบบ
+# ---------------------------------------------------------------------------
+
+
+async def open_connection(db_path) -> aiosqlite.Connection:
+    """เปิด aiosqlite connection ที่ **ไม่ค้าง process ตอน exit**
+
+    ⚠️ aiosqlite เปิด connection thread แบบ non-daemon → interpreter รอ thread
+    นี้ตอน exit → pytest / โปรแกรม **ค้าง** แม้เทสต์ผ่านหมด (CI hang, 21 ต.ค. 2569)
+
+    `aiosqlite.connect()` เป็นฟังก์ชัน **sync** ที่ "ยังไม่เริ่ม" thread
+    → ตั้ง `daemon=True` ได้ก่อน `await` (ต้องอยู่ก่อน thread start)
+
+    โครงสร้างต่างกันตามเวอร์ชัน:
+      aiosqlite >= 0.21 → Connection ห่อ `_thread` (Thread อยู่ข้างใน)
+      aiosqlite <  0.21 → Connection สืบทอด `Thread` ตรง ๆ
+    → ตั้ง flag ให้ตัวที่เป็น Thread จริงเสมอ
+    """
+    conn = aiosqlite.connect(db_path)
+    thread_obj = getattr(conn, "_thread", conn)
+    try:
+        thread_obj.daemon = True
+    except (AttributeError, RuntimeError):  # pragma: no cover — กัน library เปลี่ยน
+        log.warning("ไม่สามารถตั้ง daemon ให้ aiosqlite thread — อาจค้างตอน exit")
+    return await conn
+
+
 # ---------------------------------------------------------------------------
 # Schema DDL
 # ---------------------------------------------------------------------------
@@ -254,15 +283,15 @@ class DbManager:
         self._conn: aiosqlite.Connection | None = None
 
     # ── Lifecycle ──────────────────────────────────────────────────
-
     async def init(self) -> None:
         """Open the connection, enable WAL / foreign_keys, create schema."""
         if self._conn is not None:
             return  # already initialised
 
         log.info("Opening SQLite at %s", self._db_path)
-        self._conn = await aiosqlite.connect(self._db_path)
+        self._conn = await open_connection(self._db_path)
         self._conn.row_factory = aiosqlite.Row
+
 
         await self._conn.execute("PRAGMA journal_mode=WAL;")
         await self._conn.execute("PRAGMA foreign_keys=ON;")
