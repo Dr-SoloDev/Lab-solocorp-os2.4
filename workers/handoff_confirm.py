@@ -260,9 +260,17 @@ def print_record(record: dict[str, Any]) -> None:
 # ── CLI ────────────────────────────────────────────────────────────────
 
 
+class _Parser(argparse.ArgumentParser):
+    """argparse ที่ exit(1) แทน exit(2) — ให้ตรง contract ของ CLI นี้
+    (tests กำหนดว่า invalid usage ต้อง SystemExit โดยเฉพาะ status ผิด = 1)."""
+
+    def error(self, message: str) -> None:
+        self.exit(1, f"{self.prog}: error: {message}\n")
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the CLI argument parser."""
-    parser = argparse.ArgumentParser(
+    parser = _Parser(
         prog="handoff-confirm",
         description="SoloCorp OS -- สร้าง Handoff Confirmation Record",
         epilog="ข้อกำหนด: SOP-03-handoff.md Step 5a -- ทุก handoff ต้องมี confirmation",

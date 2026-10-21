@@ -18,6 +18,7 @@ import sys
 import time
 import signal
 import logging
+import subprocess
 from pathlib import Path
 
 try:
@@ -26,6 +27,9 @@ except ImportError:
     typer = None  # type: ignore[assignment]
 
 log = logging.getLogger("govctl.api")
+
+# SIGKILL ไม่มีบน Windows — fallback เป็น SIGTERM (CI/Linux ได้ SIGKILL จริงเหมือนเดิม)
+_SIGKILL = getattr(signal, "SIGKILL", signal.SIGTERM)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -66,7 +70,6 @@ def _write_pid(pid: int) -> None:
 
 def _start_server(port: int = DEFAULT_PORT, reload: bool = False) -> None:
     """Start uvicorn as a background subprocess (daemon)."""
-    import subprocess
     cmd = [
         sys.executable, "-m", "uvicorn",
         "govctl_cli.api.main:app",
@@ -118,8 +121,6 @@ def _check_uvicorn() -> bool:
 
 def cmd_start(port: int = DEFAULT_PORT, reload: bool = False) -> None:
     """Start the API server as a background daemon."""
-    import subprocess  # built-in
-
     existing_pid = _read_pid()
     if existing_pid and _is_running(existing_pid):
         print(f"⚠️  API server is already running (PID {existing_pid})")
@@ -155,7 +156,7 @@ def cmd_stop() -> None:
             break
     else:
         print(f"⚠️  SIGTERM did not stop PID {pid} — sending SIGKILL")
-        os.kill(pid, signal.SIGKILL)
+        os.kill(pid, _SIGKILL)
         time.sleep(0.3)
 
     PID_FILE.unlink(missing_ok=True)

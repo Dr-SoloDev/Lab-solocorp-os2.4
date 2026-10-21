@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-10-10T18:45:00Z",
+  "last_updated": "2026-10-21T12:45:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -206,6 +206,12 @@
       "id": "ADR-014",
       "title": "Agent Activation System — Go-Live",
       "date": "2026-07-09",
+      "status": "Accepted"
+    },
+    {
+      "id": "ADR-027",
+      "title": "route_v2 เชื่อ classifier เมื่อมี signal (>0) — gate 0.9 ทำให้ v2 routing ตาย (merge จาก PR #19, renumber จาก ADR-017)",
+      "date": "2026-10-14",
       "status": "Accepted"
     }
   ],
@@ -516,6 +522,32 @@
         "rental-pilot-tmp/ in /tmp awaits Owner decision",
         "bootstrap queue count false positive (high=3 vs empty jsonl) — fix counting"
       ]
+    },
+    {
+      "date": "2026-10-21",
+      "duration": "evening session (PR #19 review + integration)",
+      "summary": "รีวิว PR #19 จาก fork darinsupanikorn-rgb (9 commits, 387 ไฟล์) → แตกเป็น 3 ก้อน · merge เฉพาะก้อนโค้ดกลาง · แก้ CI แดง 26 → 0 failed",
+      "key_decisions": [
+        "Owner L5: Creator Kit + X — คงไว้ทั้งชุด (สนามแรก โพสต์แรกไปแล้ว 20 ต.ค. x.com/AChaisirum/status/2112593940096709038)",
+        "Owner L5: ชื่อหัวหน้า/อัตลักษณ์ — คงเดิมทั้งหมด ตามคอนเซ็ป 'หนึ่งแกน หลายตัวตน' (README:49, OPENCODE-GUIDE:56) → fork ของเขา rename ได้ แต่ห้าม PR กลับมาเขียนทับ upstream",
+        "หลักการแยก: โค้ดขึ้นแกนกลาง (ทุกคนได้ประโยชน์) · อัตลักษณ์แยกสาขา (ไม่ย้อนกลับ)",
+        "ก้อน C ปฏิเสธ: rename หัวหน้า 17 แผนก + ปิด Sales/Support/Legal + opencode.json Windows paths + ถอน Creator Kit+X + .claude/.codex rename",
+        "ADR-017 ของเขาชนกับของเรา → renumber เป็น ADR-027 + แก้ Part 2 ให้ตรงกับ implementation จริง (fallback = COO ไม่ใช่ CEO)",
+        "ไม่ merge CERTIFICATION-REGISTRY ที่อ้าง D2 — ไฟล์หลักฐาน bus/evidence/D2-content-creator-20261019.md ไม่มีจริง (ผิด rules/06) → คงสถานะ D0",
+        "content_render.py แก้จาก hardcode C:\\Users\\Lenovo → CONCAT_BIN env + PATH lookup",
+        "thokchai-001.json + voice-clone SKILL.md + VECTORCRAFT-CAPABILITY-MAP.md — scrub path/identity ให้เป็นของเรา"
+      ],
+      "achievements": [
+        "verify เอง: สาขาเขา 738 passed/0 failed · โค้ดเราเดิม 794 passed/26 failed",
+        "merge ก้อน A → 820 passed / 0 failed / coverage 74.5% · auto_qa_gate 🟢 PASS (evidence bus/evidence/2026-10-21/qa-gate-22754ec2.json)",
+        "เอา skill ใหม่: real-sound (~4k บรรทัด) · earshot · voice-clone (OmniVoice RTX 4050 RTF 0.36 — เราใช้ CPU RTF 165)",
+        "ADR-027 ถูกต้อง: Part 2 เขียนไว้ไม่ตรงโค้ดจริง → แก้ให้ตรง + บันทึกการย้อนกลับ"
+      ],
+      "pending_next": [
+        "ตอบ PR #19 — อธิบายเหตุผลที่ไม่ merge ก้อน C + ขอให้เขาเปิด PR ใหม่เฉพาะก้อนโค้ด",
+        "content สร้างเอง: สายผลิตสื่อรอ content_render ที่รันได้บน Linux (ต้อง Concat binary)",
+        "rental-pilot-tmp/ — หายไปจาก /tmp แล้ว (system ล้าง) → ปิดรายการนี้ได้"
+      ]
     }
   ],
   "current_assessment": {
@@ -544,7 +576,7 @@
       "✅ Agent Worker process: no longer zombie — can poll Central Bus queue"
     ]
   },
-  "saved_at": "2026-10-10 18:45 UTC",
+  "saved_at": "2026-10-21T12:45:00Z",
   "latest_commit": "65b8604 fix(loop): media_daily date-gate + quiet SKIP",
   "state_snapshot": {
     "date": "2026-10-10",
