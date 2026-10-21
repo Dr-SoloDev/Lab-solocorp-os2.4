@@ -8,8 +8,27 @@ pydantic>=2.11.0
 starlette>=0.37.2,<0.39.0       # Pinned: v1.x breaks fastapi 0.115.0 APIRouter (on_startup removed)
 pydantic_settings>=2.0.0        # For central_bus.config.BaseSettings
 
+# ── Runtime deps ที่ถูก import ในโค้ดจริง แต่เคยไม่ถูก declare ──
+# (deep health check 21 ต.ค. 2569 — CI แดงเพราะ collect ไม่ผ่าน)
+numpy>=1.26.0                   # central_bus/semantic.py, central_bus/behavior_classifier.py
+tomli-w>=1.0.0                  # govctl_cli/api/routes/governance.py (เขียน ADR เป็น TOML)
+typer>=0.12.0                   # govctl_cli/adr.py, govctl_cli/ao_cmd.py (CLI)
+rich>=13.0.0                    # govctl_cli/dashboard/dashboard.py
+mcp>=1.0.0                      # solocorp_mcp/server.py, legal_vault/mcp_server/server.py
+PyYAML>=6.0                     # routing.yaml / config.yaml loading
+requests>=2.31.0                # workers/maxplus_llm_provider.py
+python-dotenv>=1.0.0            # โหลด .env
+GitPython>=3.1.0                # govctl (อ่าน git history ตอนสร้าง ADR)
+jsonschema>=4.0.0               # ตรวจ schema ของ bus message / ADR
+
 # Test only
 httpx>=0.27.1
 pytest>=8.0
 pytest-cov>=5.0
 pytest-asyncio>=0.23.0          # Required: asyncio_mode=auto (root pytest.ini) + pytest_asyncio fixtures
+
+# ── Optional / heavy (ไม่ติดตั้งใน CI — ต้องใช้เฉพาะงานเฉพาะทาง) ──
+# torch>=2.0.0                 # scripts/voice_clone.py — โมเดลเสียง (หลักฐาน: ต้องมี GPU)
+# omnivoice                   # scripts/voice_clone.py — ไม่มีใน PyPI (ติดตั้งเอง)
+# soundfile>=0.12.0           # scripts/voice_clone.py — อ่าน/เขียน wav
+# faster-whisper              # scripts/transcribe.py — ถอดเสียง
