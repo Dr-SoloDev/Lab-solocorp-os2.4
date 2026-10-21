@@ -1,0 +1,62 @@
+# SoloCorp Routing Manifest — Game
+# version: 1.0.0
+
+always_read:
+  - README.md
+  - profiles/INDEX.md
+  - skills/solocorp/routing.yaml
+
+tasks:
+  - id: game-design
+    label: ออกแบบเกม / GDD
+    route: Game — GDD, core loop, mechanics, economy
+    trigger_examples:
+      - GDD
+      - ออกแบบเกม
+      - game design
+      - core loop
+      - balance
+    route_to: game
+
+  - id: level-design
+    label: ออกแบบด่าน / บอสไฟต์
+    route: Game — layout, pacing, encounter, boss
+    trigger_examples:
+      - ออกแบบด่าน
+      - level design
+      - บอส
+      - boss fight
+      - encounter
+    route_to: game
+
+  - id: narrative
+    label: เนื้อเรื่อง / บทสนทนา
+    route: Game — story, dialogue, lore
+    trigger_examples:
+      - เนื้อเรื่อง
+      - บทสนทนา
+      - narrative
+      - lore
+      - dialogue
+    route_to: game
+
+  - id: game-audio
+    label: เสียงเกม / ดนตรี
+    route: Game — SFX, adaptive music, FMOD/Wwise
+    trigger_examples:
+      - เสียงเกม
+      - ดนตรี
+      - game audio
+      - FMOD
+      - Wwise
+    route_to: game
+
+  - id: playtest
+    label: ทดสอบเล่น / ปรับสมดุล
+    route: Game — playtest, balance, QA เกม
+    trigger_examples:
+      - playtest
+      - ทดสอบเล่น
+      - playtesting
+      - สมดุลเกม
+    route_to: game

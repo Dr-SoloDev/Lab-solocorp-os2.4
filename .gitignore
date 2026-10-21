@@ -63,6 +63,7 @@ build/
 .codex/mcp/
 tools/stealth-browser-mcp/
 tools/github-mcp/
+tools/vectorcraft/
 
 # ML model weights
 *.pt

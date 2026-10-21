@@ -3,7 +3,7 @@
 > Master index of all profiles in SoloCorp OS.
 > Sorted by hierarchy: Owner → R&D Lab → CEO → CFO → CMO → Orchestrator → Architect → Product
 > → Engineering → Design → UI-Designer → QA → Sales → Support → Legal
-> → Web3 → Content Creator → Default
+> → Web3 → Content Creator → Game → Default
 
 ---
 
@@ -70,6 +70,7 @@
 | `16-neteng` | **Network Engineer** | [ไนท์ (Night)](16-neteng/SOUL.md) | Network Design, Infrastructure, CDN, VPN, DNS | Active |
 | `17-cybersec` | **Cyber Security** | [สมปอง (Sompong)](17-cybersec/SOUL.md) | Threat Detection, Vulnerability Assessment, Incident Response | Active |
 | `18-psychology` | **Psychology** | [เต๋า (Tao)](18-psychology/SOUL.md) | User Behavior, Behavioral Economics, Organizational Psychology | Active |
+| `20-game` | **Game** | [เฮียต้า](20-game/SOUL.md) | Game Design, Levels, Narrative, Audio | Design |
 
 ## Base Profile
 
@@ -235,6 +236,18 @@ solocorp-mark-workflow, content creation pipeline
 | 02 | [Behavioral Economist](18-psychology/jit/team/02-behavioral-economist.SOUL.md) | Nudge theory, prospect theory, pricing psychology, choice architecture | Design |
 | 03 | [Organizational Psychologist](18-psychology/jit/team/03-organizational-psychologist.SOUL.md) | AI agent team health, communication patterns, conflict resolution, motivation systems | Design |
 
+## Team — 20-game (เฮียต้า)
+
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | [นักออกแบบเกม](20-game/ta/team/01-game-designer.SOUL.md) | Core loop, mechanics spec, economy & balance ([PLACEHOLDER] จนกว่า playtest) | Design |
+| 02 | [นักออกแบบด่าน](20-game/ta/team/02-level-designer.SOUL.md) | Layout & flow, encounter design, environmental storytelling, grey box first | Design |
+| 03 | [นักออกแบบเนื้อเรื่อง](20-game/ta/team/03-narrative-designer.SOUL.md) | Dialogue & branching, lore 3 ระดับ, story-gameplay sync | Design |
+| 04 | [วิศวกรเสียงเกม](20-game/ta/team/04-game-audio-engineer.SOUL.md) | Interactive music, SFX/3D spatial, FMOD/Wwise, audio budget | Design |
+| 05 | [ศิลปินเทคนิค](20-game/ta/team/05-technical-artist.SOUL.md) | Shaders & VFX, asset pipeline & LOD, GPU perf triage | Design |
+
+> Engine squads (on-call): Unity (4) · Unreal Engine (4) · Godot (3) · Roblox Studio (3) · Blender (1) — ต้นฉบับ `Desktop/game-development/<engine>/` เลื่อนเป็นทีมเต็มเมื่อโปรเจกต์ต้องการ
+
 ---
 
 ## Team Summary
@@ -260,8 +273,9 @@ solocorp-mark-workflow, content creation pipeline
 | 16 Network Engineer | ไนท์ | 4 | 5 |
 | 17 Cyber Security | สมปอง | 3 | 4 |
 | 18 Psychology | เต๋า | 3 | 4 |
+| 20 Game | เฮียต้า | 5 | 6 |
 | — | Default (Fallback) | — | 1 |
-| **Total** | **19 Departments** | **58+ Specialists** | **72+ Active Members** |
+| **Total** | **20 Departments** | **63+ Specialists** | **78+ Active Members** |
 
 ---
 
