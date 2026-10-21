@@ -1,0 +1,33 @@
+[skill]
+name = "@solocorp/engineering/news-feed"
+version = "0.1.0"
+description = "ข่าวสาขาตัวเองทุกเช้า — ดึงจาก facts store (news.<dept>.<วันที่>)"
+category = "engineering"
+
+[dept]
+owner = "engineering"
+consumers = ["engineering", "ceo", "cmo", "sales", "content", "product", "support"]
+
+[bus]
+endpoint = "/v1/context"
+queue_topic = "news.daily"
+lifecycle = "news_daily → facts.upsert → inbox.notify"
+
+[mirror]
+minimum_level = "L1"
+check_on_invoke = false
+description = "อ่านข่าวอย่างเดียว ไม่แก้ไขอะไร → L1"
+
+[dependencies]
+skills = ["@solocorp/engineering/web-read"]
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/news"
+description = "ดึงข่าวสาขาตัวเอง (facts key = news.<dept>.<วันที่>)"
+platforms = ["opencode", "grok"]
+
+[resources]
+watchlist = "bus/news/watchlist.md"
+fetcher = "solocorp_skills/news.py"
+loop = "loop_runner/loops/news_daily.py"

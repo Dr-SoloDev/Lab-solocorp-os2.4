@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import asyncio
 from pathlib import Path
 from typing import Any, Optional
 
@@ -95,6 +96,8 @@ class BaseAgent:
             f"- กระชับ ได้ใจความ ภายใน 2-3 ย่อหน้า\n"
             f"- ถ้าไม่รู้หรือไม่แน่ใจ ให้บอกตรงๆ\n"
             f"- ใช้ข้อมูลจาก context ที่มี ไม่มโน\n"
+            f"- ทำงานให้เสร็จในคำตอบเดียว — ห้ามตอบว่า 'จะเริ่ม' หรือ 'กำลังจะทำ'\n"
+            f"  ให้ส่งผลลัพธ์จริง (ตัวเลข รายการ ข้อสรุป) กลับมาเลย\n"
             f"- อย่าใช้ markdown หรือ emoji เกินจำเป็น"
         )
 
@@ -147,6 +150,62 @@ class BaseAgent:
             return result or "(no output)"
         except Exception as e:
             return f"❌ Command error: {e}"
+
+    # ── Web — อ่านเว็บที่ต้อง render JavaScript ─────────────────────────
+
+    async def web_read(self, url: str, wait: int = 12) -> str:
+        """อ่านเนื้อหาเว็บ (render JS ได้ ไม่ต้องมี display)
+
+        ใช้เมื่อ HTTP ธรรมดาดึงได้แค่ source code (React/Vue SPA, client-side only)
+
+        Args:
+            url: URL ที่ต้องการอ่าน
+            wait: วินาทีที่รอให้หน้าโหลด (เว็บหนักใช้ 20-30)
+
+        Returns:
+            str: เนื้อหาเว็บ ห่อด้วย marker กัน prompt injection
+        """
+        from solocorp_skills.web import WebError, read_url, wrap_untrusted
+
+        try:
+            result = await asyncio.to_thread(read_url, url, wait=wait)
+        except WebError as e:
+            return f"❌ อ่านเว็บไม่สำเร็จ: {e}"
+        except Exception as e:
+            return f"❌ Web read error: {e}"
+
+        header = f"# {result['title']}\n" if result["title"] else ""
+        return header + wrap_untrusted(result["text"], result["url"])
+
+    async def web_search(self, query: str, limit: int = 10) -> str:
+        """ค้นหาข่าว/ข้อมูลบนเว็บ (รองรับภาษาไทย)
+
+        Args:
+            query: คำค้น
+            limit: จำนวนผลลัพธ์สูงสุด
+
+        Returns:
+            str: รายการผลลัพธ์ (ชื่อเรื่อง + URL + snippet)
+        """
+        from solocorp_skills.web import WebError, search
+
+        try:
+            result = await asyncio.to_thread(search, query, limit=limit)
+        except WebError as e:
+            return f"❌ ค้นหาไม่สำเร็จ: {e}"
+        except Exception as e:
+            return f"❌ Search error: {e}"
+
+        if not result["results"]:
+            return f"ไม่พบผลลัพธ์สำหรับ '{query}'"
+
+        lines = [f"# ผลการค้นหา: {query}", ""]
+        for i, r in enumerate(result["results"], 1):
+            lines.append(f"## {i}. {r['title']}")
+            lines.append(f"URL: {r['url']}")
+            lines.append(r["snippet"])
+            lines.append("")
+        return "\n".join(lines)
 
     # ── Report Back ─────────────────────────────────────────────────────
 

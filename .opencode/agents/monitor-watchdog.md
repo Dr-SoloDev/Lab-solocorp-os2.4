@@ -1,5 +1,4 @@
 ---
-model: opencode/muse-spark-1.3-contributor-free
 name: monitor-watchdog
 description: Monitor Watchdog — เฝ้าสุขภาพ pipeline real-time, health probe, SLA tracking
 mode: subagent

@@ -59,13 +59,67 @@ def _get_skills_list() -> list[dict[str, Any]]:
             "skill": r["skill"],
             "method": r["method"],
             "path": r["path"],
-            "target_department": r["target_department"],
+            "target_department": r.get("target_department"),
+            "target_agent": r.get("target_agent"),
+            "queue_topic": r.get("queue_topic"),
             "mirror_check": r.get("mirror_check", False),
             "min_mirror_level": r.get("min_mirror_level", "L1"),
             "status": r.get("status", "registered"),
         }
         for r in data.get("routes", [])
     ]
+
+
+# ── Dept → Agent fallback ─────────────────────────────────────────────
+# target_department เป็นชื่อแผนก (ไม่ใช่ agent_id) — ถ้า config ไม่ระบุ
+# target_agent ให้ใช้ตารางนี้แทน
+_DEPT_TO_AGENT = {
+    "ceo": "orchestrator-wut",
+    "coo": "orchestrator-wut",
+    "orchestrator": "orchestrator-wut",
+    "architect": "architect-songsak",
+    "engineering": "changful",
+    "cfo": "cfo-meetoo",
+    "cmo": "cmo-mark",
+    "design": "design-kreet",
+    "qa": "qa",
+    "sales": "sales",
+    "support": "support",
+    "legal": "legal-tulya",
+    "web3": "web3-aywa",
+    "content": "content-creator-sek",
+    "neteng": "neteng-neet",
+    "cybersec": "cybersec-sai",
+    "product": "product-produck",
+    "ui": "ui-designer",
+    "psychology": "psych-jit",
+    "rd": "rd-lab",
+}
+
+# agent_id ที่ลงทะเบียนใน workers/agent_worker_service.py (consumer ตัวจริง)
+_KNOWN_AGENTS = {
+    "cfo-meetoo", "architect-songsak", "changful", "product-produck",
+    "orchestrator-wut", "cmo-mark", "design-kreet", "qa", "sales", "support",
+    "legal-tulya", "web3-aywa", "content-creator-sek", "neteng-neet",
+    "cybersec-sai", "psych-jit", "ui-designer", "rd-lab",
+}
+
+_MAX_PROMPT_CHARS = 4000
+
+
+def _load_skill_prompt(rel_path: str | None) -> str:
+    """อ่าน SKILL.md มาเป็นคำสั่งให้ agent ทำตาม (จำกัดความยาว)"""
+    if not rel_path:
+        return ""
+    p = Path(rel_path)
+    if not p.is_absolute():
+        p = Path(__file__).parent.parent.parent / rel_path
+    if not p.exists():
+        return ""
+    try:
+        return p.read_text(encoding="utf-8")[:_MAX_PROMPT_CHARS]
+    except Exception:
+        return ""
 
 
 # ── Error Response Helper ───────────────────────────────────────────
@@ -117,7 +171,16 @@ async def _execute_skill(
     queue_topic = route_config.get("queue_topic", "skill.invoke")
     decision_text = payload.get("decision") or payload.get("task") or json.dumps(payload)
 
-    # Step 1: Mirror Check (with timeout — LLM may be unavailable)
+    # ── Resolve target agent ────────────────────────────────────────
+    # ต้องเป็น agent_id จริงที่ worker service ลงทะเบียนไว้
+    # (target_department เป็นชื่อแผนก → ไม่มี consumer รับ → ค้างในคิวตลอด)
+    target_agent = (
+        route_config.get("target_agent")
+        or _DEPT_TO_AGENT.get(department)
+        or "orchestrator-wut"
+    )
+
+    # ── Step 1: Mirror Check (with timeout — LLM may be unavailable) ──
     if route_config.get("mirror_check", False):
         db = await ensure_db()
         try:
@@ -142,22 +205,35 @@ async def _execute_skill(
                 "message": "Mirror Check Failed — decision rejected",
             }
 
-    # Step 2: Enqueue to Bus
+    # ── Step 2: Enqueue to Bus ───────────────────────────────────────
     db = await ensure_db()
     qm = SQLiteQueueManager(db)
     trace_id = f"skill-{new_id()[:12]}"
+
+    # ใส่คำสั่งของ skill (SKILL.md) เป็น description ให้ agent ทำตาม
+    skill_prompt = _load_skill_prompt(route_config.get("skill_prompt"))
+    enqueue_payload = dict(payload)
+    enqueue_payload.setdefault("action", "skill")
+    if skill_prompt:
+        enqueue_payload.setdefault("description", skill_prompt)
+    enqueue_payload.setdefault(
+        "description", f"Execute skill {route_config['skill']} with params: {payload}"
+    )
+    enqueue_payload["skill"] = route_config["skill"]
 
     msg = await qm.create_message(
         trace_id=trace_id,
         task_id=payload.get("task_id", f"skill-{new_id()[:8]}"),
         agent_id=f"skill:{route_config['skill']}",
-        payload=payload,
-        target_agent=department,
+        payload=enqueue_payload,
+        target_agent=target_agent,
         priority=payload.get("priority", "normal"),
         max_retries=payload.get("max_retries", 3),
     )
+    # 'routed' = พร้อมให้ worker service หยิบ (ไม่ใช่ 'pending' ที่ไม่มีใครดู)
+    await qm.update_status(msg["id"], "routed")
 
-    # Step 3: Audit Trail
+    # ── Step 3: Audit Trail ──────────────────────────────────────────
     await db.execute(
         """
         INSERT INTO audit_log (id, trace_id, action, agent_id, entity_type, entity_id, payload, created_at)
@@ -173,18 +249,27 @@ async def _execute_skill(
             json.dumps({
                 "skill": route_config["skill"],
                 "department": department,
+                "target_agent": target_agent,
                 "queue_topic": queue_topic,
             }),
             now_iso(),
         ),
     )
 
+    consumer_ready = target_agent in _KNOWN_AGENTS
     return {
         "status": "queued",
         "skill": route_config["skill"],
         "trace_id": trace_id,
         "queue_id": msg["id"],
         "target_department": department,
+        "target_agent": target_agent,
+        "consumer_ready": consumer_ready,
+        "hint": (
+            "รอ Agent Worker Service หยิบ (cron ทุก 5 นาที)"
+            if consumer_ready
+            else f"⚠️ '{target_agent}' ไม่มีในรายชื่อ agent ที่ลงทะเบียน — จะไม่มีใครหยิบ!"
+        ),
         "mirror_check": {
             "passed": True,
             "department": department,

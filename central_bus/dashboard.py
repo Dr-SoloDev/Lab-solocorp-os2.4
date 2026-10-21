@@ -111,8 +111,8 @@ def _count_dispatches() -> dict:
     return counts
 
 
-def _queue_depth() -> dict:
-    """Read queue depths."""
+def _queue_depth_jsonl() -> dict:
+    """Legacy JSONL queue depth (fallback เมื่อ SQLite ใช้ไม่ได้)."""
     q = {"high": 0, "normal": 0, "dead": 0}
     try:
         if (BUS_QUEUE / "high.jsonl").exists():
@@ -125,6 +125,62 @@ def _queue_depth() -> dict:
     except Exception:
         pass
     return q
+
+
+def _queue_depth() -> dict:
+    """Read queue depth จากคิวจริง (SQLite) — ไม่ใช่ JSONL ที่ไม่มีใครเขียน
+
+    เดิมอ่าน ``bus/queue/*.jsonl`` ซึ่งเป็นระบบเก่า — Central Bus เขียนลง
+    SQLite ตั้งแต่ v0.6 ทำให้ตัวเลขบน dashboard โกหก (แสดง 0 ทั้งที่มีงานค้าง)
+
+    Returns:
+        dict: high/normal/dead + รายละเอียดตามสถานะ + source
+    """
+    q = {
+        "high": 0, "normal": 0, "dead": 0,
+        "pending": 0, "routed": 0, "failed": 0, "completed": 0,
+        "source": "sqlite",
+    }
+    try:
+        from central_bus.config import settings
+
+        db_file = Path(settings.db_path)
+        if not db_file.is_absolute():
+            db_file = BASE / db_file
+        if not db_file.exists():
+            raise FileNotFoundError(db_file)
+
+        import sqlite3
+
+        with sqlite3.connect(f"file:{db_file}?mode=ro", uri=True) as conn:
+            rows = conn.execute(
+                "SELECT status, priority, COUNT(*) FROM queue GROUP BY status, priority"
+            ).fetchall()
+
+        by_status: dict[str, int] = {}
+        waiting: dict[str, int] = {}
+        for status, priority, cnt in rows:
+            by_status[status] = by_status.get(status, 0) + cnt
+            if status in ("pending", "routed"):
+                waiting[priority] = waiting.get(priority, 0) + cnt
+
+        q["pending"] = by_status.get("pending", 0)
+        q["routed"] = by_status.get("routed", 0)
+        q["failed"] = by_status.get("failed", 0)
+        q["completed"] = by_status.get("completed", 0)
+        q["dead"] = by_status.get("dead", 0)
+        # high = งานที่รออยู่ + เร่งด่วน · normal = งานที่รออยู่ + ปกติ
+        q["high"] = waiting.get("critical", 0) + waiting.get("high", 0)
+        q["normal"] = waiting.get("normal", 0) + waiting.get("low", 0)
+        return q
+    except Exception:
+        legacy = _queue_depth_jsonl()
+        legacy.update({
+            "pending": legacy["high"] + legacy["normal"],
+            "routed": 0, "failed": 0, "completed": 0,
+            "source": "jsonl",
+        })
+        return legacy
 
 
 def _evidence_count() -> int:
@@ -243,6 +299,9 @@ def owner_dashboard(format: str = "markdown") -> str | dict:
     # System health score (0-100)
     score = 100
     if queue["dead"] > 0: score -= 10
+    # งานที่ยัง 'pending' = ยังไม่มีใครมารับ → แปลว่า dispatch path ขาด consumer
+    if queue.get("pending", 0) > 0:
+        score -= min(5 + queue["pending"] * 2, 20)
     if git["dirty_files"] > 0: score -= min(git["dirty_files"] * 2, 20)
     if disp.get("P0", 0) > 0: score -= 15
     # Central Bus health — check if process is running
@@ -300,6 +359,15 @@ def owner_dashboard(format: str = "markdown") -> str | dict:
     lines.append(f"| Dirty Files | {git['dirty_files']} |")
     lines.append(f"| Active Dispatches | {disp['total']} (P0:{disp['P0']} P1:{disp['P1']}) |")
     lines.append(f"| Queue Depth | High:{queue['high']} Normal:{queue['normal']} Dead:{queue['dead']} |")
+    lines.append(
+        f"| Queue Breakdown | pending:{queue['pending']} routed:{queue['routed']} "
+        f"failed:{queue['failed']} completed:{queue['completed']} |"
+    )
+    if queue.get("pending", 0) > 0:
+        lines.append(
+            f"| ⚠️ Unclaimed Tasks | {queue['pending']} งานรอ consumer "
+            f"(ดู ADR-019 — skill dispatch ไม่มี consumer) |"
+        )
     lines.append(f"| Evidence Records | {evidence} |")
     lines.append(f"| Brain Files | {brain['files']} |")
     lines.append(f"| Active Profiles | {profiles} |")

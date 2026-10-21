@@ -4,6 +4,7 @@ Endpoints
 ~~~~~~~~~
 * ``POST /v1/observe``       — Receive a task from an agent, enqueue, and route
 * ``POST /v1/context``       — Provide context (facts + queue status) to an agent
+* ``POST /v1/web-read``      — Read/search a web page with a real browser (no display)
 * ``POST /v1/update``        — Report result back; triggers AAR on completion/failure
 * ``GET  /v1/health``        — Health check: DB, queue depth, uptime
 * ``GET  /v1/aar/{trace_id}``— Retrieve After Action Review entries for a trace
@@ -26,6 +27,7 @@ Startup
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -254,7 +256,153 @@ async def observe(request: Request):
          json.dumps({"route_to": route_to, "priority": priority}), now_iso()),
     )
 
+    # ── report_back = รายงานถึง CEO (ไม่ใช่งานที่ต้องรอ consumer) ──
+    # เดิมปล่อยให้ค้างเป็น 'routed' ตลอด → สะสมในคิวโดยไม่มีใครปิดสถานะ
+    # (พบ 18 แถวค้างจาก ก.ค. ในรอบตรวจสอบ 2026-10-20)
+    if msg_payload.get("action") == "report_back":
+        alert_id = await _record_ceo_alert(
+            source_agent=source_agent,
+            status=msg_payload.get("status", "completed"),
+            summary=msg_payload.get("summary", ""),
+            details=msg_payload.get("details") or {},
+            trace_id=trace_id,
+        )
+        await qm.update_status(msg_id, "completed")
+        return {
+            "trace_id": trace_id, "queue_id": msg_id, "status": "completed",
+            "route_to": route_to, "alert_id": alert_id,
+            "hops": ["queue", "route", "report_back"],
+        }
+
     return {"trace_id": trace_id, "queue_id": msg_id, "status": "routed", "route_to": route_to, "hops": ["queue", "route"]}
+
+
+async def _record_ceo_alert(
+    *,
+    source_agent: str,
+    status: str,
+    summary: str,
+    details: dict,
+    trace_id: str,
+) -> str:
+    """บันทึกรายงานจาก agent เข้า ceo_alerts (ให้ CEO อ่าน/ack ได้)"""
+    alert_id = new_id()
+    severity = "HIGH" if status == "failed" else "NORMAL"
+    alert_type = "agent_report_failed" if status == "failed" else "agent_report"
+    try:
+        services = await _get_services()
+        await services["db"].execute(
+            """
+            INSERT INTO ceo_alerts
+                (id, alert_type, severity, source, title, detail,
+                 acknowledged, acknowledged_by, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                alert_id, alert_type, severity, source_agent,
+                (summary or "(ไม่มี summary)")[:200],
+                json.dumps({"details": details, "trace_id": trace_id},
+                           ensure_ascii=False)[:2000],
+                0, None, now_iso(),
+            ),
+        )
+    except Exception as e:  # pragma: no cover — หลักฐานล้มเหลวไม่ควรทำให้ report พัง
+        log.warning("Failed to record ceo_alert: %s", e)
+    return alert_id
+
+
+@app.get("/v1/ceo-alerts")
+async def list_ceo_alerts(acknowledged: str = "all", limit: int = 50):
+    """รายงานจาก agent ทั้งหมด (ceo_alerts) — CEO ใช้ดูว่าใครรายงานอะไร
+
+    Query:
+        acknowledged: all (default) | true | false
+    """
+    services = await _get_services()
+    sql = "SELECT * FROM ceo_alerts"
+    params: list = []
+    if acknowledged in ("true", "false"):
+        sql += " WHERE acknowledged = ?"
+        params.append(1 if acknowledged == "true" else 0)
+    sql += " ORDER BY created_at DESC LIMIT ?"
+    params.append(max(1, min(int(limit), 500)))
+    rows = await services["db"].fetch_all(sql, tuple(params))
+    return {"count": len(rows), "alerts": [dict(r) for r in rows]}
+
+
+# ══════════════════════════════════════════════════════════════════════
+# POST /v1/facts  ·  GET /v1/facts
+# ══════════════════════════════════════════════════════════════════════
+# facts store = คลังความรู้ของ agent (อ่านผ่าน /v1/context)
+# เดิมอ่านได้อย่างเดียว — ไม่มีทางเขียน → คลังว่างเปล่า (1 แถว test)
+# endpoint นี้ทำให้ agent/loop เขียนความรู้กลับเข้าคลังได้
+
+
+@app.post("/v1/facts")
+async def upsert_fact(request: Request):
+    """เขียน/อัปเดต fact เข้าคลังความรู้ (upsert + version++)
+
+    Body:
+    ```json
+    {
+        "key": "news.cmo.2026-10-20",
+        "value": "...",
+        "metadata": {"workstream": "OWN-BIZ", "sensitivity": "PUB"},
+        "updated_by": "news_daily"
+    }
+    ```
+    """
+    try:
+        payload = await request.json()
+    except Exception:
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request body must be valid JSON",
+            detail={"reason": "invalid JSON"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+
+    key = payload.get("key")
+    if not key or not isinstance(key, str):
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request payload validation failed",
+            detail={"field": "key", "reason": "missing or not a string"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+    if len(key) > 200:
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="key ยาวเกิน 200 ตัวอักษร",
+            detail={"field": "key"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+
+    services = await _get_services()
+    try:
+        row = await services["facts"].set_fact(
+            key=key,
+            value=payload.get("value"),
+            metadata=payload.get("metadata") or {},
+            updated_by=payload.get("updated_by") or request.headers.get("X-Agent-Id", "unknown"),
+        )
+    except ValueError as e:
+        # bus_tags strict mode — ป้าย workstream/sensitivity ไม่ผ่าน
+        return JSONResponse(status_code=400, content=_error_response(
+            code="FACT_TAGS_INVALID", message=str(e),
+            detail={"field": "metadata"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+
+    return {"status": "ok", "key": key, "version": row.get("version"),
+            "updated_at": row.get("updated_at")}
+
+
+@app.get("/v1/facts")
+async def list_facts(prefix: str = "", limit: int = 100):
+    """อ่าน facts ตาม key pattern (prefix/glob)"""
+    services = await _get_services()
+    rows = await services["facts"].list_facts(
+        prefix=prefix or None, limit=max(1, min(int(limit), 500))
+    )
+    return {"count": len(rows), "facts": rows}
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -313,6 +461,182 @@ async def get_context(request: Request):
 # ═══════════════════════════════════════════════════════════════════════
 # POST /v1/update
 # ═══════════════════════════════════════════════════════════════════════
+
+@app.post("/v1/web-read")
+async def web_read(request: Request):
+    """อ่านเว็บด้วยเบราว์เซอร์จริง (เรนเดอร์ JavaScript ได้) — ไม่ต้องมี display
+
+    ใช้แทน HTTP ธรรมดาเมื่อเว็บเป็น client-side rendered (React/Vue SPA)
+    เพราะ HTTP ธรรมดาดึงได้แค่ source code
+
+    รัน Chromium ใน container → 47.5MB RAM · 0% CPU ตอน idle · ไม่มี display
+    ไม่เก็บ cookie → เว็บที่ต้อง login ใช้ไม่ได้
+
+    Body (เลือกอย่างใดอย่างหนึ่ง):
+    ```json
+    {
+        "url": "https://example.com",
+        "query": "คำค้น",
+        "wait": 12,
+        "cols": 120,
+        "rows": 40,
+        "agent_id": "cmo-mark"
+    }
+    ```
+    """
+    try:
+        payload = await request.json()
+    except Exception:
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request body must be valid JSON",
+            detail={"reason": "invalid JSON"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+
+    url = payload.get("url")
+    query = payload.get("query")
+    if not url and not query:
+        return JSONResponse(status_code=400, content=_error_response(
+            code="VALIDATION_ERROR", message="Request payload validation failed",
+            detail={"field": "url|query", "reason": "missing"},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+
+    agent_id = payload.get("agent_id") or "anonymous"
+    wait = int(payload.get("wait", 12))
+    cols = int(payload.get("cols", 120))
+    rows = int(payload.get("rows", 40))
+    trace_id = payload.get("trace_id") or new_id()
+    task_id = payload.get("task_id") or f"web-read-{new_id()[:8]}"
+
+    # lazy import — กัน circular import ระหว่าง central_bus ↔ solocorp_skills
+    from solocorp_skills.web import WebError, read_url, search, wrap_untrusted
+
+    started = time.monotonic()
+    started_at = now_iso()
+    try:
+        if url:
+            result = await asyncio.to_thread(read_url, url, wait=wait, cols=cols, rows=rows)
+        else:
+            result = await asyncio.to_thread(
+                search, query, limit=int(payload.get("limit", 10)),
+                wait=wait, cols=cols, rows=rows,
+            )
+    except WebError as e:
+        await _record_web_evidence(
+            trace_id=trace_id, task_id=task_id, agent_id=agent_id,
+            status="failed", summary=f"web-read failed: {e}",
+            latency_ms=int((time.monotonic() - started) * 1000),
+            started_at=started_at,
+        )
+        return JSONResponse(status_code=400, content=_error_response(
+            code="WEB_READ_FAILED", message=str(e),
+            detail={"trace_id": trace_id},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+    except Exception as e:  # pragma: no cover
+        log.exception("web-read crashed")
+        return JSONResponse(status_code=500, content=_error_response(
+            code="WEB_READ_ERROR", message=str(e),
+            detail={"trace_id": trace_id},
+            request_id=request.headers.get("X-Request-Id", ""),
+        ))
+
+    latency_ms = int((time.monotonic() - started) * 1000)
+
+    if url:
+        body = wrap_untrusted(result["text"], result["url"])
+        summary = f"อ่านเว็บ {result['url']} — {result['chars']} chars"
+        out = {
+            "ok": True,
+            "mode": "read",
+            "url": result["url"],
+            "title": result["title"],
+            "chars": result["chars"],
+            "lines": result["lines"],
+            "content": body,
+        }
+    else:
+        results = result["results"]
+        lines = [f"# ผลการค้นหา: {result['query']}", ""]
+        for i, r in enumerate(results, 1):
+            lines.append(f"## {i}. {r['title']}")
+            lines.append(f"URL: {r['url']}")
+            lines.append(r["snippet"])
+            lines.append("")
+        summary = f"ค้นหา '{result['query']}' — ได้ {result['count']} ผลลัพธ์"
+        out = {
+            "ok": True,
+            "mode": "search",
+            "query": result["query"],
+            "count": result["count"],
+            "results": results,
+            "content": wrap_untrusted("\n".join(lines), "duckduckgo:" + result["query"]),
+        }
+
+    await _record_web_evidence(
+        trace_id=trace_id, task_id=task_id, agent_id=agent_id,
+        status="completed", summary=summary, latency_ms=latency_ms,
+        metadata={"mode": out["mode"], "chars": out.get("chars", 0)},
+        started_at=started_at,
+    )
+
+    return {"trace_id": trace_id, "latency_ms": latency_ms, **out}
+
+
+async def _record_web_evidence(
+    *,
+    trace_id: str,
+    task_id: str,
+    agent_id: str,
+    status: str,
+    summary: str,
+    latency_ms: int,
+    metadata: Optional[dict] = None,
+    started_at: Optional[str] = None,
+) -> None:
+    """บันทึก evidence + audit + AAR ของการอ่านเว็บ (sync endpoint — ไม่ผ่าน queue)"""
+    try:
+        services = await _get_services()
+        db = services["db"]
+        await db.execute(
+            """
+            INSERT INTO evidence
+                (id, task_id, trace_id, agent_id, evidence_type,
+                 evidence_file, summary, status, routing_hops,
+                 retry_count, latency_ms, metadata_json, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                new_id(), task_id, trace_id, agent_id, "web_read",
+                None, summary[:500], status, "[]",
+                0, latency_ms, json.dumps(metadata or {}), now_iso(),
+            ),
+        )
+        await db.execute(
+            "INSERT INTO audit_log (id, trace_id, action, agent_id, entity_type, entity_id, payload, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (new_id(), trace_id, "web.read", agent_id, "web", task_id,
+             json.dumps({"status": status, "latency_ms": latency_ms,
+                         **(metadata or {})}), now_iso()),
+        )
+        aar_id, _ = await AARGenerator(db).generate(
+            trace_id=trace_id,
+            queue_id=task_id,
+            status=status,
+            error=None if status == "completed" else summary,
+            updated={
+                "task_id": task_id,
+                "created_at": started_at or now_iso(),
+                "routing_hops": "[]",
+                "retry_count": 0,
+                "max_retries": 3,
+            },
+        )
+        if aar_id:
+            log.info("web-read evidence recorded: %s (trace=%s)", aar_id, trace_id)
+    except Exception as e:  # pragma: no cover — หลักฐานล้มเหลวไม่ควรทำให้ request พัง
+        log.warning("Failed to record web-read evidence: %s", e)
+
 
 @app.post("/v1/update")
 async def update_message(request: Request):

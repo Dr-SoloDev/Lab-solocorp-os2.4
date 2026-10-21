@@ -1,5 +1,4 @@
 ---
-model: opencode/muse-spark-1.3-contributor-free
 name: content-creator-sek
 description: Content Creator — Content Production, Caption, Image, Video, Campaign, โฆษณา
 mode: subagent

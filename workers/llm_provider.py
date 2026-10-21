@@ -11,32 +11,174 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import os
 import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Optional
 
 log = logging.getLogger(__name__)
 
 # ── Configuration ──────────────────────────────────────────────────────
 
-# Owner-ordered fallback chain (2026-10-08, stash review — รวมเป็นฟรีตัวเดียว):
-# 1. Muse Spark 1.3 Free — ตัวหลัก (พิสูจน์แล้วผ่าน opencode run ตรง)
-# 2. Space Bunny Free — สำรอง 1
-# 3. Longcat 2.5 Preview Free — สำรอง 2
-# 4. Mimo-2.6-Flash Free — สำรอง 3
-DEFAULT_MODEL = "opencode/muse-spark-1.3-contributor-free"
+# Fallback chain (2026-10-20 — ทดสอบจาก repo root จริงทุกตัว):
+# 1. Minimax M3.1 Flash Free   — ตัวหลัก (~12s)
+# 2. DeepSeek V4.1 Flash Free  — สำรอง 1
+# 3. Nemotron 3.5 Lightning    — สำรอง 2
+# 4. Longcat 2.5 Preview Free  — สำรอง 3 (~46s ช้า)
+# 5. Mimo 2.6 Flash Free       — สำรอง 4
+#
+# ⚠️ โมเดลที่ถูกลบออก (ไม่มีใน opencode models แล้ว → "Model not found"):
+#    muse-spark-1.3-contributor-free, space-bunny-free
+# ⚠️ โมเดลที่มีอยู่แต่ใช้ไม่ได้จาก repo root:
+#    beam-free (gateway ปฏิเสธ agents_md), glm-5.3-flash-free (unknown_parameter)
+DEFAULT_MODEL = "opencode/minimax-m3.1-flash-free"
+# ยืนยันแล้วว่าใช้ได้จริงจาก repo root (2026-10-20) — ทดสอบทีละตัว
+# ดูวิธีทดสอบ: python scripts/check-model-health.py --verify <model>
 MODEL_FALLBACKS = [
-    "opencode/muse-spark-1.3-contributor-free",
-    "opencode/space-bunny-free",
-    "opencode/longcat-2.5-preview-free",
+    "opencode/minimax-m3.1-flash-free",        # ~12s · เร็วสุดในชุดที่ใช้ได้
+    "opencode/deepseek-v4.1-flash-free",
+    "opencode/nemotron-3.5-lightning-free",
+    "opencode/nemotron-3-ultra-free",          # + เพิ่ม 2026-10-20
+    "opencode/big-pickle",                     # + เพิ่ม 2026-10-20
+    "opencode/longcat-2.5-preview-free",       # ~46s · ช้า
     "opencode/mimo-v2.6-flash-free",
 ]
 # Dead models — ถ้ามี caller ส่งชื่อเก่ามา ให้ map เข้า fallback chain ทันที
 DEAD_MODELS = {
+    # ยังไม่มีใน opencode models (Model not found)
     "opencode/x-preview-f-free",
-    "stealth/ox-alpha",
+    "opencode/muse-spark-1.3-contributor-free",
+    "opencode/space-bunny-free",
     "opencode/deepseek-v4-flash-free",
+    "stealth/ox-alpha",
+    # มีอยู่แต่ gateway free-tier ปฏิเสธ agents_md / unknown_parameter
+    "opencode/beam-free",
+    "opencode/glm-5.3-flash-free",
 }
+
+# ── Model health check (กันโมเดลตายเงียบ) ────────────────────────────
+# โมเดลฟรีของ opencode ถูกเปลี่ยนชื่อ/ลบไปเรื่อย ๆ → chain นี้จะตาย
+# โดยไม่มี error ชัดเจน (ทุกโมเดลคืน "empty response")
+# → ต้องตรวจชื่อเป็นระยะ แล้วเตือนก่อนที่ agent ทั้ง 19 ตัวจะ "ตาบอด"
+
+_MODEL_CACHE_PATH = Path(
+    os.environ.get(
+        "SOLOCORP_MODEL_HEALTH_CACHE",
+        str(Path(__file__).parent.parent / "bus" / "system" / "model_health.json"),
+    )
+)
+_MODEL_CACHE_TTL_HOURS = 6
+_MODELS_TIMEOUT = 30
+
+
+def list_available_models(prefix: str = "opencode/") -> list[str]:
+    """รายชื่อโมเดลที่ opencode มีจริง ณ ตอนนี้ (เรียก CLI)
+
+    Returns:
+        list[str]: เช่น ["opencode/minimax-m3.1-flash-free", ...]
+        คืน [] ถ้าเรียกไม่ได้ (ไม่มี opencode / timeout)
+    """
+    import subprocess
+
+    try:
+        r = subprocess.run(
+            [_CMD, "models"], capture_output=True, text=True,
+            timeout=_MODELS_TIMEOUT,
+        )
+    except Exception:
+        return []
+
+    out = []
+    for line in (r.stdout or "").splitlines():
+        line = line.strip()
+        if line.startswith(prefix):
+            out.append(line)
+    return out
+
+
+def _read_model_cache() -> dict:
+    try:
+        if not _MODEL_CACHE_PATH.exists():
+            return {}
+        data = json.loads(_MODEL_CACHE_PATH.read_text(encoding="utf-8"))
+        checked = data.get("checked_at")
+        if not checked:
+            return {}
+        age_h = (datetime.now(timezone.utc)
+                 - datetime.fromisoformat(checked)).total_seconds() / 3600
+        if age_h > _MODEL_CACHE_TTL_HOURS:
+            return {}
+        return data
+    except Exception:
+        return {}
+
+
+def _write_model_cache(models: list[str]) -> None:
+    try:
+        _MODEL_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        _MODEL_CACHE_PATH.write_text(json.dumps({
+            "checked_at": datetime.now(timezone.utc).isoformat(),
+            "available": models,
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception:
+        pass
+
+
+def audit_models(use_cache: bool = True) -> dict:
+    """เทียบ MODEL_FALLBACKS กับโมเดลที่มีจริง → รายงานสุขภาพ chain
+
+    Returns:
+        dict: {
+            ok: bool,             # ไม่มีโมเดลใน chain หาย
+            chain: [...],         # chain ปัจจุบัน
+            available: [...],     # โมเดล opencode/ ที่มีจริง (ทั้งหมด)
+            missing: [...],       # ใน chain แต่ไม่มีจริง  ← ต้องแก้
+            usable: [...],        # ใน chain ที่มีจริง
+            candidates: [...],    # มีจริงแต่ยังไม่อยู่ใน chain (ข้อเสนอ)
+            checked_at: str,
+            stale: bool,          # ใช้ข้อมูล cache
+            error: str | None,
+        }
+    """
+    cached = _read_model_cache() if use_cache else {}
+    if cached.get("available"):
+        available = list(cached["available"])
+        stale = True
+        checked_at = cached.get("checked_at", "")
+    else:
+        available = list_available_models()
+        stale = False
+        checked_at = datetime.now(timezone.utc).isoformat()
+        if available:
+            _write_model_cache(available)
+
+    chain = list(MODEL_FALLBACKS)
+    if not available:
+        return {
+            "ok": True, "chain": chain, "available": [], "missing": [],
+            "usable": chain, "candidates": [], "checked_at": checked_at,
+            "stale": stale, "error": "อ่านรายชื่อโมเดลไม่ได้ (ข้ามการตรวจ)",
+        }
+
+    avail_set = set(available)
+    missing = [m for m in chain if m not in avail_set]
+    usable = [m for m in chain if m in avail_set]
+    candidates = [m for m in available if m not in chain]
+
+    return {
+        "ok": not missing,
+        "chain": chain,
+        "available": available,
+        "missing": missing,
+        "usable": usable,
+        "candidates": candidates,
+        "checked_at": checked_at,
+        "stale": stale,
+        "error": None,
+    }
 _CMD = os.environ.get("OPENCODE_BIN", os.path.expanduser("~/.opencode/bin/opencode"))
 _MAX_CONCURRENT = 3
 _LLM_TIMEOUT = 60
@@ -59,6 +201,7 @@ async def think(
     model: str = DEFAULT_MODEL,
     max_tokens: int = 500,
     temperature: float = 0.7,
+    timeout: Optional[int] = None,
 ) -> str:
     """ให้ LLM คิดและตอบกลับ — ใช้ได้จากทุก Agent
 
@@ -68,6 +211,7 @@ async def think(
         model: ชื่อ model (default: muse-spark-1.3, fallback → space-bunny → longcat → mimo)
         max_tokens: ความยาวสูงสุดของคำตอบ
         temperature: (reserved) ไม่ได้ส่งไป opencode run โดยตรง
+        timeout: override timeout (วินาที) — prompt ยาว/ภาษาไทยต้องใช้เวลานาน
 
     Returns:
         str: ข้อความตอบกลับจาก LLM (ตัด max_tokens แล้ว)
@@ -90,7 +234,7 @@ async def think(
         for attempt in range(1, _MAX_RETRIES + 1):
             try:
                 async with _semaphore:
-                    result = await _run_opencode(full_prompt, model_name)
+                    result = await _run_opencode(full_prompt, model_name, timeout=timeout)
 
                 if not result:
                     log.warning(f"LLM เปล่า ({model_name} attempt {attempt})")
@@ -103,7 +247,7 @@ async def think(
 
             except asyncio.TimeoutError:
                 log.warning(f"LLM timeout {model_name} attempt {attempt}/{_MAX_RETRIES}")
-                last_error = f"{model_name}: timeout ({_LLM_TIMEOUT}s)"
+                last_error = f"{model_name}: timeout ({timeout or _LLM_TIMEOUT}s)"
                 continue
 
             except Exception as e:
@@ -120,7 +264,7 @@ async def think(
     return f"⚠️ LLM ไม่พร้อม: {last_error}"
 
 
-async def _run_opencode(full_prompt: str, model: str) -> str:
+async def _run_opencode(full_prompt: str, model: str, *, timeout: Optional[int] = None) -> str:
     """เรียก LLM ผ่าน opencode run CLI (core)
 
     spawn subprocess → ส่ง prompt ผ่าน stdin → อ่าน stdout
@@ -139,7 +283,7 @@ async def _run_opencode(full_prompt: str, model: str) -> str:
     try:
         stdout, stderr = await asyncio.wait_for(
             proc.communicate(input=full_prompt.encode("utf-8")),
-            timeout=_LLM_TIMEOUT,
+            timeout=timeout or _LLM_TIMEOUT,
         )
     except asyncio.TimeoutError:
         _safe_kill(proc)

@@ -98,6 +98,7 @@ docs/demo/output/video/
 docs/demo/output/debug/
 docs/demo/output/narration.mp3
 docs/demo/output/.clawforge-checkpoints/
+docs/demo/.clawforge-checkpoints/
 
 # Bus runtime data
 bus/governance/
@@ -107,6 +108,8 @@ bus/verdicts/
 bus/evidence/
 bus/inbox/
 bus/system/
+bus/news/seen.json
+bus/programs/x-kickstart/*/tracker.json
 
 # Python cache (already tracked, force-untrack)
 __pycache__/
@@ -127,3 +130,6 @@ loop_runner/.main.lock
 
 # Daemon PID files (runtime, never commit — daemon เขียนใหม่ทุกครั้งที่รัน)
 *.pid
+
+# คลิปของครีเอเตอร์ (ใหญ่) — เก็บในเครื่อง ไม่ commit
+bus/media/creator/*/clips/

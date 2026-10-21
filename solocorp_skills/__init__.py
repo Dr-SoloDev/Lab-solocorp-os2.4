@@ -30,6 +30,13 @@ from solocorp_skills.queue import get_queue, peek_queue, push_queue
 from solocorp_skills.skills import invoke_skill
 from solocorp_skills.mirror import mirror_check
 from solocorp_skills.broadcast import announce
+from solocorp_skills.web import (
+    WebError,
+    read_url,
+    search,
+    validate_url,
+    wrap_untrusted,
+)
 
 __all__ = [
     "SolocorpClient",
@@ -48,4 +55,9 @@ __all__ = [
     "invoke_skill",
     "mirror_check",
     "announce",
+    "WebError",
+    "read_url",
+    "search",
+    "validate_url",
+    "wrap_untrusted",
 ]

@@ -57,6 +57,17 @@ from workers.evidence_collector import collect_evidence
 from workers.aar_generator import generate_aar
 
 
+# ── Agent registry (consumer ตัวจริงของ Central Bus queue) ─────────────
+# target_agent ที่ถูกต้องต้องอยู่ในรายชื่อนี้ ไม่งั้นไม่มีใครหยิบ
+# (ใช้โดย central_bus.monitor_watchdog.check_orphaned_messages)
+AGENT_IDS = (
+    "cfo-meetoo", "architect-songsak", "changful", "product-produck",
+    "orchestrator-wut", "cmo-mark", "design-kreet", "qa", "sales", "support",
+    "legal-tulya", "web3-aywa", "content-creator-sek", "neteng-neet",
+    "cybersec-sai", "psych-jit", "ui-designer", "rd-lab",
+)
+
+
 class AgentWorkerService:
     """Agent Worker Service — หัวใจของ Agent Activation
 
@@ -66,7 +77,6 @@ class AgentWorkerService:
         3. Agent execute task
         4. Report กลับ CEO / update queue status
     """
-
     def __init__(
         self,
         bus_url: str = "http://127.0.0.1:8099",
@@ -312,7 +322,37 @@ class AgentWorkerService:
 # ── CLI ──────────────────────────────────────────────────────────────
 
 async def main():
-    service = AgentWorkerService()
+    import argparse
+
+    ap = argparse.ArgumentParser(description="SoloCorp Agent Worker Service")
+    ap.add_argument(
+        "--once", action="store_true",
+        help="ประมวลผลคิวหนึ่งรอบแล้วออก (สำหรับ cron) — ไม่ต้องรันเป็น daemon",
+    )
+    ap.add_argument(
+        "--poll-interval", type=int, default=5,
+        help="ระยะห่างระหว่าง poll (วินาที, เฉพาะโหมด daemon)",
+    )
+    ap.add_argument(
+        "--max-concurrent", type=int, default=3,
+        help="จำนวน task ที่ประมวลผลพร้อมกัน",
+    )
+    args = ap.parse_args()
+
+    service = AgentWorkerService(
+        poll_interval=args.poll_interval,
+        max_concurrent=args.max_concurrent,
+    )
+
+    # ── โหมด batch (cron) ──
+    if args.once:
+        print("=" * 60)
+        print("  🤖 SoloCorp OS — Agent Worker Service (one-shot)")
+        print("=" * 60)
+        print(f"  Agents loaded: {len(service.agents)}")
+        processed = await service.run_once()
+        print(f"  {'✅' if processed else '📭'} processed {processed} task(s)")
+        return
 
     # Print welcome
     print("=" * 60)

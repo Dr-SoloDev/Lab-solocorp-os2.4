@@ -1,5 +1,4 @@
 ---
-model: opencode/muse-spark-1.3-contributor-free
 name: cfo-meetoo
 description: CFO of SoloCorp OS — การเงิน, งบประมาณ, การลงทุน, cost analysis
 mode: subagent

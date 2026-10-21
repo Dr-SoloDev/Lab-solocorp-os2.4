@@ -495,6 +495,65 @@ Use this server when you need to:
             lines.append(f"| {i} | **{s.get('name', '?')}** | {s.get('role', '?')} | {s.get('dept', '?')} |")
         return "\n".join(lines)
 
+    @mcp.tool()
+    def solocorp_web_read(url: str, wait: int = 12) -> str:
+        """Read a web page as rendered by a real browser (JavaScript executed).
+
+        Use this when plain HTTP fetching only returns source code — React/Vue
+        SPAs, client-side rendered dashboards, and similar.
+
+        Runs Chromium in a container with NO display (47.5MB RAM, 0% idle CPU).
+        Does not persist cookies, so logged-in pages will not work.
+
+        Args:
+            url: The page to read (http/https only).
+            wait: Seconds to wait for the page to load (use 20-30 for heavy sites).
+        """
+        _check_scope("team")
+        from solocorp_skills.web import WebError, read_url, wrap_untrusted
+
+        try:
+            result = read_url(url, wait=wait)
+        except WebError as e:
+            return f"❌ Web read failed: {e}"
+        except Exception as e:
+            return f"❌ Web read error: {e}"
+
+        header = f"# {result['title']}\n" if result["title"] else ""
+        return header + wrap_untrusted(result["text"], result["url"])
+
+    @mcp.tool()
+    def solocorp_web_search(query: str, limit: int = 10) -> str:
+        """Search the web for news or information (Thai and English supported).
+
+        Returns a list of results with title, URL and snippet.
+        No API key required.
+
+        Args:
+            query: Search terms.
+            limit: Maximum number of results (default 10).
+        """
+        _check_scope("team")
+        from solocorp_skills.web import WebError, search
+
+        try:
+            result = search(query, limit=limit)
+        except WebError as e:
+            return f"❌ Search failed: {e}"
+        except Exception as e:
+            return f"❌ Search error: {e}"
+
+        if not result["results"]:
+            return f"No results found for '{query}'."
+
+        lines = [f"# Search results: {query}\n"]
+        for i, r in enumerate(result["results"], 1):
+            lines.append(f"## {i}. {r['title']}")
+            lines.append(f"URL: {r['url']}")
+            lines.append(r["snippet"])
+            lines.append("")
+        return "\n".join(lines)
+
     return mcp
 
 
