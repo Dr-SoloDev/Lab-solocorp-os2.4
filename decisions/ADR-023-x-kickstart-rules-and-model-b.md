@@ -11,6 +11,10 @@
 - Creator Monetization Standards: `help.x.com/en/rules-and-policies/content-monetization-standards`
 - Original Content Rewards: `help.x.com/en/using-x/original-content-rewards`
 
+> ⛔ **สถานะปัจจุบัน (2026-10-21): ถอนแล้ว — ไม่ได้ดำเนินต่อ**
+> Owner สั่งไม่รับส่วน "Creator Kit + X" (ข้อ 3 ของอัปเดต) → โค้ด/loop/skill ที่เกี่ยวข้องถูกถอนออกจาก repo
+> เอกสารนี้คงไว้เป็น**บันทึกการตัดสินใจ** (ประวัติ) ไม่ใช่คำสั่งให้ทำ
+
 ---
 
 ## บริบท

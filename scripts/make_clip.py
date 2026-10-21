@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
-"""🎬 make_clip.py — สคริปต์ → คลิปแนวตั้ง 9:16 พร้อมเสียงพูดไทย + ซับไตเติล
-
-ทำงานร่วมกับ `solocorp_skills/creator.py` (4 ท่อน → script.md) และ
-`solocorp_skills/programs/x_kickstart.py` (เงื่อนไข 9:16 / <3 นาที)
+"""🎬 make_clip.py — สคริปต์ → คลิปแนวตั้ง 9:16 พร้อมเสียงพูดไทย + ซับไทยเติล
 
 สายผลิต (ทั้งหมด local ไม่ต้องใช้ key):
   • เสียงพูด  → piper (th_TH-tsync2-medium) + tltk สำหรับหันศัลย์ไทย
-  • ซับไตเติล → ffmpeg + libass (ฟอนต์ Noto Sans Thai)
+  • ซับไทยเติล → ffmpeg + libass (ฟอนต์ Noto Sans Thai)
   • ภาพ        → แนวตั้ง 1080x1920 (preset "reels")
 
+ถ้าติดตั้ง `solocorp_skills/programs/x_kickstart.py` ไว้ จะตรวจเงื่อนไข 9:16 / <3 นาที
+ให้อัตโนมัติหลังประกอบคลิป (ไม่มีก็ข้าม ไม่ error)
+
 ใช้:
-  python scripts/make_clip.py --script bus/media/creator/<slug>/<วัน>/xxx.script.md \\
-      --out bus/media/creator/<slug>/<วัน>/xxx.mp4
+  python scripts/make_clip.py --script <path>/xxx.script.md --out <path>/xxx.mp4
   python scripts/make_clip.py --script ... --out ... --bg 0x1a1a2e
 """
 from __future__ import annotations
@@ -227,15 +226,16 @@ def main() -> int:
         size_mb = out.stat().st_size / 1_048_576
         print(f"🎬 เสร็จ: {out} ({size_mb:.1f} MB · {total:.1f}s)")
 
-        # ตรวจเงื่อนไขโปรแกรมให้อัตโนมัติ
+        # ตรวจเงื่อนไขโปรแกรมให้อัตโนมัติ (ถ้ามีโมดูลตรวจติดตั้งไว้)
         try:
             sys.path.insert(0, str(ROOT))
             from solocorp_skills.programs.x_kickstart import check_video
+        except ImportError:
+            pass
+        else:
             for c in check_video(out):
                 mark = "✅" if c["ok"] else "❌"
                 print(f"   {mark} {c['rule']} — {c['detail']}")
-        except Exception as e:
-            print(f"   (ตรวจเงื่อนไขไม่ได้: {e})")
         return 0
     finally:
         shutil.rmtree(tmp, ignore_errors=True)

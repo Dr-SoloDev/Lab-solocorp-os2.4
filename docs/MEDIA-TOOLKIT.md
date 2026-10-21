@@ -1,14 +1,18 @@
-# 🛠️ เครื่องมือผลิตสื่อ — สถานะจริง ณ 2026-10-20
+# 🛠️ เครื่องมือผลิตสื่อ — สถานะจริง ณ 2026-10-21
 
 > ตรวจแล้ว**ทดสอบจริงทุกชิ้น** ไม่ใช่อ่านชื่อไฟล์
+>
+> ⚠️ **2026-10-21 — ถอนส่วน Creator Kit + X ออก** (Owner สั่งไม่รับข้อ 3)
+> สายผลิตสื่อ (เสียง/ซับ/คลิป 9:16) **ยังใช้ได้ตามปกติ**
+> แต่ตัวที่ผูกกับโปรแกรม X Video Kickstart ถูกถอน: `x_kickstart.py` · `creator_daily.py` · `creator-kit` · `scripts/x_*.py`
 
-## สรุป: **ทำคลิปแนวตั้งพร้อมเสียงไทย+ซับไตเติล ได้จริงแล้ว**
+## สรุป: **ทำคลิปแนวตั้งพร้อมเสียงไทย+ซับไทยเติล ได้จริงแล้ว**
 
 ```
-สคริปต์ (4 ท่อน) → เสียงพูดไทย (piper) → ซับไตเติล (ffmpeg+libass) → คลิป 9:16 → ตรวจเงื่อนไขโปรแกรม
+สคริปต์ (4 ท่อน) → เสียงพูดไทย (piper) → ซับไทยเติล (ffmpeg+libass) → คลิป 9:16
 ```
 
-**หลักฐาน:** สคริปต์ตัวอย่าง → mp4 **1080x1920, 31.0 วิ, เสียง+ซับไทยครบ, ผ่านทั้ง 2 เงื่อนไขโปรแกรม**
+**หลักฐาน:** สคริปต์ตัวอย่าง → mp4 **1080x1920, 31.0 วิ, เสียง+ซับไทยครบ**
 
 ---
 
@@ -21,13 +25,11 @@
 | **ถอดเสียง → ซับ** | `scripts/transcribe.py` (faster-whisper) | ✅ | ทำงานจริง |
 | **ประกอบคลิป 9:16** | `ffmpeg` + `libass` | ✅ | 3 คลิป → 1080x1920 จริง |
 | **ซับไตเติลเบิร์น** | `scripts/make_clip.py` | ✅ | เห็นภาพจริง — ไทยครบ ล่างจอ |
-| **ตรวจเงื่อนไขโปรแกรม** | `solocorp_skills/programs/x_kickstart.py` | ✅ | ffprobe → 9:16 + <180 วิ |
 | **สคริปต์แบบมีช่วงเวลา** | `workers/media_pipeline.py script` | ✅ | 10 วิ/ท่อน + validate |
 | **ปกวิดีโอ** | `workers/media_pipeline.py cover` | ✅ | SVG |
 | **อ่านเว็บที่ต้อง render JS** | `tools/carbonyl/web-read` | ✅ | 47.5MB, ไม่มี display |
 | **ค้นหาเว็บ** | `solocorp_skills/web.py` | ✅ | DuckDuckGo ผ่าน Chromium |
 | **ข่าวรายแผนก** | `loop_runner/loops/news_daily.py` | ✅ | 15 แหล่ง → facts + inbox |
-| **เตรียมคลิปให้ครีเอเตอร์ (โมเดล B)** | `loop_runner/loops/creator_daily.py` | ✅ | 3 ไอเดีย → 15 ไฟล์ |
 
 **ฟอนต์ไทยที่มี:** Noto Sans Thai · Noto Looped Thai · Garuda · Loma · Kinnari · Laksaman · Norasi
 
@@ -50,24 +52,26 @@ scripts/setup_tts.sh     # venv + piper + tltk + โมเดลเสียง�
 ## 🧱 สายผลิตแบบเต็ม
 
 ```
-bus/media/creator/<slug>/<วัน>/
-  ├─ xxx.script.md      ← 4 ท่อน + เวลา (จาก creator-kit)
+<โฟลเดอร์งาน>/<slug>/
+  ├─ xxx.script.md      ← 4 ท่อน + เวลา
   ├─ xxx.shots.md       ← shot list
   ├─ xxx.caption.md     ← แคปชัน + แฮชแท็ก
-  ├─ xxx.origin.md      ← ตลิ่งที่มา (ต้นทางของภาพ/เพลง/ฟอนต์)
-  ├─ xxx.checklist.md   ← checklist โปรแกรม + สถานะโควตา
+  ├─ xxx.checklist.md   ← checklist (เฉพาะโปรแกรม X — ถอนแล้ว ไม่บังคับ)
   └─ xxx.mp4            ← คลิป 9:16 พร้อมเสียง+ซับ ← scripts/make_clip.py
 ```
 
 ```bash
 python scripts/make_clip.py --script <xxx.script.md> --out <xxx.mp4>
-# → แล้วตรวจเงื่อนไขโปรแกรมให้อัตโนมัติ
+# → ได้คลิป 9:16 พร้อมเสียงไทย + ซับไทยเบิร์น
 ```
 
 ---
 
-## ⚠️ ข้อจำกัดสำคัญ (ต้องรู้ก่อนใช้กับโปรแกรม X)
+## ⚠️ ข้อจำกัดสำคัญ (ยังมีผลแม้ถอนโปรแกรมแล้ว)
 
+
+โปรแกรม X Video Kickstart **ถูกถอน** แต่ข้อกำหนด Terms §4(a) ยังใช้อ้างอิงได้
+(เผยแพร่คลิปที่ผลิตเป็นชิ้นเป็นอันโดยเฉพาะเพื่อไล่รางวัล = ผิดเงื่อนไข):
 Terms §4(a) ของ X Video Kickstart Bonus:
 > *"The Qualifying Video must be **yours**"* · *"not mass-produced solely to manufacture qualifying posts"*
 
