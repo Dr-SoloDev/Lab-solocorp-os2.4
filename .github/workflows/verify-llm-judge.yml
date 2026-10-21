@@ -1,0 +1,76 @@
+name: "Verify — LLM judge agent (diagnostic)"
+
+# ⚠️ DIAGNOSTIC ONLY — ไม่ใช่งานจริงของ feature
+# มีไว้เพื่อดึงตัวเลข pytest จริง (session agent ไม่มี shell ในเครื่อง)
+# ลบทิ้งหลังอ่านผลแล้ว
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        continue-on-error: true
+        run: |
+          set -x
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov coverage pytest-asyncio
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f central_bus/requirements.txt ]; then pip install -r central_bus/requirements.txt; fi
+
+      - name: Run new test file
+        id: new_test
+        continue-on-error: true
+        if: always()
+        run: |
+          python -m pytest tests/test_llm_provider_judge_agent.py --tb=short --no-header -q -p no:cacheprovider 2>&1 | tee new-test-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Run full suite
+        id: full_test
+        continue-on-error: true
+        if: always()
+        run: |
+          python -m pytest tests/ central_bus/tests/ --tb=short --no-header -q -p no:cacheprovider 2>&1 | tee full-test-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Post result to PR
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          NEW_EXIT: ${{ steps.new_test.outputs.exit_code }}
+          FULL_EXIT: ${{ steps.full_test.outputs.exit_code }}
+        run: |
+          {
+            echo "### 🔍 Diagnostic — LLM judge agent"
+            echo
+            echo "**new test file** exit=${NEW_EXIT}"
+            echo '```'
+            tail -c 4000 new-test-output.txt 2>/dev/null || echo "(no output)"
+            echo '```'
+            echo
+            echo "**full suite** exit=${FULL_EXIT}"
+            echo '```'
+            tail -c 6000 full-test-output.txt 2>/dev/null || echo "(no output)"
+            echo '```'
+          } > result.md
+          cat result.md
+          gh pr comment "$PR_NUMBER" --body-file result.md
