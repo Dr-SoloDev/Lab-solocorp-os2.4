@@ -109,7 +109,7 @@ def description_for(path: Path, content: str) -> str:
 
 
 def agent_toml(path: Path, name: str, description: str, instructions: str) -> str:
-    source = path.relative_to(ROOT)
+    source = path.relative_to(ROOT).as_posix()  # POSIX เสมอ — กัน backslash บน Windows ทำ diff สกปรก
     return "\n".join(
         [
             GENERATED_HEADER,

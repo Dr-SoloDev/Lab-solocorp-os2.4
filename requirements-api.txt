@@ -4,3 +4,4 @@ fastapi>=0.115.0
 uvicorn[standard]>=0.27.0
 aiosqlite>=0.20.0
 pydantic-settings>=2.0.0
+tomli-w>=1.0.0  # เขียน ADR/RFC เป็น TOML (ไม่มี = fallback JSON แล้ว endpoint 500)
