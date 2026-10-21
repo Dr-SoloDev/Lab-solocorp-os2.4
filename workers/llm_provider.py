@@ -5,7 +5,6 @@
 ใช้ opencode run CLI โดยตรง — stable, official, tested.
 - ส่ง prompt ผ่าน stdin ป้องกัน shell injection
 - --pure ลด overhead plugins
-- --agent <judgment agent> กันโมเดลพยายามใช้เครื่องมือ (permission auto-reject → stdout ว่าง)
 - retry + timeout + semaphore concurrency control
 """
 
@@ -193,62 +192,6 @@ _CMD_WITH_FLAGS = [_CMD, "run", "--pure"]
 _semaphore = asyncio.Semaphore(_MAX_CONCURRENT)
 
 
-# ── Judgment agent (LLM ต้อง "ตอบ" ไม่ใช่ "ลงมือทำ") ───────────────────
-# Defect (2026-10-21): `opencode run` ที่รันใน repo จะโหลด agent config ของโปรเจกต์
-# → persona หลัก (ceo-turbo) → โมเดลพยายามใช้เครื่องมือ (bash/git/read)
-# → permission ถูก auto-reject → run จบ exit 0 แต่ stdout ว่าง
-# → provider เห็น "ค่าว่าง" → เปลี่ยนโมเดลไปตัวถัดไปจนหมด → "⚠️ LLM ไม่พร้อม"
-# Fix: เรียกด้วย `--agent llm-judge` (agent ที่ปิดสิทธิ์เครื่องมือทั้งหมด)
-# Fallback: agent ไม่มี/ไม่รู้จัก → retry โดยไม่ใส่ --agent (ไม่ให้ระบบล้มทั้งหมด)
-
-_LLM_AGENT_ENV = "SOLOCORP_LLM_AGENT"
-_DEFAULT_LLM_AGENT = "llm-judge"
-# agent ต้องอ่านได้จาก .opencode/agents/ ของ repo (cwd = repo root) หรือ global config
-_AGENT_SEARCH_DIRS = (
-    Path(_CWD) / ".opencode" / "agents",
-    Path(_CWD) / ".opencode" / "agent",
-    Path(os.path.expanduser("~")) / ".config" / "opencode" / "agent",
-    Path(os.path.expanduser("~")) / ".config" / "opencode" / "agents",
-)
-# คำที่บ่งบอกว่า error เกี่ยวกับ agent (ไม่มี / ไม่รู้จัก / flag ผิด)
-_AGENT_FAIL_WORDS = (
-    "not found", "unknown", "invalid", "no such", "does not exist",
-    "not exist", "missing", "unrecognized", "no agent",
-)
-
-
-def _agent_name() -> str:
-    """ชื่อ judgment agent — override ได้ด้วย env SOLOCORP_LLM_AGENT"""
-    return (os.environ.get(_LLM_AGENT_ENV) or "").strip() or _DEFAULT_LLM_AGENT
-
-
-def _agent_available(name: str) -> bool:
-    """agent ต้องมีไฟล์จริง ถึงจะส่ง --agent ไปได้"""
-    return any((d / f"{name}.md").is_file() for d in _AGENT_SEARCH_DIRS)
-
-
-def _resolve_agent() -> Optional[str]:
-    """คืนชื่อ agent ที่ใช้ได้จริง — None = เรียกโดยไม่ใส่ --agent"""
-    name = _agent_name()
-    if not _agent_available(name):
-        log.warning(
-            f"LLM agent '{name}' ไม่พบใน .opencode/agents/ "
-            f"→ เรียก opencode โดยไม่ใส่ --agent"
-        )
-        return None
-    return name
-
-
-def _looks_like_agent_error(message: str) -> bool:
-    """error เกี่ยวกับ agent? (ไม่มี / ไม่รู้จัก / flag ผิด) → ต้อง retry โดยไม่ใส่ --agent"""
-    low = (message or "").lower()
-    if "model not found" in low:
-        return False  # เป็นเรื่องโมเดล ไม่ใช่เรื่อง agent
-    if "agent" not in low:
-        return False
-    return any(word in low for word in _AGENT_FAIL_WORDS)
-
-
 # ── Provider Functions ─────────────────────────────────────────────────
 
 
@@ -326,34 +269,8 @@ async def _run_opencode(full_prompt: str, model: str, *, timeout: Optional[int] 
 
     spawn subprocess → ส่ง prompt ผ่าน stdin → อ่าน stdout
     ใช้ --model + --pure เพื่อลด overhead
-    ใช้ --agent <judgment agent> ด้วย เพื่อกันโมเดลพยายามใช้เครื่องมือ
-    (permission auto-reject → stdout ว่าง → provider คืน "LLM ไม่พร้อม")
-    ถ้า agent ไม่มี/ไม่รู้จัก → retry โดยไม่ใส่ --agent (ไม่ให้ระบบล้มทั้งหมด)
     """
-    agent = _resolve_agent()
-    try:
-        return await _exec_opencode(full_prompt, model, agent=agent, timeout=timeout)
-    except Exception as exc:
-        if agent and _looks_like_agent_error(str(exc)):
-            log.warning(
-                f"opencode agent '{agent}' ใช้ไม่ได้ ({exc}) "
-                f"→ retry โดยไม่ใส่ --agent"
-            )
-            return await _exec_opencode(full_prompt, model, agent=None, timeout=timeout)
-        raise
-
-
-async def _exec_opencode(
-    full_prompt: str,
-    model: str,
-    *,
-    agent: Optional[str] = None,
-    timeout: Optional[int] = None,
-) -> str:
-    """รัน opencode run 1 ครั้ง (ไม่มี fallback — ใช้จาก _run_opencode)"""
     cmd = [*_CMD_WITH_FLAGS, "--model", model]
-    if agent:
-        cmd += ["--agent", agent]
 
     proc = await asyncio.create_subprocess_exec(
         *cmd,
