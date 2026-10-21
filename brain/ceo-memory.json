@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-10-21T13:30:00Z",
+  "last_updated": "2026-10-21T15:40:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -217,6 +217,12 @@
     {
       "id": "SOP-07",
       "title": "Cross-Instance Dispatch — ฝากงานข้ามครอบครัวผ่าน GitHub (GitHub = bus ข้ามบ้าน)",
+      "date": "2026-10-21",
+      "status": "Accepted"
+    },
+    {
+      "id": "ADR-028",
+      "title": "Mirror check: prompt ต้องปิดช่องให้โมเดลใช้เครื่องมือ + fail-fast เมื่อเจอ free-tier gate",
       "date": "2026-10-21",
       "status": "Accepted"
     }
@@ -581,6 +587,33 @@
         "content สร้างเอง: สายผลิตสื่อรอ content_render ที่รันได้จริง (รอ issue #20)",
         "profiles/20-game/ (แผนก Game ของหนุมาน) — ยังไม่เอา รอ Owner ตัดสินเรื่องโครงสร้าง"
       ]
+    },
+    {
+      "date": "2026-10-21",
+      "duration": "night session (deep system health check)",
+      "summary": "ตรวจสุขภาพระบบเชิงลึก: mirror check + certification ladder audit 20 แผนก → เจอ 4 defect (mirror check ใช้ไม่ได้จริง · CI hang · CI แดงจาก deps · ทะเบียนอ้างเกินจริง) แก้ครบ + สร้างเครื่องมือ audit ใช้ซ้ำ",
+      "key_decisions": [
+        "🚨 mirror check ใช้ไม่ได้จริงทั้งระบบ (fail-silent) — prompt เปิดช่องให้โมเดลขอสิทธิ์ bash → permission auto-reject → stdout ว่าง → ได้ NO ทุกครั้งโดยไม่ crash",
+        "แก้แล้ว: prompt ใหม่ (ห้ามใช้เครื่องมือ + ตอบคำเดียว) + log เมื่อตอบผิดรูปแบบ + free-tier gate → fail-fast (เดิม 7 โมเดล×3 retry ≈ 7 นาที)",
+        "❌ แนวทาง 'ใช้ custom agent ปิดเครื่องมือ' ใช้ไม่ได้ — custom agent ชน free-tier gate (ADR-017 ซ้ำ) → revert แล้ว ใช้ built-in agent แทน",
+        "🚨 CI hang ตอนจบ run — aiosqlite เปิด connection thread แบบ non-daemon → interpreter รอมัน → แก้ด้วย open_connection() ตั้ง daemon=True ก่อน thread start (รองรับ 0.20 และ 0.21+)",
+        "🚨 CI แดง — numpy/typer/tomli-w/rich/mcp/PyYAML/requests/python-dotenv/GitPython/jsonschema ถูก import ในโค้ดจริงแต่ไม่ถูก declare → เพิ่มใน central_bus/requirements.txt",
+        "pin mcp<2.0 (2.x เปลี่ยน API _tool_manager) · pin aiosqlite>=0.21,<0.23 (ต่างกันตรงโครงสร้าง Thread)",
+        "🛡️ แก้ defect ของตัวเอง — ผมเคยติ๊ก content-creator-sek D1 ✅ โดยไม่มีเอกสาร D1 → ทวนเป็น ☐ + ฝาก D1 note ให้ instance หนุมาน (issue #20)",
+        "สร้าง scripts/certification-audit.py — ตรวจบันได 4 ด่านจากหลักฐานจริง (ไม่เชื่อทะเบียน) + จับกรณีทะเบียนอ้างเกินจริง"
+      ],
+      "achievements": [
+        "mirror check ซ่อมแล้ว: 6 ข้อรันจริง ผ่าน 5 (ก่อนซ่อม = 0 ผ่านทั้งหมดแบบ fail-silent)",
+        "CI venv สะอาดแบบ CI: 830 passed / 0 failed / exit=0 / 108s (เดิม hang จน timeout 400s)",
+        "เทสต์เต็ม: 833 passed / 0 failed",
+        "audit: D1 0/20 · D2 โค้ด 12/20 · D2 ครบ 9/20 · D3 0/20 · specialists 61 · worker 50-150L 12 · ทะเบียนตรงกับของจริง",
+        "หลักฐาน: bus/evidence/2026-10-21/{certification-audit,mirror-check}-20261021.json"
+      ],
+      "pending_next": [
+        "🟡 L1 mirror scoring ใช้เกณฑ์เดียวกับ L5 — คำถาม 'Owner ควรรู้อะไร' ตอบ NO ถูกนับเป็น fail (ทั้งที่ถูกต้องสำหรับ L1) → รอ Owner ตัดสินว่าจะแก้ scoring หรือไม่",
+        "🟡 รอหนุมาน: D1 note + D2 evidence (issue #20) · เสียง batch (issue #21)",
+        "🟡 19 แผนกที่เหลือยัง D0 ทั้งหมด — ยังไม่มีใครมี D1 document เลย (0/20)"
+      ]
     }
   ],
   "current_assessment": {
@@ -609,7 +642,7 @@
       "✅ Agent Worker process: no longer zombie — can poll Central Bus queue"
     ]
   },
-  "saved_at": "2026-10-21T13:30:00Z",
+  "saved_at": "2026-10-21T15:40:00Z",
   "latest_commit": "65b8604 fix(loop): media_daily date-gate + quiet SKIP",
   "state_snapshot": {
     "date": "2026-10-10",

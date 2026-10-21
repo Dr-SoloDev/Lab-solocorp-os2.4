@@ -1,0 +1,164 @@
+{
+  "generated_by": "central_bus/mirror_check.run_mirror_check",
+  "date": "2026-10-21",
+  "note": "หลักฐานรอบแรกหลังซ่อม mirror check (ก่อนซ่อม = fail-silent ทั้งหมด)",
+  "results": [
+    {
+      "n": 1,
+      "dept": "ceo",
+      "level": "L5",
+      "passed": true,
+      "score": 100,
+      "decision": "Merge เฉพาะก้อนโค้ดกลางจาก PR #19 (routing fix + test fixes + skills ใหม่) และปฏิเสธก้อนอัตลักษณ์ (rename หัวหน้า 17 แผนก + ปิด Sales/Support/Legal + ถอน Creator Kit+X 74 ไฟล์)",
+      "questions": [
+        {
+          "id": 1,
+          "q": "ลูกพี่จะทำแบบนี้ไหม?",
+          "r": "pass"
+        },
+        {
+          "id": 2,
+          "q": "Decision นี้สะท้อนตัวตนของ Dr.solodev หรือไม่?",
+          "r": "pass"
+        },
+        {
+          "id": 3,
+          "q": "ถ้า Owner เห็น decision นี้ จะยิ้มหรือส่ายหัว?",
+          "r": "pass"
+        }
+      ],
+      "elapsed_s": 75.0
+    },
+    {
+      "n": 2,
+      "dept": "ceo",
+      "level": "L5",
+      "passed": true,
+      "score": 66,
+      "decision": "รับรองให้ CEO หนุมาน (fork darinsupanikorn-rgb) เป็นสมาชิกครอบครัว SoloCorp คนที่ 2 และฝากงานข้าม instance 2 งาน",
+      "questions": [
+        {
+          "id": 1,
+          "q": "ลูกพี่จะทำแบบนี้ไหม?",
+          "r": "fail"
+        },
+        {
+          "id": 2,
+          "q": "Decision นี้สะท้อนตัวตนของ Dr.solodev หรือไม่?",
+          "r": "pass"
+        },
+        {
+          "id": 3,
+          "q": "ถ้า Owner เห็น decision นี้ จะยิ้มหรือส่ายหัว?",
+          "r": "pass"
+        }
+      ],
+      "elapsed_s": 70.8
+    },
+    {
+      "n": 3,
+      "dept": "ceo",
+      "level": "L5",
+      "passed": true,
+      "score": 100,
+      "decision": "เพิ่ม SOP-07 cross-instance dispatch + docs/FAMILY.md + labels เป็นช่องทางฝากงานข้ามครอบครัวผ่าน GitHub",
+      "questions": [
+        {
+          "id": 1,
+          "q": "ลูกพี่จะทำแบบนี้ไหม?",
+          "r": "pass"
+        },
+        {
+          "id": 2,
+          "q": "Decision นี้สะท้อนตัวตนของ Dr.solodev หรือไม่?",
+          "r": "pass"
+        },
+        {
+          "id": 3,
+          "q": "ถ้า Owner เห็น decision นี้ จะยิ้มหรือส่ายหัว?",
+          "r": "pass"
+        }
+      ],
+      "elapsed_s": 92.6
+    },
+    {
+      "n": 4,
+      "dept": "architect",
+      "level": "L4",
+      "passed": true,
+      "score": 100,
+      "decision": "Untrack bus runtime state (guard_events.jsonl, queue jsonl, forum sequence.txt) ออกจาก git เพราะ .gitignore ประกาศไว้แล้ว และ test run ทำให้มันโผล่ในทุก commit",
+      "questions": [
+        {
+          "id": 1,
+          "q": "Dr.solodev จะออกแบบระบบนี้ยังไง?",
+          "r": "pass"
+        },
+        {
+          "id": 2,
+          "q": "Decision นี้ทำให้ระบบดีขึ้นสำหรับ Owner หรือไม่?",
+          "r": "pass"
+        },
+        {
+          "id": 3,
+          "q": "Owner จะ approve architecture นี้ไหม?",
+          "r": "pass"
+        }
+      ],
+      "elapsed_s": 46.2
+    },
+    {
+      "n": 5,
+      "dept": "qa",
+      "level": "L1",
+      "passed": false,
+      "score": 50,
+      "decision": "ปรับ budget ของ test_bulk_classification_throughput จาก 500ms เป็น 3000ms เพราะวัดจริง idle = 270ms และ test นี้ fail แบบ flaky ใน full suite",
+      "questions": [
+        {
+          "id": 1,
+          "q": "Decision นี้มี impact อะไรบ้าง?",
+          "r": "pass"
+        },
+        {
+          "id": 2,
+          "q": "Owner ควรรู้อะไรเกี่ยวกับ decision นี้?",
+          "r": "fail"
+        }
+      ],
+      "elapsed_s": 30.4
+    },
+    {
+      "n": 6,
+      "dept": "ceo",
+      "level": "L5",
+      "passed": true,
+      "score": 100,
+      "decision": "ไม่ merge ส่วน CERTIFICATION-REGISTRY ที่อ้างว่า content-creator-sek ผ่าน D2 เพราะไฟล์หลักฐานไม่มีจริงในสาขาของผู้ส่ง",
+      "questions": [
+        {
+          "id": 1,
+          "q": "ลูกพี่จะทำแบบนี้ไหม?",
+          "r": "pass"
+        },
+        {
+          "id": 2,
+          "q": "Decision นี้สะท้อนตัวตนของ Dr.solodev หรือไม่?",
+          "r": "pass"
+        },
+        {
+          "id": 3,
+          "q": "ถ้า Owner เห็น decision นี้ จะยิ้มหรือส่ายหัว?",
+          "r": "pass"
+        }
+      ],
+      "elapsed_s": 41.0
+    }
+  ],
+  "summary": {
+    "total": 6,
+    "passed": 5,
+    "failed": 1,
+    "finding_L1_semantics": "L1 มีคำถาม \"Owner ควรรู้อะไรเกี่ยวกับ decision นี้?\" — คำตอบ NO แปลว่า Owner ไม่ต้องรู้ ซึ่งถูกต้องสำหรับงานระดับ L1 แต่ถูกนับเป็น fail เพราะ threshold 60% ใช้เกณฑ์เดียวกับทุกระดับ"
+  }
+}

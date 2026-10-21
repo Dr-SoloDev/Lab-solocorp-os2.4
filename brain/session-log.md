@@ -864,3 +864,76 @@ State tracking files: 0
 - `CERTIFICATION-REGISTRY` — content-creator-sek: **D1 ✅ / D2 ☐ (รอหลักฐาน)** + บันทึกบทเรียน PR #19 (อ้าง D2 แต่ไฟล์หลักฐานไม่มีจริง)
 - D2 จะผ่านได้เมื่อ **คนละ instance** (หนุมาน) รันจริง + แนบ output + exit code + ไฟล์ใน repo → ผู้ผลิต ≠ ผู้ตรวจ ✅
 
+
+---
+
+## 2026-10-21 (ดึก) — 🔬 Deep system health check: mirror check + certification ladder audit
+
+**Mode:** Review (ตรวจสุขภาพเชิงลึก) → Command (แก้ defect)
+**Owner:** Dr.solodev · **ผู้ตรวจ:** CEO เทอโบ
+
+### เครื่องมือใหม่: `scripts/certification-audit.py`
+ตรวจบันได 4 ด่าน **จากหลักฐานจริงใน repo** ไม่เชื่อทะเบียน + จับกรณีทะเบียนอ้างเกินจริง
+ใช้ซ้ำได้: `python scripts/certification-audit.py --strict` (exit 1 ถ้าไม่ตรง)
+
+### ผล audit 20 แผนก
+| | |
+|:--|:--|
+| D1 มีเอกสาร | **0/20** — ไม่มีใครมีเลย |
+| D2 โค้ดผ่านเกณฑ์ (50–150L + เรียกเครื่องมือ) | 12/20 |
+| D2 ครบ (โค้ด + หลักฐานรัน) | 9/20 |
+| D3 | 0/20 |
+| specialists รวม | 61 · worker ที่อยู่ในช่วง 50–150 บรรทัด 12/20 |
+
+---
+
+### 🚨 Defect 1 — Mirror check ใช้ไม่ได้จริงทั้งระบบ (fail-silent)
+
+**root cause 3 ชั้น:**
+1. prompt เปิดช่องให้โมเดล "ตรวจสอบเพิ่ม" (Mirror Question + Decision)
+2. โมเดลพยายามขอสิทธิ์ `bash (git log / ls / gh pr view)` → permission auto-reject
+3. stdout ว่าง → provider log "LLM เปล่า" → mirror ได้ NO ทุกครั้ง
+
+**แก้:** prompt ใหม่ (ห้ามใช้เครื่องมือ + ตอบคำเดียว) + log เมื่อตอบผิดรูปแบบ + free-tier gate → fail-fast
+**verify:** prompt เดิมที่ล้ม → "YES" สะอาด ไม่ขอเครื่องมือเลย · score 100/100
+
+**❌ แนวทางที่ตก:** ใช้ custom agent ที่ปิดเครื่องมือ (`--agent llm-judge`) → **ชน free-tier gate** (ADR-017 ซ้ำ)
+→ built-in agent (`build`/`plan`) ผ่าน · custom agent ไม่ผ่าน → **revert** แล้ว ใช้วิธี prompt
+
+### 🚨 Defect 2 — CI hang ตอนจบ run (เทสต์ผ่านหมด แต่ process ไม่ exit)
+`aiosqlite` เปิด connection thread แบบ **non-daemon** → interpreter รอมันตอน exit
+- แก้: `central_bus/db.py::open_connection()` ตั้ง `daemon=True` **ก่อน** thread start
+- ต้องรองรับ 2 โครงสร้าง: 0.20 (Connection สืบทอด Thread ตรง) / 0.21+ (ห่อ `_thread`)
+- verify: CI venv สะอาด → 830 passed, **exit=0**, 108s (เดิม hang จน timeout 400s)
+
+### 🚨 Defect 3 — CI แดง: deps ถูก import ในโค้ดจริงแต่ไม่ถูก declare
+`numpy` (semantic.py, behavior_classifier.py) → **collection error** · `tomli-w` `typer` `rich` `mcp` `PyYAML` `requests` `python-dotenv` `GitPython` `jsonschema`
++ pin `mcp<2.0` (2.x เปลี่ยน API `_tool_manager`) · pin `aiosqlite>=0.21,<0.23`
+**verify:** venv สะอาดแบบ CI → collect ไม่ error · 830 passed · 0 failed · exit=0
+
+### 🛡️ Defect 4 — ทะเบียนอ้างเกินจริง (defect ของผมเอง)
+ผมเคยติ๊ก `content-creator-sek` **D1 ✅** โดยไม่มีเอกสาร D1 = สิ่งที่ผมไปหาเรื่อง PR #19
+→ ทวนเป็น ☐ ทั้งหมด + ระบุ "ห้ามข้ามลำดับ" + ฝาก D1 note ให้ instance หนุมาน (issue #20)
+
+---
+
+### 🪞 Mirror check หลังซ่อม — รันจริง 6 ข้อ ผ่าน 5
+| # | แผนก | ระดับ | score | ผล |
+|:-:|:--|:--|:--:|:--|
+| 1 | ceo | L5 | 100 | ✅ |
+| 2 | ceo | L5 | 66 | ✅ (Q1 ไม่ผ่าน) |
+| 3 | ceo | L4 | 100 | ✅ |
+| 4 | architect | L3 | 100 | ✅ |
+| 5 | **qa** | **L1** | **50** | ❌ **FAIL — mirror จับผมได้** |
+| 6 | ceo | L4 | 100 | ✅ |
+
+**ข้อ 5 = การปรับ budget ของ perf test** → mirror ถาม "Owner ควรรู้อะไรเกี่ยวกับ decision นี้?" → ตอบ NO
+→ เหตุผลจริง: **L1 มีคำถามคนละชนิด** (คำถามเชิง "ควรรู้ไหม" — NO คือคำตอบที่ถูกสำหรับงานระดับ L1)
+แต่ scoring ใช้ threshold 60% เหมือน L5 → **นับเป็น fail → false negative**
+→ รอ Owner ตัดสินว่าจะแก้ scoring ให้ level-aware หรือไม่ (ยังไม่แก้เอง เพราะมันกำหนดว่าอะไรต้อง escalate ถึง Owner)
+
+**หลักฐาน:** `bus/evidence/2026-10-21/{certification-audit,mirror-check}-20261021.json`
+
+### ผลรวม
+เทสต์ **833 passed / 0 failed** · CI venv สะอาด **exit=0 ใน 108s** · ทะเบียนตรงกับหลักฐานจริงแล้ว
+

@@ -1,0 +1,332 @@
+{
+  "generated_by": "scripts/certification-audit.py",
+  "depts_audited": 20,
+  "rows": [
+    {
+      "dept": "01-ceo",
+      "soul": true,
+      "specialists": 0,
+      "worker": "-",
+      "worker_lines": 0,
+      "worker_tool_patterns": 0,
+      "d1_docs": [],
+      "d2_code_ok": false,
+      "d2_evidence": [
+        "bus/evidence/2026-10-20-carbonyl-web-read.json",
+        "bus/evidence/efed0254-5164-4d77-aed4-9da682650268.json",
+        "bus/evidence/9075212c-0522-456e-adae-ab0b0a240407.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "02-cfo",
+      "soul": true,
+      "specialists": 3,
+      "worker": "cfo_agent.py",
+      "worker_lines": 49,
+      "worker_tool_patterns": 2,
+      "d1_docs": [],
+      "d2_code_ok": false,
+      "d2_evidence": [
+        "bus/evidence/e353cfe3-e637-426e-8a67-6ea4261559cc.json",
+        "bus/evidence/8ed88b4b-aa1b-4df2-bb63-938ff27b0c0f.json",
+        "bus/evidence/0edce54c-dffd-4560-8ce3-0e41ec140aed.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "02-coo",
+      "soul": true,
+      "specialists": 0,
+      "worker": "coo_dispatch_agent.py",
+      "worker_lines": 324,
+      "worker_tool_patterns": 3,
+      "d1_docs": [],
+      "d2_code_ok": false,
+      "d2_evidence": [
+        "bus/evidence/2026-10-20-carbonyl-web-read.json",
+        "bus/evidence/2026-10-20-web-capability-v1.json",
+        "bus/evidence/2026-08-04/CMD-004-T2-20260804-apply.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "03-cmo",
+      "soul": true,
+      "specialists": 3,
+      "worker": "cmo_agent.py",
+      "worker_lines": 41,
+      "worker_tool_patterns": 1,
+      "d1_docs": [],
+      "d2_code_ok": false,
+      "d2_evidence": [
+        "bus/evidence/2026-07-26/mirror-cmo-233714.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "04-orchestrator",
+      "soul": true,
+      "specialists": 3,
+      "worker": "orchestrator_agent.py",
+      "worker_lines": 67,
+      "worker_tool_patterns": 1,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [
+        "bus/evidence/2026-07-26/mirror-orchestrator-233759.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "05-architect",
+      "soul": true,
+      "specialists": 6,
+      "worker": "architect_agent.py",
+      "worker_lines": 72,
+      "worker_tool_patterns": 2,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [
+        "bus/evidence/efed0254-5164-4d77-aed4-9da682650268.json",
+        "bus/evidence/9e1cb5e7-f20e-4106-bbc2-77fc76c43cbc.json",
+        "bus/evidence/4358e1f0-5c15-47d5-b355-f77d0765e000.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "06-product",
+      "soul": true,
+      "specialists": 3,
+      "worker": "product_agent.py",
+      "worker_lines": 68,
+      "worker_tool_patterns": 1,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [
+        "bus/evidence/a3745952-50fc-4af9-a5e2-f8b03d423cd1.json",
+        "bus/evidence/2026-07-26/mirror-product-233729.json",
+        "bus/evidence/2026-07-20/audit-cmd-004-dispatch.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "07-engineering",
+      "soul": true,
+      "specialists": 3,
+      "worker": "engineering_agent.py",
+      "worker_lines": 68,
+      "worker_tool_patterns": 1,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [
+        "bus/evidence/2026-10-20-carbonyl-web-read.json",
+        "bus/evidence/a3745952-50fc-4af9-a5e2-f8b03d423cd1.json",
+        "bus/evidence/2026-07-26/mirror-engineering-233538.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "08-design",
+      "soul": true,
+      "specialists": 3,
+      "worker": "design_agent.py",
+      "worker_lines": 43,
+      "worker_tool_patterns": 1,
+      "d1_docs": [],
+      "d2_code_ok": false,
+      "d2_evidence": [
+        "bus/evidence/9e1cb5e7-f20e-4106-bbc2-77fc76c43cbc.json",
+        "bus/evidence/2026-10-20-web-capability-v1.json",
+        "bus/evidence/f3c1aa74-92bf-4458-a96e-c635285342f3.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "09-ui-designer",
+      "soul": true,
+      "specialists": 3,
+      "worker": "ui_agent.py",
+      "worker_lines": 64,
+      "worker_tool_patterns": 1,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "10-qa",
+      "soul": true,
+      "specialists": 3,
+      "worker": "qa_agent.py",
+      "worker_lines": 27,
+      "worker_tool_patterns": 1,
+      "d1_docs": [],
+      "d2_code_ok": false,
+      "d2_evidence": [
+        "bus/evidence/1e04b0ec-24d6-43fd-b662-968a6293d87b.json",
+        "bus/evidence/6c60aec2-32a1-4710-9ee2-133bafc01933.json",
+        "bus/evidence/61757165-6fe6-4324-9b46-cd609dde760c.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "11-sales",
+      "soul": true,
+      "specialists": 3,
+      "worker": "sales_agent.py",
+      "worker_lines": 27,
+      "worker_tool_patterns": 1,
+      "d1_docs": [],
+      "d2_code_ok": false,
+      "d2_evidence": [
+        "bus/evidence/2026-08-03/qa-gate-9d336ec7.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "12-support",
+      "soul": true,
+      "specialists": 3,
+      "worker": "support_agent.py",
+      "worker_lines": 27,
+      "worker_tool_patterns": 1,
+      "d1_docs": [],
+      "d2_code_ok": false,
+      "d2_evidence": [
+        "bus/evidence/6de8eb2c-ec3e-4d18-8667-51a2754bb52c.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "13-legal",
+      "soul": true,
+      "specialists": 3,
+      "worker": "legal_agent.py",
+      "worker_lines": 126,
+      "worker_tool_patterns": 2,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [
+        "bus/evidence/681e4670-73a4-4afc-a8df-06e87715fd50.json",
+        "bus/evidence/2026-08-04/CMD-002-B-20260804.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "14-web3",
+      "soul": true,
+      "specialists": 4,
+      "worker": "web3_agent.py",
+      "worker_lines": 125,
+      "worker_tool_patterns": 2,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [
+        "bus/evidence/681e4670-73a4-4afc-a8df-06e87715fd50.json",
+        "bus/evidence/2026-08-04/CMD-004-T2-20260804-apply.json",
+        "bus/evidence/2026-08-04/CMD-002-B-20260804.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "15-content-creator",
+      "soul": true,
+      "specialists": 0,
+      "worker": "content_agent.py",
+      "worker_lines": 112,
+      "worker_tool_patterns": 2,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "16-neteng",
+      "soul": true,
+      "specialists": 4,
+      "worker": "neteng_agent.py",
+      "worker_lines": 117,
+      "worker_tool_patterns": 2,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [
+        "bus/evidence/681e4670-73a4-4afc-a8df-06e87715fd50.json",
+        "bus/evidence/2026-08-04/CMD-002-B-20260804.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "17-cybersec",
+      "soul": true,
+      "specialists": 4,
+      "worker": "cybersec_agent.py",
+      "worker_lines": 137,
+      "worker_tool_patterns": 3,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [
+        "bus/evidence/9075212c-0522-456e-adae-ab0b0a240407.json",
+        "bus/evidence/5c251241-f8a7-4f92-996b-6ac6b4169d6f.json",
+        "bus/evidence/2026-07-26/mirror-cybersec-233744.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "18-psychology",
+      "soul": true,
+      "specialists": 3,
+      "worker": "psychology_agent.py",
+      "worker_lines": 115,
+      "worker_tool_patterns": 2,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [
+        "bus/evidence/681e4670-73a4-4afc-a8df-06e87715fd50.json",
+        "bus/evidence/2026-08-04/CMD-002-B-20260804.json"
+      ],
+      "d3_docs": [],
+      "registry": null
+    },
+    {
+      "dept": "19-rd-lab",
+      "soul": true,
+      "specialists": 7,
+      "worker": "rd_lab_agent.py",
+      "worker_lines": 115,
+      "worker_tool_patterns": 2,
+      "d1_docs": [],
+      "d2_code_ok": true,
+      "d2_evidence": [],
+      "d3_docs": [],
+      "registry": null
+    }
+  ],
+  "registry_mismatches": [],
+  "totals": {
+    "d1": 0,
+    "d2_code_ok": 12,
+    "d2_full": 9,
+    "d3": 0,
+    "specialists_total": 61,
+    "workers_50_150": 12
+  }
+}
