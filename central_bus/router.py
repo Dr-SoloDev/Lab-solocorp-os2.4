@@ -115,9 +115,9 @@ def route(msg: BusMessage) -> Department:
 
     Three-tier matching with governance pre-route:
       0. If message type is GOVERNANCE -> governance routing rules
-      1. Keyword matching (fast path)
+      1. Keyword matching (fast path) — เลือก rule ที่ match มากที่สุด
       2. Semantic matching (TF-IDF + cosine similarity)
-      3. CEO fallback
+      3. Fallback rule (ปัจจุบัน = COO ตาม hierarchy Owner → CEO → COO)
     """
     # Tier 0a: AO message routing
     if msg.type == "AO_REQUEST":
@@ -133,12 +133,22 @@ def route(msg: BusMessage) -> Department:
     text = " ".join(str(v) for v in msg.payload.values()).lower()
 
     # Tier 1: keyword matching (skip for Thai text)
+    # เลือก rule ที่ match keyword ได้ "มากที่สุด" ไม่ใช่ rule แรกที่เจอ
+    # เหตุผล: rule ที่เฉพาะเจาะจงต้องชนะ rule กว้าง
+    #   "deploy smart contract on solana" → web3 (smart contract + solana = 2)
+    #                                ไม่ใช่ engineering (deploy = 1)
+    #   tie → ใช้ลำดับในไฟล์ (พฤติกรรมเดิม)
     if not _has_thai(text):
+        best_rule = None
+        best_hits = 0
         for rule in rules["rules"]:
             if rule.get("is_fallback"):
                 continue
-            if any(_matches(kw, text) for kw in rule["trigger"]["keywords"]):
-                return rule["route_to"]
+            hits = sum(1 for kw in rule["trigger"]["keywords"] if _matches(kw, text))
+            if hits > best_hits:
+                best_rule, best_hits = rule, hits
+        if best_rule is not None:
+            return best_rule["route_to"]
 
     # Tier 2: semantic matching
     sr = _get_semantic_router()
@@ -159,7 +169,9 @@ def priority_for(dept: Department, msg: BusMessage | None = None) -> Priority:
 
     rules = _load_rules()
     for rule in rules["rules"]:
-        if rule["route_to"] == dept and not rule.get("is_fallback"):
+        # mirror_check = rule ของระบบ Mirror (ตรวจการสะท้อนตัวตน)
+        # ไม่ใช่ความสำคัญของข้อความ → ต้องไม่รั่วมาเซ็ต priority ของทุกข้อความ
+        if rule["route_to"] == dept and not rule.get("is_fallback") and not rule.get("mirror_check"):
             return rule["priority"]
     return "normal"
 
