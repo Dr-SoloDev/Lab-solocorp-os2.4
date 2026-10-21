@@ -1,0 +1,66 @@
+name: "Verify — BASELINE on main (diagnostic)"
+
+# ⚠️ DIAGNOSTIC ONLY — baseline (main โดยไม่มี fix) เพื่อเทียบกับ branch fix
+# ลบทิ้งหลังอ่านผลแล้ว
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies (mirror local .venv)
+        continue-on-error: true
+        if: always()
+        run: |
+          set -x
+          python -m pip install --upgrade pip
+          pip install pytest==9.1.1 pytest-asyncio==1.4.0 pytest-cov==7.1.0
+          coverage==7.15.0 pytest-random-order==1.2.0
+          fastapi==0.139.0 starlette==1.3.1 "uvicorn[standard]==0.50.0"
+          aiosqlite==0.22.1 pydantic==2.13.4 pydantic-settings==2.14.2
+          httpx==0.28.1 numpy==2.5.0 pyyaml==6.0.3 requests==2.34.2
+          python-dotenv==1.2.2 python-frontmatter==1.3.0 gitpython==3.1.50
+          jsonschema==4.26.0 mcp==1.28.1 python-multipart==0.0.32
+          sse-starlette==3.4.5 typer==0.26.8 rich==15.0.0 markdown-it-py==4.2.0
+
+      - name: Run full suite (baseline)
+        id: full_test
+        continue-on-error: true
+        if: always()
+        run: |
+          python -m pytest tests/ central_bus/tests/ --tb=short --no-header -q -p no:cacheprovider 2>&1 | tee full-test-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Post result to PR
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          FULL_EXIT: ${{ steps.full_test.outputs.exit_code }}
+        run: |
+          {
+            echo "### 🔍 BASELINE on main (no fix)"
+            echo
+            echo "**full suite** exit=${FULL_EXIT}"
+            echo '```'
+            tail -c 4000 full-test-output.txt
+            echo '```'
+          } > result.md
+          gh pr comment "$PR_NUMBER" --body-file result.md
