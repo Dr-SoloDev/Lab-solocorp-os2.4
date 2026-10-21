@@ -83,7 +83,9 @@ def test_route_to_legal():
 
 def test_route_fallback():
     msg = make_msg(payload={"text": "random unrelated topic xyz"})
-    assert route(msg) == "ceo"
+    # fallback = COO (L3 gatekeeper) ตาม hierarchy Owner → CEO → COO
+    # ไม่ใช่ CEO — CEO เป็น L4 ตัดสินใจทิศทาง ไม่ใช่ที่รับงานก้อนไม่เข้าเกณฑ์
+    assert route(msg) == "coo"
 
 def test_priority_for_qa():
     assert priority_for("qa") == "high"

@@ -33,7 +33,7 @@ log = logging.getLogger(__name__)
 SEED_KEYWORDS: dict[str, list[str]] = {
     "vision_strategy": ["vision", "strategy", "mission", "direction", "goal", "objective", "strategic", "long-term"],
     "owner_decision": ["final decision", "approve", "escalate", "owner", "authorize", "sign off", "decide"],
-    "budget_approval": ["budget", "funding", "allocate", "resource", "approve budget"],
+    "budget_approval": ["budget", "funding", "allocate", "resource", "approve budget", "งบประมาณ"],
     "cost_analysis": ["cost", "roi", "profit", "revenue", "financial model", "forecast", "expense"],
     "campaign_management": ["campaign", "marketing", "advertising", "promotion", "ad"],
     "brand_strategy": ["brand", "branding", "positioning", "identity"],
@@ -45,7 +45,7 @@ SEED_KEYWORDS: dict[str, list[str]] = {
     "roadmap_planning": ["roadmap", "prioritize", "backlog", "release", "planning", "sprint"],
     "backend_development": ["backend", "api", "database", "server", "microservice", "endpoint"],
     "frontend_development": ["frontend", "ui code", "component", "react", "vue", "html", "css", "tailwind"],
-    "bug_fixing": ["bug", "fix", "error", "crash", "defect", "regression", "broken"],
+    "bug_fixing": ["bug", "fix", "error", "crash", "defect", "regression", "broken", "บั๊ก"],
     "visual_design": ["design system", "visual", "style guide", "figma", "component library", "ui design"],
     "ux_research": ["ux", "user research", "usability", "wireframe", "user experience", "research"],
     "qa_testing": ["test", "qa", "quality", "test case", "automation test", "testing"],
@@ -160,8 +160,8 @@ class TfidfVectorizer:
 class LogisticRegression:
     """Multi-class Logistic Regression with softmax and L2 regularization."""
 
-    def __init__(self, lr: float = 0.01, n_iter: int = 200, l2: float = 0.01) -> None:
-        self.lr = lr
+    def __init__(self, learning_rate: float = 0.01, n_iter: int = 200, l2: float = 0.01) -> None:
+        self.learning_rate = learning_rate
         self.n_iter = n_iter
         self.l2 = l2
         self.weights: np.ndarray | None = None
@@ -185,8 +185,8 @@ class LogisticRegression:
             grad = probs.copy()
             grad[np.arange(N), y] -= 1
             grad /= N
-            self.weights -= self.lr * (X.T @ grad + self.l2 * self.weights)
-            self.bias -= self.lr * np.sum(grad, axis=0)
+            self.weights -= self.learning_rate * (X.T @ grad + self.l2 * self.weights)
+            self.bias -= self.learning_rate * np.sum(grad, axis=0)
             if abs(prev_loss - loss) < 1e-6:
                 break
             prev_loss = loss
@@ -215,7 +215,7 @@ class BehaviorClassifier:
     def __init__(self, threshold: float = 0.9) -> None:
         self.threshold = threshold
         self.vectorizer = TfidfVectorizer(max_features=500)
-        self.classifier = LogisticRegression(lr=0.01, n_iter=200)
+        self.classifier = LogisticRegression(learning_rate=0.01, n_iter=200)
         self._is_trained = False
         self._label_map: dict[str, int] = {}
         self._reverse_map: dict[int, str] = {}
@@ -278,21 +278,46 @@ class BehaviorClassifier:
             X = self.vectorizer.transform([text])
             probs = self.classifier.predict_proba(X)[0]
             best_idx = int(np.argmax(probs))
+            # ออกแบบไว้: ML มั่นใจไม่ถึง threshold → ถอยไป keyword (cold-start heuristic)
+            if float(probs[best_idx]) < self.threshold:
+                return self._classify_keyword(text)
             return self._reverse_map.get(best_idx, "owner_decision"), float(probs[best_idx])
         except Exception:
             return self._classify_keyword(text)
 
+    @staticmethod
+    def _kw_hit(keyword: str, text_lower: str) -> bool:
+        # ASCII keyword: จับแบบ whole-word (กัน "approve" ไปโดน "approval")
+        # Non-ASCII (เช่น ไทย ไม่มี word boundary): จับแบบ substring
+        kw = keyword.lower()
+        if re.fullmatch(r"[\x00-\x7f]+", kw) and re.fullmatch(r"[a-z0-9\s\-/]+", kw):
+            return re.search(r"(?<!\w)" + re.escape(kw) + r"(?!\w)", text_lower) is not None
+        return kw in text_lower
+
     def _classify_keyword(self, text: str) -> tuple[str, float]:
         text_lower = text.lower()
-        scores: dict[str, float] = {}
+        scored: dict[str, tuple[float, int]] = {}
         for bname, kws in SEED_KEYWORDS.items():
-            matches = sum(1 for kw in kws if kw.lower() in text_lower)
-            if matches:
-                scores[bname] = matches / max(len(kws), 1)
-        if not scores:
+            # ตัวหารนับเฉพาะ keyword ASCII — keyword ภาษาไทยเป็น alias เสริม
+            # ไม่ให้เปลี่ยน granularity ของ list ภาษาอังกฤษหลัก
+            denom = max(sum(1 for k in kws if re.fullmatch(r"[\x00-\x7f]+", k)), 1)
+            hits = [kw for kw in kws if self._kw_hit(kw, text_lower)]
+            if hits:
+                scored[bname] = (len(hits) / denom, sum(len(k) for k in hits))
+        if not scored:
             return ("owner_decision", 0.0)
-        best = max(scores, key=scores.get)
-        return best, min(scores[best] * 1.5, 0.95)
+        # หลัก: normalized score สูงสุด; ถ้าที่ 1 กับที่ 2 ห่างกันไม่ถึง 0.05
+        # (within noise) ให้ specificity (ความยาว keyword ที่ชนรวม) ตัดสินแทน dict-order
+        ranked = sorted(scored, key=lambda b: scored[b][0], reverse=True)
+        best = ranked[0]
+        if len(ranked) > 1:
+            second = ranked[1]
+            gap = scored[best][0] - scored[second][0]
+            # เสมอเป๊ะ (gap == 0): คง dict-order เดิม — ไม่แตะต้อง
+            # เกือบเสมอ (0 < gap < 0.05): ให้ specificity ตัดสินแทน
+            if 0 < gap < 0.05 and scored[second][1] > scored[best][1]:
+                best = second
+        return best, min(scored[best][0] * 1.5, 0.95)
 
 
 # ---------------------------------------------------------------------------

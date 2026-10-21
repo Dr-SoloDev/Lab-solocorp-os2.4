@@ -784,3 +784,43 @@ State tracking files: 0
 - แก่น 3 ชั้นครบ: frontier-builder-20261007 🔒 + core-definition-20261010 🔒 + vision-small-people-20261015 🔒
 
 ---
+
+---
+
+## 2026-10-21 (เย็น) — 🔍 รีวิว PR #19 (fork ลูกศิษย์) + แก้ CI แดง 26 → 0
+
+**Mode:** Review (ตรวจชิ้นงาน) → Strategic (Owner ตัดสิน 2 ข้อ) → Command (merge ก้อน A)
+**Owner:** Dr.solodev · **ผู้ตรวจ:** CEO เทอโบ (maker ≠ checker)
+
+### เจออะไร
+- fork ทั้งหมด 3: `darinsupanikorn-rgb` (มีงานจริง) · `TheoryOfEverything698` (idle) · `Ayoub123AI` (idle)
+- PR #19 เปิด: 9 commits · 387 ไฟล์ · +9,271/−5,011 · **ไม่มี CI check run เลย**
+
+### 🔬 verify เอง (ไม่เชื่อ PR description)
+| | โค้ดเรา (ก่อน) | สาขาเขา | โค้ดเรา (หลัง merge ก้อน A) |
+|:--|:--|:--|:--|
+| passed | 794 | 738 | **820** |
+| failed | **26** | 0 | **0** ✅ |
+| coverage | — | 74% | **74.5%** |
+ต่างกัน 82 เทสต์ = พอดีกับ 3 ไฟล์ที่เขาลบ (Creator Kit+X) → ตัวเลขสอดคล้อง ไม่ได้โกงตัวเลข
+
+### Owner ตัดสิน (L5) — 2 ข้อ
+1. **Creator Kit + X → คงไว้ทั้งชุด** (สนามแรก โพสต์แรกไปแล้ว 20 ต.ค.)
+2. **ชื่อหัวหน้า/อัตลักษณ์ → คงเดิม** ตามคอนเซ็ป "หนึ่งแกน หลายตัวตน" (README:49)
+
+> **หลักการที่ใช้ตัดสิน:** fork = ตัวของตัวเอง → rename ใน fork ได้ แต่ **PR กลับมาเขียนทับ upstream = กลับด้านกับคอนเซ็ป**
+> → **โค้ดขึ้นแกนกลาง · อัตลักษณ์แยกสาขา** นี่คือ "หนึ่งแกน หลายตัวตน" ทำงานจริง
+
+### แบ่งเป็น 3 ก้อน
+- **A ✅ merge แล้ว**: routing fix (best-match keyword + priority_for เลิกรั่ว mirror rule + fallback=COO) · test fixes 28 จุด · skill `real-sound` (~4k บรรทัด) · `earshot` · `voice-clone` (OmniVoice RTX 4050 RTF 0.36) · `content_render.py` · VECTORCRAFT map · บทเรียน voice clone + ถ้อยค์
+- **B 🟡 ปรับแล้ว**: `content_render.py` เลิก hardcode `C:\Users\Lenovo` → `CONCAT_BIN` env + PATH · spec เป็น relative · ADR-017 → **ADR-027** + แก้ Part 2 ให้ตรงโค้ดจริง · scrub identity ในเอกสาร
+- **C ⛔ ปฏิเสธ**: rename หัวหน้า 17 แผนก (เทอโบ→หนุมาน ฯลฯ) · rename `19-rd-lab/solodev/`→`human/` · ปิด Sales/Support/Legal · `opencode.json` path Windows · ถอน Creator Kit+X 74 ไฟล์ + banner ทับ ADR-022/023/024/026 · `.claude`/`.codex` rename
+
+### ⛔ Governance defect ที่เจอ (ไม่ merge)
+- `CERTIFICATION-REGISTRY.md` อ้าง "content-creator-sek ผ่าน D2" + ชี้ `bus/evidence/D2-content-creator-20261019.md` → **ไฟล์ไม่มีจริงในสาขาเขา** → ผิด `rules/06-certification.md` (default NOT PASSED จนมีหลักฐาน) → คงสถานะ D0 ของเรา
+- `VECTORCRAFT-CAPABILITY-MAP.md` อ้าง D2 PASSED แต่ evidence gitignored + binary เป็น `.exe` → แก้เป็น "ยังไม่ยืนยันใน upstream"
+- ADR-027 Part 2 รุ่นแรกเขียน "fallback coo → ceo" แต่โค้ดจริง = COO → บันทึกการย้อนกลับ + เหตุผล (COO คือ L3 gatekeeper)
+
+### ผล
+- `820 passed · 0 failed · coverage 74.5%` · `auto_qa_gate` 🟢 PASS · evidence `bus/evidence/2026-10-21/qa-gate-22754ec2.json`
+- สาขา: `integration/pr19-core` → merge → `main`

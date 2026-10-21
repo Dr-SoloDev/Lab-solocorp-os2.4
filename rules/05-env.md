@@ -60,3 +60,19 @@ pytest tests/ central_bus/tests/ -q
 | `/audit <scope>` | ตรวจ audit trail + compliance |
 | `/brain <context>` | บันทึก session context ลง brain |
 | `/mirror-check` | ตรวจ decision สะท้อน Owner |
+
+## 7. USB Backup Drive (exFAT)
+
+| สิ่ง | ค่า |
+|:-----|:-----|
+| Device | WDC WD5000BPVT 500G (`152d:2329` JM20329 bridge) |
+| UUID | `FFF7-7625` |
+| Label | `DATA-BACKUP` |
+| Stable path | `~/mnt/usb-backup` → `/media/drsolodev/DATA-BACKUP` |
+| CLI | `usb-backup {mount\|sync\|eject\|status\|repair}` |
+| Scripts | `~/.hermes/bin/usb-backup-{mount,sync,watch,eject}.sh` |
+| Units | `solocorp-usb-backup-{mount,sync,watch}.service`, `…-sync.timer` (30m) |
+
+⚠️ **Bridge เป็น USB 2.0 เท่านั้น** (bcdUSB 2.00) → ทำงานที่ 480 Mb/s (~67 MB/s) ไม่ใช่ SuperSpeed
+⚠️ **exFAT ไม่รองรับ symlink** → rsync ใช้ `--no-links`; exFAT ไม่มี unix permission → `--no-perms --no-owner --no-group`
+⚠️ **ถอดปลั๊กโดย unmount อาจทำให้ dirty flag** → ใช้ `usb-backup eject` เสมอ (sync + unmount + power-off)
