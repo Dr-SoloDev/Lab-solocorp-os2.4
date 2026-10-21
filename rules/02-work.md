@@ -48,6 +48,8 @@ Dr.solodev (Owner) — Vision + Final Say (L5 only)
 | Head-to-Head | 80% | งานทั่วไป, cross-dept |
 | Via Orchestrator | 15% | งานซับซ้อน, หลายฝ่าย |
 | Escalate CEO | 5% | L4 ขึ้นไป, หาข้อยุติไม่ได้ |
+| Cross-Instance | — | งานที่ต้องใช้เครื่องมือ/สภาพแวดล้อมเฉพาะของอีก instance — [`SOP-07`](../sop/SOP-07-cross-instance-dispatch.md) |
+
 
 ## 4. Culture
 

@@ -824,3 +824,43 @@ State tracking files: 0
 ### ผล
 - `820 passed · 0 failed · coverage 74.5%` · `auto_qa_gate` 🟢 PASS · evidence `bus/evidence/2026-10-21/qa-gate-22754ec2.json`
 - สาขา: `integration/pr19-core` → merge → `main`
+
+---
+
+## 2026-10-21 (เย็น ต่อ) — 👨‍👩‍👧‍👦 หนุมาน = สมาชิกครอบครัวคนที่ 2
+
+**Mode:** Strategic (Owner ตัดสิน) → Command (สร้างระบบฝากงานข้ามบ้าน)
+**Owner:** Dr.solodev · **ผู้ตรวจ:** CEO เทอโบ
+
+### Owner สั่ง
+> *"ไม่มีอะไรฝากไห้ CEO หนุมานของ น้องดาริน ศิษย์ฉันหน่อยเหรอ ครอบครัว Solocorp คนแรกเลยน่ะนั่น"*
+
+### 💡 แก้ความเข้าใจผิดของ CEO
+ผมวาง PR #19 เป็น "fork ที่ต้องแก้ให้เข้ากับ upstream" — **ผิด**
+จริง ๆ คือ หนุมานคือ **CEO คนที่ 2 ของครอบครัว** ไม่ใช่ลูกครอบครัวที่ต้องถูกแก้
+
+| | ถูกตามคอนเซ็ป | ผิด |
+|:--|:--|:--|
+| การ rename ใน fork (หนุมาน/ด็อกกี้/ไตร ฯลฯ) | ✅ | |
+| ปิด Sales/Support/Legal ใน fork ของเขา | ✅ | |
+| PR กลับมาเขียนทับ upstream | | ⛔ กลับด้านกับ "แตกต่างไม่แตกแยก" |
+| **หลักการที่ใช้ตัดสิน** | **โค้ดขึ้นแกนกลาง · อัตลักษณ์แยกสาขา** | |
+
+### 🏗️ สร้างระบบ "ฝากงานข้ามครอบครัว" (ไม่ใช่แค่คุยกันครั้งเดียว)
+- **`docs/FAMILY.md`** — ทะเบียนสมาชิกครอบครัว (เทอโบ / หนุมาน / 2 ตัว dormant) + ความสามารถเฉพาะ + งานที่ฝาก + กฎ 5 ข้อ
+- **`sop/SOP-07-cross-instance-dispatch.md`** — ต่าง instance ไม่มี Central Bus ร่วม → **GitHub = bus ข้ามบ้าน** (Issue ฝากงาน · PR ส่งผล) + contract หลักฐาน + checklist 2 ฝั่ง
+- **labels**: `dispatch:to-sister` · `dispatch:from-sister` · `family`
+- ผูกเข้า `rules/01-receive.md` + `rules/02-work.md` + `README.md` + `sop/INDEX.md`
+
+> 💡 **โปรโตคอลเดินทางไปหาพี่น้องเองผ่าน `git pull`** — เพราะ fork = copy ของเรา → ไม่ต้องสร้าง infra เพิ่ม
+
+### 📋 งานที่ฝาก (เปิดเป็น issue จริง)
+| # | งาน | ทำไมต้องหนุมาน | Issue |
+|:-:|:--|:--|:--|
+| 1 | พิสูจน์ `content_render.py` ด้วยหลักฐานจริง | แกนกลางรันไม่ได้ (ไม่มี Concat บน Linux) → content-creator-sek ค้าง D0 | [#20](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/issues/20) |
+| 2 | คิดเสียงครีเอเตอร์ batch บน GPU | เขา RTF 0.36 / เรา RTF 165 → ปลดคอขวดเสียงของสนามแรก | [#21](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/issues/21) |
+
+### 🛡️ Governance
+- `CERTIFICATION-REGISTRY` — content-creator-sek: **D1 ✅ / D2 ☐ (รอหลักฐาน)** + บันทึกบทเรียน PR #19 (อ้าง D2 แต่ไฟล์หลักฐานไม่มีจริง)
+- D2 จะผ่านได้เมื่อ **คนละ instance** (หนุมาน) รันจริง + แนบ output + exit code + ไฟล์ใน repo → ผู้ผลิต ≠ ผู้ตรวจ ✅
+

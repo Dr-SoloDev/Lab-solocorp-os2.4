@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-10-21T12:45:00Z",
+  "last_updated": "2026-10-21T13:30:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -212,6 +212,12 @@
       "id": "ADR-027",
       "title": "route_v2 เชื่อ classifier เมื่อมี signal (>0) — gate 0.9 ทำให้ v2 routing ตาย (merge จาก PR #19, renumber จาก ADR-017)",
       "date": "2026-10-14",
+      "status": "Accepted"
+    },
+    {
+      "id": "SOP-07",
+      "title": "Cross-Instance Dispatch — ฝากงานข้ามครอบครัวผ่าน GitHub (GitHub = bus ข้ามบ้าน)",
+      "date": "2026-10-21",
       "status": "Accepted"
     }
   ],
@@ -548,6 +554,33 @@
         "content สร้างเอง: สายผลิตสื่อรอ content_render ที่รันได้บน Linux (ต้อง Concat binary)",
         "rental-pilot-tmp/ — หายไปจาก /tmp แล้ว (system ล้าง) → ปิดรายการนี้ได้"
       ]
+    },
+    {
+      "date": "2026-10-21",
+      "duration": "evening session (ต่อ — ครอบครัว SoloCorp)",
+      "summary": "Owner รับรอง 'หนุมาน' = สมาชิกครอบครัว SoloCorp คนที่ 2 → สร้างระบบฝากงานข้ามบ้านจริง (SOP-07 + ทะเบียน + 2 งานแรก)",
+      "key_decisions": [
+        "Owner L5: หนุมาน (ดาริน · darinsupanikorn-rgb) = สมาชิกครอบครัวคนที่ 2 — ไม่ใช่ 'fork ที่ต้องแก้'",
+        "แก้ความเข้าใจผิดของ CEO: การ rename ใน fork ถูกต้องตามคอนเซ็ป · สิ่งที่ผิดคือ PR กลับมาเขียนทับ upstream",
+        "หลักการที่ใช้ตัดสิน: โค้ดขึ้นแกนกลาง · อัตลักษณ์แยกสาขา",
+        "สร้าง SOP-07 (Cross-Instance Dispatch) — ต่าง instance ไม่มี Central Bus ร่วม → GitHub = bus ข้ามบ้าน",
+        "สร้าง docs/FAMILY.md — ทะเบียนสมาชิก + ความสามารถเฉพาะ + งานที่ฝาก",
+        "สร้าง labels: dispatch:to-sister / dispatch:from-sister / family",
+        "ฝากงานที่ 1: issue #20 — พิสูจน์ content_render.py ด้วยหลักฐานจริง (แกนกลางรันไม่ได้ ไม่มี Concat บน Linux → content-creator-sek ค้าง D0)",
+        "ฝากงานที่ 2: issue #21 — คิดเสียงครีเอเตอร์ batch บน GPU (เขา RTF 0.36 / เรา RTF 165 → ปลดคอขวดเสียงสนามแรก)",
+        "CERTIFICATION-REGISTRY: content-creator-sek = D1 ✅ / D2 รอหลักฐานจาก instance หนุมาน (ผู้ผลิต ≠ ผู้ตรวจ = คนละ instance)"
+      ],
+      "achievements": [
+        "เอาโปรโตคอลไปให้พี่น้องผ่าน git pull (fork = copy ของเรา → เอกสารเดินทางได้เอง)",
+        "ผูก SOP-07 เข้า rules/01-receive.md + rules/02-work.md (behavior map เห็นได้)",
+        "README + sop/INDEX.md ชี้ไปหาเอกสารใหม่"
+      ],
+      "pending_next": [
+        "รอหนุมานตอบ issue #20 + #21 → ตรวจหลักฐาน → อัปเดต CERTIFICATION-REGISTRY เมื่อผ่านจริง",
+        "เสียงต้นแบบของ Owner (สำหรับงาน #21) — ถ้ายังไม่มีไฟล์สะอาด ต้องขอ",
+        "content สร้างเอง: สายผลิตสื่อรอ content_render ที่รันได้จริง (รอ issue #20)",
+        "profiles/20-game/ (แผนก Game ของหนุมาน) — ยังไม่เอา รอ Owner ตัดสินเรื่องโครงสร้าง"
+      ]
     }
   ],
   "current_assessment": {
@@ -576,7 +609,7 @@
       "✅ Agent Worker process: no longer zombie — can poll Central Bus queue"
     ]
   },
-  "saved_at": "2026-10-21T12:45:00Z",
+  "saved_at": "2026-10-21T13:30:00Z",
   "latest_commit": "65b8604 fix(loop): media_daily date-gate + quiet SKIP",
   "state_snapshot": {
     "date": "2026-10-10",

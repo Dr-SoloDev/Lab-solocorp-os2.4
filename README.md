@@ -54,6 +54,9 @@ SoloCorp OS เกิดจากแกนเดียวกัน แต่**�
 
 ดูวัฒนธรรมการแบ่งปันที่ [`COMMUNITY.md`](./COMMUNITY.md) 💬
 
+> 🧑‍🤝‍🧑 **ครอบครัว SoloCorp** — ทะเบียนสมาชิก instance ทุกตัว: [`docs/FAMILY.md`](./docs/FAMILY.md)
+> ฝากงานข้าม instance: [`sop/SOP-07-cross-instance-dispatch.md`](./sop/SOP-07-cross-instance-dispatch.md)
+
 ---
 
 ## Prerequisite

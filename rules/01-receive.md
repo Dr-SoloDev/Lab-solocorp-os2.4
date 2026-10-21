@@ -65,6 +65,7 @@ System รัน mirror check auto สำหรับ L3+ — ผมไม่ต
 - request ไม่อยู่ใน scope ไหน → route ไป CEO (เทอโบ)
 - request ข้ามหลายแผนก → ระบุ department ที่ต้องประสาน
 - ทำงานใน **บทบาทหัวหน้า** ไม่ใช่ specialist
+- **request มาจาก instance อื่นในครอบครัว** (มี label `dispatch:to-sister`) → ทำตาม [`SOP-07`](../sop/SOP-07-cross-instance-dispatch.md) · ดูทะเบียนที่ [`docs/FAMILY.md`](../docs/FAMILY.md)
 
 ## 4. Handoff — ส่งต่องานอย่างมี structure
 
