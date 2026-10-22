@@ -113,7 +113,11 @@ def get_department_level(department: str) -> MirrorLevel | None:
 
 
 class MirrorCheckResult:
-    """ผลลัพธ์จากการตรวจสอบ Mirror Check"""
+    """ผลลัพธ์จากการตรวจสอบ Mirror Check
+
+    ``advisory`` = True หมายถึงระดับนี้เป็น **เพียงข้อมูลประกอบ** ไม่ block
+    (L1/L2 — ดู ADR-028) · ``passed`` ยังเป็น True แต่ score ต่ำได้
+    """
 
     def __init__(
         self,
@@ -124,6 +128,7 @@ class MirrorCheckResult:
         question_results: list[dict[str, Any]],
         score: int,
         reason: str = "",
+        advisory: bool = False,
     ):
         self.passed = passed
         self.department = department
@@ -132,10 +137,12 @@ class MirrorCheckResult:
         self.question_results = question_results
         self.score = score
         self.reason = reason
+        self.advisory = advisory
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "passed": self.passed,
+            "advisory": self.advisory,
             "department": self.department,
             "level": self.level.value if self.level else None,
             "decision": self.decision[:200],
@@ -149,6 +156,7 @@ class MirrorCheckResult:
             "action": "mirror_check",
             "detail": {
                 "result": "pass" if self.passed else "fail",
+                "advisory": self.advisory,
                 "department": self.department,
                 "level": self.level.value if self.level else "none",
                 "score": self.score,
@@ -250,7 +258,21 @@ async def run_mirror_check(
         })
 
     score = int((passed_count / len(questions)) * 100) if questions else 100
-    passed = score >= 60  # threshold: 60%+
+
+    # ── Scoring แยกตามระดับ (ADR-028) ────────────────────────────────
+    # L1 (monitor) / L2 (advisory) → บันทึก score ไว้ให้ดู แต่ **ไม่ block**
+    #   เหตุผล: คำถามของ L1/L2 ไม่ได้ถามว่า "Owner จะอนุมัติไหม" เสมอไป
+    #   เช่น L1 ถาม "Owner ควรรู้อะไรเกี่ยวกับ decision นี้?" → คำตอบ NO
+    #   หมายถึง "Owner ไม่ต้องรู้" ซึ่ง**ถูกต้อง**สำหรับงานระดับ L1
+    #   แต่เกณฑ์ 60% แบบเดียวกับ L5 จะนับเป็น fail → false negative
+    # L3+ → gate จริง เกณฑ์ 60% เดิม (ไม่เปลี่ยนพฤติกรรมเดิม)
+    ADVISORY_LEVELS = {MirrorLevel.L1_MONITOR, MirrorLevel.L2_ADVISORY}
+    is_advisory = level in ADVISORY_LEVELS
+
+    if is_advisory:
+        passed = True
+    else:
+        passed = score >= 60  # threshold: 60%+
 
     # บันทึก audit
     if db is not None:
@@ -271,9 +293,11 @@ async def run_mirror_check(
                     f"mc-{new_id()[:8]}",
                     json.dumps({
                         "result": "pass" if passed else "fail",
+                        "advisory": is_advisory,
                         "department": department,
                         "level": level.value,
                         "score": score,
+                        "below_threshold": score < 60,
                     }),
                     now_iso(),
                 ),
@@ -282,7 +306,15 @@ async def run_mirror_check(
             log.warning("Failed to write mirror check audit: %s", exc)
 
     reason = ""
-    if not passed:
+    if is_advisory:
+        # บันทึกข้อมูลประกอบเสมอ แม้ผ่าน — เพื่อให้เห็นว่า score ต่ำตรงไหน
+        reason = (
+            f"Mirror Check (advisory, {level.value}): score={score}% — "
+            f"ระดับนี้บันทึกข้อมูลประกอบ ไม่ block การทำงาน"
+        )
+        if score < 60:
+            reason += f" · คะแนนต่ำกว่า 60% — ควรสังเกต (ไม่ block)"
+    elif not passed:
         reason = (
             f"Mirror Check FAILED for {department} "
             f"(score={score}%, threshold=60%). "
@@ -297,6 +329,7 @@ async def run_mirror_check(
         question_results=question_results,
         score=score,
         reason=reason,
+        advisory=is_advisory,
     )
 
 

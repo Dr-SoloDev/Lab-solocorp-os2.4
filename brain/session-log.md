@@ -937,3 +937,34 @@ State tracking files: 0
 ### ผลรวม
 เทสต์ **833 passed / 0 failed** · CI venv สะอาด **exit=0 ใน 108s** · ทะเบียนตรงกับหลักฐานจริงแล้ว
 
+
+---
+
+## 2026-10-21 (ดึก ต่อ) — 🪞 ADR-028: Mirror scoring แยกตามระดับ (Owner อนุมัติ)
+
+**Owner สั่ง:** "แก้เป็น level-aware: L1/L2 = advisory (บันทึก score แต่ไม่ block) · L3+ = เกณฑ์ 60% เดิม"
+
+### เหตุผลที่ต้องแก้
+คำถามของแต่ละระดับไม่ได้ถามสิ่งเดียวกัน — L1 ถาม *"Owner ควรรู้อะไรเกี่ยวกับ decision นี้?"*
+คำตอบ **NO** = "Owner ไม่ต้องรู้" = **ถูกต้อง** สำหรับงานระดับ L1 แต่ถูกนับเป็น fail → false negative
+
+### ผล
+| ระดับ | พฤติกรรม | แผนก |
+|:--|:--|:--|
+| **L1, L2** | advisory — บันทึก score เสมอ, `passed=True` → ไม่ block | **12/20** (L1: content_creator, psychology, qa, support, ui_designer · L2: design, engineering, legal, neteng, rd_lab, sales, web3) |
+| **L3, L4, L5** | gate — `score >= 60%` เดิม ไม่เปลี่ยน | **8/20** (cfo, cmo, coo, cybersec, product, architect, orchestrator, ceo) |
+
+- เพิ่ม flag `advisory` ใน `MirrorCheckResult` → `to_dict()` + audit log เก็บ `below_threshold` → **คะแนนต่ำยังถูกบันทึก ไม่หาย**
+- `reason` ระบุชัดว่า advisory + เตือนเมื่อคะแนน < 60%
+- `require_mirror_check(min_level=...)` ยังทำงานเดิม (ยัง 403 เมื่อระดับแผนกต่ำกว่า min_level)
+
+### verify end-to-end (LLM จริง)
+- qa (L1) → score=0, advisory=True, **passed=True** ✅ (เดิม fail)
+- engineering (L2) → score=66, advisory=True, passed=True ✅
+
+### 📌 ข้อสังเกตที่ต้องจำ: LLM ไม่ deterministic
+คำถามเดิม (qa L1) ได้ **50% → 0%** ระหว่างสองรอบ → mirror check เป็น **สัญญาณประกอบ** ไม่ใช่ตัวตัดสิน
+→ อย่าตัดสินใจจาก 1 รอบ
+
+เทสต์ **841 passed / 0 failed** · CI venv exit=0 · หลักฐาน `bus/evidence/2026-10-21/mirror-level-aware-verify-20261021.json`
+

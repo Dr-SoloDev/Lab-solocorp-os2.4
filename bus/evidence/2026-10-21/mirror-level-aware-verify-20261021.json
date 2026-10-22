@@ -1,0 +1,25 @@
+{
+  "generated_by": "central_bus/mirror_check.run_mirror_check",
+  "date": "2026-10-21",
+  "purpose": "ยืนยัน end-to-end หลังแก้ scoring เป็น level-aware (ADR-028)",
+  "results": [
+    {
+      "dept": "qa",
+      "expected_level": "L1",
+      "actual_level": "L1",
+      "advisory": true,
+      "passed": true,
+      "score": 0,
+      "reason": "Mirror Check (advisory, L1): score=0% — ระดับนี้บันทึกข้อมูลประกอบ ไม่ block การทำงาน · คะแนนต่ำกว่า 60% — ควรสังเกต (ไม่ block)"
+    },
+    {
+      "dept": "engineering",
+      "expected_level": "L2",
+      "actual_level": "L2",
+      "advisory": true,
+      "passed": true,
+      "score": 66,
+      "reason": "Mirror Check (advisory, L2): score=66% — ระดับนี้บันทึกข้อมูลประกอบ ไม่ block การทำงาน"
+    }
+  ]
+}

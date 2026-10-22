@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-10-21T15:40:00Z",
+  "last_updated": "2026-10-21T16:20:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -223,6 +223,12 @@
     {
       "id": "ADR-028",
       "title": "Mirror check: prompt ต้องปิดช่องให้โมเดลใช้เครื่องมือ + fail-fast เมื่อเจอ free-tier gate",
+      "date": "2026-10-21",
+      "status": "Accepted"
+    },
+    {
+      "id": "ADR-028",
+      "title": "Mirror Check Scoring แยกตามระดับ — L1/L2 = advisory (บันทึก score ไม่ block) · L3+ = gate 60% เดิม",
       "date": "2026-10-21",
       "status": "Accepted"
     }
@@ -600,14 +606,19 @@
         "🚨 CI แดง — numpy/typer/tomli-w/rich/mcp/PyYAML/requests/python-dotenv/GitPython/jsonschema ถูก import ในโค้ดจริงแต่ไม่ถูก declare → เพิ่มใน central_bus/requirements.txt",
         "pin mcp<2.0 (2.x เปลี่ยน API _tool_manager) · pin aiosqlite>=0.21,<0.23 (ต่างกันตรงโครงสร้าง Thread)",
         "🛡️ แก้ defect ของตัวเอง — ผมเคยติ๊ก content-creator-sek D1 ✅ โดยไม่มีเอกสาร D1 → ทวนเป็น ☐ + ฝาก D1 note ให้ instance หนุมาน (issue #20)",
-        "สร้าง scripts/certification-audit.py — ตรวจบันได 4 ด่านจากหลักฐานจริง (ไม่เชื่อทะเบียน) + จับกรณีทะเบียนอ้างเกินจริง"
+        "สร้าง scripts/certification-audit.py — ตรวจบันได 4 ด่านจากหลักฐานจริง (ไม่เชื่อทะเบียน) + จับกรณีทะเบียนอ้างเกินจริง",
+        "Owner อนุมัติแก้ L1 mirror scoring → ADR-028: L1/L2 advisory (12/20 แผนก) · L3+ gate เหมือนเดิม (8/20)",
+        "เพิ่ม flag `advisory` ใน MirrorCheckResult + audit เก็บ below_threshold → คะแนนไม่หาย",
+        "บันทึกข้อสังเกต: LLM ไม่ deterministic — score คำถามเดิมเปลี่ยนระหว่างรอบ (qa L1: 50% → 0%) → mirror เป็นสัญญาณประกอบ ไม่ใช่ตัวตัดสิน"
       ],
       "achievements": [
         "mirror check ซ่อมแล้ว: 6 ข้อรันจริง ผ่าน 5 (ก่อนซ่อม = 0 ผ่านทั้งหมดแบบ fail-silent)",
         "CI venv สะอาดแบบ CI: 830 passed / 0 failed / exit=0 / 108s (เดิม hang จน timeout 400s)",
         "เทสต์เต็ม: 833 passed / 0 failed",
         "audit: D1 0/20 · D2 โค้ด 12/20 · D2 ครบ 9/20 · D3 0/20 · specialists 61 · worker 50-150L 12 · ทะเบียนตรงกับของจริง",
-        "หลักฐาน: bus/evidence/2026-10-21/{certification-audit,mirror-check}-20261021.json"
+        "หลักฐาน: bus/evidence/2026-10-21/{certification-audit,mirror-check}-20261021.json",
+        "ADR-028 + tests/test_mirror_level_scoring.py (6 เคส) · verify end-to-end: qa L1 score=0 → passed=True · engineering L2 score=66 → passed=True",
+        "เทสต์ 841 passed / 0 failed · CI venv exit=0 · untrack bus/inbox runtime (เก็บ config/routes.json ไว้)"
       ],
       "pending_next": [
         "🟡 L1 mirror scoring ใช้เกณฑ์เดียวกับ L5 — คำถาม 'Owner ควรรู้อะไร' ตอบ NO ถูกนับเป็น fail (ทั้งที่ถูกต้องสำหรับ L1) → รอ Owner ตัดสินว่าจะแก้ scoring หรือไม่",
@@ -642,7 +653,7 @@
       "✅ Agent Worker process: no longer zombie — can poll Central Bus queue"
     ]
   },
-  "saved_at": "2026-10-21T15:40:00Z",
+  "saved_at": "2026-10-21T16:20:00Z",
   "latest_commit": "65b8604 fix(loop): media_daily date-gate + quiet SKIP",
   "state_snapshot": {
     "date": "2026-10-10",
