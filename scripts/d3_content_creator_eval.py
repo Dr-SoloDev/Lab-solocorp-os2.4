@@ -758,7 +758,7 @@ def _parse_ids(raw: str) -> list[int]:
 
 
 async def _run(selected: list[dict], out_dir: Path, repeats_for: dict[int, int],
-               shas: dict, argv: list[str], started: str) -> int:
+               shas: dict, argv: list[str], started: str, strict: bool = False) -> int:
     rows: list[dict] = []
     requested = [c["id"] for c in selected]
     crash_seen = False
@@ -816,8 +816,11 @@ async def _run(selected: list[dict], out_dir: Path, repeats_for: dict[int, int],
     print(f"out-dir : {out_dir}")
     print(f"table   : {out_dir / 'table.md'}")
     print(f"results : {out_dir / 'results.json'}")
-    print(f"EXIT {1 if crash_seen else 0}")
-    return 1 if crash_seen else 0
+    # exit code: CRASH = harness/agent พัง (ต้องแก้) — ส่วน FAIL คือ "ผลการประเมิน"
+    # --strict ใช้เมื่อต้องการให้ FAIL/SKIP-NA ทำให้ exit != 0 (เช่น ให้ checker ใช้ตัดสินอัตโนมัติ)
+    bad = crash_seen or (strict and (meta["fail"] or meta["skip"]))
+    print(f"EXIT {1 if bad else 0}" + ("  (--strict)" if strict and bad and not crash_seen else ""))
+    return 1 if bad else 0
 
 
 def write_table_and_report(rows: list[dict], out_dir: Path, shas: dict,
@@ -836,6 +839,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--repeat-ids", default="",
                     help="เคสที่ต้องรันซ้ำเพื่อรายงานการกระจาย เช่น 3,15,17,20")
     ap.add_argument("--repeats", type=int, default=3, help="จำนวนรอบสำหรับ --repeat-ids")
+    ap.add_argument("--strict", action="store_true",
+                    help="exit 1 ถ้ามี FAIL/SKIP-NA (default: exit 1 เฉพาะ CRASH)")
     args = ap.parse_args(argv)
 
     if IMPORT_ERROR:
@@ -886,7 +891,9 @@ def main(argv: list[str] | None = None) -> int:
     started = datetime.now().isoformat(timespec="seconds")
 
     try:
-        return asyncio.run(_run(selected, out_dir, repeats_for, shas, argv, started))
+        return asyncio.run(
+            _run(selected, out_dir, repeats_for, shas, argv, started, strict=args.strict)
+        )
     except KeyboardInterrupt:
         print("\n⚠️ ถูกยกเลิก — results.json มีเท่าที่รันเสร็จ")
         return 1
