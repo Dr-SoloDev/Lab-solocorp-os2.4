@@ -1,14 +1,15 @@
 # 📋 Certification Registry — บันได 4 ด่าน (D0–D4)
 
 > **ผู้ผลิต ≠ ผู้ตรวจ** — อัปเดตโดยผู้ตรวจ/CEO เมื่อผ่านด่านจริงเท่านั้น (rules/06-certification.md, SOP-06)
-> **สถานะ ณ 21 ต.ค. 2569: ทั้งองค์กรยังอยู่ที่ D0** — มี 1 ตัวรอหลักฐาน (ดูล่าง) · ความจริงที่ต้องยอมรับก่อนก้าวต่อ
+> **สถานะ ณ 25 ต.ค. 2569: ตัวแรกผ่าน D1+D2 แล้ว** — `content-creator-sek` (D3 กำลังทำ) · อีก 19 ตัวยัง D0
+> **ครั้งแรกที่บันไดถูกเดินจริงจนถึง D2** — ใช้เป็นแม่แบบให้แผนกอื่นได้
 
 ## สถานะปัจจุบัน
 
 | Agent | D1 | D2 | D3 | D4 | หลักฐานล่าสุด | หมายเหตุ |
 |-------|:--:|:--:|:--:|:--:|:-------------|:---------|
-| **content-creator-sek** (content) | ☐ | ☐ | ☐ | ☐ | `docs/certification/D1-content-creator.md` (rev.3) | **มีชิ้นงานจริง** แต่ยังไม่ผ่านด่านใด:<br>① **D1 มีเอกสารแล้ว rev.3** (106 บรรทัด, maker: CEO เทอโบ) — สถานะในเอกสาร = *ส่งตรวจ Owner, default ยังไม่ผ่าน* → **รอ Owner ตรวจอนุมัติ** (ไม่ใช่ "ยังไม่มีเอกสาร" อีกแล้ว · อัปเดต 25 ต.ค. 2569)<br>② **D2 หลักฐานครบแล้ว (25 ต.ค. 2569)** — `scripts/verify_d2_content_agent.py` เป็นผู้ตรวจอิสระ (อ่านไฟล์จริงจากดิสก์ ไม่เชื่อ agent) รันกับโค้ดวันนี้: **6/6 ✅ · `D2 VERDICT: PASSED` · exit 0** → `bus/evidence/2026-10-25/d2-content-creator/` (`verify-run1.{log,json}`, `tool-calls-verify.jsonl` 6 calls จริง, `code-sha256.txt`, draft `bus/creative/drafts/draft-20261025-120035.md` 1558 chars) · ยัง**ไม่ติ๊ก D2** เพราะ **ห้ามข้ามลำดับ** (rules/06 §3.3) — D1 ต้องผ่านก่อน<br>⚠️ ระหว่างทางเจอ P0 องค์กร: `llm_provider` ตายทั้งระบบ (opencode v2.1.4 ถอด `--pure` + default agent ขอ tool permission) → แก้แล้ว 862 passed |
-| ทุก Department Head + Specialist (อีก 19 ตัว) | ☐ | ☐ | ☐ | ☐ | — | ยังไม่ผ่านด่านใด — ห้ามรับงาน execution จริงโดยไม่มีแผน D2 แนบในงาน |
+| **content-creator-sek** (content) | **✅ ผ่าน** | **✅ ผ่าน** | ⏳ กำลังทำ | ☐ | `bus/evidence/2026-10-25/d2-content-creator/` · แผน D3: `docs/certification/D3-content-creator-PLAN.md` | **ผ่าน D1 + D2 ครบ (25 ต.ค. 2569)** — ตัวแรกขององค์กร<br>① **D1 ✅** rev.3 (106 บรรทัด) — Owner อนุมัติ 2026-10-25, ไม่มีการแก้เงื่อนไข · ข้อห้ามที่ยังไม่ถูกบังคับในโค้ด (D1 §4) ถูกยกระดับเป็นงาน D2 ครบ<br>② **D2 ✅** `content_agent.py` 144 บรรทัด เรียก tool จริง (read_file ×4, write_file, run_command) · ผู้ตรวจอิสระ `scripts/verify_d2_content_agent.py` = **6/6 ✅ PASSED exit 0** กับโค้ดวันนี้ (sha `0b78009…`) · หลักฐาน `verify-run1/2.{log,json}` + `tool-calls-verify.jsonl` + draft 1479/1558 chars<br>③ **D3 ⏳** มี runner 20 เคส (`scripts/d3_content_creator_eval.py`) — ยังไม่รัน · แผนอยู่ที่ `docs/certification/D3-content-creator-PLAN.md`<br>⚠️ ระหว่างทางเจอ P0 องค์กร: `llm_provider` ตายทั้งระบบ (opencode v2.1.4 ถอด `--pure` + default agent ขอ tool permission) → แก้แล้ว 868 passed
+| ทุก Department Head + Specialist (อีก 19 ตัว) | ☐ | ☐ | ☐ | ☐ | — | ยังไม่ผ่านด่านใด — ห้ามรับงาน execution จริงโดยไม่มีแผน D2 แนบในงาน · **แม่แบบที่ใช้ได้: content-creator-sek (D1+D2)** |
 
 ## ขอบเขตที่ content-creator-sek รอการยืนยัน (ยังไม่อนุญาตเต็มขอบเขต)
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-10-25T05:35:00Z",
+  "last_updated": "2026-10-25T06:00:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -642,7 +642,10 @@
         "หลักฐาน D2 เก่า (23 ต.ค. ผ่าน 6/6) ไม่ใช้นับ: mtime โค้ดใหม่กว่า evidence 26 วินาที -> รันใหม่กับโค้ดวันนี้",
         "Owner อนุมัติ model policy จากผลวัด: DEFAULT = deepseek-v4.1-flash-free · chain 5 ตัว (mimo ท้ายสุดเพราะ 82.9s + ชอบเรียก tool) · minimax+longcat ตาย upstream → DEAD_MODELS",
         "หลักฐานที่อ้างต้องอยู่ใน repo: force-add bus/evidence/ แม้ถูก gitignore — ไม่งั้นคำว่า PASSED เหลือแค่คำพูด",
-        "ปักหมุดโมเดลใน .opencode/agents/*.md ก็ตายด้วย (interactive path ไม่ผ่าน llm_provider) → แก้เป็น deepseek"
+        "ปักหมุดโมเดลใน .opencode/agents/*.md ก็ตายด้วย (interactive path ไม่ผ่าน llm_provider) → แก้เป็น deepseek",
+        "Owner อนุมัติ D1 content-creator (25 ต.ค.) → ติ๊ก D1 ✅ + D2 ✅ ในทะเบียน (D2 หลักฐานครบอยู่แล้ว, ไม่ต้องรันซ้ำ) = ตัวแรกขององค์กรที่ผ่าน D2",
+        "D3: ประกาศเกณฑ์ตัดสินล่วงหน้าก่อนรัน (machine-checkable assert 20 เคส) — กันการเข้าข้างตัวเอง/ตัดเคสที่ล้ม; D3 ผ่าน ≠ ทุกเคสสำเร็จ แต่ = วัดครบ ซื่อสัตย์ อธิบายได้",
+        "เคส 9–13 (เขียนนอกขอบเขต/traversal) เป็น hard gate: ถ้าหลุดข้อใด = D3 ไม่ผ่านทันที แม้งานอื่นสวย"
       ],
       "achievements": [
         "brain/ceo-memory.json + profiles/CERTIFICATION-REGISTRY.md: แก้ข้อความที่ตกรุ่นให้ตรงหลักฐาน (ไม่ติ๊กผ่านด่านใด)",
@@ -653,14 +656,18 @@
         "วัดจริง 5/7 โมเดลรอด (names/verify-all/latency/quality) · หลักฐาน bus/evidence/2026-10-25/model-health/",
         "7 commits: fix(llm) P0 · feat(cert) D2 · docs(cert) D1+registry+brain · content(media) · feat(llm) model policy · chore(evidence) · fix(agents,docs)",
         "D2 re-run กับโค้ดสุดท้าย: 6/6 ✅ PASSED exit 0 · draft 1479 chars · argv trace = deepseek 1 call · permission requested 0",
-        "เทสต์เต็ม 868 passed / 0 failed · check-model-health --verify-all 5/5 exit 0 · tree clean"
+        "เทสต์เต็ม 868 passed / 0 failed · check-model-health --verify-all 5/5 exit 0 · tree clean",
+        "profiles/CERTIFICATION-REGISTRY.md: content-creator-sek = D1 ✅ D2 ✅ D3 ⏳ (ตัวแรกขององค์กร) + ชี้แม่แบบให้ 19 แผนก",
+        "docs/certification/D1-content-creator.md: เติมสถานะอนุมัติโดย Owner 2026-10-25 + เหตุผล (ไม่แก้เงื่อนไข)",
+        "docs/certification/D3-content-creator-PLAN.md: แผน D3 ครบ 9 หัวข้อ — 20 เคส + 2 เคสเสริม, เกณฑ์ตัดสินแบบ assert, ช่องว่าง harness 6 ข้อ, หลักฐาน, เกณฑ์ผ่าน/ตก, runbook"
       ],
       "pending_next": [
-        "🔴 D1 content-creator (rev.3) รอ Owner ตรวจอนุมัติ — เป็น blocker เดียวที่เหลือก่อนติ๊ก D1+D2 ในทะเบียน",
-        "🟡 พอ D1 อนุมัติ → ติ๊ก D1 + D2 ใน CERTIFICATION-REGISTRY.md (หลักฐานครบแล้ว ไม่ต้องรันซ้ำ) แล้วเริ่ม D3",
-        "🟡 D3: scripts/d3_content_creator_eval.py ยังไม่รัน — ต้องได้ตาราง ≥20 task (expected vs actual + root cause) ไม่ cherry-pick",
-        "🟡 ยังไม่ push main (7 commits local) — รอ Owner สั่ง",
-        "🟡 อีก 19 แผนกยัง D0 — ไม่มี D1 document"
+        "🟡 D3 ขั้น 1: @changful อัปเกรด harness 6 ข้อ (--out-dir, expect→assert, verdict, root cause, exit code, table.md) แล้วพิสูจน์ด้วย --only 9,10,11 โดยไม่ใช้ LLM",
+        "🟡 D3 ขั้น 3: รันเต็ม 20 เคส (+ซ้ำ 3 รอบ เคส 3/15/17/20) → หลักฐาน bus/evidence/<วัน>/d3/ (force-add)",
+        "🟡 D3 ขั้น 4-5: ผู้ตรวจ ≠ ผู้ทำ (Reality Checker/pipeline-auditor) รันซ้ำ ≥3 เคส + Owner ลงนาม",
+        "🟡 รอ Owner ชี้ขาด 3 ข้อใน D3 plan §9 (เคส 6/8 นอกขอบเขต · ใครเป็นผู้ตรวจรันซ้ำ · งบเวลา/quota)",
+        "🟡 ยังไม่ push — 9 commits local รอ Owner สั่ง",
+        "🟡 อีก 19 แผนกยัง D0 — ใช้ content-creator เป็นแม่แบบ"
       ]
     }
   ],
@@ -690,7 +697,7 @@
       "✅ Agent Worker process: no longer zombie — can poll Central Bus queue"
     ]
   },
-  "saved_at": "2026-10-25T05:35:00Z",
+  "saved_at": "2026-10-25T06:00:00Z",
   "latest_commit": "65b8604 fix(loop): media_daily date-gate + quiet SKIP",
   "state_snapshot": {
     "date": "2026-10-10",
