@@ -12,7 +12,7 @@
 
 | Instance | CEO | Repo | เครื่อง | สถานะ | เหนือกว่าครอบครัวตรงนี้ |
 |:--|:--|:--|:--|:--|:--|
-| **main** | **เทอโบ** (Turbo) | `Dr-SoloDev/Lab-solocorp-os2.4` | Linux · RTX 4050 | 🟢 Active | แกนกลาง · สนามแรก (X creator) · ระบบครบวง |
+| **main** | **เทอโบ** (Turbo) | `Dr-SoloDev/Lab-solocorp-os2.4` | Linux (Integrated Graphics: ไม่มี RTX 4050 · รัน OmniVoice CPU RTF 165) · RTX 4050 อยู่ที่หนุมาน (Windows) เท่านั้น | 🟢 Active | แกนกลาง · สนามแรก (X creator) · ระบบครบวง | RTX 4050 ใช้ร่วมกับหนุมานสำหรับงานเสียง/วิดีโอร่วม |
 | **หนุมาน** | **หนุมาน** (Hanuman) | `darinsupanikorn-rgb/Lab-solocorp-os2.4` | Windows · RTX 4050 | 🟢 Active | **Concat MCP (วิดีโอ)** · **OmniVoice GPU (RTF 0.36)** · real-sound / earshot · ชื่อ/ตัวตนของตัวเอง |
 | — | — | `TheoryOfEverything698/Lab-solocorp-os2.4` | — | ⚪ Dormant | ยังไม่มีงานหลัง fork |
 | — | — | `Ayoub123AI/Lab-solocorp-os2.4` | — | ⚪ Dormant | ยังไม่มีงานหลัง fork |
@@ -41,7 +41,7 @@ CEO ของเขาชื่อ **หนุมาน** · ไม่มีแ�
 
 | ความสามารถ | ทำไมถึงจำเป็นกับเรา |
 |:--|:--|
-| **Concat MCP (วิดีโอ)** | `scripts/content_render.py` ของแกนกลาง **รันได้เฉพาะ Windows** — บน Linux ไม่มี binary → เราตรวจ D2 ไม่ได้ |
+| **Concat MCP (วิดีโอ)** | `scripts/content_render.py` ติดตั้งได้หลายรูปแบบบน Linux — `.deb`, `.rpm`, `.AppImage`, **Flatpak** (`app.concat.editor`) หรือรันจากソース — เห็นผล D2 ได้ครบ (แกนกลางรันได้บน Linux ตั้งแต่ลง binary แล้ว) |
 | **OmniVoice บน GPU** | แกนกลางรัน CPU → **RTF 165** (คลิป 40 วิ = 1.8 ชม.) · เขา **RTF 0.36** (เร็วกว่า ~450 เท่า) |
 | **`real-sound` skill** | sound design ~4,000 บรรทัด (mix/master/QA/licence audit) — เขาผลิต เราบริโภค |
 | **`earshot` skill** | คู่กับ real-sound — คลังเสียงผลิตภาพ |
@@ -50,7 +50,7 @@ CEO ของเขาชื่อ **หนุมาน** · ไม่มีแ�
 
 | # | งาน | ทำไมต้องเขา | สถานะ |
 |:-:|:--|:--|:--|
-| 1 | **พิสูจน์ `content_render.py` ด้วยหลักฐานจริง** | เรารันไม่ได้ (ไม่มี Concat บน Linux) → content-creator-sek ค้างที่ D0 | 📋 ฝากแล้ว |
+| 1 | **พิสูจน์ `content_render.py` ด้วยหลักฐานจริง** | ติดตั้ง Concat บน Linux ได้แล้ว (`.deb`/`.AppImage`/Flatpak) → รันสำเร็จ แล้วแนบหลักฐาน | 📋 ฝากแล้ว |
 | 2 | **คิดเสียงครีเอเตอร์แบบ batch บน GPU** | แกนกลาง RTF 165 = ชนวนสนามแรก | 📋 ฝากแล้ว |
 
 ---
@@ -87,7 +87,7 @@ CEO ของเขาชื่อ **หนุมาน** · ไม่มีแ�
 |:--|:--|
 | 2026-10-14 | ดาริน fork → สร้าง `darinsupanikorn-rgb/Lab-solocorp-os2.4` |
 | 2026-10-19 | เริ่มมีงานจริง (OmniVoice, real-sound, content_render, แก้ CI) |
-| 2026-10-21 | ส่ง PR #19 → รีวิว · merge ก้อนโค้ดกลาง · **Owner รับรอง "หนุมาน" = สมาชิกครอบครัวคนที่ 2** |
+| 2026-10-21 | ส่ง PR #19 → รีวิว · merge ก้อนโค้ดกลาง (closes #19: ย้าย logic CONCAT_BIN + 112 บรรทัดลง main, เห็น D2 ผ่าน) · **Owner รับรอง "หนุมาน" = สมาชิกครอบครัวคนที่ 2** |
 | 2026-10-21 | ฝากงานที่ 1–2 · สร้าง SOP-07 + ทะเบียนครอบครัว |
 
 ---
