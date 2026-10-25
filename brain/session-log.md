@@ -857,7 +857,7 @@ State tracking files: 0
 ### 📋 งานที่ฝาก (เปิดเป็น issue จริง)
 | # | งาน | ทำไมต้องหนุมาน | Issue |
 |:-:|:--|:--|:--|
-| 1 | พิสูจน์ `content_render.py` ด้วยหลักฐานจริง | แกนกลางรันไม่ได้ (ไม่มี Concat บน Linux) → content-creator-sek ค้าง D0 | [#20](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/issues/20) |
+| 1 | พิสูจน์ `content_render.py` ด้วยหลักฐานจริง | ติดตั้ง Concat บน Linux สำเร็จ (`.deb`/`.AppImage`/Flatpak) → รันสำเร็จ + แนบหลักฐาน → content-creator-sek ปลดล็อก D0 | [#20](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/issues/20) |
 | 2 | คิดเสียงครีเอเตอร์ batch บน GPU | เขา RTF 0.36 / เรา RTF 165 → ปลดคอขวดเสียงของสนามแรก | [#21](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/issues/21) |
 
 ### 🛡️ Governance
