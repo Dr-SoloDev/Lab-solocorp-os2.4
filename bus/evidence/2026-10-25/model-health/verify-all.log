@@ -1,0 +1,9 @@
+=== ทดสอบจริงทุกโมเดลใน chain ===
+❌ opencode/minimax-m3.1-flash-free             ไม่ได้ข้อความตอบ
+✅ opencode/deepseek-v4.1-flash-free            ใช้ได้
+✅ opencode/nemotron-3.5-lightning-free         ใช้ได้
+✅ opencode/nemotron-3-ultra-free               ใช้ได้
+✅ opencode/big-pickle                          ใช้ได้
+❌ opencode/longcat-2.5-preview-free            ไม่ได้ข้อความตอบ
+✅ opencode/mimo-v2.6-flash-free                ใช้ได้
+--- 5/7 ใช้ได้ ---

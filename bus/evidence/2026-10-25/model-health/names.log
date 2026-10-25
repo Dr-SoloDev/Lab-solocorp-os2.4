@@ -1,0 +1,24 @@
+=== LLM Model Chain Health ===
+ตรวจเมื่อ: 2026-10-25T05:06:41.350113+00:00
+chain (7):
+   ❌ ไม่มีจริง  opencode/minimax-m3.1-flash-free
+   ✅  opencode/deepseek-v4.1-flash-free
+   ✅  opencode/nemotron-3.5-lightning-free
+   ✅  opencode/nemotron-3-ultra-free
+   ✅  opencode/big-pickle
+   ❌ ไม่มีจริง  opencode/longcat-2.5-preview-free
+   ✅  opencode/mimo-v2.6-flash-free
+
+🚨 หายไป 2 ตัว: ['opencode/minimax-m3.1-flash-free', 'opencode/longcat-2.5-preview-free']
+   แก้ workers/llm_provider.py MODEL_FALLBACKS
+
+โมเดลใหม่ที่ยังไม่อยู่ใน chain (17):
+   · opencode/beam-free
+   · opencode/claude-haiku-5-5
+   · opencode/claude-opus-5-5
+   · opencode/claude-sonnet-5-5
+   · opencode/deepseek-v4.1-flash
+   · opencode/flint-40b-free
+   · opencode/gemini-4-argon
+   · opencode/glm-5.3-flash-free
+   ทดสอบ: python scripts/check-model-health.py --candidates

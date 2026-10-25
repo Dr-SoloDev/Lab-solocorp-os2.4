@@ -1,0 +1,1 @@
+run --agent plan --model opencode/deepseek-v4.1-flash-free

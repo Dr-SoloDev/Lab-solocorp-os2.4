@@ -1,0 +1,17 @@
+
+====================================================================
+✅ 1 อ่าน brand sources ครบ 3         อ่านแล้ว 4 ไฟล์
+✅ 2 อ่าน brief                       brief=bus/evidence/2026-10-25/d2-content-creator/brief-001.md
+✅ 3 เขียนไฟล์ draft                  bus/creative/drafts/draft-20261025-121746.md
+✅ 4 ครบ 4 องค์ประกอบ                 missing=none
+✅ 5 ความยาว 600-2500                 1479 chars
+✅ 6 ไม่เขียนนอกขอบเขต                leaked=none
+====================================================================
+agent status = completed · tool calls = 6
+D2 VERDICT: PASSED
+
+--- post-run evidence (appended after tee; not verifier output) ---
+[model] 1 opencode call → run --agent plan --model opencode/deepseek-v4.1-flash-free
+        (argv captured by OPENCODE_BIN trace wrapper → model-trace-run2.log)
+[permission requested] 0 occurrences in this log
+EXIT=0
