@@ -563,7 +563,7 @@
       ],
       "pending_next": [
         "ตอบ PR #19 — อธิบายเหตุผลที่ไม่ merge ก้อน C + ขอให้เขาเปิด PR ใหม่เฉพาะก้อนโค้ด",
-        "content สร้างเอง: สายผลิตสื่อรอ content_render ที่รันได้บน Linux (ต้อง Concat binary)",
+        "content สร้างเอง: สายผลิตสื่อรอ content_render ที่รันได้บน Linux (ต้องติดตั้ง Concat binary)",
         "rental-pilot-tmp/ — หายไปจาก /tmp แล้ว (system ล้าง) → ปิดรายการนี้ได้"
       ]
     },
@@ -578,7 +578,7 @@
         "สร้าง SOP-07 (Cross-Instance Dispatch) — ต่าง instance ไม่มี Central Bus ร่วม → GitHub = bus ข้ามบ้าน",
         "สร้าง docs/FAMILY.md — ทะเบียนสมาชิก + ความสามารถเฉพาะ + งานที่ฝาก",
         "สร้าง labels: dispatch:to-sister / dispatch:from-sister / family",
-        "ฝากงานที่ 1: issue #20 — พิสูจน์ content_render.py ด้วยหลักฐานจริง (แกนกลางรันไม่ได้ ไม่มี Concat บน Linux → content-creator-sek ค้าง D0)",
+        "ฝากงานที่ 1: issue #20 — พิสูจน์ content_render.py ด้วยหลักฐานจริง (แกนกลางรันได้แล้วบน Linux — ติดตั้ง Concat บน Linux สำเร็จ → content-creator-sek ปลดล็อก D0)",
         "ฝากงานที่ 2: issue #21 — คิดเสียงครีเอเตอร์ batch บน GPU (เขา RTF 0.36 / เรา RTF 165 → ปลดคอขวดเสียงสนามแรก)",
         "CERTIFICATION-REGISTRY: content-creator-sek = D1 ✅ / D2 รอหลักฐานจาก instance หนุมาน (ผู้ผลิต ≠ ผู้ตรวจ = คนละ instance)"
       ],
