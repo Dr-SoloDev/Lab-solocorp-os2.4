@@ -27,28 +27,31 @@ log = logging.getLogger(__name__)
 
 # ── Configuration ──────────────────────────────────────────────────────
 
-# Fallback chain (2026-10-20 — ทดสอบจาก repo root จริงทุกตัว):
-# 1. Minimax M3.1 Flash Free   — ตัวหลัก (~12s)
-# 2. DeepSeek V4.1 Flash Free  — สำรอง 1
-# 3. Nemotron 3.5 Lightning    — สำรอง 2
-# 4. Longcat 2.5 Preview Free  — สำรอง 3 (~46s ช้า)
-# 5. Mimo 2.6 Flash Free       — สำรอง 4
+# Fallback chain (2026-10-25 — วัดจริงจาก repo root ทุกตัว
+# หลักฐาน: bus/evidence/2026-10-25/model-health/{names,quality,latency}.log):
+# 1. DeepSeek V4.1 Flash Free  — ตัวหลัก · 15.1s · ไทย 1078 · ไม่เรียก tool
+#    (latency สั้นสุด steadier สุด: 2.62/2.69/2.65s) · เคยเขียน draft ที่ผ่าน D2
+# 2. Nemotron 3.5 Lightning    — 13.2s · ไทย 1087 · เร็วสุด/ไทยมากสุด
+# 3. Nemotron 3 Ultra          — 19.0s · ไทย 702
+# 4. Big Pickle                — 19.8s · ไทย 871
+# 5. Mimo 2.6 Flash Free       — 82.9s + พยายามเรียก tool → เก็บไว้ท้ายสุดเท่านั้น
 #
-# ⚠️ โมเดลที่ถูกลบออก (ไม่มีใน opencode models แล้ว → "Model not found"):
+# ⚠️ ตายแล้ว upstream (2026-10-25 — "Model unavailable" จาก opencode v2.1.4)
+#    → ย้ายเข้า DEAD_MODELS (caller เก่าที่ส่งชื่อนี้มาจะถูก map เข้า chain):
+#    minimax-m3.1-flash-free (เคยเป็น DEFAULT_MODEL), longcat-2.5-preview-free
+# ⚠️ โมเดลที่ถูกลบออกก่อนหน้า (ไม่มีใน opencode models แล้ว → "Model not found"):
 #    muse-spark-1.3-contributor-free, space-bunny-free
 # ⚠️ โมเดลที่มีอยู่แต่ใช้ไม่ได้จาก repo root:
 #    beam-free (gateway ปฏิเสธ agents_md), glm-5.3-flash-free (unknown_parameter)
-DEFAULT_MODEL = "opencode/minimax-m3.1-flash-free"
-# ยืนยันแล้วว่าใช้ได้จริงจาก repo root (2026-10-20) — ทดสอบทีละตัว
+DEFAULT_MODEL = "opencode/deepseek-v4.1-flash-free"
+# ยืนยันแล้วว่าใช้ได้จริงจาก repo root (2026-10-25) — ทดสอบทีละตัว
 # ดูวิธีทดสอบ: python scripts/check-model-health.py --verify <model>
 MODEL_FALLBACKS = [
-    "opencode/minimax-m3.1-flash-free",        # ~12s · เร็วสุดในชุดที่ใช้ได้
-    "opencode/deepseek-v4.1-flash-free",
-    "opencode/nemotron-3.5-lightning-free",
-    "opencode/nemotron-3-ultra-free",          # + เพิ่ม 2026-10-20
-    "opencode/big-pickle",                     # + เพิ่ม 2026-10-20
-    "opencode/longcat-2.5-preview-free",       # ~46s · ช้า
-    "opencode/mimo-v2.6-flash-free",
+    "opencode/deepseek-v4.1-flash-free",       # ตัวหลัก · 15.1s · steadier สุด
+    "opencode/nemotron-3.5-lightning-free",    # 13.2s · ไทย 1087
+    "opencode/nemotron-3-ultra-free",          # 19.0s · ไทย 702
+    "opencode/big-pickle",                     # 19.8s · ไทย 871
+    "opencode/mimo-v2.6-flash-free",           # 82.9s + ชอบเรียก tool · ท้ายสุด
 ]
 # Dead models — ถ้ามี caller ส่งชื่อเก่ามา ให้ map เข้า fallback chain ทันที
 DEAD_MODELS = {
@@ -58,6 +61,9 @@ DEAD_MODELS = {
     "opencode/space-bunny-free",
     "opencode/deepseek-v4-flash-free",
     "stealth/ox-alpha",
+    # หาย upstream 2026-10-25 (Model unavailable) — เดิมอยู่ใน chain
+    "opencode/minimax-m3.1-flash-free",
+    "opencode/longcat-2.5-preview-free",
     # มีอยู่แต่ gateway free-tier ปฏิเสธ agents_md / unknown_parameter
     "opencode/beam-free",
     "opencode/glm-5.3-flash-free",
@@ -82,7 +88,7 @@ def list_available_models(prefix: str = "opencode/") -> list[str]:
     """รายชื่อโมเดลที่ opencode มีจริง ณ ตอนนี้ (เรียก CLI)
 
     Returns:
-        list[str]: เช่น ["opencode/minimax-m3.1-flash-free", ...]
+        list[str]: เช่น ["opencode/deepseek-v4.1-flash-free", ...]
         คืน [] ถ้าเรียกไม่ได้ (ไม่มี opencode / timeout)
     """
     import subprocess
@@ -218,7 +224,7 @@ async def think(
     Args:
         prompt: คำถาม/คำสั่งถึง LLM
         system_prompt: context/brief เพิ่มเติม (เช่น บทบาท agent)
-        model: ชื่อ model (default: muse-spark-1.3, fallback → space-bunny → longcat → mimo)
+        model: ชื่อ model (default: deepseek-v4.1-flash-free; ตัวอื่นดู MODEL_FALLBACKS)
         max_tokens: ความยาวสูงสุดของคำตอบ
         temperature: (reserved) ไม่ได้ส่งไป opencode run โดยตรง
         timeout: override timeout (วินาที) — prompt ยาว/ภาษาไทยต้องใช้เวลานาน
@@ -269,7 +275,7 @@ async def think(
                 if _is_dead_model_error(str(e)):
                     break
                 # Free tier gate = ทุกโมเดลจะล้มเหมือนกัน (ADR-017)
-                # ไม่ต้อง retry ทั้ง chain (7 โมเดล × 3 ครั้ง = ~7 นาทีที่เสียเปล่า)
+                # ไม่ต้อง retry ทั้ง chain (5 โมเดล × 3 ครั้ง = เสียเวลาหลายนาทีเปล่า ๆ)
                 # → หยุดทั้ง chain ทันทีแล้วบอก root cause ให้ชัด
                 if "free tier" in str(e).lower():
                     last_error = (

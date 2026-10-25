@@ -91,7 +91,8 @@ class TestDeadModelDetection:
 
 class TestThinkUnavailableSkipsRetries:
     def test_each_unavailable_model_called_once(self, monkeypatch):
-        """DEFAULT_MODEL (minimax) ปัจจุบัน unavailable → ต้องยิงครั้งเดียวต่อโมเดล"""
+        """โมเดลที่ยืนยันว่าตายแล้ว (minimax/longcat หาย upstream 2026-10-25)
+        → map เข้า chain และยิงแต่ละโมเดลครั้งเดียว ไม่ retry"""
         calls: list[str] = []
 
         async def fake(full_prompt: str, model: str, *, timeout=None):
@@ -99,10 +100,24 @@ class TestThinkUnavailableSkipsRetries:
             raise RuntimeError(f"opencode run exit 1: Model unavailable: {model}")
 
         monkeypatch.setattr(lp, "_run_opencode", fake)
-        out = asyncio.run(lp.think("hi", model=lp.DEFAULT_MODEL))
+        out = asyncio.run(lp.think("hi", model="opencode/minimax-m3.1-flash-free"))
 
         assert calls == lp.MODEL_FALLBACKS, f"คาดว่าแต่ละโมเดลครั้งเดียว ได้ {calls}"
         assert out.startswith("⚠️ LLM ไม่พร้อม")
+
+    def test_nonexistent_model_then_chain_each_called_once(self, monkeypatch):
+        """ชื่อที่ไม่รู้จักเลย → ลองตัวนั้นก่อน แล้วต่อด้วย chain ตัวละครั้งเดียว"""
+        calls: list[str] = []
+
+        async def fake(full_prompt: str, model: str, *, timeout=None):
+            calls.append(model)
+            raise RuntimeError("opencode run exit 1: Model unavailable: " + model)
+
+        monkeypatch.setattr(lp, "_run_opencode", fake)
+        asyncio.run(lp.think("hi", model="opencode/definitely-not-a-model"))
+
+        assert calls == ["opencode/definitely-not-a-model", *lp.MODEL_FALLBACKS]
+        assert all(calls.count(m) == 1 for m in calls), f"มีโมเดลถูกยิงซ้ำ: {calls}"
 
     def test_single_model_unavailable_called_once(self, monkeypatch):
         calls: list[str] = []

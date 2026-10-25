@@ -43,6 +43,25 @@ class TestModelChain:
                      "opencode/space-bunny-free"):
             assert gone in lp.DEAD_MODELS
 
+    def test_chain_length_is_5(self):
+        """chain ถูกวัดใหม่ 2026-10-25 (bus/evidence/2026-10-25/model-health/)"""
+        assert len(lp.MODEL_FALLBACKS) == 5
+
+    def test_upstream_gone_models_are_dead(self):
+        """minimax (default เดิม) + longcat หาย upstream 2026-10-25 → ต้องเป็น dead"""
+        gone = {"opencode/minimax-m3.1-flash-free",
+                "opencode/longcat-2.5-preview-free"}
+        assert gone <= lp.DEAD_MODELS, f"ยังไม่ถูก mark dead: {gone - lp.DEAD_MODELS}"
+
+    def test_every_chain_model_is_alive(self):
+        """ห้ามมีโมเดลที่รู้ว่าตายแล้วอยู่ใน chain (จะทำให้ chain สั้นลงเงียบ ๆ)"""
+        for m in lp.MODEL_FALLBACKS:
+            assert m not in lp.DEAD_MODELS, f"{m} อยู่ในทั้ง chain และ DEAD_MODELS"
+
+    def test_default_model_is_alive(self):
+        assert lp.DEFAULT_MODEL not in lp.DEAD_MODELS
+        assert lp.DEFAULT_MODEL in lp.MODEL_FALLBACKS
+
 
 # ══════════════════════════════════════════════════════════════════════
 # audit_models
@@ -209,3 +228,14 @@ class TestModelHealthScript:
         # DEAD_MARKERS ต้องครอบคลุมเคส agents_md ที่เจอจริง
         assert any("agents_md" in m for m in mod.DEAD_MARKERS)
         assert any("model not found" in m for m in mod.DEAD_MARKERS)
+
+    def test_probe_detects_v214_and_flag_markers(self):
+        """v2.1.4 พูดว่า "Model unavailable" และ flag แปลก → "Unrecognized flag"
+        ทั้งคู่ต้องถูกจัดเป็น dead ไม่ใช่ miss ธรรมดา (เคสจริง 2026-10-25)"""
+        import importlib.util
+        p = Path(__file__).resolve().parent.parent / "scripts" / "check-model-health.py"
+        spec = importlib.util.spec_from_file_location("_cmh2", p)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        assert "model unavailable" in mod.DEAD_MARKERS
+        assert "unrecognized flag" in mod.DEAD_MARKERS

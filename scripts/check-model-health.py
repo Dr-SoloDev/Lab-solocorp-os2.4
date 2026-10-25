@@ -27,6 +27,8 @@ TIMEOUT = 90
 # error ที่บอกว่าโมเดลนี้ใช้ไม่ได้ (ไม่ใช่แค่ช้า)
 DEAD_MARKERS = (
     "model not found",
+    "model unavailable",   # v2.1.4 wording — minimax/longcat หายแบบนี้ 2026-10-25
+    "unrecognized flag",   # flag ที่ CLI ไม่รู้จัก = ทุกโมเดลล้มเหมือนกัน ไม่ใช่แค่ miss
     "agents_md",
     "unknown_parameter",
     "unsupported_parameter",
