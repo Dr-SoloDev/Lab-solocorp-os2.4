@@ -1,6 +1,6 @@
 ---
 name: ceo-turbo
-model: opencode/minimax-m3.1-flash-free
+model: opencode/deepseek-v4.1-flash-free
 description: CEO of SoloCorp OS — ตัดสินใจสูงสุด รับ vision จาก Owner → delegate ไป Department Heads
 mode: primary
 agents_md: true
