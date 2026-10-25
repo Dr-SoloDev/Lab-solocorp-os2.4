@@ -4,7 +4,11 @@
 
 ใช้ opencode run CLI โดยตรง — stable, official, tested.
 - ส่ง prompt ผ่าน stdin ป้องกัน shell injection
-- --pure ลด overhead plugins
+- ⚠️ ไม่มี --pure ในคำสั่ง — opencode v2.1.4 ไม่รู้จัก flag นี้ (unknown flag =
+  ทุกโมเดลล้มทั้ง chain) ใช้เฉพาะ flag ที่ `opencode run --help` ระบุ
+- บังคับ `--agent plan` (read-only) — subprocess ไม่มีใครกด "allow" ได้ ถ้าใช้ agent
+  ที่มี shell/write โมเดลจะขอ permission แล้วค้าง → ไม่มีคำตอบทั้ง org
+  override ได้ด้วย OPENCODE_AGENT
 - retry + timeout + semaphore concurrency control
 """
 
@@ -180,13 +184,19 @@ def audit_models(use_cache: bool = True) -> dict:
         "error": None,
     }
 _CMD = os.environ.get("OPENCODE_BIN", os.path.expanduser("~/.opencode/bin/opencode"))
+# agent สำหรับงาน LLM แบบ one-shot: ต้อง read-only/ไม่มี tool ที่ต้องขออนุญาต
+# default agent ของโปรเจกต์ (ceo-turbo) มี shell/write → subprocess ที่ไม่มี TTY
+# จะค้างที่ "permission requested: shell" แล้วล้มทั้ง chain
+_AGENT = os.environ.get("OPENCODE_AGENT", "plan")
 _MAX_CONCURRENT = 3
 _LLM_TIMEOUT = 60
 _MAX_RETRIES = 3
 _CWD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # จะได้ reuse context ทุกครั้ง (ไม่ต้อง search path ใหม่)
-_CMD_WITH_FLAGS = [_CMD, "run", "--pure"]
+# --agent plan = built-in read-only agent (ไม่มี shell/edit → ไม่มี permission prompt)
+# stdout ยังสะอาด: banner "> agent · model" ออกทาง stderr (ยืนยัน 2026-10-25, 3/3 รัน)
+_CMD_WITH_FLAGS = [_CMD, "run", "--agent", _AGENT]
 
 # Concurrency control
 _semaphore = asyncio.Semaphore(_MAX_CONCURRENT)
@@ -254,8 +264,9 @@ async def think(
             except Exception as e:
                 log.warning(f"LLM error {model_name} attempt {attempt}/{_MAX_RETRIES}: {e}")
                 last_error = f"{model_name}: {e}"
-                # Model not found = ข้ามไปตัวถัดไปทันที ไม่ต้อง retry ซ้ำ
-                if "Model not found" in str(e) or "model not found" in str(e).lower():
+                # Model not found / unavailable = ข้ามไปตัวถัดไปทันที ไม่ต้อง retry ซ้ำ
+                # (v2.1.4 พูดว่า "Model unavailable" — เช็คทั้งสองคำแบบ case-insensitive)
+                if _is_dead_model_error(str(e)):
                     break
                 # Free tier gate = ทุกโมเดลจะล้มเหมือนกัน (ADR-017)
                 # ไม่ต้อง retry ทั้ง chain (7 โมเดล × 3 ครั้ง = ~7 นาทีที่เสียเปล่า)
@@ -278,11 +289,21 @@ async def think(
     return f"⚠️ LLM ไม่พร้อม: {last_error}"
 
 
+def _is_dead_model_error(message: str) -> bool:
+    """error ที่แปลว่า "โมเดลนี้ใช้ไม่ได้" → ข้ามทันที ไม่ต้อง retry ตัวเดิม 3 ครั้ง
+
+    opencode v2.1.4 คืน `Model unavailable: <model>` (ไม่ใช่ "Model not found")
+    → ถ้าเช็คแต่คำเดิม จะเสีย ~3s ต่อโมเดลตาย 1 ตัวในทุก think()
+    """
+    low = message.lower()
+    return "model not found" in low or "model unavailable" in low
+
+
 async def _run_opencode(full_prompt: str, model: str, *, timeout: Optional[int] = None) -> str:
     """เรียก LLM ผ่าน opencode run CLI (core)
 
     spawn subprocess → ส่ง prompt ผ่าน stdin → อ่าน stdout
-    ใช้ --model + --pure เพื่อลด overhead
+    ใช้ --agent (read-only) + --model เท่านั้น (ไม่ส่ง flag ที่ CLI ไม่รู้จัก — ดู _CMD_WITH_FLAGS)
     """
     cmd = [*_CMD_WITH_FLAGS, "--model", model]
 

@@ -44,7 +44,7 @@ def probe_model(model: str) -> dict:
 
     try:
         r = subprocess.run(
-            [str(OPENCODE), "run", "--pure", "--model", model],
+            [str(OPENCODE), "run", "--model", model],
             input=PROBE, capture_output=True, text=True,
             timeout=TIMEOUT, cwd=str(ROOT),
         )
