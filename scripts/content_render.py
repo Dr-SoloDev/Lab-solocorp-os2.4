@@ -39,10 +39,13 @@ def _find_concat() -> str:
             return candidate
 
     raise SystemExit(
-        "❌ หา Concat MCP binary ไม่เจอ\n"
+        "⚠️ หา Concat MCP binary ไม่เจอใน PATH อัตโนมัติ\n"
+        "   Concat รองรับ Linux แล้ว (.deb, .AppImage, Flatpak) → ตั้งค่าให้ถูกต้อง\n"
         "   ตั้ง env ก่อนแล้วรัน:\n"
         "     export CONCAT_BIN=/path/to/concat\n"
-        "   (Windows: set CONCAT_BIN=C:\\path\\to\\concat.exe)"
+        "   หรือติดตั้ง: sudo apt install ./concat_0.2.8_amd64.deb\n"
+        "   (Windows: set CONCAT_BIN=C:\\path\\to\\concat.exe)\n"
+        "   ตรวจสอบ: which concat\n"
     )
 
 
