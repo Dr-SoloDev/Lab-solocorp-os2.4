@@ -58,7 +58,12 @@ class ContentAgent(BaseAgent):
                 "details": {"error": error, "tool_calls": self.tool_calls, **extra}}
 
     async def _read(self, path: str) -> str:
-        text = await self.read_file(path)
+        try:
+            text = await self.read_file(path)
+        except (OSError, UnicodeDecodeError) as exc:
+            # directory/permission (OSError) หรือ binary (UnicodeDecodeError) → sentinel
+            # ให้ guard เดิมใน execute() จัดการ ไม่ปล่อย exception หลุดออกไป
+            text = f"❌ อ่านไฟล์ไม่ได้: {path} ({type(exc).__name__})"
         self._record("read_file", path, not text.startswith("❌"))
         return text
 
