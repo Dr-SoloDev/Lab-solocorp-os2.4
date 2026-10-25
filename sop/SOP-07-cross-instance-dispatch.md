@@ -123,7 +123,7 @@ gh pr create --title "[ผลงานถึง <ชื่อ CEO>] <สิ่�
 
 | # | งาน | ทำไมเขา | Issue |
 |:-:|:--|:--|:--|
-| 1 | รัน `scripts/content_render.py` จริง + แนบหลักฐาน | แกนกลางไม่มี Concat บน Linux → ตรวจ D2 ไม่ได้ | #20 |
+| 1 | รัน `scripts/content_render.py` จริง + แนบหลักฐาน | ติดตั้ง Concat บน Linux สำเร็จ (`.deb`/`.AppImage`/Flatpak) → รันสำเร็จ + ตรวจ D2 ได้ครบ | #20 |
 | 2 | คิดเสียงครีเอเตอร์แบบ batch บน GPU | แกนกลาง RTF 165 (CPU) · เขา RTF 0.36 (GPU) | #21 |
 
 ---

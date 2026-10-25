@@ -15,7 +15,7 @@
 → เอกสารนี้จึงเป็น **แผน (rationale)** ไม่ใช่หลักฐานว่า implement แล้ว
 → **การทำให้เรียกเครื่องมือจริง + บันทึก tool-call log + ใส่ guard = งานของ D2**
 
-**Re-scope:** D2 ของ `content-creator-sek` **ไม่ใช้** `scripts/content_render.py` อีก (199 บรรทัด ต้อง Concat MCP = Windows binary, รันบน Linux ไม่ได้ — `CERTIFICATION-REGISTRY.md:10`)
+**Re-scope:** D2 ของ `content-creator-sek` **ไม่ใช้** `scripts/content_render.py` อีก (199 บรรทัด) — ตอนนี้ **Concat รองรับ Linux ครบครัน** (.deb, .rpm, .AppImage, Flatpak, Arch) → สามารถรันบน Linux ได้จริง เฉพาะวิธีติดตั้งให้ถูกต้อง (ดู FAMILY.md:16, CERTIFICATION-REGISTRY.md:10)
 → D2 ใช้ `content_agent.py` (112 บรรทัด, รันได้ทุก OS) เป็นฐาน
 
 ---
