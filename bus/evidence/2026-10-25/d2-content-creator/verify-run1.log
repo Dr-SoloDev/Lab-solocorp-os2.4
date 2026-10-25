@@ -1,0 +1,14 @@
+LLM error opencode/minimax-m3.1-flash-free attempt 1/3: opencode run exit 1: [91m[1mError: [0mModel unavailable: opencode/minimax-m3.1-flash-free
+
+
+====================================================================
+✅ 1 อ่าน brand sources ครบ 3         อ่านแล้ว 4 ไฟล์
+✅ 2 อ่าน brief                       brief=bus/evidence/2026-10-25/d2-content-creator/brief-001.md
+✅ 3 เขียนไฟล์ draft                  bus/creative/drafts/draft-20261025-120035.md
+✅ 4 ครบ 4 องค์ประกอบ                 missing=none
+✅ 5 ความยาว 600-2500                 1558 chars
+✅ 6 ไม่เขียนนอกขอบเขต                leaked=none
+====================================================================
+agent status = completed · tool calls = 6
+D2 VERDICT: PASSED
+EXIT=0

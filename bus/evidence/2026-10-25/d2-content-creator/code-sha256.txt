@@ -1,0 +1,2 @@
+0b7800971ca05f5a8efab190ee78c23ff7c5b862b53a4624f3865638f9cdf849  workers/agents/content_agent.py
+94d6a17b8585050a5da87807f15585c799aa98cdf97935f4261991f56f2441d6  scripts/verify_d2_content_agent.py

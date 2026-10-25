@@ -1,0 +1,86 @@
+{
+  "agent_result": {
+    "status": "completed",
+    "summary": "draft bus/creative/drafts/draft-20261025-120035.md (1558 ตัวอักษร)",
+    "details": {
+      "agent": "content-creator-sek",
+      "out_path": "bus/creative/drafts/draft-20261025-120035.md",
+      "chars": 1558,
+      "in_range": true,
+      "tool_calls": [
+        {
+          "ts": "2026-10-25T05:00:10.900646+00:00",
+          "tool": "read_file",
+          "args": "profiles/01-ceo/SOUL.md",
+          "ok": true
+        },
+        {
+          "ts": "2026-10-25T05:00:10.900937+00:00",
+          "tool": "read_file",
+          "args": "profiles/03-cmo/SOUL.md",
+          "ok": true
+        },
+        {
+          "ts": "2026-10-25T05:00:10.901128+00:00",
+          "tool": "read_file",
+          "args": "docs/brand/BRAND-GUIDELINES-v1.md",
+          "ok": true
+        },
+        {
+          "ts": "2026-10-25T05:00:10.901268+00:00",
+          "tool": "read_file",
+          "args": "bus/evidence/2026-10-25/d2-content-creator/brief-001.md",
+          "ok": true
+        },
+        {
+          "ts": "2026-10-25T05:00:35.571661+00:00",
+          "tool": "write_file",
+          "args": "/data/projects/Lab-solocorp-os2.4/bus/creative/drafts/draft-20261025-120035.md",
+          "ok": true
+        },
+        {
+          "ts": "2026-10-25T05:00:35.574417+00:00",
+          "tool": "run_command",
+          "args": "test -f bus/creative/drafts/draft-20261025-120035.md && wc -m < bus/creative/drafts/draft-20261025-120035.md",
+          "ok": true
+        }
+      ],
+      "log": "/data/projects/Lab-solocorp-os2.4/bus/evidence/2026-10-25/d2-content-creator/tool-calls-verify.jsonl"
+    }
+  },
+  "checks": [
+    {
+      "check": "1 อ่าน brand sources ครบ 3",
+      "ok": true,
+      "detail": "อ่านแล้ว 4 ไฟล์"
+    },
+    {
+      "check": "2 อ่าน brief",
+      "ok": true,
+      "detail": "brief=bus/evidence/2026-10-25/d2-content-creator/brief-001.md"
+    },
+    {
+      "check": "3 เขียนไฟล์ draft",
+      "ok": true,
+      "detail": "bus/creative/drafts/draft-20261025-120035.md"
+    },
+    {
+      "check": "4 ครบ 4 องค์ประกอบ",
+      "ok": true,
+      "detail": "missing=none"
+    },
+    {
+      "check": "5 ความยาว 600-2500",
+      "ok": true,
+      "detail": "1558 chars"
+    },
+    {
+      "check": "6 ไม่เขียนนอกขอบเขต",
+      "ok": true,
+      "detail": "leaked=none"
+    }
+  ],
+  "passed": true,
+  "tool_call_count": 6,
+  "brief": "bus/evidence/2026-10-25/d2-content-creator/brief-001.md"
+}
