@@ -968,3 +968,37 @@ State tracking files: 0
 
 เทสต์ **841 passed / 0 failed** · CI venv exit=0 · หลักฐาน `bus/evidence/2026-10-21/mirror-level-aware-verify-20261021.json`
 
+
+## 2026-10-25 14:12 — ⏸️ PAUSE (Owner รีสตาร์ทเครื่อง)
+
+**ทำไม:** Owner จะรีสตาร์ทเครื่อง 1 รอบ แล้วกลับมาเปิดใหม่ — session นี้ถูกตัดกลางทาง
+**สถานะ git:** tree สะอาด · **16 commits local ยังไม่ push** (รอ Owner สั่ง)
+**HEAD:** 0834528 `feat(d3): --strict`
+
+### เสร็จในรอบนี้ (หลัง token accounting)
+1. `scripts/secret-history-scan.sh` — tracked (0.2s) + history (1m45s) + gitignored; KNOWN_FAKE allowlist; exit 1 เฉพาะค่าจริง
+2. `docs/API-KEY-PROTECTION.md` — Layer 2.5 (สแกนประวัติ) + Layer 4 (console-side) + incident 2 ค่า
+3. D3 harness `--strict` — exit 1 เมื่อมี FAIL/SKIP-NA (เดิม FAIL ก็ exit 0)
+4. ตรวจ `workspace-audit.json` 13 records → `bus/evidence/2026-10-25/workspace-audit/REVIEW.md` (F0–F7)
+
+### Findings ค้าง (ต้อง Owner)
+- **F0-a** `ccsk-8fc78b9…` ใน `docs/API-KEY-PROTECTION.md` commit `c33a09a` — บน origin/main ของ repo **public**
+- **F0-b** `sk-gDFLCDp1p…` hardcoded ใน `workers/llm_provider.py` commit `d6ec613` (ลบที่ `30e373a`) — ยังอยู่ในประวัติ
+- **F0.5** ค่าจริง 27 จุดในเครื่อง: TELEGRAM token ซ้ำ 13 ไฟล์ · MAXPLUS 2 ค่าไม่เหมือนกัน
+- F2 policy `limitDollars: 0` + ยกเว้น svc acct `…AHRR` (กลับด้าน) · F1 คีย์ 3 ตัว `permissions: all`
+
+### Resume point (ทำต่อทันทีหลังเปิดเครื่อง)
+```bash
+cd /data/projects/Lab-solocorp-os2.4 && source .venv/bin/activate && export PYTHONPATH=.
+python -c "from workers import token_ledger as t; print(t.quota_status())"   # lock หมดอายุเอง 14:31:46
+python -c "from workers import token_ledger as t; t.clear_quota()"            # ถ้าจะลองเลย
+# probe 1 call: ถ้า 200 → รัน D3 เต็ม; ถ้า 429 → ล็อกใหม่ (1 attempt เท่านั้น)
+python scripts/d3_content_creator_eval.py --out-dir bus/evidence/2026-10-25/d3 --strict
+python scripts/d3_content_creator_eval.py --out-dir bus/evidence/2026-10-25/d3 --repeat-ids 3,15,17,20 --repeats 3 --strict
+```
+> probe เดิมที่ตั้งรอ 14:32 ถูกยกเลิกเพราะรีสตาร์ท (background job ตายพร้อมเครื่อง)
+
+### ยังไม่ทำ
+- D3 เต็ม 20 เคส + ซ้ำ 3 รอบ (ติดโควตา)
+- ผู้ตรวจอิสระ (`pipeline-auditor` เคส 1/11/17) + Owner เซ็น
+- `max_tokens` ไม่ถูกส่งไป API · `opencode.db` 1.9 GB ยังไม่มี housekeeping

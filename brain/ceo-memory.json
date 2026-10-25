@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-10-25T06:41:28Z",
+  "last_updated": "2026-10-25T07:12:04Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -629,7 +629,7 @@
     {
       "date": "2026-10-25",
       "duration": "session start → brain reconcile → P0 fix → D2 evidence → model policy → commit",
-      "summary": "แก้ brain ตกรุ่น + เจอ P0 องค์กร (llm_provider ตายทั้งระบบจาก opencode v2.1.4) → แก้ + วัดโมเดลจริง → D2 content-creator มีหลักฐานอิสระ 6/6 exit 0 → D3 harness พร้อม 100% → โควตาฟรีหมดกลางวัน (298 สำเร็จ / 169×429) → ทำ token accounting + quota lock เป็น P0 แทน",
+      "summary": "P0 llm_provider ตาย (opencode v2.1.4) → แก้ · D2 content-creator ผ่าน · D3 harness พร้อม + --strict · โควตาฟรีหมดกลางวัน → token accounting + quota lock · ตรวจ workspace-audit → เจอคีย์จริง 2 ค่า ในประวัติ repo public + secret-history-scan",
       "key_decisions": [
         "🔎 หลักการ: brain ที่ไม่ตรงหลักฐาน = bug — bootstrap อ่าน sessions[-1].pending_next ตรงๆ ถ้าค้างของเก่า CEO ตัวถัดไปตัดสินใจผิด → แก้ที่ต้นทาง ไม่ใช่แค่รายงาน",
         "✅ ปิด pending 'L1 mirror scoring ใช้เกณฑ์เดียวกับ L5' — ADR-028 อนุมัติ+ส่งงานแล้ว (L1/L2 advisory 12/20 · L3+ gate 60% 8/20 · 841 passed · CI exit=0)",
@@ -646,7 +646,8 @@
         "Owner อนุมัติ D1 content-creator (25 ต.ค.) → ติ๊ก D1 ✅ + D2 ✅ ในทะเบียน (D2 หลักฐานครบอยู่แล้ว, ไม่ต้องรันซ้ำ) = ตัวแรกขององค์กรที่ผ่าน D2",
         "D3: ประกาศเกณฑ์ตัดสินล่วงหน้าก่อนรัน (machine-checkable assert 20 เคส) — กันการเข้าข้างตัวเอง/ตัดเคสที่ล้ม; D3 ผ่าน ≠ ทุกเคสสำเร็จ แต่ = วัดครบ ซื่อสัตย์ อธิบายได้",
         "เคส 9–13 (เขียนนอกขอบเขต/traversal) เป็น hard gate: ถ้าหลุดข้อใด = D3 ไม่ผ่านทันที แม้งานอื่นสวย",
-        "Owner สั่งทำ token accounting ใน workers/llm_provider.py → ยกเว้น non-goal ของ docs/COST-DESIGN.md ('ห้ามแตะ signature') เพราะ usage ต่อ call ต้องอ่านจาก session ที่เราถือเอง"
+        "Owner สั่งทำ token accounting ใน workers/llm_provider.py → ยกเว้น non-goal ของ docs/COST-DESIGN.md ('ห้ามแตะ signature') เพราะ usage ต่อ call ต้องอ่านจาก session ที่เราถือเอง",
+        "pause 2026-10-25 14:12 เพราะ Owner รีสตาร์ทเครื่อง — เก็บ resume point ไว้ใน brain/session-log.md"
       ],
       "achievements": [
         "brain/ceo-memory.json + profiles/CERTIFICATION-REGISTRY.md: แก้ข้อความที่ตกรุ่นให้ตรงหลักฐาน (ไม่ติ๊กผ่านด่านใด)",
@@ -668,13 +669,13 @@
         "948 passed ทั้งชุด CI invocation · 13 commits local · ยังไม่ push"
       ],
       "pending_next": [
-        "🔴 D3 รันเต็มยังติด: LLM ทุกทางตัน — free 429 (reset ~17.7 ชม.) · paid 402 ไม่มีเงิน · maxplus 503 → Owner เลือก 'รอ reset' (ไม่เติมเงิน/ไม่สมัคร Go/ไม่ทำ local)",
-        "🟡 D3 ขั้น 3: รัน 20 เคส + ซ้ำ 3 รอบ (3/15/17/20) → bus/evidence/<วัน>/d3 (force-add)",
-        "🟡 D3 ขั้น 4-5: pipeline-auditor รันเคส 1/11/17 อิสระ (ไม่เห็นผลคาด) → Owner เซ็น",
-        "🟡 หลัง Owner เติมเงิน/โควตากลับ: python -c \"from workers import token_ledger as t; t.clear_quota()\"",
-        "🟡 ยังไม่แก้: max_tokens ไม่ได้ส่งไป API (ตัด string ปลายทาง) → output ยาวจริงกว่าที่ขอ",
-        "🟡 opencode.db โต 1.9 GB — ยังไม่มี housekeeping",
-        "🟡 ยังไม่ push — 13 commits local รอ Owner สั่ง",
+        "🔴 F0: rotate 2 คีย์ที่หลุดในประวัติ repo public — ccsk-8fc78b9… (c33a09a) · sk-gDFLCDp1p… (d6ec613)",
+        "🔴 F2: policy limitDollars 0 → 5 + ตัดสินใจ exemption ของ svc acct …AHRR (ตอนนี้คนถูกห้าม ระบบไม่ถูกคุม)",
+        "🔴 F1/F5: คีย์ 3 ตัว permissions: all → inference-only · เก็บไม่เกิน 2 ตัว",
+        "🟡 D3 เต็ม 20 เคส + ซ้ำ 3 รอบ (3/15/17/20) — ติดโควตา 429 (lock หมดอายุ 14:31:46)",
+        "🟡 D3 ผู้ตรวจอิสระ pipeline-auditor (เคส 1/11/17, ไม่เห็นผลคาด) → Owner เซ็น",
+        "🟡 ยังไม่ push — 16 commits local รอ Owner สั่ง",
+        "🟡 F0.5: รวม .env 27 จุดเป็นแหล่งเดียว + ENV-INVENTORY (ยังไม่ทำ — รอ Owner เคาะ)",
         "🟡 อีก 19 แผนกยัง D0 — ใช้ content-creator เป็นแม่แบบ"
       ]
     }
@@ -706,7 +707,7 @@
     ]
   },
   "saved_at": "2026-10-25T06:00:00Z",
-  "latest_commit": "db54904",
+  "latest_commit": "0834528",
   "state_snapshot": {
     "date": "2026-10-10",
     "p0_fixes_today": {
