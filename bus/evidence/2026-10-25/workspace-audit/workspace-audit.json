@@ -1,0 +1,631 @@
+[
+  {
+    "id": "6305622",
+    "createdAt": "2026-10-25T06:22:12.932Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "api-key",
+    "resourceID": "sk_3010c1cc-22e5-4019-afe5-5021e14692e1",
+    "resourceLabel": "solocorp01",
+    "action": "created",
+    "changes": [
+      {
+        "field": "expiresAt",
+        "before": null,
+        "after": "2027-01-23T06:22:13.000Z"
+      },
+      {
+        "field": "name",
+        "before": null,
+        "after": "solocorp01"
+      },
+      {
+        "field": "permissions",
+        "before": null,
+        "after": "all"
+      },
+      {
+        "field": "serviceAccountId",
+        "before": null,
+        "after": "svcacct_01KDJY7XEK590J6MY0VHXSKVA3_01KDJY7XEKH9JS0RXFYM99AHRR"
+      }
+    ],
+    "requestID": "01M5RVJMBAS1BHC9SA0NCB1657"
+  },
+  {
+    "id": "6302670",
+    "createdAt": "2026-10-25T06:03:38.785Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "provider",
+    "resourceID": "conn_01KDJY7XEK590J6MY0VHXSKVA3_opencode",
+    "resourceLabel": "OpenCode",
+    "action": "updated",
+    "changes": [
+      {
+        "field": "config.models.claude-fable-5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-fable-5-1.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-haiku-4-5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-opus-4-5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-opus-4-6.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-opus-4-7.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-opus-4-8.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-opus-5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-sonnet-4-5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-sonnet-4-6.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.claude-sonnet-5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.deepseek-v4-flash.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.deepseek-v4-pro.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gemini-3-flash.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gemini-3.1-pro.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gemini-3.5-flash.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gemini-3.5-flash-lite.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gemini-3.6-flash.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gemini-3.7-flash.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gemini-3.8-flash.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.glm-5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.glm-5.1.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.glm-5.2.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.glm-5.3.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.glm-5.3-flash.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5-codex.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5-nano.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.1.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.1-codex.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.1-codex-max.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.1-codex-mini.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.2.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.2-codex.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.3-codex.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.3-codex-spark.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.4.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.4-mini.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.4-nano.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.4-pro.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.5-pro.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.6-luna.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.6-sol.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-5.6-terra.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.gpt-6-astra.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.grok-4.5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.grok-4.6.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.grok-build-0.1.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.kimi-k2.5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.kimi-k2.6.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.kimi-k2.7-code.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.kimi-k3.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.minimax-m2.5.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.minimax-m2.7.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.minimax-m3.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.muse-spark-1.2.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.muse-spark-1.3.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.qwen3.5-plus.enabled",
+        "before": false,
+        "after": true
+      },
+      {
+        "field": "config.models.qwen3.6-plus.enabled",
+        "before": false,
+        "after": true
+      }
+    ],
+    "requestID": "01M5RTGM9GE5TF0WKXSF3BZTF6"
+  },
+  {
+    "id": "6290066",
+    "createdAt": "2026-10-25T04:36:41.245Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "api-key",
+    "resourceID": "sk_6cdce120-a773-4c0a-9b1c-c819c7951f08",
+    "resourceLabel": "SOLOCORPOS",
+    "action": "created",
+    "changes": [
+      {
+        "field": "expiresAt",
+        "before": null,
+        "after": "2027-01-23T04:36:41.000Z"
+      },
+      {
+        "field": "name",
+        "before": null,
+        "after": "SOLOCORPOS"
+      },
+      {
+        "field": "permissions",
+        "before": null,
+        "after": "all"
+      },
+      {
+        "field": "serviceAccountId",
+        "before": null,
+        "after": "svcacct_01KDJY7XEK590J6MY0VHXSKVA3_01KDJY7XEKH9JS0RXFYM99AHRR"
+      }
+    ],
+    "requestID": "01M5RNHD25T0Q2EC1SD8ZX8YG0"
+  },
+  {
+    "id": "6290009",
+    "createdAt": "2026-10-25T04:36:11.969Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "api-key",
+    "resourceID": "sk_65bf6a04-416e-4626-9640-2dfd59eb793f",
+    "resourceLabel": "solocorp",
+    "action": "updated",
+    "changes": [
+      {
+        "field": "revokedAt",
+        "before": null,
+        "after": "2026-10-25T04:36:12.000Z"
+      }
+    ],
+    "requestID": "01M5RNGGF1162G0WXRFQYF5W4D"
+  },
+  {
+    "id": "6289214",
+    "createdAt": "2026-10-25T04:30:12.171Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "policy-rule",
+    "resourceID": "rule_defc83c8-36fa-481d-9a7f-c5591f759457",
+    "resourceLabel": "budget",
+    "action": "created",
+    "changes": [
+      {
+        "field": "policy_id",
+        "before": null,
+        "after": "policy_a6b93a2e-85b6-432b-aba7-c915e140a35a"
+      },
+      {
+        "field": "position",
+        "before": null,
+        "after": 0
+      },
+      {
+        "field": "selector.includeUnknownPrice",
+        "before": null,
+        "after": false
+      },
+      {
+        "field": "terms.kind",
+        "before": null,
+        "after": "budget"
+      },
+      {
+        "field": "terms.limitDollars",
+        "before": null,
+        "after": 0
+      },
+      {
+        "field": "terms.per",
+        "before": null,
+        "after": "set"
+      },
+      {
+        "field": "terms.period",
+        "before": null,
+        "after": "month"
+      },
+      {
+        "field": "terms.scope",
+        "before": null,
+        "after": "combined"
+      }
+    ],
+    "requestID": "01M5RN5GZVENR9ND3MH0CQ9FX6"
+  },
+  {
+    "id": "6289213",
+    "createdAt": "2026-10-25T04:30:12.110Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "policy",
+    "resourceID": "policy_a6b93a2e-85b6-432b-aba7-c915e140a35a",
+    "resourceLabel": "policy_a6b93a2e-85b6-432b-aba7-c915e140a35a",
+    "action": "created",
+    "changes": [
+      {
+        "field": "audience.mode",
+        "before": null,
+        "after": "except-service-accounts"
+      },
+      {
+        "field": "audience.serviceAccountIDs",
+        "before": null,
+        "after": [
+          "svcacct_01KDJY7XEK590J6MY0VHXSKVA3_01KDJY7XEKH9JS0RXFYM99AHRR"
+        ]
+      }
+    ],
+    "requestID": "01M5RN5GZVENR9ND3MH0CQ9FX6"
+  },
+  {
+    "id": "6288040",
+    "createdAt": "2026-10-25T04:22:30.848Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "integration",
+    "resourceID": "int_301508ff-807e-49f5-b5bc-6663903cf0c4",
+    "resourceLabel": "web_search",
+    "action": "updated",
+    "changes": [
+      {
+        "field": "enabledAt",
+        "before": null,
+        "after": "2026-10-25T04:22:31.000Z"
+      }
+    ],
+    "requestID": "01M5RMQEGSN7KXT04C3QG7DH26"
+  },
+  {
+    "id": "6288028",
+    "createdAt": "2026-10-25T04:22:23.146Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "integration",
+    "resourceID": "int_301508ff-807e-49f5-b5bc-6663903cf0c4",
+    "resourceLabel": "web_search",
+    "action": "updated",
+    "changes": [
+      {
+        "field": "enabledAt",
+        "before": "2026-10-25T04:22:20.000Z",
+        "after": null
+      }
+    ],
+    "requestID": "01M5RMQ72N18DF5AS4PJM9EZFX"
+  },
+  {
+    "id": "6288021",
+    "createdAt": "2026-10-25T04:22:19.950Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "integration",
+    "resourceID": "int_301508ff-807e-49f5-b5bc-6663903cf0c4",
+    "resourceLabel": "web_search",
+    "action": "updated",
+    "changes": [
+      {
+        "field": "enabledAt",
+        "before": null,
+        "after": "2026-10-25T04:22:20.000Z"
+      }
+    ],
+    "requestID": "01M5RMQ3Z02B94NV490NJGSNC7"
+  },
+  {
+    "id": "6288016",
+    "createdAt": "2026-10-25T04:22:15.301Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "integration",
+    "resourceID": "int_301508ff-807e-49f5-b5bc-6663903cf0c4",
+    "resourceLabel": "web_search",
+    "action": "updated",
+    "changes": [
+      {
+        "field": "enabledAt",
+        "before": "2026-10-25T04:22:11.000Z",
+        "after": null
+      }
+    ],
+    "requestID": "01M5RMPZE056PWEH23KCBGRMDS"
+  },
+  {
+    "id": "6287789",
+    "createdAt": "2026-10-25T04:20:37.806Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "workspace",
+    "resourceID": "wrk_01KDJY7XEK590J6MY0VHXSKVA3",
+    "resourceLabel": "Default",
+    "action": "updated",
+    "changes": [
+      {
+        "field": "avatar_key",
+        "before": null,
+        "after": "workspaces/wrk_01KDJY7XEK590J6MY0VHXSKVA3/avatar/img_01M5RMM01DNNRYN6ANWPRKW7BF.jpg"
+      }
+    ],
+    "requestID": "01M5RMM00F63WYTMG6MGAP5FNR"
+  },
+  {
+    "id": "6286842",
+    "createdAt": "2026-10-25T04:13:15.656Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "api-key",
+    "resourceID": "sk_65bf6a04-416e-4626-9640-2dfd59eb793f",
+    "resourceLabel": "solocorp",
+    "action": "created",
+    "changes": [
+      {
+        "field": "expiresAt",
+        "before": null,
+        "after": "2027-01-23T04:13:15.000Z"
+      },
+      {
+        "field": "name",
+        "before": null,
+        "after": "solocorp"
+      },
+      {
+        "field": "permissions",
+        "before": null,
+        "after": "all"
+      },
+      {
+        "field": "serviceAccountId",
+        "before": null,
+        "after": "svcacct_01KDJY7XEK590J6MY0VHXSKVA3_01KDJY7XEKH9JS0RXFYM99AHRR"
+      }
+    ],
+    "requestID": "01M5RM6GDDHW0YJ26DBJFX9GZW"
+  },
+  {
+    "id": "6286730",
+    "createdAt": "2026-10-25T04:12:20.464Z",
+    "actorID": "acc_01KDJY7VRW3CC3SYWMPZWPB0JV",
+    "actorLabel": "achaisirum@gmail.com",
+    "source": "console",
+    "resource": "api-key",
+    "resourceID": "key_01M2KFXVM8TTERVMKKEZE1MMZ1",
+    "resourceLabel": "Piask252534",
+    "action": "updated",
+    "changes": [
+      {
+        "field": "permissions",
+        "before": "inference-only",
+        "after": "all"
+      }
+    ],
+    "requestID": "01M5RM4TERA4P17S3VSJGEB6HE"
+  }
+]

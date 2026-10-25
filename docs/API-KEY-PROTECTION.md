@@ -73,6 +73,18 @@ git commit --no-verify
 
 ⚠️ **ใช้ `--no-verify` เฉพาะเมื่อแน่ใจ 100%!**
 
+### ⚠️ Hook นี้เห็นแค่ "ของใหม่" — ต้องมี Layer 2.5
+
+hook ตรวจ `git diff --cached` → คีย์ที่ commit ไปแล้ว **มองไม่เห็นตลอดกาล**
+(incident 2026-10-25: คีย์จริง 2 ค่าอยู่ในประวัติมาเป็นเดือน)
+
+```bash
+bash scripts/secret-history-scan.sh --current   # 0.2s — ใส่ CI ทุก PR
+bash scripts/secret-history-scan.sh             # + ทั้งประวัติ ~1m45s (รันก่อน release)
+```
+
+exit 1 = เจอค่าจริง (ค่าปลอม/dev key ที่ประกาศไว้จะถูกรายงานเป็น ℹ️ ไม่ทำให้ fail)
+
 ---
 
 ## 📋 Layer 3: Code Review Checklist
@@ -87,13 +99,61 @@ git commit --no-verify
 
 ---
 
+## 🏢 Layer 4: Console-side (สโคป / อายุ / หมุน / งบ)
+
+> เพิ่ม 2026-10-25 หลังตรวจ `workspace-audit.json` — 3 ชั้นแรกกัน "คีย์หลุดเข้า git"
+> แต่ไม่กัน "คีย์มีสิทธิ์เกิน" และ "ไม่มีเพดานงบ" ซึ่งเจอของจริงในวันเดียวกัน
+
+| ข้อ | กฎ | เหตุผลจาก incident |
+|:--|:--|:--|
+| สโคป | คีย์สำหรับ inference ต้องเป็น `inference-only` — **ห้าม `all`** | `all` สั่งงาน workspace ได้ (สร้าง/revoke คีย์, เปลี่ยนโมเดล, สร้าง policy) → คีย์รั่ว 1 ตัว = ยึด workspace |
+| อายุ | ≤ 90 วัน + ปฏิทินหมุน | audit เจอคีย์ 3 ตัวหมดอายุวันเดียวกันหมด (2027-01-23) ไม่มีแผนหมุน |
+| จำนวน | 1 งาน = 1 คีย์ · เก็บไม่เกิน 2 ตัวที่มีชีวิต | audit เจอ 4 คีย์ใน 2 ชม. (สร้าง 3 / revoke 1) ชื่อไม่มีระบบ |
+| งบ | budget policy ต้องมี **เพดานจริง** (>0) และครอบคลุมบัญชีอัตโนมัติ | เจอ `limitDollars: 0` + `except-service-accounts` → คนถูกบล็อก ระบบไม่ถูกคุม (กลับด้าน) |
+| โมเดล | เปิดเฉพาะที่ใช้ · โมเดลแพง ($30/$180 per M) ต้องมีเหตุผล | audit เจอเปิด claude-opus-5 / gpt-5.5-pro พร้อมกัน ~30 ตัว |
+| ตรวจ | ดาวน์โหลด `workspace-audit.json` เดือนละครั้ง แล้วเทียบกับรายการคีย์ที่ควรมี | audit log ระบุ actor + field-level change ครบ → ตรวจได้จริง |
+
+### Incident 2026-10-25 — คีย์จริงอยู่ในประวัติของ repo ที่เป็น public
+
+สแกนทั้ง 497 commits ด้วย `scripts/secret-history-scan.sh` → เจอ **ค่าจริง 2 ค่า**:
+
+| # | อะไร | ที่ไหน | commit | สถานะ |
+|:--|:--|:--|:--|:--|
+| a | `MAXPLUS_API_KEY` ตัวจริง (ค่าเดียวกับ `.env` root) ใช้เป็น "ตัวอย่าง" 4 จุด | `docs/API-KEY-PROTECTION.md` | `c33a09a` | แทนด้วย `ccsk-REPLACE_WITH_NEW_KEY` แล้ว · **ยังไม่ rotate** |
+| b | API key hardcoded เป็น fallback ในโค้ด | `workers/llm_provider.py` | `d6ec613` (ลบที่ `30e373a`, 2026-07-12) | ไม่อยู่ใน HEAD · **ยังอยู่ในประวัติ** |
+
+ทั้งสอง commit **อยู่บน `origin/main` ของ repo public** (`Dr-SoloDev/Lab-solocorp-os2.4`)
+
+| | |
+|:--|:--|
+| ทำไม hook ไม่จับ | hook สแกนเฉพาะ `git diff --cached` (ของใหม่) — ทั้งสองค่าถูก commit ก่อน/ตอนติดตั้ง hook |
+| ยังต้องทำ | **rotate ทั้งสองค่า** (Owner) — การลบในไฟล์ไม่ทำให้ค่าที่เคย public ใช้ไม่ได้ |
+| ทางเลือกเพิ่ม | `git filter-repo` ลบ commit `c33a09a` + `d6ec613` แล้ว force-push — ต้อง Owner อนุมัติ (destructive) และ **ทำหลัง rotate เท่านั้น** |
+
+#### วิธีสแกนซ้ำ (ทำได้เอง ไม่ต้องรอ incident ใหม่)
+
+```bash
+bash scripts/secret-history-scan.sh --current   # tracked files (0.2s) — ใส่ CI ได้
+bash scripts/secret-history-scan.sh --history   # ทั้ง 497 commits (~1m45s)
+bash scripts/secret-history-scan.sh --all       # + ไฟล์ที่ gitignore (ตรวจเครื่องตัวเอง)
+```
+
+สคริปต์แยก **ค่าปลอม** (ทดสอบ/dev key ที่ประกาศไว้) ออกจาก **ค่าจริง** → exit 1 เฉพาะค่าจริง
+และพิมพ์แค่ 12 ตัวอักษรแรก · advisory pattern จับ ENV-assignment ที่มีค่ายาว
+(เช่น `LINE_CHANNEL_ACCESS_TOKEN`) ซึ่ง pattern มาตรฐานไม่จับ
+
+> บทเรียน: **เอกสารความปลอดภัยเองก็เป็นที่รั่วได้** — ตัวอย่างในเอกสารต้องเป็นค่า fake
+> ที่ผ่าน hook pattern หรือ placeholder ที่ไม่ใช่ hex จริง
+
+---
+
 ## 🔧 How to Use API Keys Safely
 
 ### ✅ Correct Way
 
 **1. Store in `.env`:**
 ```bash
-MAXPLUS_API_KEY=ccsk-8fc78b9689f73b15419b6236663b8b6246a8deec299517b01f4b5c05a890ef57
+MAXPLUS_API_KEY=ccsk-REPLACE_WITH_NEW_KEY
 ```
 
 **2. Load in code:**
@@ -114,15 +174,15 @@ MAXPLUS_API_KEY=your-api-key-here
 
 ```python
 # ❌ Hardcoded API key
-API_KEY = "ccsk-8fc78b9689f73b15419b6236663b8b6246a8deec299517b01f4b5c05a890ef57"
+API_KEY = "ccsk-REPLACE_WITH_NEW_KEY"
 
 # ❌ Commented API key (still dangerous!)
-# API_KEY = "ccsk-8fc78b9689f73b15419b6236663b8b6246a8deec299517b01f4b5c05a890ef57"
+# API_KEY = "ccsk-REPLACE_WITH_NEW_KEY"
 
 # ❌ Config file tracked by git
 config.json:
 {
-  "api_key": "ccsk-8fc78b9689f73b15419b6236663b8b6246a8deec299517b01f4b5c05a890ef57"
+  "api_key": "ccsk-REPLACE_WITH_NEW_KEY"
 }
 ```
 

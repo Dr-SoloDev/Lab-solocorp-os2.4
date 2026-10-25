@@ -327,3 +327,39 @@
 - `scripts/token-report.py`: "วันนี้ทั้ง org กินเท่าไร ใครกิน" (อ่าน DB รวม desktop ไม่ใช่แค่ ledger)
 - `docs/TOKEN-ACCOUNTING.md`: เอกสารถาวร + ตารางอ่าน dashboard ให้ถูก
 - เทสต์ 42 + 10 ใหม่ · 948 passed · หลักฐาน `bus/evidence/2026-10-25/token-accounting/`
+
+## Session 2026-10-25 (ต่อ 2) — ตรวจ workspace audit: เจอคีย์จริงใน repo public 2 ค่า
+
+### 🚨 Findings (F0 คือเรื่องใหญ่สุด)
+- **F0-a**: `MAXPLUS_API_KEY` ตัวจริง (ค่าเดียวกับ `.env`) ถูกใช้เป็น "ตัวอย่าง" ใน
+  `docs/API-KEY-PROTECTION.md` 4 จุด → commit `c33a09a` **อยู่บน origin/main ของ repo public**
+- **F0-b**: API key hardcoded เป็น fallback ใน `workers/llm_provider.py` commit `d6ec613`
+  (ถูกลบที่ `30e373a` 3 วันต่อมา) — ไม่อยู่ใน HEAD แต่ยังอยู่ในประวัติที่ public
+- **F0.5**: ค่าจริง 27 จุดในเครื่อง — `TELEGRAM_BOT_TOKEN` ค่าเดียวกันซ้ำ 13 ไฟล์,
+  `MAXPLUS_API_KEY` **2 ค่าไม่เหมือนกัน** (root vs profiles) → rotate ต้องรู้ว่าคีย์ไหนใช้ที่ไหน
+- F1–F6 (จาก workspace-audit 13 records): คีย์ 3 ตัว `permissions: all` · budget $0 แต่
+  **ยกเว้น svc acct** (คนถูกห้าม ระบบไม่ถูกคุม — กลับด้าน) · เปิดโมเดลแพง ~30 ตัว · dashboard ขัดกับ audit
+
+### 💡 Insights
+1. **"grep แล้วไม่เจอ" ≠ "ไม่มี"** — ผมเขียนใน REVIEW ว่า "repo ไม่มี key หลุด" เพราะ grep แค่
+   *key id ของ console* (`sk_3010…`) แต่ของที่ห่วงคือ *ค่า MAXPLUS* (`ccsk-…`) → grep ต้องเลือก
+   pattern ให้ตรงกับภัยที่ห่วง ไม่ใช่ pattern ที่บังเอิญนึกออก
+2. **Hook ที่ดูแค่ staged = ป้องกันได้แค่ปัจจุบัน** — คีย์เก่าใน history คือช่องที่ hook ไม่มีวันเห็น
+   → ต้องมีสคริปต์สแกนประวัติที่รันซ้ำได้ ไม่ใช่ grep มือครั้งเดียว
+3. **สคริปต์สแกนที่เตือนทุกอย่าง = สคริปต์ที่ไม่มีใครฟัง** — รอบแรกสแกน `.env` (gitignored) ด้วย
+   → 30 บรรทัดเตือนจนของจริงจม · ต้องแยก "ค่าปลอม/ไฟล์ที่ไม่ขึ้น git" ออกจาก "ค่าจริงใน tracked files"
+   แล้ว exit 1 เฉพาะค่าจริง
+4. **placeholder ของตัวเองก็ trip pattern ได้** — `ccsk-REDACTED-2026-10-25-ROTATE-NEEDED`
+   มี substring `sk-REDACTED-…` (35 chars) → ถูกจับด้วย pattern `sk-[A-Za-z0-9_-]{32,}`
+   → เปลี่ยนเป็น `ccsk-REPLACE_WITH_NEW_KEY`
+5. **การลบในไฟล์ ≠ การแก้ incident** — ค่าที่เคย public ต้องถือว่ารั่วแล้ว จนกว่าจะ rotate
+   history rewrite เป็นงานแยก (destructive, ต้อง Owner) และต้องทำ**หลัง** rotate เท่านั้น
+6. **audit log ที่ดีบอกได้มากกว่าที่คิด** — 13 records พอให้รู้ว่า policy $0 ถูกสร้างตอนไหน
+   เทียบกับเวลา 402 ที่เราเจอ → ตั้งสมมติฐานที่ทดสอบได้ใน 30 วินาที (แก้ limitDollars → ยิง 1 ครั้ง)
+
+### 🔧 ที่ทำแล้ว
+- `scripts/secret-history-scan.sh`: tracked files (0.2s) + history (1m45s) + ignored files
+  · KNOWN_FAKE allowlist · mask 12 ตัวแรก · advisory pattern จับ ENV-assignment ค่ายาว
+- `docs/API-KEY-PROTECTION.md`: Layer 2.5 (สแกนประวัติ) + Layer 4 (console-side: สโคป/อายุ/จำนวน/งบ/โมเดล)
+  + incident table 2 ค่า
+- `bus/evidence/2026-10-25/workspace-audit/`: audit.json (sha256) + REVIEW.md (F0–F7) + secret-scan.log
