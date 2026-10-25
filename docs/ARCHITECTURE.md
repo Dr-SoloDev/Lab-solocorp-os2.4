@@ -566,12 +566,29 @@ result = await think(
     prompt="Write a PRD for billing v2",
     system_prompt="คุณคือ Product Manager ของ SoloCorp",
     max_tokens=800,
+    agent="product-produck",  # ใส่ชื่อ agent → รู้ว่าใครกินโควตา (ledger)
 )
+```
+
+### Token / quota accounting
+
+ทุก call ถูกวัดและบันทึก — ดูรายละเอียดที่ **[`docs/TOKEN-ACCOUNTING.md`](TOKEN-ACCOUNTING.md)**
+
+| ชั้น | ทำอะไร | ไฟล์ |
+|:----|:-------|:-----|
+| วัด | ทุก call มี `--session ses_llm…` ของเราเอง → อ่าน `tokens`/`cost` จริงจาก `opencode.db` (`session_message`) | `workers/token_ledger.py` |
+| บันทึก | append 1 บรรทัด JSONL ต่อ call (สำเร็จ/ล้ม, model, agent, duration, tokens, cost) | `bus/system/token-ledger.jsonl` |
+| เพดาน | รายวัน: requests / output tokens / cost — เกินแล้ว **ไม่ยิง LLM** (ค่าเริ่มต้น 400 / 2M / $1) | env `SOLOCORP_LLM_DAILY_*` |
+| ล็อก | เจอ 429/402 → จำเวลา reset → call ถัดไปจบใน ~1 ms ไม่ยิงซ้ำ | `bus/system/llm_quota.json` |
+
+```bash
+python scripts/token-report.py --sessions 5   # วันนี้ทั้ง org กินเท่าไร ใครกิน
 ```
 
 ### Cross-Reference
 
 - `workers/llm_provider.py` — LLM inference wrapper
+- `workers/token_ledger.py` — token/quota accounting (usage, budget, lock)
 - `loop_runner/loops/pipeline_executor.py` — Uses `think()` for queue tasks
 
 ---

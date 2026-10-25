@@ -1,0 +1,20 @@
+# smoke: think() จริง 1 ครั้ง — วัดว่า fail-fast ได้จริง
+# 2026-10-25T13:31:44+07:00
+# host: solocorp-main · python: Python 3.12.3
+# commit: 9815824 (uncommitted changes in working tree)
+# sha256 workers/token_ledger.py: 3ede88090e5d730e85b8706ce534e0ea163596c1268bc5cceb6ff665e01eb319
+# sha256 workers/llm_provider.py: 8c10af3fc2306fbb8a114220d018564ca2fc365c56776974b2b286a14c69a28b
+
+LLM error opencode/deepseek-v4.1-flash-free attempt 1/3: opencode run exit 1: [0m
+> plan · deepseek-v4.1-flash-free
+[91m[1mError: [0mFree usage limit reached. Connect a provider or subscribe to OpenCode Go to keep going, or switch models.
+
+LLM quota lock → 2026-10-25T14:31:46+07:00 (free-limit) — หยุด chain
+LLM หมดโอกาส (ลอง 5 โมเดล): free-tier/quota หมด: การเรียกผ่าน opencode run ถูกจำกัด (ADR-017) — ล็อกถึง 2026-10-25T14:31:46+07:00 (~60 นาที) ไม่ยิงซ้ำจนถึงเวลานั้น
+LLM ข้าม: quota lock ถึง 2026-10-25T14:31:46+07:00 (~59 นาที) — free-limit
+elapsed_s: 0.98
+result: ⚠️ LLM ไม่พร้อม: free-tier/quota หมด: การเรียกผ่าน opencode run ถูกจำกัด (ADR-017) — ล็อกถึง 2026-10-25T14:31:46+07:00 (~60 นาที) ไม่ยิงซ้ำจนถึงเวลานั้น
+quota: {"locked": true, "until_ms": 1792913506027, "until": "2026-10-25T14:31:46+07:00", "remaining_s": 3599, "reason": "free-limit", "model": "opencode/deepseek-v4.1-flash-free"}
+ledger_tail: {"agent": "smoke-test", "model": "opencode/deepseek-v4.1-flash-free", "session_id": "ses_llmbc7e475465fa49aa9d11", "ok": false, "duration_ms": 970, "prompt_chars": 15, "result_chars": 0, "error": "opencode run exit 1: \u001b[0m\n> plan · deepseek-v4.1-flash-free\n\u001b[91m\u001b[1mError: \u001b[0mFree usage limit reached. Connect a provider or subscribe to OpenCode Go to keep going, or switch models.\n", "requests": 0, "input": 0, "output": 0, "reasoning": 0, "cache_read": 0, "cache_write": 0, "cost": 0.0, "ts": "2026-10-25T13:31:46+07:00"}
+second_call_s: 0.001  ledger_rows_before=1 after=1
+second_result: ⚠️ LLM ไม่พร้อม: โควตาถูกล็อกถึง 2026-10-25T14:31:46+07:00 (~59 นาที, free-limit) — ไม่ยิงซ้ำเพื่อไม่ให้เสียเวลาเปล่า

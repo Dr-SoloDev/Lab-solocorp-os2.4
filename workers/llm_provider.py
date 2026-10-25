@@ -10,6 +10,9 @@
   ที่มี shell/write โมเดลจะขอ permission แล้วค้าง → ไม่มีคำตอบทั้ง org
   override ได้ด้วย OPENCODE_AGENT
 - retry + timeout + semaphore concurrency control
+- ทุก call มี session id ของเราเอง (`--session ses_llm…`) → ตามรอย usage ได้
+  จาก opencode.db และจาก console request logs (ดู workers/token_ledger.py)
+- วัด token จริงต่อ call + เพดานรายวัน + quota lock (ไม่ยิงซ้ำเข้ากำแพง 429)
 """
 
 from __future__ import annotations
@@ -19,9 +22,12 @@ import json
 import logging
 import os
 import subprocess
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
+
+from workers import token_ledger
 
 log = logging.getLogger(__name__)
 
@@ -218,6 +224,7 @@ async def think(
     max_tokens: int = 500,
     temperature: float = 0.7,
     timeout: Optional[int] = None,
+    agent: str = "",
 ) -> str:
     """ให้ LLM คิดและตอบกลับ — ใช้ได้จากทุก Agent
 
@@ -228,12 +235,41 @@ async def think(
         max_tokens: ความยาวสูงสุดของคำตอบ
         temperature: (reserved) ไม่ได้ส่งไป opencode run โดยตรง
         timeout: override timeout (วินาที) — prompt ยาว/ภาษาไทยต้องใช้เวลานาน
+        agent: ชื่อ agent ที่เรียก (สำหรับ ledger — ใครกินโควตา)
 
     Returns:
         str: ข้อความตอบกลับจาก LLM (ตัด max_tokens แล้ว)
+
+    หมายเหตุ: ค่าใช้จ่ายจริงของ call นี้ถูกบันทึกใน bus/system/token-ledger.jsonl
+    ถ้าโควตาถูกล็อกอยู่ (429/402 ที่เจอมาแล้ว) ฟังก์ชันนี้คืนทันทีโดยไม่ยิง LLM
     """
     full_prompt = f"{system_prompt}\n\n{prompt}" if system_prompt else prompt
     last_error = ""
+
+    # ── Pre-flight 1: โควตาถูกล็อกอยู่ไหม (ประหยัดเวลา + ไม่ยิงเข้ากำแพง) ──
+    quota = token_ledger.quota_status()
+    if quota["locked"]:
+        mins = quota["remaining_s"] // 60
+        log.error(
+            f"LLM ข้าม: quota lock ถึง {quota['until']} (~{mins} นาที) — {quota['reason']}"
+        )
+        return (
+            f"⚠️ LLM ไม่พร้อม: โควตาถูกล็อกถึง {quota['until']} "
+            f"(~{mins} นาที, {quota['reason']}) — ไม่ยิงซ้ำเพื่อไม่ให้เสียเวลาเปล่า"
+        )
+
+    # ── Pre-flight 2: งบรายวัน (requests / output / cost) ──────────────────
+    budget = token_ledger.check_budget()
+    if not budget["ok"]:
+        log.error(f"LLM ข้าม: เกินงบรายวัน — {budget['reason']}")
+        return (
+            f"⚠️ LLM ไม่พร้อม: เกินงบรายวัน ({budget['reason']}) — "
+            "ปรับเพดานที่ SOLOCORP_LLM_DAILY_*"
+        )
+    if budget["warn"]:
+        log.warning(
+            f"LLM ใกล้งบรายวันแล้ว: {token_ledger.format_usage(budget['totals'])}"
+        )
 
     # Build try-list: requested model first, then fallbacks (skip duplicates).
     # Dead models map straight to full chain.
@@ -249,9 +285,20 @@ async def think(
     for model_name in try_list:
         stop_chain = False
         for attempt in range(1, _MAX_RETRIES + 1):
+            session_id = token_ledger.new_session_id()
+            started = time.monotonic()
             try:
                 async with _semaphore:
-                    result = await _run_opencode(full_prompt, model_name, timeout=timeout)
+                    result = await _run_opencode(
+                        full_prompt, model_name, timeout=timeout, session_id=session_id
+                    )
+
+                duration_ms = int((time.monotonic() - started) * 1000)
+                usage = await token_ledger.read_session_usage_async(session_id)
+                _record_call(
+                    agent, model_name, session_id, usage, duration_ms,
+                    ok=True, prompt_chars=len(full_prompt), result_chars=len(result),
+                )
 
                 if not result:
                     log.warning(f"LLM เปล่า ({model_name} attempt {attempt})")
@@ -263,26 +310,43 @@ async def think(
                 return result[:max_tokens]
 
             except asyncio.TimeoutError:
+                duration_ms = int((time.monotonic() - started) * 1000)
+                usage = await token_ledger.read_session_usage_async(session_id)
+                _record_call(
+                    agent, model_name, session_id, usage, duration_ms,
+                    ok=False, error=f"timeout ({timeout or _LLM_TIMEOUT}s)",
+                    prompt_chars=len(full_prompt),
+                )
                 log.warning(f"LLM timeout {model_name} attempt {attempt}/{_MAX_RETRIES}")
                 last_error = f"{model_name}: timeout ({timeout or _LLM_TIMEOUT}s)"
                 continue
 
             except Exception as e:
+                duration_ms = int((time.monotonic() - started) * 1000)
+                usage = await token_ledger.read_session_usage_async(session_id)
+                _record_call(
+                    agent, model_name, session_id, usage, duration_ms,
+                    ok=False, error=str(e), prompt_chars=len(full_prompt),
+                )
                 log.warning(f"LLM error {model_name} attempt {attempt}/{_MAX_RETRIES}: {e}")
                 last_error = f"{model_name}: {e}"
                 # Model not found / unavailable = ข้ามไปตัวถัดไปทันที ไม่ต้อง retry ซ้ำ
                 # (v2.1.4 พูดว่า "Model unavailable" — เช็คทั้งสองคำแบบ case-insensitive)
                 if _is_dead_model_error(str(e)):
                     break
-                # Free tier gate = ทุกโมเดลจะล้มเหมือนกัน (ADR-017)
+                # โควตา/เงินตัน = ทุกโมเดลจะล้มเหมือนกัน (ADR-017)
                 # ไม่ต้อง retry ทั้ง chain (5 โมเดล × 3 ครั้ง = เสียเวลาหลายนาทีเปล่า ๆ)
-                # → หยุดทั้ง chain ทันทีแล้วบอก root cause ให้ชัด
-                if "free tier" in str(e).lower():
+                # → ล็อกจนถึงเวลา reset แล้วบอก root cause ให้ชัด
+                if token_ledger.is_quota_error(str(e)):
+                    st = token_ledger.lock_from_error(str(e), model=model_name)
                     last_error = (
-                        "free-tier gate: การเรียกโมเดลผ่าน opencode run ถูกจำกัดสิทธิ์ "
-                        "(ADR-017) — ต้องรันจากภายใน OpenCode client หรือใช้โมเดลที่อนุญาต"
+                        "free-tier/quota หมด: การเรียกผ่าน opencode run ถูกจำกัด (ADR-017) "
+                        f"— ล็อกถึง {st['until']} (~{st['remaining_s'] // 60} นาที) "
+                        "ไม่ยิงซ้ำจนถึงเวลานั้น"
                     )
-                    log.error("LLM free-tier gate — หยุด chain ไม่ retry ซ้ำ")
+                    log.error(
+                        f"LLM quota lock → {st['until']} ({st['reason']}) — หยุด chain"
+                    )
                     stop_chain = True
                     break
                 if attempt < _MAX_RETRIES:
@@ -295,6 +359,46 @@ async def think(
     return f"⚠️ LLM ไม่พร้อม: {last_error}"
 
 
+def _record_call(
+    agent: str,
+    model: str,
+    session_id: str,
+    usage: dict,
+    duration_ms: int,
+    *,
+    ok: bool,
+    error: str = "",
+    prompt_chars: int = 0,
+    result_chars: int = 0,
+) -> None:
+    """เขียน 1 บรรทัดลง ledger — ห้าม raise (accounting ต้องไม่ฆ่า LLM call)"""
+    try:
+        entry = {
+            "agent": agent or os.environ.get("SOLOCORP_AGENT_NAME", "unknown"),
+            "model": model,
+            "session_id": session_id,
+            "ok": ok,
+            "duration_ms": duration_ms,
+            "prompt_chars": prompt_chars,
+            "result_chars": result_chars,
+            "error": (error or "")[:300],
+        }
+        for key in ("requests", "input", "output", "reasoning",
+                    "cache_read", "cache_write", "cost"):
+            entry[key] = usage.get(key, 0)
+        token_ledger.record(entry)
+
+        if usage.get("error"):
+            log.warning(f"อ่าน usage ไม่ได้ ({session_id}): {usage['error']}")
+        elif ok:
+            log.info(
+                f"LLM {model} {duration_ms}ms {token_ledger.format_usage(usage)}"
+            )
+    except Exception as e:  # noqa: BLE001 — accounting ต้องไม่ทำให้ call ล้ม
+        log.debug(f"บันทึก usage ไม่สำเร็จ: {e}")
+
+
+
 def _is_dead_model_error(message: str) -> bool:
     """error ที่แปลว่า "โมเดลนี้ใช้ไม่ได้" → ข้ามทันที ไม่ต้อง retry ตัวเดิม 3 ครั้ง
 
@@ -305,13 +409,24 @@ def _is_dead_model_error(message: str) -> bool:
     return "model not found" in low or "model unavailable" in low
 
 
-async def _run_opencode(full_prompt: str, model: str, *, timeout: Optional[int] = None) -> str:
+async def _run_opencode(
+    full_prompt: str,
+    model: str,
+    *,
+    timeout: Optional[int] = None,
+    session_id: Optional[str] = None,
+) -> str:
     """เรียก LLM ผ่าน opencode run CLI (core)
 
     spawn subprocess → ส่ง prompt ผ่าน stdin → อ่าน stdout
     ใช้ --agent (read-only) + --model เท่านั้น (ไม่ส่ง flag ที่ CLI ไม่รู้จัก — ดู _CMD_WITH_FLAGS)
+    session_id: ถ้าระบุ จะส่ง `--session <id>` → สร้าง session ใหม่ด้วย id ของเรา
+      (ไม่ได้เปลี่ยนพฤติกรรม: ปกติ opencode ก็สร้าง session ใหม่ทุก run)
+      ประโยชน์: ตามรอย usage ใน opencode.db + console request logs ได้แบบ 1:1
     """
     cmd = [*_CMD_WITH_FLAGS, "--model", model]
+    if session_id:
+        cmd += ["--session", session_id]
 
     proc = await asyncio.create_subprocess_exec(
         *cmd,

@@ -1,7 +1,15 @@
-# Cost Control — Design (paper only, ห้าม code รอบนี้)
+# Cost Control — Design (ชั้น 1 ลงมือแล้ว · ชั้น 2–3 ยัง paper only)
 
 > Owner-approved AAAA ข้อ 3: design-only — เสาอ่อนสุด ออกแบบผิด = ฝังผิด
 > สถานะเสา Cost วันนี้: มีที่ปรึกษา (`profiles/02-cfo` + skill `budget-check` แบบ read-only/advisory) แต่ไม่มีด่านใน bus — คุมงบไม่ได้จริง
+>
+> **อัปเดต 2026-10-25 (Owner สั่งตรง):** ชั้น 1 (cost ledger) + เพดานรายวัน + quota lock
+> ลงมือแล้วใน `workers/llm_provider.py` + `workers/token_ledger.py`
+> → ดู [`TOKEN-ACCOUNTING.md`](TOKEN-ACCOUNTING.md) · หลักฐาน `bus/evidence/2026-10-25/token-accounting/`
+> เหตุผลที่ต้องแตะแกน `think()` (ซึ่งเดิมเป็น non-goal): usage ต่อ call อ่านได้แม่น
+> ก็ต่อเมื่อ **เราถือ session id เอง** (`--session`) ซึ่งเกิดใน `_run_opencode` เท่านั้น
+> — wrapper ภายนอกแยก call ที่รันขนานกัน 3 ตัวไม่ออก
+> ชั้น 2 (quota ผูก workstream) และชั้น 3 (send_back เมื่อเกินงบ) **ยังไม่ทำ** — ยังรอคำตอบ Owner 3 ข้อล่างนี้
 
 ## เป้าหมาย
 
@@ -25,7 +33,9 @@
 
 - ไม่เก็บเงินจริง/ไม่ต่อ payment API ใดๆ — นับหน่วยภายในก่อน
 - ไม่ block ใครในรอบนี้ — ชั้น 2/3 เป็น design ไว้พลิกทีหลังพร้อม tags
-- ไม่แตะ `llm_provider` signature — ledger อยู่ที่ caller/wrapper ไม่ใช่แกน think
+- ~~ไม่แตะ `llm_provider` signature~~ → **Owner ยกเว้นให้ 2026-10-25**: เพิ่ม `agent=` และ
+  `_run_opencode(session_id=…)` เพราะ usage ต่อ call ต้องอ่านจาก session ที่เราถือเอง
+  (เหตุผล + หลักฐานอยู่ในหัวเอกสาร) — ชั้น 2/3 ยังไม่แตะ signature เพิ่ม
 
 ## คำถามค้างให้ Owner (ตอบก่อน code เฟสหน้า)
 

@@ -106,6 +106,7 @@ class BaseAgent:
             system_prompt=system_prompt,
             max_tokens=max_tokens,
             temperature=temperature,
+            agent=self.agent_id,
         )
 
     # ── Tools — เครื่องมือที่ Agent ใช้ ──────────────────────────────────

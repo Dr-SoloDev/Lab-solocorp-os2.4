@@ -1,0 +1,5 @@
+# 2026-10-25T13:32:03+07:00 · python 3.12.3
+# command: python -m pytest tests/test_token_ledger.py tests/test_llm_provider_cmd.py tests/test_llm_fallback.py tests/test_mirror_llm_reliability.py -v --no-cov
+........................................................................ [ 87%]
+..........                                                               [100%]
+82 passed in 1.08s

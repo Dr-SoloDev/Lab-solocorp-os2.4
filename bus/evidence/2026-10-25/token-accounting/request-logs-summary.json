@@ -1,0 +1,135 @@
+{
+  "source": "request-logs-2026-10-25.json",
+  "sha256": "eb685bdd44aba9b808127b05f60c41768beac29c53130ff4996279ed402d845b",
+  "export_until_ms": 1792908948196,
+  "export_until": "2026-10-25T13:15:48.196000+07:00",
+  "records": 488,
+  "totals": {
+    "requests": 488,
+    "ok": 298,
+    "rejected_429": 169,
+    "failed_403": 19,
+    "insufficient_402": 2,
+    "input": 1167820,
+    "cache_read": 15640374,
+    "cache_write": 0,
+    "output": 195302,
+    "reasoning": 79495,
+    "cost_reported": 0
+  },
+  "by_model": {
+    "deepseek-v4.1-flash-free": {
+      "requests": 326,
+      "ok": 271,
+      "input": 812295,
+      "cache_read": 15431680,
+      "cache_write": 0,
+      "output": 188132,
+      "reasoning": 76023,
+      "cost": 0
+    },
+    "mimo-v2.6-flash-free": {
+      "requests": 38,
+      "ok": 8,
+      "input": 59306,
+      "cache_read": 105280,
+      "cache_write": 0,
+      "output": 3359,
+      "reasoning": 1748,
+      "cost": 0
+    },
+    "big-pickle": {
+      "requests": 38,
+      "ok": 6,
+      "input": 107775,
+      "cache_read": 6102,
+      "cache_write": 0,
+      "output": 922,
+      "reasoning": 400,
+      "cost": 0
+    },
+    "nemotron-3-ultra-free": {
+      "requests": 36,
+      "ok": 6,
+      "input": 114548,
+      "cache_read": 12960,
+      "cache_write": 0,
+      "output": 959,
+      "reasoning": 290,
+      "cost": 0
+    },
+    "nemotron-3.5-lightning-free": {
+      "requests": 38,
+      "ok": 6,
+      "input": 43686,
+      "cache_read": 83840,
+      "cache_write": 0,
+      "output": 1773,
+      "reasoning": 1034,
+      "cost": 0
+    },
+    "gemini-3.8-flash": {
+      "requests": 2,
+      "ok": 0,
+      "input": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "output": 0,
+      "reasoning": 0,
+      "cost": 0
+    },
+    "gemini-4-argon": {
+      "requests": 4,
+      "ok": 0,
+      "input": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "output": 0,
+      "reasoning": 0,
+      "cost": 0
+    },
+    "nemotron-3.5-super-vl-free": {
+      "requests": 2,
+      "ok": 0,
+      "input": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "output": 0,
+      "reasoning": 0,
+      "cost": 0
+    },
+    "flint-40b-free": {
+      "requests": 4,
+      "ok": 1,
+      "input": 30210,
+      "cache_read": 512,
+      "cache_write": 0,
+      "output": 157,
+      "reasoning": 0,
+      "cost": 0
+    }
+  },
+  "by_app": {
+    "desktop": {
+      "requests": 423,
+      "ok": 240,
+      "input": 1014742,
+      "cache_read": 13841334,
+      "cache_write": 0,
+      "output": 170792,
+      "reasoning": 70280,
+      "cost": 0
+    },
+    "cli": {
+      "requests": 65,
+      "ok": 58,
+      "input": 153078,
+      "cache_read": 1799040,
+      "cache_write": 0,
+      "output": 24510,
+      "reasoning": 9215,
+      "cost": 0
+    }
+  },
+  "note": "ตัวเลข '15.2M' ที่ console แสดงในคอลัมน์ที่ 3 ของตาราง model คือ cache_read ไม่ใช่ output — output จริงของ deepseek = 188,132"
+}
