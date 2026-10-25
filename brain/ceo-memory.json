@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-10-21T16:20:00Z",
+  "last_updated": "2026-10-25T05:10:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -625,6 +625,37 @@
         "🟡 รอหนุมาน: D1 note + D2 evidence (issue #20) · เสียง batch (issue #21)",
         "🟡 19 แผนกที่เหลือยัง D0 ทั้งหมด — ยังไม่มีใครมี D1 document เลย (0/20)"
       ]
+    },
+    {
+      "date": "2026-10-25",
+      "duration": "session start → brain reconcile → P0 fix → D2 evidence",
+      "summary": "แก้ brain ตกรุ่น + เจอ P0 องค์กรระหว่างทาง: llm_provider ตายทั้งระบบ (opencode v2.1.4) → แก้แล้ว 862 passed · D2 ของ content-creator มีหลักฐานอิสระครบ 6/6 exit 0 · D1 รอ Owner อนุมัติ",
+      "key_decisions": [
+        "🔎 หลักการ: brain ที่ไม่ตรงหลักฐาน = bug — bootstrap อ่าน sessions[-1].pending_next ตรงๆ ถ้าค้างของเก่า CEO ตัวถัดไปตัดสินใจผิด → แก้ที่ต้นทาง ไม่ใช่แค่รายงาน",
+        "✅ ปิด pending 'L1 mirror scoring ใช้เกณฑ์เดียวกับ L5' — ADR-028 อนุมัติ+ส่งงานแล้ว (L1/L2 advisory 12/20 · L3+ gate 60% 8/20 · 841 passed · CI exit=0)",
+        "📄 แก้ pending 'D1 0/20 / ไม่มีใครมีเอกสารเลย' — docs/certification/D1-content-creator.md มีจริง 106 บรรทัด rev.3 → แต่สถานะในเอกสารเองเขียนว่า 'ส่งตรวจ Owner (default = ยังไม่ผ่าน)' → นับเป็น ☐ ตามกฎ maker≠checker",
+        "🧾 อัปเดต profiles/CERTIFICATION-REGISTRY.md แถว content-creator-sek ให้ตรงความจริง (เดิมเขียน 'D1 ยังไม่มีเอกสาร' ซึ่งผิดแล้ว) — ไม่ติ๊กผ่าน ด่านใดทั้งสิ้น",
+        "🚨 P0 พบระหว่างรัน D2: `opencode run --pure` -> v2.1.4 ไม่รู้จัก flag -> ทุกโมเดลล้ม -> think() ตายทั้งองค์กร (agent ทุกตัวพูดไม่ได้) — ซ่อนอยู่ใต้เทสต์เขียว 862 ตัว เพราะเทสต์ mock think() หมด",
+        "🚨 P0 ตัวที่ 2: `opencode run` spawn ด้วย default agent (มี tools) -> model explore repo -> ขอ permission -> subprocess ปฏิเสธ -> ไม่มี output; prompt ที่ชวนหาข้อมูลจึงไม่มีวันได้คำตอบ (mirror รอดเพราะ prompt สั่งห้ามใช้เครื่องมือ)",
+        "แก้: `--agent plan` (built-in read-only) + dead-model check จับ 'Model unavailable' (v2.1.4 เปลี่ยนข้อความจาก 'Model not found') + เทสต์ยิง argv จริง",
+        "ซ่อม verifier ที่ crash ตอน agent fail (`Path(\"\")` = `.` -> IsADirectoryError) + เพิ่มเทสต์ failure path — ผู้ตรวจก็ต้องมีเทสต์",
+        "หลักฐาน D2 เก่า (23 ต.ค. ผ่าน 6/6) ไม่ใช้นับ: mtime โค้ดใหม่กว่า evidence 26 วินาที -> รันใหม่กับโค้ดวันนี้"
+      ],
+      "achievements": [
+        "brain/ceo-memory.json + profiles/CERTIFICATION-REGISTRY.md: แก้ข้อความที่ตกรุ่นให้ตรงหลักฐาน (ไม่ติ๊กผ่านด่านใด)",
+        "workers/llm_provider.py: `--agent plan` (override ด้วย OPENCODE_AGENT) + จับ 'Model unavailable' ข้ามทันที · scripts/check-model-health.py ถอด --pure",
+        "tests/test_llm_provider_cmd.py (14) + tests/test_verify_d2_content_agent.py (4) — เทสต์ที่ยิง argv จริง + failure path",
+        "D2 content-creator: 6/6 ✅ PASSED exit=0 กับโค้ดวันนี้ · draft 1558 chars · tool calls 6 จริง (4 read + 1 write + 1 run_command) · หลักฐาน bus/evidence/2026-10-25/d2-content-creator/",
+        "เทสต์เต็ม: 862 passed / 0 failed (exit 0, 83s) · think() เร็วขึ้น 6.7s -> 3.4s (ตัด retry ของโมเดลตาย)"
+      ],
+      "pending_next": [
+        "🟡 D1 content-creator (rev.3) รอ Owner ตรวจอนุมัติ — ติ๊ก D1 ไม่ได้จนกว่า Owner อนุมัติ (maker ≠ checker)",
+        "🟡 D2 หลักฐานครบแล้วแต่ยังไม่ติ๊ก — ติดลำดับ rules/06 §3.3 (D1 ต้องผ่านก่อน) · พอ D1 ผ่าน = ติ๊ก D2 ได้ทันทีไม่ต้องรันซ้ำ (ยกเว้นโค้ดเปลี่ยน)",
+        "🟡 D3 ยังไม่เริ่ม: มี scripts/d3_content_creator_eval.py แต่ยังไม่รัน — ต้องได้ตาราง ≥20 task (expected vs actual + root cause) ไม่ cherry-pick",
+        "🟡 รอ Owner ตัดสิน: DEFAULT_MODEL (minimax-m3.1-flash-free) ตาย upstream — จะสลับ chain ให้ deepseek มาก่อน หรือเปลี่ยน default (นโยบายโมเดล = L3+)",
+        "🟡 docs/ARCHITECTURE.md:551 ยังเขียน `opencode run --pure --model` (เอกสารเก่า) — ต้องแก้ตามโค้ด",
+        "🟡 อีก 19 แผนกยัง D0 — ไม่มี D1 document"
+      ]
     }
   ],
   "current_assessment": {
@@ -653,7 +684,7 @@
       "✅ Agent Worker process: no longer zombie — can poll Central Bus queue"
     ]
   },
-  "saved_at": "2026-10-21T16:20:00Z",
+  "saved_at": "2026-10-25T05:10:00Z",
   "latest_commit": "65b8604 fix(loop): media_daily date-gate + quiet SKIP",
   "state_snapshot": {
     "date": "2026-10-10",

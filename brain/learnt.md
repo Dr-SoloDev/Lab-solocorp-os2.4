@@ -277,3 +277,23 @@
 
 ### Skill ที่สร้าง
 - `.opencode/skills/voice-clone/SKILL.md` + `clone.py` — เรียกใช้: "ทำวิดีโอด้วยเสียงนี้"
+
+## Session 2026-10-25 — LLM provider ตายทั้งองค์กร (opencode v2.1.4 upgrade)
+
+### 🚨 What broke (P0 — กระทบทุก agent)
+1. **`--pure` ถูกถอดออกจาก CLI** — `workers/llm_provider.py` เรียก `opencode run --pure --model …` → `Unrecognized flag: --pure` → ทั้ง 7 fallback model ล้ม → `think()` คืน `⚠️ LLM ไม่พร้อม` → agent ทุกตัว (content, mirror_check, monitor_watchdog, media_pipeline, BaseAgent.think) พูดไม่ได้เลย
+2. **`opencode run` spawn ด้วย default agent ที่มี tools** → model ตัดสินใจ explore repo (`grep`, `ls`) → subprocess ขอ permission → ปฏิเสธอัตโนมัติ → ไม่มี output
+   → prompt ใดที่ "ชวนให้หาข้อมูลใน repo" จะไม่มีคำตอบเลย (content/media/research = ตายหมด)
+   → mirror check รอดเพราะ prompt สั่ง "ตอบคำเดียว ห้ามใช้เครื่องมือ" — รอดด้วยวินัย prompt ไม่ใช่ด้วยสถาปัตยกรรม
+3. **ข้อความ error เปลี่ยน** — v2.1.4 พูด `Model unavailable` ไม่ใช่ `Model not found` → ตัวกรองเดิมไม่จับ → เสีย retry 3 ครั้ง × ทุก model ที่ตาย
+
+### ✅ วิธีแก้ที่ใช้ได้ (ยืนยันด้วยการรันจริง)
+- `_CMD_WITH_FLAGS = [bin, "run", "--agent", os.environ.get("OPENCODE_AGENT", "plan")]` — `plan` = built-in read-only agent → ไม่ขอ permission ไม่พยายามแก้ไฟล์
+- dead-model check จับทั้ง `model not found` + `model unavailable` (case-insensitive) → ข้ามทันที
+- banner `> agent · model` ออกทาง **stderr** — stdout สะอาด ไม่ต้อง strip (วัดด้วยการแยก stream ไม่ใช่เดา)
+
+### 💡 Insights
+1. **dependency ภายนอกอัปเกรดเอง = bug ระดับองค์กรที่ไม่มีใครเห็น** — เทสต์เขียว 862 passed ทั้งที่ LLM ตาย เพราะทุกเทสต์ mock `think()` ไว้ → **ไม่มีเทสต์ไหนยิง CLI จริง** (เพิ่ม `tests/test_llm_provider_cmd.py` แล้ว)
+2. **เทสต์ที่ green ทั้งที่ของจริงพัง = เทสต์ที่พิสูจน์ว่า mock ทำงาน** — ต้องมี 1 smoke test ที่ยิงของจริง (ตอนนี้คือ `check-model-health.py`)
+3. **หลักฐานเก่า ≠ หลักฐานของโค้ดวันนี้** — evidence D2 วันที่ 23 ต.ค. ผ่าน 6/6 แต่ mtime ของโค้ดใหม่กว่า evidence 26 วินาที → ต้องรันซ้ำก่อนอ้างว่าผ่าน
+4. **verifier เองก็มีบั๊ก happy-path-only** — `Path("")` = `.` → `IsADirectoryError` ตอน agent fail → script ตายแทนที่จะรายงาน verdict (แก้ + เพิ่มเทสต์ failure path)
