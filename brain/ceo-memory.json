@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-10-25T06:00:00Z",
+  "last_updated": "2026-10-25T06:41:28Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -629,7 +629,7 @@
     {
       "date": "2026-10-25",
       "duration": "session start → brain reconcile → P0 fix → D2 evidence → model policy → commit",
-      "summary": "แก้ brain ตกรุ่น + เจอ P0 องค์กร (llm_provider ตายทั้งระบบจาก opencode v2.1.4) → แก้ + วัดโมเดลจริง → D2 content-creator มีหลักฐานอิสระ 6/6 exit 0 · 7 commits · 868 passed · tree สะอาด",
+      "summary": "แก้ brain ตกรุ่น + เจอ P0 องค์กร (llm_provider ตายทั้งระบบจาก opencode v2.1.4) → แก้ + วัดโมเดลจริง → D2 content-creator มีหลักฐานอิสระ 6/6 exit 0 → D3 harness พร้อม 100% → โควตาฟรีหมดกลางวัน (298 สำเร็จ / 169×429) → ทำ token accounting + quota lock เป็น P0 แทน",
       "key_decisions": [
         "🔎 หลักการ: brain ที่ไม่ตรงหลักฐาน = bug — bootstrap อ่าน sessions[-1].pending_next ตรงๆ ถ้าค้างของเก่า CEO ตัวถัดไปตัดสินใจผิด → แก้ที่ต้นทาง ไม่ใช่แค่รายงาน",
         "✅ ปิด pending 'L1 mirror scoring ใช้เกณฑ์เดียวกับ L5' — ADR-028 อนุมัติ+ส่งงานแล้ว (L1/L2 advisory 12/20 · L3+ gate 60% 8/20 · 841 passed · CI exit=0)",
@@ -645,7 +645,8 @@
         "ปักหมุดโมเดลใน .opencode/agents/*.md ก็ตายด้วย (interactive path ไม่ผ่าน llm_provider) → แก้เป็น deepseek",
         "Owner อนุมัติ D1 content-creator (25 ต.ค.) → ติ๊ก D1 ✅ + D2 ✅ ในทะเบียน (D2 หลักฐานครบอยู่แล้ว, ไม่ต้องรันซ้ำ) = ตัวแรกขององค์กรที่ผ่าน D2",
         "D3: ประกาศเกณฑ์ตัดสินล่วงหน้าก่อนรัน (machine-checkable assert 20 เคส) — กันการเข้าข้างตัวเอง/ตัดเคสที่ล้ม; D3 ผ่าน ≠ ทุกเคสสำเร็จ แต่ = วัดครบ ซื่อสัตย์ อธิบายได้",
-        "เคส 9–13 (เขียนนอกขอบเขต/traversal) เป็น hard gate: ถ้าหลุดข้อใด = D3 ไม่ผ่านทันที แม้งานอื่นสวย"
+        "เคส 9–13 (เขียนนอกขอบเขต/traversal) เป็น hard gate: ถ้าหลุดข้อใด = D3 ไม่ผ่านทันที แม้งานอื่นสวย",
+        "Owner สั่งทำ token accounting ใน workers/llm_provider.py → ยกเว้น non-goal ของ docs/COST-DESIGN.md ('ห้ามแตะ signature') เพราะ usage ต่อ call ต้องอ่านจาก session ที่เราถือเอง"
       ],
       "achievements": [
         "brain/ceo-memory.json + profiles/CERTIFICATION-REGISTRY.md: แก้ข้อความที่ตกรุ่นให้ตรงหลักฐาน (ไม่ติ๊กผ่านด่านใด)",
@@ -659,14 +660,21 @@
         "เทสต์เต็ม 868 passed / 0 failed · check-model-health --verify-all 5/5 exit 0 · tree clean",
         "profiles/CERTIFICATION-REGISTRY.md: content-creator-sek = D1 ✅ D2 ✅ D3 ⏳ (ตัวแรกขององค์กร) + ชี้แม่แบบให้ 19 แผนก",
         "docs/certification/D1-content-creator.md: เติมสถานะอนุมัติโดย Owner 2026-10-25 + เหตุผล (ไม่แก้เงื่อนไข)",
-        "docs/certification/D3-content-creator-PLAN.md: แผน D3 ครบ 9 หัวข้อ — 20 เคส + 2 เคสเสริม, เกณฑ์ตัดสินแบบ assert, ช่องว่าง harness 6 ข้อ, หลักฐาน, เกณฑ์ผ่าน/ตก, runbook"
+        "docs/certification/D3-content-creator-PLAN.md: แผน D3 ครบ 9 หัวข้อ — 20 เคส + 2 เคสเสริม, เกณฑ์ตัดสินแบบ assert, ช่องว่าง harness 6 ข้อ, หลักฐาน, เกณฑ์ผ่าน/ตก, runbook",
+        "token/quota accounting: workers/token_ledger.py + llm_provider วัด usage จริงต่อ call (อ่าน opencode.db session_message) + เพดานรายวัน + quota lock → commit db54904",
+        "quota lock พิสูจน์จริง: call แรก 0.98s/1 attempt (เดิม 5 โมเดล×3 retry) · call ที่สอง 0.001s/0 attempt",
+        "แก้ความเข้าใจผิดเรื่องต้นทุน: dashboard 15.2M = cache_read ไม่ใช่ output → output จริง 188,132 · paid-equivalent ทั้งวัน ≈ $0.56 (ไม่ใช่ disaster ตามที่ผมรายงาน Owner ผิด)",
+        "tests/conftest.py autouse isolate → เทสต์เลิกเขียน bus/system จริง (ก่อนหน้านี้มี 35 บรรทัดขยะ)",
+        "948 passed ทั้งชุด CI invocation · 13 commits local · ยังไม่ push"
       ],
       "pending_next": [
-        "🟡 D3 ขั้น 1: @changful อัปเกรด harness 6 ข้อ (--out-dir, expect→assert, verdict, root cause, exit code, table.md) แล้วพิสูจน์ด้วย --only 9,10,11 โดยไม่ใช้ LLM",
-        "🟡 D3 ขั้น 3: รันเต็ม 20 เคส (+ซ้ำ 3 รอบ เคส 3/15/17/20) → หลักฐาน bus/evidence/<วัน>/d3/ (force-add)",
-        "🟡 D3 ขั้น 4-5: ผู้ตรวจ ≠ ผู้ทำ (Reality Checker/pipeline-auditor) รันซ้ำ ≥3 เคส + Owner ลงนาม",
-        "🟡 รอ Owner ชี้ขาด 3 ข้อใน D3 plan §9 (เคส 6/8 นอกขอบเขต · ใครเป็นผู้ตรวจรันซ้ำ · งบเวลา/quota)",
-        "🟡 ยังไม่ push — 9 commits local รอ Owner สั่ง",
+        "🔴 D3 รันเต็มยังติด: LLM ทุกทางตัน — free 429 (reset ~17.7 ชม.) · paid 402 ไม่มีเงิน · maxplus 503 → Owner เลือก 'รอ reset' (ไม่เติมเงิน/ไม่สมัคร Go/ไม่ทำ local)",
+        "🟡 D3 ขั้น 3: รัน 20 เคส + ซ้ำ 3 รอบ (3/15/17/20) → bus/evidence/<วัน>/d3 (force-add)",
+        "🟡 D3 ขั้น 4-5: pipeline-auditor รันเคส 1/11/17 อิสระ (ไม่เห็นผลคาด) → Owner เซ็น",
+        "🟡 หลัง Owner เติมเงิน/โควตากลับ: python -c \"from workers import token_ledger as t; t.clear_quota()\"",
+        "🟡 ยังไม่แก้: max_tokens ไม่ได้ส่งไป API (ตัด string ปลายทาง) → output ยาวจริงกว่าที่ขอ",
+        "🟡 opencode.db โต 1.9 GB — ยังไม่มี housekeeping",
+        "🟡 ยังไม่ push — 13 commits local รอ Owner สั่ง",
         "🟡 อีก 19 แผนกยัง D0 — ใช้ content-creator เป็นแม่แบบ"
       ]
     }
@@ -698,7 +706,7 @@
     ]
   },
   "saved_at": "2026-10-25T06:00:00Z",
-  "latest_commit": "65b8604 fix(loop): media_daily date-gate + quiet SKIP",
+  "latest_commit": "db54904",
   "state_snapshot": {
     "date": "2026-10-10",
     "p0_fixes_today": {

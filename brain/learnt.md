@@ -297,3 +297,33 @@
 2. **เทสต์ที่ green ทั้งที่ของจริงพัง = เทสต์ที่พิสูจน์ว่า mock ทำงาน** — ต้องมี 1 smoke test ที่ยิงของจริง (ตอนนี้คือ `check-model-health.py`)
 3. **หลักฐานเก่า ≠ หลักฐานของโค้ดวันนี้** — evidence D2 วันที่ 23 ต.ค. ผ่าน 6/6 แต่ mtime ของโค้ดใหม่กว่า evidence 26 วินาที → ต้องรันซ้ำก่อนอ้างว่าผ่าน
 4. **verifier เองก็มีบั๊ก happy-path-only** — `Path("")` = `.` → `IsADirectoryError` ตอน agent fail → script ตายแทนที่จะรายงาน verdict (แก้ + เพิ่มเทสต์ failure path)
+
+## Session 2026-10-25 (ต่อ) — โควตาหมด = บทเรียนเรื่อง "วัดก่อนเชื่อ"
+
+### 🚨 What broke
+- โควตาฟรีหมดกลางวัน: 298 requests สำเร็จ → **169 × 429** แล้วอีก **186 requests ถูกยิงเข้ากำแพง**
+- ไม่มีใครรู้จน Owner ส่ง dashboard มาให้ → ระบบ "ตาบอดเรื่องเงิน" มาก่อนจะ "ประหยัดเงิน"
+
+### 💡 Insights (เรียงตามความเจ็บ)
+1. **ผมอ่านตัวเลขของ Owner ผิด แล้วเอาไปสร้างทฤษฎี** — dashboard คอลัมน์ที่ 3 (`15.2M`) คือ
+   **cache_read** ไม่ใช่ output · output จริง 188,132 · paid-equivalent ทั้งวัน **≈ $0.56**
+   → ทฤษฎี "56k output/คำขอ" ที่ผมรายงานไปนั้น **ผิด** · บทเรียน: ก่อนอธิบายตัวเลข ให้หาตัวเลขดิบ
+   (console export / DB) มาหารด้วยตัวเอง ไม่ใช่เดาจากภาพหน้าจอ
+2. **cache_read พุ่งเพราะ agent อ่านบริบทซ้ำทุก step** — 15.4M cache vs 195k output
+   → ตัวเลข token ก้อนใหญ่สุดไม่ใช่ตัวที่แพงสุด ต้องดู `cost` และ `output`
+3. **ของเสียที่แพงที่สุดคือ "retry เข้ากำแพง"** — 186 จาก 488 requests (38%) คือความพยายามที่รู้ผลล่วงหน้าอยู่แล้ว
+   → ความจำสั้น ๆ (`quota lock` 1 ไฟล์) เปลี่ยน call ที่ใช้ ~10s เป็น ~1ms
+4. **usage ที่แม่นที่สุดอยู่ในเครื่องเราเอง** — `opencode.db` → `session_message` มี tokens/cost ตรงกับ
+   gateway ที่คิดเงิน · ไม่ต้อง parse stdout, ไม่ต้องรอ console export
+   → แต่ต้อง **ถือ session id เอง** (`--session`) ไม่งั้นแยก call ที่ขนานกัน 3 ตัวไม่ออก
+5. **เทสต์ที่แตะ runtime state จริง = เทสต์ที่ทำให้เทสต์อื่นล้มแบบลึกลับ** — เทสต์เขียน ledger จริง 35 บรรทัด
+   และ quota lock ที่ค้างจะทำให้ `think()` คืนทันที → `tests/conftest.py` autouse isolate คือคำตอบ
+6. **เพดานต้องมีทั้งแบบ "กันภายนอก" และ "กันตัวเอง"** — 429 lock กันกำแพงของเจ้า (ภายนอก)
+   เพดานรายวันกัน loop ของเราเอง (ภายใน) — ขาดอย่างใดอย่างหนึ่งไม่พอ
+
+### 🔧 ที่ทำแล้ว (commit db54904)
+- `workers/token_ledger.py`: อ่าน usage จาก DB / ledger JSONL / เพดานรายวัน / quota lock / แกะ `retryAfterMs`
+- `workers/llm_provider.py`: pre-flight (lock + งบ) → ทุก attempt มี session id → บันทึก usage → 429/402 ล็อกหยุด chain
+- `scripts/token-report.py`: "วันนี้ทั้ง org กินเท่าไร ใครกิน" (อ่าน DB รวม desktop ไม่ใช่แค่ ledger)
+- `docs/TOKEN-ACCOUNTING.md`: เอกสารถาวร + ตารางอ่าน dashboard ให้ถูก
+- เทสต์ 42 + 10 ใหม่ · 948 passed · หลักฐาน `bus/evidence/2026-10-25/token-accounting/`
