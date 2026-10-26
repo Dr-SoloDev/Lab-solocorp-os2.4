@@ -4,6 +4,28 @@
 
 ---
 
+## Department MCP servers (Content Creator pilot)
+
+นอกจาก `solocorp` core server แล้ว โปรเจกต์นี้มี server แบบเสียบแยกตามแผนก:
+
+- `central-bus` — storage primitives สำหรับ payload ของแผนก
+- `content-creator` — หัวหน้าเสกและ workflow ของ Content Creator
+
+OpenCode ลงทะเบียนไว้ใน `opencode.json` แล้ว ส่วน Codex ลงทะเบียนไว้ใน
+`.codex/config.toml` แล้ว คำสั่งที่ใช้จาก repo นี้คือ:
+
+```bash
+.venv/bin/python3 -m solocorp_mcp.bus_mcp
+.venv/bin/python3 -m solocorp_mcp.departments.content_mcp
+```
+
+ต่อเฉพาะ `content-creator` ได้เมื่อใช้งานงานคอนเทนต์อย่างเดียว ตัว server
+ใช้ shared bus store ภายในตัวเอง จึงไม่จำเป็นต้องเปิด Central Bus MCP อีกตัว
+เพื่อสร้าง draft; ต่อ `central-bus` เพิ่มเมื่อ client ต้องการอ่าน/ตรวจ payload
+โดยตรง
+
+---
+
 ## 🔌 OpenCode
 
 Add to `opencode.json`:
@@ -75,14 +97,25 @@ Also start runtime: `bash scripts/start-services.sh`
 
 ## 🔌 Codex CLI
 
-Add to `.codex/config.toml`:
+Add to `.codex/config.toml` (the repo already includes these entries):
 
 ```toml
-[mcp.solocorp]
-command = "python3"
-args = ["-m", "solocorp_mcp.server"]
+[mcp_servers.central_bus]
+command = "/path/to/Lab-solocorp-os2.4/.venv/bin/python3"
+args = ["-m", "solocorp_mcp.bus_mcp"]
 cwd = "/path/to/Lab-solocorp-os2.4"
+enabled = true
+
+[mcp_servers.content_creator]
+command = "/path/to/Lab-solocorp-os2.4/.venv/bin/python3"
+args = ["-m", "solocorp_mcp.departments.content_mcp"]
+cwd = "/path/to/Lab-solocorp-os2.4"
+enabled = true
 ```
+
+Codex CLI รุ่นใหม่จัดการรายการที่ใช้งานจริงใน `~/.codex/config.toml` ให้ใช้
+คำสั่ง `codex mcp add` หรือค่าที่แสดงใน `codex mcp list --json` เป็นแหล่งตรวจสอบ
+สุดท้าย
 
 ---
 

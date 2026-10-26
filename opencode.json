@@ -155,6 +155,20 @@
         "SOLOCORP_API_KEY": "{env:SOLOCORP_API_KEY}"
       }
     },
+    "central-bus": {
+      "type": "local",
+      "command": [".venv/bin/python3", "-m", "solocorp_mcp.bus_mcp"],
+      "cwd": ".",
+      "enabled": true,
+      "timeout": 60000
+    },
+    "content-creator": {
+      "type": "local",
+      "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.content_mcp"],
+      "cwd": ".",
+      "enabled": true,
+      "timeout": 60000
+    },
     "github": {
       "type": "local",
       "command": ["gh", "mcp"],

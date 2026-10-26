@@ -8,6 +8,18 @@ An **organizational OS for AI agents**, not a normal codebase. The "product" is 
 @rules/INDEX.md   ← 30-sec behavior map (6 files: receive, work, session, safety, env, certification)
 ```
 
+## Resume checkpoint — MCP Content Creator pilot (2026-10-26)
+
+- ทำงานที่ repo หลัก `/home/drsolodev/projects/Lab-solocorp-os2.4`; ไม่ใช้ FreeBuff ในแผนนี้
+- เป้าหมาย: MCP แยกตามแผนก ให้ OpenCode V2 และ Codex ต่อใช้ได้; pilot แรกคือ Content Creator
+- เพิ่ม `solocorp_mcp.bus_mcp`, shared storage `bus_store.py` และ `solocorp_mcp.departments.content_mcp` พร้อม tools สร้าง draft/script/visual prompt และตรวจ Publish Gate
+- OpenCode เห็น `central-bus` และ `content-creator` connected; Codex CLI ใช้ global `~/.codex/config.toml` และแสดง server ทั้งคู่ enabled
+- ตรวจแล้ว: stdio handshake ผ่าน, full suite `959 passed`, Auto-QA PASS (75.4%). Content tools ตอนนี้สร้างโครงร่าง/scaffold; การสร้างเนื้อหาเต็มด้วย LLM ยังเป็นงานถัดไป
+- แผนและผลตรวจอยู่ `docs/plans/MCP-DEPARTMENT-SERVERS-CONTENT-PILOT.md`
+- งานปัจจุบันยังไม่ commit: ตรวจ `git status`/`git diff` ก่อนแก้ต่อ; อย่าทับไฟล์ที่เปลี่ยนแล้ว
+- ขั้นต่อไป: เปิด MCP tools จาก Codex/OpenCode แล้วทดสอบ workflow Content Creator จริง จากนั้นต่อ LLM generation และตรวจ Publish Gate ให้ครบ
+- Owner ขอประหยัดเครดิต/token: อ่าน checkpoint กับเอกสารแผนก่อน ไม่ต้องสรุปบทสนทนาเดิมใหม่
+
 Default agent is `ceo-turbo` (strategy + routing + final call). Owner (Dr.solodev) decides L5 only.
 
 ## Hierarchy + escalation (do-not-break)

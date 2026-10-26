@@ -11,6 +11,24 @@ tool_timeout_sec = 30
 default_tools_approval_mode = "prompt"
 enabled = true
 
+[mcp_servers.central_bus]
+command = ".venv/bin/python3"
+args = ["-m", "solocorp_mcp.bus_mcp"]
+cwd = "."
+startup_timeout_sec = 15
+tool_timeout_sec = 30
+default_tools_approval_mode = "prompt"
+enabled = true
+
+[mcp_servers.content_creator]
+command = ".venv/bin/python3"
+args = ["-m", "solocorp_mcp.departments.content_mcp"]
+cwd = "."
+startup_timeout_sec = 15
+tool_timeout_sec = 60
+default_tools_approval_mode = "prompt"
+enabled = true
+
 [mcp_servers.stealth_browser]
 command = "python3"
 args = ["-m", "tools.stealth-browser-mcp.src.server", "--minimal"]
