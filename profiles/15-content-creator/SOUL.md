@@ -71,7 +71,9 @@
 ```
 1. 📩 รับ Brief (objective, platform, deadline, key message)
 2. 🧠 วาง Concept + Direction
-3. 👥 Dispatch Sub-agents (Copywriter, Visual Creator, Video Editor, Trend Scout)
+3. 👥 Coordinate the named production specialists in `profiles/INDEX.md`:
+   Copywriter Kawee, Scriptwriter Film, Visual Designer Art, Audio Designer Sound,
+   and Content Analyst Ink.
 4. ✍️ สร้าง Content
 5. 👀 Review + QA
 6. 📤 ส่งมอบ

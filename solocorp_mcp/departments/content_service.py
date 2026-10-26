@@ -3,19 +3,26 @@
 from __future__ import annotations
 
 import os
+import fcntl
+import hashlib
+import json
 import re
 import unicodedata
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 from dotenv import load_dotenv
 from solocorp_mcp.bus_store import (
+    MAX_PAYLOAD_BYTES,
     as_json,
     fetch_from_bus,
+    list_department_bus,
     submit_bytes_to_bus,
     submit_to_bus,
 )
+from solocorp_mcp import bus_store
 from solocorp_skills.redact import gate_report_md, publish_gate, redact
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -26,11 +33,39 @@ CONTENT_TYPES = {"article", "social_post", "newsletter"}
 VOICEOVER_MODELS = {"eleven_v4"}
 MAX_VOICEOVER_CHARACTERS = 2_000
 SPECIALISTS = (
-    {"id": "copywriter", "responsibility": "โครงร่าง คอปปี้ และ hook"},
-    {"id": "visual-creator", "responsibility": "แนวทางภาพและ visual direction"},
-    {"id": "video-editor", "responsibility": "โครงสคริปต์และจังหวะวิดีโอ"},
-    {"id": "trend-scout", "responsibility": "บริบทแพลตฟอร์มและแนวโน้ม"},
+    {
+        "id": "copywriter-kawee",
+        "name": "กวี",
+        "role": "Copywriter & Narrative Architect",
+    },
+    {
+        "id": "scriptwriter-film",
+        "name": "ฟิล์ม",
+        "role": "Video Script & Storyboard Director",
+    },
+    {
+        "id": "visual-designer-art",
+        "name": "อาร์ต",
+        "role": "Visual Concept & Prompt Architect",
+    },
+    {
+        "id": "audio-designer-sound",
+        "name": "ซาวด์",
+        "role": "Sound Design, SFX & Lip-Sync Architect",
+    },
+    {
+        "id": "content-analyst-ink",
+        "name": "อิงค์",
+        "role": "Content Strategist & Publish Gate Manager",
+    },
 )
+LIFECYCLE_STATES = {
+    "scaffold",
+    "llm_generated",
+    "human_edited",
+    "review_required",
+    "approved",
+}
 
 
 class ContentServiceError(ValueError):
@@ -59,6 +94,230 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _campaign_identity(campaign_id: str) -> tuple[str, str]:
+    original = _required(campaign_id, "campaign_id")
+    normalized = slugify(original)
+    if len(normalized) > 42:
+        suffix = hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:8]
+        normalized = f"{normalized[:33]}-{suffix}"
+    return normalized, original
+
+
+@contextmanager
+def _campaign_lock(campaign_key: str) -> Iterator[None]:
+    directory = bus_store.BUS_ROOT / DEPARTMENT
+    directory.mkdir(parents=True, exist_ok=True)
+    lock_path = directory / f".{campaign_key}.lock"
+    with lock_path.open("a+b") as handle:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+def _load_campaign(campaign_key: str) -> dict[str, Any] | None:
+    prefix = f"campaign-{campaign_key}-manifest_"
+    snapshots: list[dict[str, Any]] = []
+    for item in list_department_bus(DEPARTMENT)["files"]:
+        filename = item["filename"]
+        if not filename.startswith(prefix) or not filename.endswith(".json"):
+            continue
+        raw = fetch_from_bus(DEPARTMENT, filename)["content"]
+        try:
+            snapshot = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise ContentServiceError("campaign manifest is not valid JSON") from exc
+        if snapshot.get("campaign_key") == campaign_key:
+            snapshots.append(snapshot)
+    if not snapshots:
+        return None
+    return max(
+        snapshots,
+        key=lambda item: (int(item.get("revision", 0)), item.get("updated_at", "")),
+    )
+
+
+def _save_campaign(campaign: dict[str, Any]) -> dict[str, Any]:
+    campaign["revision"] = int(campaign.get("revision", 0)) + 1
+    campaign["updated_at"] = _now()
+    task_id = f"campaign-{campaign['campaign_key']}-manifest"
+    result = submit_to_bus(
+        DEPARTMENT,
+        task_id[:64],
+        json.dumps(campaign, ensure_ascii=False, sort_keys=True, indent=2),
+        "json",
+    )
+    return {"filename": result["filename"], "path": result["path"]}
+
+
+def _validated_source_references(
+    source_references: list[str] | None,
+) -> list[str] | None:
+    if source_references is None:
+        return None
+    if not isinstance(source_references, list) or len(source_references) > 30:
+        raise ContentServiceError("source_references must be a list of at most 30 strings")
+    references: list[str] = []
+    for reference in source_references:
+        if not isinstance(reference, str):
+            raise ContentServiceError("each source reference must be text")
+        value = reference.strip()
+        if not value or len(value) > 500:
+            raise ContentServiceError("source references must contain 1-500 characters")
+        if value not in references:
+            references.append(value)
+    return references
+
+
+def _merge_references(*groups: list[str]) -> list[str]:
+    merged: list[str] = []
+    for group in groups:
+        for reference in group:
+            if reference not in merged:
+                merged.append(reference)
+    return merged
+
+
+def _asset_task_id(campaign_id: str | None, artifact_type: str, label: str) -> str:
+    slug = slugify(label)
+    if not campaign_id:
+        return slug
+    campaign_key, _ = _campaign_identity(campaign_id)
+    prefix = f"campaign-{campaign_key}-{artifact_type}-"
+    return f"{prefix}{slug[: max(1, 64 - len(prefix))]}"[:64].rstrip("-")
+
+
+def _source_reference_section(source_references: list[str] | None) -> str:
+    references = source_references or []
+    if references:
+        lines = ["## Source References", ""]
+        lines.extend(f"- {reference}" for reference in references)
+        lines.extend(["", "> User-supplied references; independently unverified."])
+    else:
+        lines = [
+            "## Source References",
+            "",
+            "- None supplied; factual claims remain unverified.",
+        ]
+    return "\n".join(lines) + "\n"
+
+
+def _store_assets(
+    campaign_id: str | None,
+    assets: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Write artifact payloads and append one versioned campaign snapshot."""
+
+    if not campaign_id:
+        results = []
+        for asset in assets:
+            if asset["lifecycle_state"] not in LIFECYCLE_STATES:
+                raise ContentServiceError("unsupported artifact lifecycle state")
+            writer = submit_bytes_to_bus if asset.get("binary") else submit_to_bus
+            result = writer(DEPARTMENT, asset["task_id"], asset["content"], asset["extension"])
+            results.append(
+                {
+                    **result,
+                    "status": "created",
+                    "type": asset["type"],
+                    "lifecycle_state": asset["lifecycle_state"],
+                    "operation_status": "created",
+                    "source_references": asset.get("source_references") or [],
+                    "dependencies": asset.get("dependencies", []),
+                    "human_review_required": True,
+                }
+            )
+        return results
+
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    with _campaign_lock(campaign_key):
+        campaign = _load_campaign(campaign_key)
+        if campaign is None:
+            campaign = {
+                "schema_version": 1,
+                "campaign_id": canonical_id,
+                "campaign_key": campaign_key,
+                "version_number": 0,
+                "version": "v0",
+                "revision": 0,
+                "status": "scaffold",
+                "created_at": _now(),
+                "updated_at": _now(),
+                "source_references": [],
+                "assets": [],
+                "review": None,
+                "approval_records": [],
+            }
+        elif campaign.get("campaign_id") != canonical_id:
+            raise ContentServiceError("campaign_id conflicts with an existing campaign key")
+
+        version_number = int(campaign.get("version_number", 0)) + 1
+        version = f"v{version_number}"
+        inherited = campaign.get("source_references", [])
+        stored: list[dict[str, Any]] = []
+        outputs: list[dict[str, Any]] = []
+        for asset in assets:
+            if asset["lifecycle_state"] not in LIFECYCLE_STATES:
+                raise ContentServiceError("unsupported artifact lifecycle state")
+            supplied = asset.get("source_references")
+            references = _merge_references(
+                inherited,
+                supplied if supplied is not None else [],
+            )
+            writer = submit_bytes_to_bus if asset.get("binary") else submit_to_bus
+            result = writer(DEPARTMENT, asset["task_id"], asset["content"], asset["extension"])
+            record = {
+                "filename": result["filename"],
+                "path": result["path"],
+                "type": asset["type"],
+                "version": version,
+                "status": asset["lifecycle_state"],
+                "source_references": references,
+                "source_reference_status": (
+                    "user_supplied_unverified" if references else "none_provided"
+                ),
+                "media_rights_status": asset.get(
+                    "media_rights_status", "human_confirmation_required"
+                ),
+                "dependencies": asset.get("dependencies", []),
+                "created_at": result["created_at"],
+                **asset.get("metadata", {}),
+            }
+            stored.append(record)
+            outputs.append(
+                {
+                    **result,
+                    "campaign_id": canonical_id,
+                    "version": version,
+                    "type": asset["type"],
+                    "status": asset["lifecycle_state"],
+                    "lifecycle_state": asset["lifecycle_state"],
+                    "operation_status": "created",
+                    "source_references": references,
+                    "source_reference_status": record["source_reference_status"],
+                    "dependencies": record["dependencies"],
+                    "human_review_required": True,
+                    **asset.get("metadata", {}),
+                }
+            )
+
+        campaign["version_number"] = version_number
+        campaign["version"] = version
+        campaign["status"] = assets[-1]["lifecycle_state"]
+        campaign["source_references"] = _merge_references(
+            inherited,
+            *(asset.get("source_references") or [] for asset in assets),
+        )
+        campaign["assets"].extend(stored)
+        campaign["review"] = None
+        campaign["approved_version"] = None
+        manifest_file = _save_campaign(campaign)
+        for output in outputs:
+            output["campaign_manifest"] = manifest_file
+        return outputs
+
+
 def department_info() -> dict[str, Any]:
     return {
         "status": "ok",
@@ -76,7 +335,13 @@ def department_info() -> dict[str, Any]:
 
 
 def _manifest(result: dict[str, Any], **extra: Any) -> dict[str, Any]:
-    return {**result, "status": "created", "department": "content-creator", **extra}
+    return {
+        **result,
+        "status": result.get("status", "created"),
+        "department": "content-creator",
+        "lifecycle_state": result.get("lifecycle_state", "scaffold"),
+        **extra,
+    }
 
 
 def create_content_draft(
@@ -84,10 +349,13 @@ def create_content_draft(
     topic: str,
     target_audience: str,
     content_type: str = "article",
+    campaign_id: str | None = None,
+    source_references: list[str] | None = None,
 ) -> dict[str, Any]:
     title = _required(title, "title")
     topic = _required(topic, "topic")
     audience = _required(target_audience, "target_audience")
+    references = _validated_source_references(source_references)
     kind = str(content_type or "article").strip().lower()
     if kind not in CONTENT_TYPES:
         raise ContentServiceError(
@@ -126,16 +394,40 @@ def create_content_draft(
         f"ชิ้นงานนี้มีเป้าหมายเพื่อช่วย **{audience}** เข้าใจเรื่อง **{topic}** "
         "ด้วยภาษาที่ชัดเจนและเหมาะกับแพลตฟอร์ม ก่อนเผยแพร่ต้องผ่าน Publish Gate\n\n"
         f"{sections}\n"
+        f"\n{_source_reference_section(references)}"
     )
-    result = submit_to_bus(DEPARTMENT, f"{slugify(title)}_draft", content, "md")
-    return _manifest(result, title=title, content_type=kind, human_review_required=True)
+    result = _store_assets(
+        campaign_id,
+        [
+            {
+                "task_id": _asset_task_id(campaign_id, "draft", title),
+                "content": content,
+                "extension": "md",
+                "type": "draft",
+                "lifecycle_state": "scaffold",
+                "source_references": references,
+            }
+        ],
+    )[0]
+    return {
+        **result,
+        "department": "content-creator",
+        "title": title,
+        "content_type": kind,
+        "lifecycle_state": "scaffold",
+    }
 
 
 def create_video_script(
-    title: str, core_message: str, duration_seconds: int = 60
+    title: str,
+    core_message: str,
+    duration_seconds: int = 60,
+    campaign_id: str | None = None,
+    source_references: list[str] | None = None,
 ) -> dict[str, Any]:
     title = _required(title, "title")
     message = _required(core_message, "core_message")
+    references = _validated_source_references(source_references)
     if isinstance(duration_seconds, bool) or not isinstance(duration_seconds, int):
         raise ContentServiceError("duration_seconds must be an integer")
     if duration_seconds < 15 or duration_seconds > 3_600:
@@ -158,16 +450,40 @@ def create_video_script(
         "- ตรวจสิทธิ์ของภาพ เพลง ฟอนต์ และ footage ใน origin log\n"
         "- ใส่ซับไตเติลที่อ่านได้บนมือถือ\n"
         "- ห้ามเผยแพร่จนกว่ามนุษย์จะตรวจ Publish Gate\n"
+        f"\n{_source_reference_section(references)}"
     )
-    result = submit_to_bus(DEPARTMENT, f"{slugify(title)}_script", script, "md")
-    return _manifest(result, title=title, duration_seconds=duration_seconds, human_review_required=True)
+    result = _store_assets(
+        campaign_id,
+        [
+            {
+                "task_id": _asset_task_id(campaign_id, "script", title),
+                "content": script,
+                "extension": "md",
+                "type": "video_script",
+                "lifecycle_state": "scaffold",
+                "source_references": references,
+            }
+        ],
+    )[0]
+    return {
+        **result,
+        "department": "content-creator",
+        "title": title,
+        "duration_seconds": duration_seconds,
+        "lifecycle_state": "scaffold",
+    }
 
 
 def design_visual_prompt(
-    theme: str, platform: str, aspect_ratio: str = "16:9"
+    theme: str,
+    platform: str,
+    aspect_ratio: str = "16:9",
+    campaign_id: str | None = None,
+    source_references: list[str] | None = None,
 ) -> dict[str, Any]:
     theme = _required(theme, "theme")
     platform = _required(platform, "platform")
+    references = _validated_source_references(source_references)
     if not re.fullmatch(r"\d{1,4}:\d{1,4}", str(aspect_ratio or "")):
         raise ContentServiceError("aspect_ratio must use the form WIDTH:HEIGHT, e.g. 16:9")
 
@@ -185,11 +501,229 @@ def design_visual_prompt(
         "no identifiable private information.\n\n"
         "## Asset Origin\n\n"
         "Record the generator, source assets, license, and human approval in origin.md before publish.\n"
+        f"\n{_source_reference_section(references)}"
     )
-    result = submit_to_bus(DEPARTMENT, f"{slugify(theme)}_visual_prompt", prompt, "md")
-    return _manifest(
-        result, theme=theme, platform=platform, aspect_ratio=aspect_ratio, human_review_required=True
+    result = _store_assets(
+        campaign_id,
+        [
+            {
+                "task_id": _asset_task_id(campaign_id, "visual", theme),
+                "content": prompt,
+                "extension": "md",
+                "type": "visual_prompt",
+                "lifecycle_state": "scaffold",
+                "source_references": references,
+            }
+        ],
+    )[0]
+    return {
+        **result,
+        "department": "content-creator",
+        "theme": theme,
+        "platform": platform,
+        "aspect_ratio": aspect_ratio,
+        "lifecycle_state": "scaffold",
+    }
+
+
+def _campaign_script(campaign_id: str, script_filename: str) -> tuple[dict[str, Any], str]:
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    campaign = _load_campaign(campaign_key)
+    if campaign is None or campaign.get("campaign_id") != canonical_id:
+        raise ContentServiceError(f"campaign not found: {canonical_id}")
+    filename = str(script_filename or "").strip()
+    script_asset = next(
+        (
+            asset
+            for asset in reversed(campaign.get("assets", []))
+            if asset.get("filename") == filename
+            and asset.get("type") == "video_script"
+        ),
+        None,
     )
+    if script_asset is None:
+        raise ContentServiceError(
+            "script_filename must identify a video script in this campaign"
+        )
+    script = fetch_from_bus(DEPARTMENT, filename)["content"]
+    return script_asset, script
+
+
+def design_audio_experience(
+    campaign_id: str,
+    script_filename: str,
+) -> dict[str, Any]:
+    """Create a rule-based audio cue sheet from a stored campaign script."""
+
+    campaign_id = _required(campaign_id, "campaign_id")
+    script_filename = _required(script_filename, "script_filename")
+    script_asset, script = _campaign_script(campaign_id, script_filename)
+    duration_match = re.search(r"\*\*Duration:\*\*\s*(\d+)\s*seconds", script)
+    duration_seconds = int(duration_match.group(1)) if duration_match else None
+    scenes: list[tuple[str, str, str]] = []
+    for line in script.splitlines():
+        if not line.strip().startswith("|"):
+            continue
+        columns = [column.strip() for column in line.strip().strip("|").split("|")]
+        if (
+            len(columns) >= 3
+            and re.match(r"^\d+\s*(?:[–-]\s*\d+)?\s*s$", columns[0], re.I)
+        ):
+            scenes.append((columns[0], columns[1], columns[2]))
+    if not scenes:
+        raise ContentServiceError("video script has no timestamped scenes to analyze")
+
+    cue_rows = [
+        "| Timestamp | Scene | Voice / emphasis | BGM and SFX proposal |",
+        "|:--|:--|:--|:--|",
+    ]
+    for timestamp, scene, voiceover in scenes:
+        cue_rows.append(
+            f"| {timestamp} | {scene} | Clear, conversational delivery; "
+            f"pause briefly before the key point. Source line: {voiceover} | "
+            "Keep a restrained instrumental bed; use a soft transition cue only if needed. |"
+        )
+    content = (
+        f"# Audio Cue Sheet — {campaign_id}\n\n"
+        f"> **Source script:** {script_filename}\n"
+        f"> **Total duration:** {duration_seconds if duration_seconds is not None else 'confirm with editor'} seconds\n"
+        "> **Status:** proposal; human confirmation required\n\n"
+        "## Mix Direction\n\n"
+        "- **BGM mood:** restrained, focused, warm instrumental; confirm against the campaign brief.\n"
+        "- **Voice emotion:** natural and clear; avoid overstating claims.\n"
+        "- **SFX:** minimal transition accents only; no unlicensed samples.\n"
+        "- **Pause / emphasis:** leave a short pause before each key message; tune to the final performance.\n\n"
+        "## Cues\n\n"
+        + "\n".join(cue_rows)
+        + "\n\n## Rights and Consent\n\n"
+        "Confirm BGM/SFX license and voice-clone consent before any provider use or publication.\n"
+    )
+    result = _store_assets(
+        campaign_id,
+        [
+            {
+                "task_id": _asset_task_id(campaign_id, "audio-cue", script_filename),
+                "content": content,
+                "extension": "md",
+                "type": "audio_cue_sheet",
+                "lifecycle_state": "scaffold",
+                "source_references": script_asset.get("source_references"),
+                "dependencies": [script_filename],
+            }
+        ],
+    )[0]
+    return {**result, "lifecycle_state": "scaffold", "duration_seconds": duration_seconds}
+
+
+def generate_voice_lipsync_prompt(
+    campaign_id: str,
+    script_filename: str,
+    voice_profile: str,
+) -> dict[str, Any]:
+    """Store a voice/lip-sync configuration without calling any provider."""
+
+    campaign_id = _required(campaign_id, "campaign_id")
+    script_filename = _required(script_filename, "script_filename")
+    profile = _required(voice_profile, "voice_profile")
+    script_asset, script = _campaign_script(campaign_id, script_filename)
+    script_text = script[:2_000]
+    config = {
+        "campaign_id": campaign_id,
+        "source_script": script_filename,
+        "voice_profile": profile,
+        "voice_direction": "Natural, clear, conversational; preserve the script's wording.",
+        "lip_sync_model": "Hedra",
+        "input_text_source": "stored_video_script",
+        "script_excerpt": script_text[:2_000],
+        "provider_api_called": False,
+        "voice_clone_consent": {
+            "required_before_provider_use": True,
+            "confirmed": False,
+            "confirmation_source": None,
+        },
+        "media_rights": {
+            "music_and_sfx_license_confirmation_required": True,
+            "status": "human_confirmation_required",
+        },
+        "source_references": script_asset.get("source_references", []),
+        "source_reference_status": script_asset.get(
+            "source_reference_status", "none_provided"
+        ),
+        "lifecycle_state": "scaffold",
+    }
+    result = _store_assets(
+        campaign_id,
+        [
+            {
+                "task_id": _asset_task_id(campaign_id, "voice-config", script_filename),
+                "content": json.dumps(config, ensure_ascii=False, sort_keys=True, indent=2),
+                "extension": "json",
+                "type": "voice_lipsync_config",
+                "lifecycle_state": "scaffold",
+                "source_references": script_asset.get("source_references"),
+                "dependencies": [script_filename],
+            }
+        ],
+    )[0]
+    return {
+        **result,
+        "lifecycle_state": "scaffold",
+        "provider_api_called": False,
+        "voice_clone_consent_required": True,
+    }
+
+
+def save_human_edited_artifact(
+    campaign_id: str,
+    source_filename: str,
+    edited_content: str,
+    edit_note: str,
+) -> dict[str, Any]:
+    """Store a human-edited text artifact as a new campaign version."""
+
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    filename = _required(source_filename, "source_filename")
+    note = _required(edit_note, "edit_note")
+    if not isinstance(edited_content, str) or not edited_content.strip():
+        raise ContentServiceError("edited_content is required")
+    if len(edited_content.encode("utf-8")) > MAX_PAYLOAD_BYTES:
+        raise ContentServiceError(f"edited_content exceeds {MAX_PAYLOAD_BYTES} bytes")
+    extension = Path(filename).suffix.lower().lstrip(".")
+    if extension not in {"md", "txt", "json"}:
+        raise ContentServiceError("only text artifacts can be human-edited")
+
+    campaign = _load_campaign(campaign_key)
+    if campaign is None or campaign.get("campaign_id") != canonical_id:
+        raise ContentServiceError(f"campaign not found: {canonical_id}")
+    source_asset = next(
+        (asset for asset in reversed(campaign.get("assets", [])) if asset.get("filename") == filename),
+        None,
+    )
+    if source_asset is None:
+        raise ContentServiceError("source_filename must identify an artifact in this campaign")
+    if source_asset.get("type") in {"voiceover_audio"}:
+        raise ContentServiceError("binary audio artifacts cannot be human-edited as text")
+    _required(source_asset.get("type"), "source artifact type")
+
+    result = _store_assets(
+        canonical_id,
+        [
+            {
+                "task_id": _asset_task_id(canonical_id, "human-edit", filename),
+                "content": edited_content,
+                "extension": extension,
+                "type": source_asset["type"],
+                "lifecycle_state": "human_edited",
+                "source_references": source_asset.get("source_references"),
+                "dependencies": source_asset.get("dependencies", []),
+                "metadata": {
+                    "supersedes": filename,
+                    "edit_note": note,
+                },
+            }
+        ],
+    )[0]
+    return {**result, "lifecycle_state": "human_edited"}
 
 
 def generate_voiceover(
@@ -199,6 +733,7 @@ def generate_voiceover(
     approved: bool = False,
     model_id: str = "eleven_v4",
     language_code: str = "th",
+    campaign_id: str | None = None,
 ) -> dict[str, Any]:
     """Generate one explicitly approved ElevenLabs voiceover draft."""
 
@@ -263,9 +798,6 @@ def generate_voiceover(
         raise ContentServiceError("ElevenLabs returned an empty audio response")
 
     slug = slugify(title)
-    audio_result = submit_bytes_to_bus(
-        DEPARTMENT, f"voiceover-{slug[:50]}", audio, "mp3"
-    )
     transcript = (
         f"# Voiceover Draft — {title}\n\n"
         f"> **Model:** {model}\n"
@@ -277,9 +809,35 @@ def generate_voiceover(
         "## Review\n\n"
         "Human review is required before publication.\n"
     )
-    transcript_result = submit_to_bus(
-        DEPARTMENT, f"voiceover-script-{slug[:43]}", transcript, "md"
+    stored = _store_assets(
+        campaign_id,
+        [
+            {
+                "task_id": (
+                    _asset_task_id(campaign_id, "voiceover", title)
+                    if campaign_id
+                    else f"voiceover-{slug[:50]}"
+                ),
+                "content": audio,
+                "extension": "mp3",
+                "binary": True,
+                "type": "voiceover_audio",
+                "lifecycle_state": "llm_generated",
+            },
+            {
+                "task_id": (
+                    _asset_task_id(campaign_id, "voice-script", title)
+                    if campaign_id
+                    else f"voiceover-script-{slug[:43]}"
+                ),
+                "content": transcript,
+                "extension": "md",
+                "type": "voiceover_transcript",
+                "lifecycle_state": "llm_generated",
+            },
+        ],
     )
+    audio_result, transcript_result = stored
     return _manifest(
         audio_result,
         title=title,
@@ -293,10 +851,183 @@ def generate_voiceover(
         },
         human_review_required=True,
         publish_action="blocked_until_human_approval",
+        lifecycle_state="llm_generated",
     )
 
 
-def review_publish_gate(filename: str) -> dict[str, Any]:
+def _campaign_manifest_summary(campaign: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "campaign_id": campaign["campaign_id"],
+        "version": campaign["version"],
+        "status": campaign["status"],
+        "source_references": campaign.get("source_references", []),
+        "assets": [
+            {
+                "filename": asset["filename"],
+                "version": asset["version"],
+                "type": asset["type"],
+                "status": asset["status"],
+                "source_references": asset.get("source_references", []),
+            }
+            for asset in campaign.get("assets", [])
+        ],
+        "review": campaign.get("review"),
+        "approved_version": campaign.get("approved_version"),
+    }
+
+
+def _campaign_check(
+    check: str,
+    ok: bool,
+    detail: str,
+) -> dict[str, Any]:
+    return {"check": check, "ok": bool(ok), "detail": detail}
+
+
+def _review_campaign(campaign_id: str) -> dict[str, Any]:
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    with _campaign_lock(campaign_key):
+        campaign = _load_campaign(campaign_key)
+        if campaign is None or campaign.get("campaign_id") != canonical_id:
+            raise ContentServiceError(f"campaign not found: {canonical_id}")
+
+        text_assets: list[tuple[dict[str, Any], str]] = []
+        for asset in campaign.get("assets", []):
+            extension = Path(asset["filename"]).suffix.lower()
+            if extension not in {".md", ".txt", ".json"}:
+                continue
+            text_assets.append((asset, fetch_from_bus(DEPARTMENT, asset["filename"])["content"]))
+
+        all_text = "\n\n".join(content for _, content in text_assets)
+        primary_text = "\n\n".join(
+            content
+            for asset, content in text_assets
+            if asset.get("type") in {"draft", "video_script", "voiceover_transcript"}
+        )
+        redaction = redact(all_text)
+        gate = publish_gate(primary_text, redaction=redaction)
+        assets = campaign.get("assets", [])
+        types = {asset.get("type") for asset in assets}
+        latest_script = next(
+            (asset for asset in reversed(assets) if asset.get("type") == "video_script"),
+            None,
+        )
+        audio_cue_is_current = (
+            latest_script is None
+            or any(
+                asset.get("type") == "audio_cue_sheet"
+                and latest_script["filename"] in asset.get("dependencies", [])
+                for asset in assets
+            )
+        )
+        source_references = campaign.get("source_references", [])
+        checks = [
+            _campaign_check(
+                "dependencies: primary content",
+                bool(types & {"draft", "video_script", "voiceover_transcript"}),
+                "พบ draft/script" if types & {"draft", "video_script", "voiceover_transcript"} else "ต้องมี draft หรือ video script",
+            ),
+            _campaign_check(
+                "dependencies: visual prompt",
+                "visual_prompt" in types,
+                "พบ visual prompt" if "visual_prompt" in types else "ยังไม่มี visual prompt",
+            ),
+            _campaign_check(
+                "dependencies: audio cue sheet",
+                "video_script" not in types or audio_cue_is_current,
+                "audio cue อ้างถึงสคริปต์ล่าสุด" if audio_cue_is_current else "ต้องสร้าง audio cue sheet ใหม่จากสคริปต์ล่าสุด",
+            ),
+            _campaign_check(
+                "claims: source references supplied",
+                bool(source_references),
+                f"พบ {len(source_references)} รายการ" if source_references else "ยังไม่มีแหล่งอ้างอิง",
+            ),
+            _campaign_check(
+                "claims: source verification",
+                False,
+                "ระบบยังไม่ได้ตรวจสอบแหล่งอ้างอิงโดยอิสระ; ต้องให้มนุษย์ยืนยัน",
+            ),
+            _campaign_check(
+                "media rights",
+                bool(assets) and all(
+                    asset.get("media_rights_status") == "confirmed" for asset in assets
+                ),
+                "ต้องยืนยันลิขสิทธิ์ภาพ/เพลง/เสียงก่อนเผยแพร่",
+            ),
+            _campaign_check(
+                "redaction",
+                redaction.ok,
+                "ไม่พบรายการค้างตรวจ" if redaction.ok else "พบข้อมูลที่ต้อง redact หรือให้มนุษย์ตรวจ",
+            ),
+        ]
+        checks.extend(
+            {
+                "check": item["rule"],
+                "ok": item["ok"],
+                "detail": item.get("detail", ""),
+            }
+            for item in gate.checks
+            if item["rule"].startswith("R")
+        )
+        gate_passed = all(item["ok"] for item in checks)
+        report_lines = [
+            "# Campaign Publish Gate",
+            "",
+            f"- **Campaign:** {canonical_id}",
+            f"- **Version reviewed:** {campaign['version']}",
+            "- **Decision:** review_required; human approval is still required.",
+            "",
+            "## Checks",
+        ]
+        report_lines.extend(
+            f"- {'PASS' if item['ok'] else 'REVIEW'} — {item['check']}: {item['detail']}"
+            for item in checks
+        )
+        report_lines.extend(["", "## Redaction and R1–R5 detail", gate_report_md(redaction, gate)])
+        report_task = _asset_task_id(canonical_id, "publish-gate", campaign["version"])
+        report_result = submit_to_bus(DEPARTMENT, report_task, "\n".join(report_lines), "md")
+        review = {
+            "status": "review_required",
+            "version": campaign["version"],
+            "gate_passed": gate_passed,
+            "checks": checks,
+            "report": {
+                "filename": report_result["filename"],
+                "path": report_result["path"],
+            },
+            "reviewed_at": _now(),
+        }
+        campaign["status"] = "review_required"
+        campaign["review"] = review
+        manifest_file = _save_campaign(campaign)
+        return {
+            "campaign_id": canonical_id,
+            "version": campaign["version"],
+            "status": "review_required",
+            "gate_passed": gate_passed,
+            "approval_required": True,
+            "checks": checks,
+            "manifest": _campaign_manifest_summary(campaign),
+            "campaign_manifest": manifest_file,
+            "report": review["report"],
+            "publish_action": "blocked_until_human_approval",
+        }
+
+
+def review_publish_gate(
+    filename: str | None = None,
+    campaign_id: str | None = None,
+) -> dict[str, Any]:
+    if campaign_id:
+        campaign_key, canonical_id = _campaign_identity(campaign_id)
+        if _load_campaign(campaign_key) is not None:
+            return _review_campaign(canonical_id)
+    if not filename and campaign_id:
+        # Backward-compatible positional calls used to pass a filename only.
+        filename = campaign_id
+    if not filename:
+        raise ContentServiceError("campaign_id or filename is required")
+
     fetched = fetch_from_bus(DEPARTMENT, filename)
     redaction = redact(fetched["content"])
     gate = publish_gate(fetched["content"], redaction=redaction)
@@ -309,7 +1040,7 @@ def review_publish_gate(filename: str) -> dict[str, Any]:
         "md",
     )
     return {
-        "status": "review_required" if not gate.passed else "ready_for_human_approval",
+        "status": "review_required",
         "department": "content-creator",
         "filename": fetched["filename"],
         "gate_passed": gate.passed,
@@ -324,11 +1055,84 @@ def review_publish_gate(filename: str) -> dict[str, Any]:
     }
 
 
+def record_human_approval(
+    campaign_id: str,
+    version: str,
+    approver_note: str,
+) -> dict[str, Any]:
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    note = _required(approver_note, "approver_note")
+    normalized_version = str(version or "").strip().lower()
+    if normalized_version.isdigit():
+        normalized_version = f"v{normalized_version}"
+    if not re.fullmatch(r"v\d+", normalized_version):
+        raise ContentServiceError("version must use vN format, for example v3")
+
+    with _campaign_lock(campaign_key):
+        campaign = _load_campaign(campaign_key)
+        if campaign is None or campaign.get("campaign_id") != canonical_id:
+            raise ContentServiceError(f"campaign not found: {canonical_id}")
+        if normalized_version != campaign.get("version"):
+            raise ContentServiceError(
+                f"approval version mismatch; current campaign version is {campaign.get('version')}"
+            )
+        review = campaign.get("review") or {}
+        if review.get("version") != normalized_version:
+            raise ContentServiceError("run review_publish_gate for this exact campaign version first")
+        failed_checks = [
+            item.get("check", "unknown")
+            for item in review.get("checks", [])
+            if not item.get("ok")
+        ]
+
+        approval = {
+            "campaign_id": canonical_id,
+            "version": normalized_version,
+            "status": "approved",
+            "recorded_at": _now(),
+            "recorded_by": "human MCP caller; identity is not independently authenticated",
+            "approver_note": note,
+            "gate_passed": bool(review.get("gate_passed")),
+            "overrides_failed_checks": failed_checks,
+            "review_report": review.get("report"),
+        }
+        approval_result = submit_to_bus(
+            DEPARTMENT,
+            _asset_task_id(canonical_id, "approval", normalized_version),
+            json.dumps(approval, ensure_ascii=False, sort_keys=True, indent=2),
+            "json",
+        )
+        approval_record = {
+            **approval,
+            "filename": approval_result["filename"],
+            "path": approval_result["path"],
+        }
+        campaign.setdefault("approval_records", []).append(approval_record)
+        campaign["status"] = "approved"
+        campaign["approved_version"] = normalized_version
+        manifest_file = _save_campaign(campaign)
+        return {
+            "campaign_id": canonical_id,
+            "version": normalized_version,
+            "status": "approved",
+            "approval_required": False,
+            "gate_passed": bool(review.get("gate_passed")),
+            "overrides_failed_checks": failed_checks,
+            "approval_record": {
+                "filename": approval_result["filename"],
+                "path": approval_result["path"],
+            },
+            "campaign_manifest": manifest_file,
+        }
+
+
 def sop_resource() -> str:
     parts = [
         "# Content Creator SOP\n",
         "หัวหน้าแผนก: เสก (Sek)\n",
-        "Specialists: Copywriter · Visual Creator · Video Editor · Trend Scout\n",
+        "Specialists: Kawee (copy), Film (script), Art (visual), Sound (audio), Ink (strategy and publish gate).\n",
+        "Lifecycle: scaffold → llm_generated → human_edited → review_required → approved; state changes require evidence.\n",
+        "Audio cue and voice/lip-sync tools only create files; they never call external providers.\n",
         "\n## Operating rules\n",
         "1. ทุกชิ้นต้องมีเป้าหมาย กลุ่มเป้าหมาย และแพลตฟอร์ม\n",
         "2. ทุก output เป็น draft จนกว่ามนุษย์จะผ่าน Publish Gate\n",

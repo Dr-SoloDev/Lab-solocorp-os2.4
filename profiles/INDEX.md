@@ -196,6 +196,16 @@
 Content Creator department references 10 specialist profiles from the
 agency-agents library for content production across multiple platforms.
 
+### Named Production Specialists
+
+| # | Agent | Responsibility | Status |
+|:-:|:------|:--------------|:------:|
+| 01 | `copywriter-kawee` (กวี) | Copywriting, narrative architecture, persuasion psychology | Active |
+| 02 | `scriptwriter-film` (ฟิล์ม) | Video scripts, storyboards, pacing, visual/audio cues | Active |
+| 03 | `visual-designer-art` (อาร์ต) | Visual concepts, prompts, mood and tone, infographics | Active |
+| 04 | `audio-designer-sound` (ซาวด์) | Sound design, SFX timing, voice emotion, lip-sync prompts | Active |
+| 05 | `content-analyst-ink` (อิงค์) | Content strategy, SEO, cadence, publish gate management | Active |
+
 | Platform | Focus |
 |:---------|:------|
 | LinkedIn | Thought leadership, brand authority, B2B content |

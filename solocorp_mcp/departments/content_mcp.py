@@ -1,9 +1,8 @@
 """Content Creator department MCP server.
 
-The server represents the department head as the client-facing boundary.
-Copywriter, Visual Creator, Video Editor, and Trend Scout are internal roles;
-they are described in ``content_department_info`` but are not exposed as
-independent client entry points.
+The server represents the department head as the client-facing boundary. The
+five named production specialists are listed in ``profiles/INDEX.md`` and are
+not exposed as separate client entry points.
 """
 
 from __future__ import annotations
@@ -15,10 +14,14 @@ from .content_service import (
     create_content_draft as _create_content_draft,
     create_video_script as _create_video_script,
     department_info,
+    design_audio_experience as _design_audio_experience,
     design_visual_prompt as _design_visual_prompt,
+    generate_voice_lipsync_prompt as _generate_voice_lipsync_prompt,
     generate_voiceover as _generate_voiceover,
+    record_human_approval as _record_human_approval,
     result_json,
     review_publish_gate as _review_publish_gate,
+    save_human_edited_artifact as _save_human_edited_artifact,
     sop_resource,
 )
 
@@ -26,8 +29,11 @@ mcp = FastMCP(
     "content-creator",
     instructions=(
         "SoloCorp Content Creator department. The head Sek receives briefs and "
-        "coordinates internal specialists. Tools create drafts only; every "
-        "publication requires human approval through the Publish Gate."
+        "coordinates the five internal specialists. Draft and prompt tools "
+        "store artifacts without publishing. Audio cue and lip-sync tools never "
+        "call providers. Paid ElevenLabs voiceover requires approved=true. "
+        "Every publication requires recorded human approval for the current "
+        "campaign version."
     ),
 )
 
@@ -45,13 +51,25 @@ def content_department_info() -> str:
 
 @mcp.tool()
 def create_content_draft(
-    title: str, topic: str, target_audience: str, content_type: str = "article"
+    title: str,
+    topic: str,
+    target_audience: str,
+    content_type: str = "article",
+    campaign_id: str = "",
+    source_references: list[str] | None = None,
 ) -> str:
     """Create a content draft artifact and return a compact JSON manifest."""
 
     try:
         return result_json(
-            _create_content_draft(title, topic, target_audience, content_type)
+            _create_content_draft(
+                title,
+                topic,
+                target_audience,
+                content_type,
+                campaign_id or None,
+                source_references,
+            )
         )
     except (ContentServiceError, OSError, UnicodeError) as exc:
         return _error(exc)
@@ -59,24 +77,48 @@ def create_content_draft(
 
 @mcp.tool()
 def create_video_script(
-    title: str, core_message: str, duration_seconds: int = 60
+    title: str,
+    core_message: str,
+    duration_seconds: int = 60,
+    campaign_id: str = "",
+    source_references: list[str] | None = None,
 ) -> str:
     """Create a visual-scene and voiceover script artifact."""
 
     try:
-        return result_json(_create_video_script(title, core_message, duration_seconds))
+        return result_json(
+            _create_video_script(
+                title,
+                core_message,
+                duration_seconds,
+                campaign_id or None,
+                source_references,
+            )
+        )
     except (ContentServiceError, OSError, UnicodeError) as exc:
         return _error(exc)
 
 
 @mcp.tool()
 def design_visual_prompt(
-    theme: str, platform: str, aspect_ratio: str = "16:9"
+    theme: str,
+    platform: str,
+    aspect_ratio: str = "16:9",
+    campaign_id: str = "",
+    source_references: list[str] | None = None,
 ) -> str:
     """Create an image-generation prompt artifact with an origin checklist."""
 
     try:
-        return result_json(_design_visual_prompt(theme, platform, aspect_ratio))
+        return result_json(
+            _design_visual_prompt(
+                theme,
+                platform,
+                aspect_ratio,
+                campaign_id or None,
+                source_references,
+            )
+        )
     except (ContentServiceError, OSError, UnicodeError) as exc:
         return _error(exc)
 
@@ -89,13 +131,20 @@ def generate_voiceover(
     approved: bool = False,
     model_id: str = "eleven_v4",
     language_code: str = "th",
+    campaign_id: str = "",
 ) -> str:
     """Create an explicitly approved ElevenLabs audio draft artifact."""
 
     try:
         return result_json(
             _generate_voiceover(
-                title, text, voice_id, approved, model_id, language_code
+                title,
+                text,
+                voice_id,
+                approved,
+                model_id,
+                language_code,
+                campaign_id or None,
             )
         )
     except (ContentServiceError, OSError, UnicodeError) as exc:
@@ -103,11 +152,70 @@ def generate_voiceover(
 
 
 @mcp.tool()
-def review_publish_gate(filename: str) -> str:
-    """Review an artifact and create a human-approval gate report."""
+def design_audio_experience(campaign_id: str, script_filename: str) -> str:
+    """Create an audio cue sheet from a stored campaign video script."""
 
     try:
-        return result_json(_review_publish_gate(filename))
+        return result_json(_design_audio_experience(campaign_id, script_filename))
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def generate_voice_lipsync_prompt(
+    campaign_id: str, script_filename: str, voice_profile: str
+) -> str:
+    """Create a voice/lip-sync config without calling external providers."""
+
+    try:
+        return result_json(
+            _generate_voice_lipsync_prompt(campaign_id, script_filename, voice_profile)
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def review_publish_gate(campaign_id: str = "", filename: str = "") -> str:
+    """Review a campaign or legacy single artifact without approving it."""
+
+    try:
+        return result_json(
+            _review_publish_gate(filename or None, campaign_id or None)
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def record_human_approval(
+    campaign_id: str, version: str, approver_note: str
+) -> str:
+    """Record human approval for the exact reviewed campaign version."""
+
+    try:
+        return result_json(
+            _record_human_approval(campaign_id, version, approver_note)
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def save_human_edited_artifact(
+    campaign_id: str,
+    source_filename: str,
+    edited_content: str,
+    edit_note: str,
+) -> str:
+    """Store a reviewed human edit as a new versioned artifact."""
+
+    try:
+        return result_json(
+            _save_human_edited_artifact(
+                campaign_id, source_filename, edited_content, edit_note
+            )
+        )
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
         return _error(exc)
 

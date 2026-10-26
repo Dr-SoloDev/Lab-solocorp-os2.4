@@ -30,6 +30,9 @@ async def test_content_mcp_stdio_handshake_and_tool_call(tmp_path):
             names = {tool.name for tool in listed.tools}
             assert "content_department_info" in names
             assert "create_content_draft" in names
+            assert "design_audio_experience" in names
+            assert "generate_voice_lipsync_prompt" in names
+            assert "record_human_approval" in names
             result = await session.call_tool(
                 "create_content_draft",
                 {
