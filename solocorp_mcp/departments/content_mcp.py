@@ -16,6 +16,7 @@ from .content_service import (
     create_video_script as _create_video_script,
     department_info,
     design_visual_prompt as _design_visual_prompt,
+    generate_voiceover as _generate_voiceover,
     result_json,
     review_publish_gate as _review_publish_gate,
     sop_resource,
@@ -76,6 +77,27 @@ def design_visual_prompt(
 
     try:
         return result_json(_design_visual_prompt(theme, platform, aspect_ratio))
+    except (ContentServiceError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def generate_voiceover(
+    title: str,
+    text: str,
+    voice_id: str,
+    approved: bool = False,
+    model_id: str = "eleven_v4",
+    language_code: str = "th",
+) -> str:
+    """Create an explicitly approved ElevenLabs audio draft artifact."""
+
+    try:
+        return result_json(
+            _generate_voiceover(
+                title, text, voice_id, approved, model_id, language_code
+            )
+        )
     except (ContentServiceError, OSError, UnicodeError) as exc:
         return _error(exc)
 

@@ -2,13 +2,20 @@
 
 from __future__ import annotations
 
+import os
 import re
 import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from solocorp_mcp.bus_store import as_json, fetch_from_bus, submit_to_bus
+from dotenv import load_dotenv
+from solocorp_mcp.bus_store import (
+    as_json,
+    fetch_from_bus,
+    submit_bytes_to_bus,
+    submit_to_bus,
+)
 from solocorp_skills.redact import gate_report_md, publish_gate, redact
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -16,6 +23,8 @@ PROFILE_PATH = ROOT / "profiles" / "15-content-creator" / "SOUL.md"
 BRAND_GUIDELINES_PATH = ROOT / "docs" / "brand" / "BRAND-GUIDELINES-v1.md"
 DEPARTMENT = "content"
 CONTENT_TYPES = {"article", "social_post", "newsletter"}
+VOICEOVER_MODELS = {"eleven_v4"}
+MAX_VOICEOVER_CHARACTERS = 2_000
 SPECIALISTS = (
     {"id": "copywriter", "responsibility": "โครงร่าง คอปปี้ และ hook"},
     {"id": "visual-creator", "responsibility": "แนวทางภาพและ visual direction"},
@@ -183,14 +192,119 @@ def design_visual_prompt(
     )
 
 
+def generate_voiceover(
+    title: str,
+    text: str,
+    voice_id: str,
+    approved: bool = False,
+    model_id: str = "eleven_v4",
+    language_code: str = "th",
+) -> dict[str, Any]:
+    """Generate one explicitly approved ElevenLabs voiceover draft."""
+
+    if not isinstance(approved, bool) or not approved:
+        raise ContentServiceError(
+            "paid voice generation requires approved=true for this request"
+        )
+    title = _required(title, "title")
+    text = _required(text, "text")
+    voice_id = _required(voice_id, "voice_id")
+    if len(voice_id) > 128 or any(ord(ch) < 33 for ch in voice_id):
+        raise ContentServiceError("voice_id must be a single ID of at most 128 characters")
+    if len(text) > MAX_VOICEOVER_CHARACTERS:
+        raise ContentServiceError(
+            f"text exceeds the {MAX_VOICEOVER_CHARACTERS}-character voice-generation limit"
+        )
+    model = str(model_id or "").strip()
+    if model not in VOICEOVER_MODELS:
+        raise ContentServiceError(
+            f"model_id must be one of: {', '.join(sorted(VOICEOVER_MODELS))}"
+        )
+    language = str(language_code or "").strip().lower()
+    if not re.fullmatch(r"[a-z]{2,3}", language):
+        raise ContentServiceError("language_code must be a 2- or 3-letter language code")
+
+    load_dotenv(dotenv_path=ROOT / ".env", override=False)
+    if not os.environ.get("ELEVENLABS_API_KEY"):
+        raise ContentServiceError(
+            "ELEVENLABS_API_KEY is not available from the project .env file"
+        )
+
+    try:
+        from elevenlabs.client import ElevenLabs
+
+        client = ElevenLabs()
+        chunks = client.text_to_speech.convert(
+            voice_id=voice_id,
+            text=text,
+            model_id=model,
+            language_code=language,
+            output_format="mp3_44100_128",
+        )
+        audio = b"".join(chunks)
+    except Exception as exc:
+        # SDK exception text may contain request details; keep credentials and
+        # user input out of the MCP error response.
+        status_code = getattr(exc, "status_code", None)
+        body = getattr(exc, "body", None)
+        detail = body.get("detail") if isinstance(body, dict) else None
+        api_message = detail.get("message") if isinstance(detail, dict) else None
+        if status_code == 401 and isinstance(api_message, str):
+            secret = os.environ.get("ELEVENLABS_API_KEY", "")
+            if secret:
+                api_message = api_message.replace(secret, "[redacted]")
+            raise ContentServiceError(
+                f"ElevenLabs authorization failed (HTTP 401): {api_message[:240]}"
+            ) from exc
+        raise ContentServiceError(
+            f"ElevenLabs request failed (HTTP {status_code or 'unknown'})"
+        ) from exc
+    if not audio:
+        raise ContentServiceError("ElevenLabs returned an empty audio response")
+
+    slug = slugify(title)
+    audio_result = submit_bytes_to_bus(
+        DEPARTMENT, f"voiceover-{slug[:50]}", audio, "mp3"
+    )
+    transcript = (
+        f"# Voiceover Draft — {title}\n\n"
+        f"> **Model:** {model}\n"
+        f"> **Language:** {language}\n"
+        f"> **Characters:** {len(text)}\n"
+        "> **Audio:** stored alongside this script in the Content bus\n\n"
+        "## Script\n\n"
+        f"{text}\n\n"
+        "## Review\n\n"
+        "Human review is required before publication.\n"
+    )
+    transcript_result = submit_to_bus(
+        DEPARTMENT, f"voiceover-script-{slug[:43]}", transcript, "md"
+    )
+    return _manifest(
+        audio_result,
+        title=title,
+        model_id=model,
+        language_code=language,
+        output_format="mp3_44100_128",
+        characters=len(text),
+        transcript={
+            "filename": transcript_result["filename"],
+            "path": transcript_result["path"],
+        },
+        human_review_required=True,
+        publish_action="blocked_until_human_approval",
+    )
+
+
 def review_publish_gate(filename: str) -> dict[str, Any]:
     fetched = fetch_from_bus(DEPARTMENT, filename)
     redaction = redact(fetched["content"])
     gate = publish_gate(fetched["content"], redaction=redaction)
     report = gate_report_md(redaction, gate)
+    report_task = f"{slugify(Path(filename).stem, 'review')[:51]}_publish_gate"
     report_result = submit_to_bus(
         DEPARTMENT,
-        f"{slugify(Path(filename).stem, 'review')}_publish_gate",
+        report_task,
         report,
         "md",
     )
@@ -220,6 +334,7 @@ def sop_resource() -> str:
         "2. ทุก output เป็น draft จนกว่ามนุษย์จะผ่าน Publish Gate\n",
         "3. ห้ามเผยแพร่ข้อมูลลับ ชื่อลูกค้า พาธภายใน คีย์ หรือ claim ที่ไม่มีหลักฐาน\n",
         "4. เก็บ payload จริงใน `central_bus/content/` และคืน path แบบย่อให้ client\n",
+        "5. ElevenLabs เป็นบริการคิดเครดิต; voiceover ทุกครั้งต้องส่ง `approved=true`\n",
     ]
     for label, path in (("Brand voice", BRAND_GUIDELINES_PATH), ("Department profile", PROFILE_PATH)):
         if path.is_file():

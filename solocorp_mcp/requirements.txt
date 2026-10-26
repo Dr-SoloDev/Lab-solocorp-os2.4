@@ -1,2 +1,4 @@
 # SoloCorp MCP Server — Dependencies
 mcp>=1.23.0
+elevenlabs>=2.74.1
+python-dotenv>=1.2.2

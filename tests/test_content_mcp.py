@@ -61,6 +61,12 @@ def test_publish_gate_creates_report_and_never_publishes(isolated_bus):
     assert "Publish Gate" in report["content"]
 
 
+def test_publish_gate_truncates_long_report_task_id(isolated_bus):
+    artifact = bus_store.submit_to_bus("content", "x" * 64, "# Draft\n\nSafe text", "md")
+    result = content_service.review_publish_gate(artifact["filename"])
+    assert result["report"]["filename"].endswith(".md")
+
+
 def test_content_server_contract_and_resource():
     names = {tool.name for tool in mcp._tool_manager.list_tools()}
     assert names == {
@@ -68,10 +74,31 @@ def test_content_server_contract_and_resource():
         "create_content_draft",
         "create_video_script",
         "design_visual_prompt",
+        "generate_voiceover",
         "review_publish_gate",
     }
     assert "Content Creator SOP" in content_sop()
     assert "เสก" in content_sop()
+
+
+def test_generated_audio_storage_is_binary_safe(isolated_bus):
+    result = bus_store.submit_bytes_to_bus(
+        "content", "voiceover-test", b"\x00\xffMP3", "mp3"
+    )
+    assert result["filename"].endswith(".mp3")
+    assert (
+        (isolated_bus / "content" / result["filename"]).read_bytes()
+        == b"\x00\xffMP3"
+    )
+
+
+def test_voiceover_requires_per_request_approval(isolated_bus):
+    raw = mcp._tool_manager.get_tool("generate_voiceover").fn(
+        "ทดสอบ", "ข้อความสั้น", "voice-id", False
+    )
+    result = json.loads(raw)
+    assert result["status"] == "error"
+    assert "approved=true" in result["message"]
 
 
 def test_mcp_tool_errors_are_json(isolated_bus):

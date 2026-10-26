@@ -121,6 +121,49 @@ def submit_to_bus(
     }
 
 
+def submit_bytes_to_bus(
+    dept: str,
+    task_id: str,
+    payload_content: bytes,
+    file_type: str,
+) -> dict[str, Any]:
+    """Atomically write a binary payload and return a compact manifest."""
+
+    directory = _department_dir(dept)
+    task = _validate_component(task_id, "task_id")
+    extension = _validate_extension(file_type)
+    if not isinstance(payload_content, bytes):
+        raise BusStoreError("payload_content must be bytes")
+    if len(payload_content) > MAX_PAYLOAD_BYTES:
+        raise BusStoreError(f"payload exceeds {MAX_PAYLOAD_BYTES} bytes")
+
+    created = _now()
+    filename = f"{task}_{created.strftime('%Y%m%dT%H%M%S%fZ')}.{extension}"
+    directory.mkdir(parents=True, exist_ok=True)
+    destination = (directory / filename).resolve()
+    if not destination.is_relative_to(directory.resolve()):
+        raise BusStoreError("destination escapes the department bus")
+
+    with tempfile.NamedTemporaryFile(
+        mode="wb", dir=directory, prefix=f".{filename}.", delete=False
+    ) as handle:
+        temporary = Path(handle.name)
+        handle.write(payload_content)
+        handle.flush()
+        os.fsync(handle.fileno())
+    temporary.replace(destination)
+
+    return {
+        "status": "submitted",
+        "dept": str(dept),
+        "task_id": task,
+        "filename": filename,
+        "path": _relative(destination),
+        "bytes": len(payload_content),
+        "created_at": created.isoformat(),
+    }
+
+
 def fetch_from_bus(dept: str, filename: str) -> dict[str, Any]:
     """Read one payload after enforcing department and filename boundaries."""
 
