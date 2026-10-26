@@ -1,0 +1,55 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-26T11:12:52.054102+00:00",
+      "dependencies": [],
+      "filename": "campaign-customer-value-proof-2026-10-26-script-บทแรกของการพ-ส-จ_20261026T111252054102Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-customer-value-proof-2026-10-26-script-บทแรกของการพ-ส-จ_20261026T111252054102Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — draft/script/visual tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign manifests, artifact lifecycle, review/approval records",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — pilot hypothesis and audience evaluation rubric"
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-26T11:14:28.657684+00:00",
+      "dependencies": [],
+      "edit_note": "Replace the auto-generated scaffold with a concise, source-grounded 38-second Thai vertical-video draft. Keep customer-value claims explicitly unproven; include visual/voice/audio cues, audience CTA, evaluation rubric, and production guardrails.",
+      "filename": "campaign-customer-value-proof-2026-10-26-human-edit-campaign-cus_20261026T111428657684Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-customer-value-proof-2026-10-26-human-edit-campaign-cus_20261026T111428657684Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — draft/script/visual tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign manifests, artifact lifecycle, review/approval records",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — pilot hypothesis and audience evaluation rubric"
+      ],
+      "status": "human_edited",
+      "supersedes": "campaign-customer-value-proof-2026-10-26-script-บทแรกของการพ-ส-จ_20261026T111252054102Z.md",
+      "type": "video_script",
+      "version": "v2"
+    }
+  ],
+  "campaign_id": "customer-value-proof-2026-10-26",
+  "campaign_key": "customer-value-proof-2026-10-26",
+  "created_at": "2026-10-26T11:12:52.053914+00:00",
+  "review": null,
+  "revision": 2,
+  "schema_version": 1,
+  "source_references": [
+    "Repository: solocorp_mcp/departments/content_mcp.py — draft/script/visual tools and human review boundary",
+    "Repository: solocorp_mcp/departments/content_service.py — campaign manifests, artifact lifecycle, review/approval records",
+    "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — pilot hypothesis and audience evaluation rubric"
+  ],
+  "status": "human_edited",
+  "updated_at": "2026-10-26T11:14:28.945560+00:00",
+  "version": "v2",
+  "version_number": 2
+}
