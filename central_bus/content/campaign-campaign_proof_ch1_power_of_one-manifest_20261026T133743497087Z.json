@@ -1,0 +1,197 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-26T13:15:05.997227+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_proof_ch1_power_of_one-video-script-the-power_20261026T131505997227Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_proof_ch1_power_of_one-video-script-the-power_20261026T131505997227Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+        "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+        "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+        "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+      ],
+      "status": "llm_generated",
+      "type": "video_script",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-26T13:15:06.299733+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_proof_ch1_power_of_one-visual-prompt-chapter-1_20261026T131506299733Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_proof_ch1_power_of_one-visual-prompt-chapter-1_20261026T131506299733Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+        "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+        "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+        "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+      ],
+      "status": "llm_generated",
+      "type": "visual_prompt",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-26T13:15:06.344953+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_proof_ch1_power_of_one-campaign-brief-chapter_20261026T131506344953Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_proof_ch1_power_of_one-campaign-brief-chapter_20261026T131506344953Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+        "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+        "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+        "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+      ],
+      "status": "llm_generated",
+      "type": "campaign_brief",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-26T13:15:06.390406+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_proof_ch1_power_of_one-launch-copy-chapter-1-p_20261026T131506390406Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_proof_ch1_power_of_one-launch-copy-chapter-1-p_20261026T131506390406Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+        "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+        "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+        "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+      ],
+      "status": "llm_generated",
+      "type": "campaign_copy",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-26T13:15:06.497677+00:00",
+      "dependencies": [
+        "campaign-campaign_proof_ch1_power_of_one-video-script-the-power_20261026T131505997227Z.md"
+      ],
+      "filename": "campaign-campaign_proof_ch1_power_of_one-audio-cue-chapter-1-nar_20261026T131506497677Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_proof_ch1_power_of_one-audio-cue-chapter-1-nar_20261026T131506497677Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+        "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+        "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+        "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+      ],
+      "status": "llm_generated",
+      "type": "audio_cue_sheet",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-26T13:15:21.124776+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_proof_ch1_power_of_one-voiceover-proof-of-exis_20261026T131521124776Z.mp3",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_proof_ch1_power_of_one-voiceover-proof-of-exis_20261026T131521124776Z.mp3",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+        "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+        "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+        "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+      ],
+      "status": "llm_generated",
+      "type": "voiceover_audio",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-26T13:15:21.428007+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_proof_ch1_power_of_one-voice-script-proof-of-e_20261026T131521428007Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_proof_ch1_power_of_one-voice-script-proof-of-e_20261026T131521428007Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+        "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+        "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+        "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+      ],
+      "status": "llm_generated",
+      "type": "voiceover_transcript",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-26T13:37:43.154428+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_proof_ch1_power_of_one-voiceover-proof-of-exis_20261026T133743154428Z.mp3",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_proof_ch1_power_of_one-voiceover-proof-of-exis_20261026T133743154428Z.mp3",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+        "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+        "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+        "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+      ],
+      "status": "llm_generated",
+      "type": "voiceover_audio",
+      "version": "v4"
+    },
+    {
+      "created_at": "2026-10-26T13:37:43.461999+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_proof_ch1_power_of_one-voice-script-proof-of-e_20261026T133743461999Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_proof_ch1_power_of_one-voice-script-proof-of-e_20261026T133743461999Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+        "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+        "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+        "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+        "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+        "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+      ],
+      "status": "llm_generated",
+      "type": "voiceover_transcript",
+      "version": "v4"
+    }
+  ],
+  "campaign_id": "campaign_proof_ch1_power_of_one",
+  "campaign_key": "campaign_proof_ch1_power_of_one",
+  "created_at": "2026-10-26T13:15:05.997037+00:00",
+  "review": null,
+  "revision": 5,
+  "schema_version": 1,
+  "source_references": [
+    "Repository: solocorp_mcp/departments/content_mcp.py — current Content Creator MCP tools and human review boundary",
+    "Repository: solocorp_mcp/departments/content_service.py — campaign versioning, lifecycle, and publish gate",
+    "Repository: profiles/INDEX.md — Content Creator specialist roster; not evidence of parallel execution",
+    "Repository: docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md — customer-value hypothesis and audience protocol",
+    "Evidence: docs/certification/D1-content-ffmpeg-integration.md — D1 scope and independent D2 result",
+    "Evidence: bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json — local render limitations"
+  ],
+  "status": "llm_generated",
+  "updated_at": "2026-10-26T13:37:43.495674+00:00",
+  "version": "v4",
+  "version_number": 4
+}

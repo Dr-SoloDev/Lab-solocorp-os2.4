@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f3f5ef">
+  <title>The Power of One | SoloCorp OS</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f3f5ef;
+      --ink: #18221e;
+      --muted: #59645e;
+      --green: #16704a;
+      --lime: #d5ef67;
+      --red: #c54735;
+      --line: #cbd2ca;
+      --white: #fff;
+      font-family: "Noto Sans Thai", "Noto Sans", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; }
+    body { background: var(--paper); color: var(--ink); overflow: hidden; }
+    button { font: inherit; }
+    .stage {
+      width: 100vw;
+      height: 100vh;
+      min-height: 640px;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        linear-gradient(90deg, transparent 49.9%, rgba(24,34,30,.045) 50%, transparent 50.1%),
+        var(--paper);
+    }
+    .grid-mark {
+      position: absolute;
+      inset: 0;
+      opacity: .38;
+      pointer-events: none;
+      background-image: radial-gradient(#88958b 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+      z-index: -1;
+    }
+    .topline, .bottomline {
+      position: absolute;
+      left: 8.3%;
+      right: 8.3%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-transform: uppercase;
+      font-size: 18px;
+      letter-spacing: 0;
+      font-weight: 700;
+    }
+    .topline { top: 5.4%; color: var(--muted); }
+    .bottomline { bottom: 4.6%; color: var(--muted); }
+    .brand { color: var(--ink); }
+    .live-mark { display: inline-flex; gap: 10px; align-items: center; }
+    .live-mark::before { content: ""; width: 10px; height: 10px; background: var(--green); border-radius: 50%; }
+    .scene {
+      display: none;
+      position: absolute;
+      inset: 12% 8.3% 12%;
+      animation: arrive .55s cubic-bezier(.2,.7,.2,1) both;
+    }
+    .scene.active { display: flex; }
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .eyebrow {
+      color: var(--green);
+      font-size: 20px;
+      line-height: 1.35;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin: 0 0 24px;
+    }
+    h1, h2, p { margin-top: 0; }
+    h1, h2 {
+      font-size: 68px;
+      line-height: 1.12;
+      font-weight: 800;
+      max-width: 860px;
+      margin-bottom: 28px;
+      text-wrap: balance;
+    }
+    .lede { color: var(--muted); font-size: 28px; line-height: 1.55; max-width: 780px; }
+    .title-scene { flex-direction: column; justify-content: center; }
+    .title-scene h1 { font-size: 82px; max-width: 900px; }
+    .title-scene .question {
+      margin-top: 54px;
+      border-left: 6px solid var(--green);
+      padding: 4px 0 4px 26px;
+      font-size: 30px;
+      line-height: 1.45;
+      max-width: 790px;
+    }
+    .title-tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--ink);
+      padding: 12px 17px;
+      width: fit-content;
+      font-size: 17px;
+      font-weight: 800;
+      margin-top: 20px;
+    }
+    .split-scene { flex-direction: column; justify-content: center; }
+    .flow {
+      width: 100%;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 46px;
+    }
+    .flow-step {
+      min-height: 190px;
+      padding: 26px 20px 28px 0;
+      border-right: 1px solid var(--line);
+    }
+    .flow-step:last-child { border-right: 0; padding-left: 22px; }
+    .flow-step:nth-child(2) { padding-left: 22px; }
+    .step-no { color: var(--green); font-size: 17px; font-weight: 800; }
+    .step-name { font-size: 29px; font-weight: 800; margin: 18px 0 8px; }
+    .step-state { color: var(--muted); font-size: 18px; }
+    .role-scene { flex-direction: column; justify-content: center; }
+    .role-flow {
+      display: grid;
+      grid-template-columns: 1fr 64px 1fr;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .role-list { display: grid; gap: 11px; }
+    .role {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.62);
+      min-height: 56px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 17px;
+      font-size: 19px;
+      font-weight: 700;
+    }
+    .role small { font-size: 14px; color: var(--muted); font-weight: 600; }
+    .converge { color: var(--green); font-size: 44px; text-align: center; }
+    .head-node {
+      padding: 28px 24px;
+      border: 2px solid var(--green);
+      background: var(--white);
+      font-size: 23px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+    .head-node small { display: block; margin-top: 12px; color: var(--muted); font-size: 15px; font-weight: 600; }
+    .boundary {
+      margin-top: 30px;
+      color: var(--red);
+      border-left: 4px solid var(--red);
+      padding: 7px 0 7px 15px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .engine-scene { flex-direction: column; justify-content: center; }
+    .engine-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 42px; }
+    .engine-step { border-top: 4px solid var(--green); padding: 18px 14px 0 0; }
+    .engine-step strong { display: block; font-size: 25px; margin-bottom: 8px; }
+    .engine-step span { color: var(--muted); font-size: 17px; line-height: 1.45; }
+    .truth-scene { flex-direction: column; justify-content: center; }
+    .truth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 18px; }
+    .truth-block { padding: 24px 0; border-top: 3px solid var(--green); }
+    .truth-block.unproven { border-color: var(--red); }
+    .truth-label { font-size: 17px; color: var(--muted); font-weight: 800; margin-bottom: 13px; }
+    .truth-block strong { display: block; font-size: 27px; line-height: 1.35; }
+    .cta-scene { flex-direction: column; justify-content: center; }
+    .cta-scene h2 { font-size: 76px; }
+    .cta {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 21px 24px;
+      background: var(--lime);
+      color: var(--ink);
+      font-size: 26px;
+      line-height: 1.4;
+      font-weight: 800;
+      max-width: 780px;
+    }
+    .draft-stamp { margin-top: 35px; color: var(--red); font-size: 16px; font-weight: 800; }
+    .controls {
+      position: absolute;
+      left: 8.3%;
+      right: 8.3%;
+      bottom: 9.4%;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 5;
+    }
+    body.export .controls { display: none; }
+    .play {
+      min-width: 136px;
+      height: 48px;
+      border: 0;
+      background: var(--ink);
+      color: var(--white);
+      padding: 0 17px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .seek { flex: 1; accent-color: var(--green); }
+    .time { min-width: 88px; font: 14px ui-monospace, monospace; color: var(--muted); text-align: right; }
+    @media (max-width: 640px) {
+      .stage { min-height: 0; }
+      .topline, .bottomline { left: 7%; right: 7%; font-size: 11px; }
+      .scene { inset: 13% 7% 18%; }
+      .eyebrow { font-size: 12px; margin-bottom: 14px; }
+      h1, h2 { font-size: 34px; margin-bottom: 15px; }
+      .title-scene h1 { font-size: 41px; }
+      .lede { font-size: 16px; }
+      .title-scene .question { font-size: 17px; margin-top: 28px; padding-left: 15px; }
+      .title-tag { font-size: 11px; padding: 8px 11px; }
+      .flow { margin-top: 23px; }
+      .flow-step { min-height: 116px; padding: 14px 8px 13px 0; }
+      .flow-step:nth-child(2), .flow-step:last-child { padding-left: 9px; }
+      .step-no { font-size: 10px; }
+      .step-name { font-size: 16px; margin: 10px 0 5px; }
+      .step-state { font-size: 10px; }
+      .role-flow { grid-template-columns: 1fr 22px 1fr; gap: 6px; }
+      .role-list { gap: 6px; }
+      .role { min-height: 34px; padding: 0 7px; font-size: 11px; }
+      .role small { font-size: 8px; }
+      .converge { font-size: 22px; }
+      .head-node { padding: 12px 9px; font-size: 13px; }
+      .head-node small { font-size: 9px; margin-top: 7px; }
+      .boundary { font-size: 12px; margin-top: 18px; padding-left: 9px; }
+      .engine-flow { gap: 8px; margin-top: 23px; }
+      .engine-step { border-top-width: 3px; padding-top: 11px; }
+      .engine-step strong { font-size: 15px; margin-bottom: 5px; }
+      .engine-step span { font-size: 10px; }
+      .truth-grid { gap: 12px; margin-top: 8px; }
+      .truth-block { padding: 14px 0; border-top-width: 2px; }
+      .truth-label { font-size: 10px; margin-bottom: 8px; }
+      .truth-block strong { font-size: 15px; }
+      .cta-scene h2 { font-size: 38px; }
+      .cta { font-size: 15px; padding: 13px 14px; }
+      .draft-stamp { font-size: 10px; margin-top: 20px; }
+      .controls { left: 7%; right: 7%; bottom: 9%; gap: 8px; }
+      .play { min-width: 93px; height: 36px; padding: 0 8px; font-size: 11px; }
+      .time { min-width: 54px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" aria-label="The Power of One motion demo">
+    <div class="grid-mark" aria-hidden="true"></div>
+    <div class="topline"><span class="brand">SOLOCORP OS</span><span>PROOF OF EXISTENCE / CHAPTER 01</span></div>
+
+    <section class="scene title-scene active" data-start="0" aria-label="Opening question">
+      <p class="eyebrow">A creator's first proof</p>
+      <h1>The Power<br>of One</h1>
+      <p class="question">คนคนเดียว จะเปลี่ยนไอเดีย<br>ให้เป็นงานที่คนอื่นตรวจต่อได้ไหม?</p>
+      <span class="title-tag">ONE CREATOR · ONE REVIEWABLE CAMPAIGN</span>
+    </section>
+
+    <section class="scene split-scene" data-start="4.5417" aria-label="Campaign artifact flow">
+      <p class="eyebrow">01 / จาก brief สู่ของที่ตรวจได้</p>
+      <h2>ไอเดียหนึ่งชุด<br>กลายเป็นงานที่ย้อนตรวจได้</h2>
+      <p class="lede">แคมเปญเดียว ผูกสคริปต์ ภาพ เสียง และสถานะไว้ด้วยกัน</p>
+      <div class="flow">
+        <div class="flow-step"><span class="step-no">01 / INPUT</span><p class="step-name">Brief</p><span class="step-state">โจทย์และขอบเขต</span></div>
+        <div class="flow-step"><span class="step-no">02 / DRAFT</span><p class="step-name">Artifacts</p><span class="step-state">Script · Visual · Audio</span></div>
+        <div class="flow-step"><span class="step-no">03 / GATE</span><p class="step-name">Review</p><span class="step-state">มนุษย์ตรวจ · ยังไม่อนุมัติ</span></div>
+      </div>
+    </section>
+
+    <section class="scene role-scene" data-start="13.9583" aria-label="Team boundary">
+      <p class="eyebrow">02 / ขอบเขตทีม</p>
+      <h2>บทบาทมี 5 สาย<br>งานยังผ่านหัวหน้าแผนก</h2>
+      <div class="role-flow">
+        <div class="role-list">
+          <div class="role"><span>กวี</span><small>Copy</small></div>
+          <div class="role"><span>ฟิล์ม</span><small>Script</small></div>
+          <div class="role"><span>อาร์ต</span><small>Visual</small></div>
+          <div class="role"><span>ซาวด์</span><small>Audio</small></div>
+          <div class="role"><span>อิงค์</span><small>Strategy</small></div>
+        </div>
+        <div class="converge" aria-hidden="true">→</div>
+        <div class="head-node">หัวหน้าแผนก<br>Content Creator<small>จุดรับงานจาก client</small></div>
+      </div>
+      <p class="boundary">การทำงานพร้อมกันของทั้งห้าคนยังไม่มีหลักฐาน</p>
+    </section>
+
+    <section class="scene engine-scene" data-start="22.625" aria-label="FFmpeg connection evidence">
+      <p class="eyebrow">03 / เครื่องมือตัดต่อ</p>
+      <h2>เชื่อม FFmpeg Skill<br>ผ่าน MCP แล้ว</h2>
+      <p class="lede">D2 ยืนยันการเชื่อมต่อและ read-only check; คลิปนี้เรนเดอร์จากภาพสังเคราะห์ด้วย FFmpeg CLI</p>
+      <div class="engine-flow">
+        <div class="engine-step"><strong>Initialize</strong><span>เชื่อม MCP สำเร็จ</span></div>
+        <div class="engine-step"><strong>Tools / List</strong><span>ตรวจ schema เครื่องมือที่ต้องใช้</span></div>
+        <div class="engine-step"><strong>Check</strong><span>เช็ก private path ที่ไม่มีไฟล์</span></div>
+      </div>
+      <p class="boundary">เรนเดอร์นี้ใช้ CLI; การเรนเดอร์ผ่าน FFmpeg MCP ยังไม่ผ่านการทดสอบ</p>
+    </section>
+
+    <section class="scene truth-scene" data-start="40.2917" aria-label="Paid voice and open questions">
+      <p class="eyebrow">04 / สถานะตามจริง</p>
+      <h2>เสียงตัวอย่างจาก ElevenLabs</h2>
+      <p class="lede">ใช้เครดิตตามที่เจ้าของอนุมัติ; ตัวชิ้นงานยังรอตรวจ</p>
+      <div class="truth-grid">
+        <div class="truth-block"><p class="truth-label">มีหลักฐานแล้ว</p><strong>Campaign draft<br>และเสียงบรรยาย</strong></div>
+        <div class="truth-block unproven"><p class="truth-label">ยังต้องพิสูจน์</p><strong>คุณค่าลูกค้า<br>เวลาและคุณภาพ</strong></div>
+      </div>
+    </section>
+
+    <section class="scene cta-scene" data-start="43.9583" aria-label="Audience question">
+      <p class="eyebrow">05 / บททดสอบถัดไป</p>
+      <h2>งานไหนกินเวลา<br>ซ้ำมากที่สุด?</h2>
+      <p class="lede">ถ้าคุณเป็น creator หรือ developer บอกเราหนึ่งงานที่อยากให้ทดลองจริง</p>
+      <div class="cta">หนึ่งงานจริง<br>หนึ่งรอบทดลอง<br>เก็บผลให้ตรวจซ้ำได้</div>
+      <p class="draft-stamp">DRAFT · HUMAN REVIEW REQUIRED · NOT APPROVED FOR PUBLICATION</p>
+    </section>
+
+    <div class="controls" id="controls">
+      <button class="play" id="play" type="button">เล่นเสียงตัวอย่าง</button>
+      <input class="seek" id="seek" type="range" min="0" max="46.916" step="0.05" value="0" aria-label="ตำแหน่งเสียง">
+      <span class="time" id="time">00:00 / 00:47</span>
+    </div>
+    <audio id="audio" preload="metadata" src="campaign-campaign_proof_ch1_power_of_one-voiceover-proof-of-exis_20261026T133743154428Z.mp3"></audio>
+    <div class="bottomline"><span class="live-mark">Review required</span><span>Campaign v4 · not approved</span></div>
+  </main>
+  <script>
+    const audio = document.getElementById("audio");
+    const play = document.getElementById("play");
+    const seek = document.getElementById("seek");
+    const time = document.getElementById("time");
+    const scenes = [...document.querySelectorAll(".scene")];
+    const starts = scenes.map(scene => Number(scene.dataset.start));
+    const query = new URLSearchParams(location.search);
+    if (query.has("export")) document.body.classList.add("export");
+
+    function showScene(index) {
+      scenes.forEach((scene, i) => scene.classList.toggle("active", i === index));
+    }
+    function setAt(seconds) {
+      const forced = query.get("scene");
+      if (forced !== null) {
+        showScene(Math.max(0, Math.min(scenes.length - 1, Number(forced) || 0)));
+        return;
+      }
+      let index = 0;
+      for (let i = 1; i < starts.length; i += 1) if (seconds >= starts[i]) index = i;
+      showScene(index);
+    }
+    play.addEventListener("click", async () => {
+      if (audio.paused) {
+        try { await audio.play(); } catch { play.textContent = "เล่นเสียงไม่ได้"; }
+      } else audio.pause();
+    });
+    audio.addEventListener("play", () => { play.textContent = "พักเสียง"; });
+    audio.addEventListener("pause", () => { play.textContent = "เล่นเสียงตัวอย่าง"; });
+    audio.addEventListener("timeupdate", () => {
+      seek.value = audio.currentTime;
+      time.textContent = `${format(audio.currentTime)} / ${format(audio.duration || 46.916)}`;
+      setAt(audio.currentTime);
+    });
+    audio.addEventListener("ended", () => { setAt(0); });
+    seek.addEventListener("input", () => { audio.currentTime = Number(seek.value); setAt(audio.currentTime); });
+    function format(value) {
+      const seconds = Math.floor(value || 0);
+      return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+    }
+    setAt(0);
+  </script>
+</body>
+</html>
