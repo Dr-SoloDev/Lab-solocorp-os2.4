@@ -6,12 +6,14 @@ import os
 import fcntl
 import hashlib
 import json
+import math
 import re
 import unicodedata
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator
+from uuid import uuid4
 
 from dotenv import load_dotenv
 from solocorp_mcp.bus_store import (
@@ -65,6 +67,76 @@ LIFECYCLE_STATES = {
     "human_edited",
     "review_required",
     "approved",
+}
+FFMPEG_SCHEMA_VERSION = "2.17.1"
+FFMPEG_MAX_OPERATIONS = 12
+FFMPEG_MAX_RESULT_BYTES = 64 * 1024
+
+# Pinned subset of the installed ffmpeg-skill 2.17.1 tools/list schema.
+# Raw argv and arbitrary tool arguments are intentionally not accepted.
+_FFMPEG_ARGUMENTS: dict[str, dict[str, Any]] = {
+    "probe": {
+        "inputs": "paths", "analyze": "boolean", "compact": "boolean",
+        "field": "string", "json_brief": "boolean",
+    },
+    "check": {
+        "input": "path", "aspect": "string", "content": "boolean",
+        "dry_run": "boolean", "fast": "boolean", "json_brief": "boolean",
+        "lufs": "number", "max_duration": "number", "max_mb": "number",
+        "no_loudness": "boolean", "platform": "platform", "tp": "number",
+    },
+    "cut": {
+        "input": "path", "output": "path", "start": "string", "end": "string",
+        "duration": "string", "accurate": "boolean", "dry_run": "boolean",
+        "fast": "boolean", "overwrite": "boolean", "codec": "codec",
+        "preset": "preset", "quality": "integer",
+    },
+    "silence": {
+        "input": "path", "output": "path", "threshold": "number",
+        "min_silence": "number", "min_keep": "number", "margin": "number",
+        "max_cuts": "integer", "dry_run": "boolean", "fast": "boolean",
+        "overwrite": "boolean", "quality": "integer",
+    },
+    "loudness": {
+        "input": "path", "output": "path", "lufs": "number", "tp": "number",
+        "lra": "number", "measure_only": "boolean", "dry_run": "boolean",
+        "fast": "boolean", "overwrite": "boolean",
+    },
+    "fit": {
+        "input": "path", "output": "path", "aspect": "string", "fit": "fit",
+        "width": "integer", "height": "integer", "crop_x": "number",
+        "crop_y": "number", "dry_run": "boolean", "fast": "boolean",
+        "overwrite": "boolean", "codec": "codec", "quality": "integer",
+    },
+    "caption": {
+        "input": "path", "output": "path", "language": "string",
+        "platform": "platform", "mode": "caption_mode", "position": "position",
+        "size": "integer", "bold": "boolean", "box": "boolean",
+        "karaoke": "boolean", "dry_run": "boolean", "overwrite": "boolean",
+    },
+    "look": {
+        "input": "path", "output": "path", "tiles": "string",
+        "width": "integer", "at": "strings", "no_timecode": "boolean",
+        "ink": "boolean", "dry_run": "boolean", "overwrite": "boolean",
+    },
+}
+_FFMPEG_REQUIRED_ARGUMENTS = {
+    "probe": {"inputs"},
+    "check": {"input"},
+    "cut": {"input", "output"},
+    "silence": {"input", "output"},
+    "loudness": {"input"},
+    "fit": {"input", "output"},
+    "caption": {"input", "output"},
+    "look": {"input", "output"},
+}
+_FFMPEG_ENUMS = {
+    "codec": {"h264", "hevc", "av1", "prores"},
+    "preset": {"ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow", "placebo"},
+    "fit": {"pad", "crop", "blur"},
+    "caption_mode": {"burn", "mux"},
+    "position": {"bottom", "bottom-left", "bottom-right", "center", "top", "top-left", "top-right"},
+    "platform": {"broadcast", "custom", "facebook", "fb", "ig", "instagram", "linkedin", "podcast", "reels", "shorts", "tiktok", "twitter", "x", "youtube", "youtube-shorts", "yt", "yt-shorts"},
 }
 
 
@@ -251,6 +323,12 @@ def _store_assets(
             }
         elif campaign.get("campaign_id") != canonical_id:
             raise ContentServiceError("campaign_id conflicts with an existing campaign key")
+
+        expected_version = assets[0].get("expected_campaign_version")
+        if expected_version is not None and campaign.get("version") != expected_version:
+            raise ContentServiceError(
+                "campaign changed while building the FFmpeg job manifest; retry with current assets"
+            )
 
         version_number = int(campaign.get("version_number", 0)) + 1
         version = f"v{version_number}"
@@ -547,6 +625,457 @@ def _campaign_script(campaign_id: str, script_filename: str) -> tuple[dict[str, 
         )
     script = fetch_from_bus(DEPARTMENT, filename)["content"]
     return script_asset, script
+
+
+def _campaign_ffmpeg_sources(
+    campaign_id: str,
+    script_filename: str,
+    audio_cue_filename: str,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    campaign = _load_campaign(campaign_key)
+    if campaign is None or campaign.get("campaign_id") != canonical_id:
+        raise ContentServiceError(f"campaign not found: {canonical_id}")
+
+    script_asset, _ = _campaign_script(canonical_id, script_filename)
+    latest_script = next(
+        (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
+        None,
+    )
+    if latest_script is None or latest_script.get("filename") != script_asset.get("filename"):
+        raise ContentServiceError("script_filename must identify the latest campaign video script")
+
+    cue_filename = str(audio_cue_filename or "").strip()
+    cue_asset = next(
+        (
+            asset
+            for asset in reversed(campaign.get("assets", []))
+            if asset.get("filename") == cue_filename
+            and asset.get("type") == "audio_cue_sheet"
+            and script_asset["filename"] in asset.get("dependencies", [])
+        ),
+        None,
+    )
+    if cue_asset is None:
+        raise ContentServiceError(
+            "audio_cue_filename must identify a cue sheet for the latest campaign script"
+        )
+    latest_cue = next(
+        (
+            asset
+            for asset in reversed(campaign.get("assets", []))
+            if asset.get("type") == "audio_cue_sheet"
+            and script_asset["filename"] in asset.get("dependencies", [])
+        ),
+        None,
+    )
+    if latest_cue is None or latest_cue.get("filename") != cue_filename:
+        raise ContentServiceError("audio_cue_filename must identify the latest cue sheet for this script")
+    return campaign, script_asset, cue_asset
+
+
+def _ffmpeg_bus_path(
+    value: Any,
+    label: str,
+    *,
+    produced_paths: set[str],
+    output: bool = False,
+) -> str:
+    if not isinstance(value, str) or not value.strip() or len(value) > 2_000:
+        raise ContentServiceError(f"{label} must be an absolute local path")
+    raw_path = Path(value)
+    if not raw_path.is_absolute() or ".." in raw_path.parts:
+        raise ContentServiceError(f"{label} must be an absolute path inside central_bus/content")
+    if any(ord(ch) < 32 for ch in value):
+        raise ContentServiceError(f"{label} contains a control character")
+
+    root = (bus_store.BUS_ROOT / DEPARTMENT).resolve()
+    resolved = raw_path.resolve(strict=False)
+    if not resolved.is_relative_to(root) or resolved == root:
+        raise ContentServiceError(f"{label} must be inside central_bus/content")
+
+    cursor = raw_path
+    while cursor != root and cursor != cursor.parent:
+        if cursor.is_symlink():
+            raise ContentServiceError(f"{label} cannot use symlinks")
+        cursor = cursor.parent
+    if cursor != root:
+        raise ContentServiceError(f"{label} must be inside central_bus/content")
+
+    normalized = str(resolved)
+    exists = resolved.exists()
+    if output:
+        if exists:
+            raise ContentServiceError(f"{label} already exists; overwrite is not allowed")
+        if not resolved.parent.is_dir():
+            raise ContentServiceError(f"{label} parent directory must already exist")
+    elif exists:
+        if not resolved.is_file():
+            raise ContentServiceError(f"{label} must point to a regular file")
+    elif normalized not in produced_paths:
+        raise ContentServiceError(f"{label} must exist or be produced by an earlier operation")
+    return normalized
+
+
+def _validate_ffmpeg_operations(operations: Any) -> list[dict[str, Any]]:
+    if not isinstance(operations, list) or not operations or len(operations) > FFMPEG_MAX_OPERATIONS:
+        raise ContentServiceError(
+            f"operations must be a list of 1-{FFMPEG_MAX_OPERATIONS} supported ffmpeg-skill calls"
+        )
+
+    normalized: list[dict[str, Any]] = []
+    produced_paths: set[str] = set()
+    for index, operation in enumerate(operations):
+        if not isinstance(operation, dict) or set(operation) != {"tool", "arguments"}:
+            raise ContentServiceError(
+                f"operations[{index}] must contain only tool and arguments"
+            )
+        tool = operation.get("tool")
+        if not isinstance(tool, str) or tool not in _FFMPEG_ARGUMENTS:
+            raise ContentServiceError(f"operations[{index}] uses an unsupported ffmpeg-skill tool")
+        arguments = operation.get("arguments")
+        if not isinstance(arguments, dict):
+            raise ContentServiceError(f"operations[{index}].arguments must be an object")
+        allowed = _FFMPEG_ARGUMENTS[tool]
+        unknown = set(arguments) - set(allowed)
+        if unknown:
+            raise ContentServiceError(
+                f"operations[{index}] has unsupported {tool} arguments: {', '.join(sorted(unknown))}"
+            )
+        missing = _FFMPEG_REQUIRED_ARGUMENTS[tool] - set(arguments)
+        if missing:
+            raise ContentServiceError(
+                f"operations[{index}] is missing required {tool} arguments: {', '.join(sorted(missing))}"
+            )
+
+        clean_args: dict[str, Any] = {}
+        input_paths: list[str] = []
+        output_paths: list[str] = []
+        for name, value in arguments.items():
+            kind = allowed[name]
+            if kind == "path":
+                if name == "output":
+                    path = _ffmpeg_bus_path(
+                        value, f"operations[{index}].arguments.{name}",
+                        produced_paths=produced_paths, output=True,
+                    )
+                    output_paths.append(path)
+                else:
+                    path = _ffmpeg_bus_path(
+                        value, f"operations[{index}].arguments.{name}",
+                        produced_paths=produced_paths,
+                    )
+                    input_paths.append(path)
+                clean_args[name] = path
+            elif kind == "paths":
+                if not isinstance(value, list) or not value or len(value) > 8:
+                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be a list of 1-8 paths")
+                paths = [
+                    _ffmpeg_bus_path(
+                        item, f"operations[{index}].arguments.{name}[{item_index}]",
+                        produced_paths=produced_paths,
+                    )
+                    for item_index, item in enumerate(value)
+                ]
+                input_paths.extend(paths)
+                clean_args[name] = paths
+            elif kind == "strings":
+                if not isinstance(value, list) or len(value) > 32 or any(
+                    not isinstance(item, str) or len(item) > 200 for item in value
+                ):
+                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be a list of short strings")
+                clean_args[name] = value
+            elif kind in _FFMPEG_ENUMS:
+                if not isinstance(value, str) or value not in _FFMPEG_ENUMS[kind]:
+                    raise ContentServiceError(f"operations[{index}].arguments.{name} has an unsupported value")
+                clean_args[name] = value
+            elif kind == "boolean":
+                if not isinstance(value, bool):
+                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be boolean")
+                if name == "overwrite" and value:
+                    raise ContentServiceError("FFmpeg job manifests cannot enable overwrite")
+                clean_args[name] = value
+            elif kind == "integer":
+                if isinstance(value, bool) or not isinstance(value, int):
+                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be an integer")
+                if name in {"width", "height", "quality", "max_cuts", "size"} and value <= 0:
+                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be positive")
+                clean_args[name] = value
+            elif kind == "number":
+                if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be a finite number")
+                clean_args[name] = value
+            elif kind == "string":
+                if not isinstance(value, str) or not value or len(value) > 1_000 or any(
+                    ord(ch) < 32 for ch in value
+                ):
+                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be short text")
+                if name in {"start", "end", "duration"} and not re.fullmatch(
+                    r"\d{1,3}(?::\d{1,2}){0,2}(?:\.\d{1,3})?", value
+                ):
+                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be a numeric time")
+                if name == "aspect" and not re.fullmatch(r"\d{1,5}:\d{1,5}", value):
+                    raise ContentServiceError(f"operations[{index}].arguments.aspect must use WIDTH:HEIGHT")
+                if name == "tiles" and not re.fullmatch(r"\d{1,2}x\d{1,2}", value):
+                    raise ContentServiceError(f"operations[{index}].arguments.tiles must use COLUMNSxROWS")
+                if name == "field" and not re.fullmatch(r"[\w.,:_+-]{1,100}", value):
+                    raise ContentServiceError("probe field contains unsupported characters")
+                clean_args[name] = value
+            else:
+                raise ContentServiceError("unsupported ffmpeg-skill contract type")
+
+        if tool != "probe" and not input_paths:
+            raise ContentServiceError(f"operations[{index}] must include an input path")
+        if tool == "loudness" and not clean_args.get("measure_only") and "output" not in clean_args:
+            raise ContentServiceError("loudness requires output unless measure_only is true")
+        for path in output_paths:
+            if path in produced_paths:
+                raise ContentServiceError(f"operations[{index}] repeats an output path")
+            produced_paths.add(path)
+        normalized.append({"tool": tool, "arguments": clean_args})
+    return normalized
+
+
+def build_ffmpeg_job_manifest(
+    campaign_id: str,
+    script_filename: str,
+    audio_cue_filename: str,
+    operations: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Store a versioned ffmpeg-skill call plan; never execute the plan."""
+
+    canonical_id = _required(campaign_id, "campaign_id")
+    script_filename = _required(script_filename, "script_filename")
+    audio_cue_filename = _required(audio_cue_filename, "audio_cue_filename")
+    campaign, script_asset, cue_asset = _campaign_ffmpeg_sources(
+        canonical_id, script_filename, audio_cue_filename
+    )
+    normalized_operations = _validate_ffmpeg_operations(operations)
+    job_id = f"ffmpeg-{uuid4().hex}"
+    job_manifest = {
+        "schema_version": 1,
+        "job_id": job_id,
+        "campaign_id": canonical_id,
+        "provider": "ffmpeg-skill",
+        "provider_contract_version": FFMPEG_SCHEMA_VERSION,
+        "script_filename": script_asset["filename"],
+        "script_version": script_asset["version"],
+        "audio_cue_filename": cue_asset["filename"],
+        "audio_cue_version": cue_asset["version"],
+        "operations": normalized_operations,
+        "execution": {
+            "status": "not_started",
+            "automatic_execution": False,
+            "runtime_gate": "blocked_pending_independent_runtime_verification",
+        },
+        "lifecycle_state": "scaffold",
+    }
+    result = _store_assets(
+        canonical_id,
+        [
+            {
+                "task_id": _asset_task_id(canonical_id, "ffmpeg-job", job_id),
+                "content": json.dumps(job_manifest, ensure_ascii=False, sort_keys=True, indent=2),
+                "extension": "json",
+                "type": "ffmpeg_job_manifest",
+                "lifecycle_state": "scaffold",
+                "dependencies": [script_filename, audio_cue_filename],
+                "metadata": {
+                    "job_id": job_id,
+                    "provider": "ffmpeg-skill",
+                    "provider_contract_version": FFMPEG_SCHEMA_VERSION,
+                    "execution_status": "not_started",
+                },
+                "expected_campaign_version": campaign.get("version"),
+            }
+        ],
+    )[0]
+    return _manifest(
+        result,
+        job_id=job_id,
+        campaign_version=result.get("version"),
+        script_filename=script_filename,
+        audio_cue_filename=audio_cue_filename,
+        provider="ffmpeg-skill",
+        provider_contract_version=FFMPEG_SCHEMA_VERSION,
+        execution_status="not_started",
+        automatic_execution=False,
+        runtime_gate="blocked_pending_independent_runtime_verification",
+    )
+
+
+def _validated_ffmpeg_result(response: Any) -> tuple[dict[str, Any], str, str | None, int | None]:
+    if not isinstance(response, dict):
+        raise ContentServiceError("execution_result must be an MCP result object")
+    if set(response) - {"isError", "content", "structuredContent", "_meta"}:
+        raise ContentServiceError("execution_result contains unsupported MCP result fields")
+    if "isError" in response and not isinstance(response["isError"], bool):
+        raise ContentServiceError("execution_result.isError must be boolean")
+
+    content = response.get("content", [])
+    if not isinstance(content, list) or len(content) > 16:
+        raise ContentServiceError("execution_result.content must be a list of at most 16 text blocks")
+    for index, block in enumerate(content):
+        if (
+            not isinstance(block, dict)
+            or block.get("type") != "text"
+            or not isinstance(block.get("text"), str)
+            or len(block["text"]) > 16_000
+        ):
+            raise ContentServiceError(
+                f"execution_result.content[{index}] must be a bounded text block; media is not stored"
+            )
+
+    structured = response.get("structuredContent")
+    if structured is not None and not isinstance(structured, dict):
+        raise ContentServiceError("execution_result.structuredContent must be an object")
+    if not content and structured is None:
+        raise ContentServiceError("execution_result must include content or structuredContent")
+    if "_meta" in response and not isinstance(response["_meta"], dict):
+        raise ContentServiceError("execution_result._meta must be an object")
+
+    try:
+        encoded = json.dumps(response, ensure_ascii=False, allow_nan=False)
+    except (TypeError, ValueError) as exc:
+        raise ContentServiceError("execution_result must contain JSON-compatible values") from exc
+    if len(encoded.encode("utf-8")) > FFMPEG_MAX_RESULT_BYTES:
+        raise ContentServiceError(
+            f"execution_result exceeds the {FFMPEG_MAX_RESULT_BYTES}-byte result limit"
+        )
+
+    provider_status = structured.get("status") if structured else None
+    if provider_status is not None and not isinstance(provider_status, str):
+        raise ContentServiceError("execution_result.structuredContent.status must be text")
+    exit_code = structured.get("exit_code") if structured else None
+    if exit_code is not None and (isinstance(exit_code, bool) or not isinstance(exit_code, int)):
+        raise ContentServiceError("execution_result.structuredContent.exit_code must be an integer")
+
+    if response.get("isError") is True or provider_status == "failed" or (exit_code is not None and exit_code != 0):
+        execution_status = "reported_failure"
+    elif provider_status == "completed" and exit_code == 0:
+        execution_status = "reported_completed"
+    else:
+        execution_status = "unclassified"
+    return response, execution_status, provider_status, exit_code
+
+
+def record_ffmpeg_job_result(
+    campaign_id: str,
+    job_id: str,
+    job_version: str,
+    operation_index: int,
+    execution_result: dict[str, Any],
+) -> dict[str, Any]:
+    """Record the actual MCP response for a stored job without approving it."""
+
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    normalized_job_id = _required(job_id, "job_id")
+    normalized_version = _required(job_version, "job_version")
+    campaign = _load_campaign(campaign_key)
+    if campaign is None or campaign.get("campaign_id") != canonical_id:
+        raise ContentServiceError(f"campaign not found: {canonical_id}")
+    job_asset = next(
+        (
+            asset
+            for asset in reversed(campaign.get("assets", []))
+            if asset.get("type") == "ffmpeg_job_manifest"
+            and asset.get("job_id") == normalized_job_id
+        ),
+        None,
+    )
+    if job_asset is None:
+        raise ContentServiceError("job_id must identify an FFmpeg job manifest in this campaign")
+    if job_asset.get("version") != normalized_version:
+        raise ContentServiceError(
+            f"job version mismatch; the manifest is {job_asset.get('version')}"
+        )
+    if isinstance(operation_index, bool) or not isinstance(operation_index, int):
+        raise ContentServiceError("operation_index must be an integer")
+    try:
+        job_manifest = json.loads(
+            fetch_from_bus(DEPARTMENT, job_asset["filename"])["content"]
+        )
+    except (json.JSONDecodeError, KeyError) as exc:
+        raise ContentServiceError("stored FFmpeg job manifest is not valid JSON") from exc
+    if (
+        job_manifest.get("job_id") != normalized_job_id
+        or job_manifest.get("campaign_id") != canonical_id
+        or job_manifest.get("provider") != "ffmpeg-skill"
+        or job_manifest.get("provider_contract_version")
+        != job_asset.get("provider_contract_version", FFMPEG_SCHEMA_VERSION)
+    ):
+        raise ContentServiceError("job_id does not match the stored FFmpeg job manifest")
+    planned_operations = job_manifest.get("operations")
+    if (
+        not isinstance(planned_operations, list)
+        or operation_index < 0
+        or operation_index >= len(planned_operations)
+        or not isinstance(planned_operations[operation_index], dict)
+    ):
+        raise ContentServiceError("operation_index must identify a call in the stored job manifest")
+    operation_tool = planned_operations[operation_index].get("tool")
+
+    response, execution_status, provider_status, exit_code = _validated_ffmpeg_result(
+        execution_result
+    )
+    result_id = f"ffmpeg-result-{uuid4().hex}"
+    record = {
+        "schema_version": 1,
+        "result_id": result_id,
+        "job_id": normalized_job_id,
+        "job_filename": job_asset["filename"],
+        "job_version": normalized_version,
+        "operation_index": operation_index,
+        "operation_tool": operation_tool,
+        "campaign_id": canonical_id,
+        "provider": "ffmpeg-skill",
+        "provider_contract_version": job_asset.get("provider_contract_version", FFMPEG_SCHEMA_VERSION),
+        "execution_status": execution_status,
+        "provider_status": provider_status,
+        "provider_exit_code": exit_code,
+        "mcp_is_error": response.get("isError"),
+        "mcp_result": response,
+        "lifecycle_state": "scaffold",
+        "approval_effect": "none",
+    }
+    result = _store_assets(
+        canonical_id,
+        [
+            {
+                "task_id": _asset_task_id(canonical_id, "ffmpeg-result", result_id),
+                "content": json.dumps(record, ensure_ascii=False, sort_keys=True, indent=2),
+                "extension": "json",
+                "type": "ffmpeg_execution_result",
+                "lifecycle_state": "scaffold",
+                "dependencies": [job_asset["filename"]],
+                "metadata": {
+                    "result_id": result_id,
+                    "job_id": normalized_job_id,
+                    "job_version": normalized_version,
+                    "operation_index": operation_index,
+                    "operation_tool": operation_tool,
+                    "execution_status": execution_status,
+                    "provider_status": provider_status,
+                    "provider_exit_code": exit_code,
+                    "mcp_is_error": response.get("isError"),
+                    "approval_effect": "none",
+                },
+            }
+        ],
+    )[0]
+    return _manifest(
+        result,
+        result_id=result_id,
+        job_id=normalized_job_id,
+        job_version=normalized_version,
+        operation_index=operation_index,
+        operation_tool=operation_tool,
+        execution_status=execution_status,
+        provider_status=provider_status,
+        provider_exit_code=exit_code,
+        approval_effect="none",
+        campaign_status="scaffold",
+    )
 
 
 def design_audio_experience(

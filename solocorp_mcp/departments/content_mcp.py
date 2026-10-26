@@ -7,10 +7,13 @@ not exposed as separate client entry points.
 
 from __future__ import annotations
 
+from typing import Any
+
 from mcp.server.fastmcp import FastMCP
 
 from .content_service import (
     ContentServiceError,
+    build_ffmpeg_job_manifest as _build_ffmpeg_job_manifest,
     create_content_draft as _create_content_draft,
     create_video_script as _create_video_script,
     department_info,
@@ -18,6 +21,7 @@ from .content_service import (
     design_visual_prompt as _design_visual_prompt,
     generate_voice_lipsync_prompt as _generate_voice_lipsync_prompt,
     generate_voiceover as _generate_voiceover,
+    record_ffmpeg_job_result as _record_ffmpeg_job_result,
     record_human_approval as _record_human_approval,
     result_json,
     review_publish_gate as _review_publish_gate,
@@ -32,6 +36,8 @@ mcp = FastMCP(
         "coordinates the five internal specialists. Draft and prompt tools "
         "store artifacts without publishing. Audio cue and lip-sync tools never "
         "call providers. Paid ElevenLabs voiceover requires approved=true. "
+        "FFmpeg job tools store a validated plan and the identified MCP call result; "
+        "they never execute FFmpeg or approve work. The local runtime gate remains required. "
         "Every publication requires recorded human approval for the current "
         "campaign version."
     ),
@@ -217,6 +223,45 @@ def save_human_edited_artifact(
             )
         )
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def build_ffmpeg_job_manifest(
+    campaign_id: str,
+    script_filename: str,
+    audio_cue_filename: str,
+    operations: list[dict[str, Any]],
+) -> str:
+    """Store a validated ffmpeg-skill 2.17.1 call plan without executing it."""
+
+    try:
+        return result_json(
+            _build_ffmpeg_job_manifest(
+                campaign_id, script_filename, audio_cue_filename, operations
+            )
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def record_ffmpeg_job_result(
+    campaign_id: str,
+    job_id: str,
+    job_version: str,
+    operation_index: int,
+    execution_result: dict[str, Any],
+) -> str:
+    """Store an actual ffmpeg-skill MCP response; this never approves or publishes."""
+
+    try:
+        return result_json(
+            _record_ffmpeg_job_result(
+                campaign_id, job_id, job_version, operation_index, execution_result
+            )
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
         return _error(exc)
 
 

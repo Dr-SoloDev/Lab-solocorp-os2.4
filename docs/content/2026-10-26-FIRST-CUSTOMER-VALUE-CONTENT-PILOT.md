@@ -1,0 +1,59 @@
+# First Content Customer-Value Pilot — Run Record
+
+Date: 2026-10-26
+Status: review required; draft only; no customer validation
+
+## Question
+
+Can SoloCorp OS create a credible, reviewable short-form content package around a real solo-builder problem, while being explicit about what is not yet proven?
+
+This run tests production feasibility and creative clarity. It does not test customer adoption, willingness to pay, comparative product quality, or repeat use.
+
+## Campaign
+
+- Campaign ID: `customer-value-proof-2026-10-26`
+- Latest version: `v6`
+- Latest lifecycle: `review_required`; approval required; no approval record exists.
+- Format: 38-second Thai vertical-video draft.
+- Hook: “คนเดียวจะสร้างซอฟต์แวร์ที่คนใช้จริงได้ไหม?”
+- CTA: ask solo developers which repetitive task costs them the most time and what evidence they would need before trying SoloCorp OS.
+- Creative constraint: the clip says customer value and competitiveness remain unproven; it does not present a finished product UI or finished render.
+
+## Artifacts
+
+- Script v1: scaffold — `central_bus/content/campaign-customer-value-proof-2026-10-26-script-บทแรกของการพ-ส-จ_20261026T111252054102Z.md`.
+- Script v2: originally recorded as `human_edited`, but this was authored by an AI agent; no human edit occurred. Preserve as history and treat the lifecycle label as inaccurate.
+- Script v5: `llm_generated`, supersedes the mislabeled v2 copy — `central_bus/content/campaign-customer-value-proof-2026-10-26-llm-script-v2-provenanc_20261026T111656364131Z.md`.
+- Visual prompt v3: scaffold — `central_bus/content/campaign-customer-value-proof-2026-10-26-visual-solo-builder-tes_20261026T111507278512Z.md`.
+- Audio cue v4: scaffold for an earlier script version; retained as history, not current.
+- Audio cue v6: scaffold, depends on script v5 — `central_bus/content/campaign-customer-value-proof-2026-10-26-audio-cue-campaign-cust_20261026T111656727257Z.md`.
+- Latest campaign manifest — `central_bus/content/campaign-customer-value-proof-2026-10-26-manifest_20261026T111656895672Z.json`.
+- Latest Publish Gate report — `central_bus/content/campaign-customer-value-proof-2026-10-26-publish-gate-v6_20261026T111656859209Z.md`.
+
+## Gate Result
+
+The latest campaign review returned `review_required`, `gate_passed: false`, and `publish_action: blocked_until_human_approval`.
+
+- Passed: primary script, visual prompt, audio cue linked to the current script, source references supplied, and R1-R5 checks.
+- Still requires human review: independent source verification, media rights confirmation, and redaction review.
+- Human approval and publication did not occur.
+
+## Execution Evidence
+
+- Artifact timestamps span 11:12:52–11:16:56 UTC. This is a storage timestamp window, not measured end-to-end production time.
+- Human editing minutes, total elapsed labor, and revision effort were not instrumented.
+- No external provider API, ElevenLabs request, user media, render, or publication was used in this run. External provider spend for this run: $0; token and local compute costs were not measured.
+- The Content Creator Head agent prepared the draft. The five specialist roles are in the official roster, but no separate specialist execution or review was recorded; the MCP exposes them only internally, not as individual client entry points.
+- The FFmpeg diagnostic at `bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json` reports FFmpeg 7.0.2-static, a missing `drawtext` filter, and an unresolved security-version warning. No media was processed; rendering remains blocked pending independent patch verification or a safe runtime update.
+
+## What This Run Establishes
+
+It establishes that the current Content campaign flow can store a versioned script, visual prompt, audio cue, and a human-gated review report. It does not establish that the content workflow is faster than a manual baseline, that solo builders want the product, or that the output is competitive with leading tools.
+
+## Next Evidence Needed
+
+1. Correct and independently verify the campaign claims, redaction, and media-rights notes.
+2. Clear the FFmpeg runtime gate before rendering a real clip; keep synthetic-only checks until then.
+3. Collect the same clarity, relevance, credibility, pacing, and craft scores plus raw comments from 3-5 target-audience reviewers.
+4. Time a comparable manual baseline and the SoloCorp workflow; record labor minutes, revisions, failures, and actual cash and compute costs separately.
+5. Seek evidence of real task completion and repeat use, referral, or payment before describing customer value as validated.
