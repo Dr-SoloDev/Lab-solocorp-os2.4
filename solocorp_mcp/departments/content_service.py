@@ -32,6 +32,24 @@ PROFILE_PATH = ROOT / "profiles" / "15-content-creator" / "SOUL.md"
 BRAND_GUIDELINES_PATH = ROOT / "docs" / "brand" / "BRAND-GUIDELINES-v1.md"
 DEPARTMENT = "content"
 CONTENT_TYPES = {"article", "social_post", "newsletter"}
+CLIENT_GENERATED_ARTIFACT_TYPES = {
+    "article",
+    "draft",
+    "social_post",
+    "newsletter",
+    "video_script",
+    "visual_prompt",
+    "voiceover_transcript",
+    "audio_cue_sheet",
+}
+PRIMARY_CONTENT_ARTIFACT_TYPES = {
+    "draft",
+    "article",
+    "social_post",
+    "newsletter",
+    "video_script",
+    "voiceover_transcript",
+}
 VOICEOVER_MODELS = {"eleven_v4"}
 MAX_VOICEOVER_CHARACTERS = 2_000
 SPECIALISTS = (
@@ -63,6 +81,7 @@ SPECIALISTS = (
 )
 LIFECYCLE_STATES = {
     "scaffold",
+    "client_generated",
     "llm_generated",
     "human_edited",
     "review_required",
@@ -240,6 +259,40 @@ def _validated_source_references(
         if value not in references:
             references.append(value)
     return references
+
+
+def _validated_provenance(provenance: Any) -> dict[str, str | None]:
+    if not isinstance(provenance, dict):
+        raise ContentServiceError("provenance must be an object")
+    allowed = {"client", "provider", "model"}
+    unknown = set(provenance) - allowed
+    if unknown:
+        raise ContentServiceError(
+            f"unsupported provenance fields: {', '.join(sorted(map(str, unknown)))}"
+        )
+
+    secret_pattern = re.compile(
+        r"(?i)(?:\b(?:sk|ccsk|ghp|xox[baprs])-[-A-Za-z0-9_]{12,}|\bbearer\s+\S+)"
+    )
+    result: dict[str, str | None] = {}
+    for field, max_length in (("client", 80), ("provider", 80), ("model", 120)):
+        raw = provenance.get(field)
+        if raw is None and field != "client":
+            result[field] = None
+            continue
+        if not isinstance(raw, str):
+            raise ContentServiceError(f"provenance.{field} must be text")
+        value = _required(raw, f"provenance.{field}")
+        if len(value) > max_length or "\n" in value or "\r" in value:
+            raise ContentServiceError(
+                f"provenance.{field} must be a single-line identifier of at most {max_length} characters"
+            )
+        if secret_pattern.search(value):
+            raise ContentServiceError(
+                f"provenance.{field} looks like a credential; credentials must not be sent to MCP"
+            )
+        result[field] = value
+    return result
 
 
 def _merge_references(*groups: list[str]) -> list[str]:
@@ -1255,6 +1308,48 @@ def save_human_edited_artifact(
     return {**result, "lifecycle_state": "human_edited"}
 
 
+def ingest_client_generated_artifact(
+    campaign_id: str,
+    artifact_type: str,
+    content: str,
+    provenance: dict[str, str],
+    source_references: list[str] | None = None,
+) -> dict[str, Any]:
+    """Store client-authored content without mislabeling its origin."""
+
+    canonical_id = _campaign_identity(campaign_id)[1]
+    kind = _required(artifact_type, "artifact_type").lower()
+    if kind not in CLIENT_GENERATED_ARTIFACT_TYPES:
+        raise ContentServiceError(
+            f"artifact_type must be one of: {', '.join(sorted(CLIENT_GENERATED_ARTIFACT_TYPES))}"
+        )
+    if not isinstance(content, str) or not content.strip():
+        raise ContentServiceError("content is required")
+    if len(content.encode("utf-8")) > MAX_PAYLOAD_BYTES:
+        raise ContentServiceError(f"content exceeds {MAX_PAYLOAD_BYTES} bytes")
+
+    references = _validated_source_references(source_references)
+    validated_provenance = _validated_provenance(provenance)
+    task_id = _asset_task_id(canonical_id, "client-generated", f"{kind}-{uuid4().hex}")
+    return _store_assets(
+        canonical_id,
+        [
+            {
+                "task_id": task_id,
+                "content": content,
+                "extension": "md",
+                "type": kind,
+                "lifecycle_state": "client_generated",
+                "source_references": references,
+                "metadata": {
+                    "provenance": validated_provenance,
+                    "provenance_status": "client_supplied_unverified",
+                },
+            }
+        ],
+    )[0]
+
+
 def generate_voiceover(
     title: str,
     text: str,
@@ -1397,6 +1492,8 @@ def _campaign_manifest_summary(campaign: dict[str, Any]) -> dict[str, Any]:
                 "type": asset["type"],
                 "status": asset["status"],
                 "source_references": asset.get("source_references", []),
+                "provenance": asset.get("provenance"),
+                "provenance_status": asset.get("provenance_status"),
             }
             for asset in campaign.get("assets", [])
         ],
@@ -1431,7 +1528,7 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
         primary_text = "\n\n".join(
             content
             for asset, content in text_assets
-            if asset.get("type") in {"draft", "video_script", "voiceover_transcript"}
+            if asset.get("type") in PRIMARY_CONTENT_ARTIFACT_TYPES
         )
         redaction = redact(all_text)
         gate = publish_gate(primary_text, redaction=redaction)
@@ -1453,8 +1550,8 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
         checks = [
             _campaign_check(
                 "dependencies: primary content",
-                bool(types & {"draft", "video_script", "voiceover_transcript"}),
-                "พบ draft/script" if types & {"draft", "video_script", "voiceover_transcript"} else "ต้องมี draft หรือ video script",
+                bool(types & PRIMARY_CONTENT_ARTIFACT_TYPES),
+                "พบ draft/script" if types & PRIMARY_CONTENT_ARTIFACT_TYPES else "ต้องมี draft หรือ video script",
             ),
             _campaign_check(
                 "dependencies: visual prompt",
@@ -1512,6 +1609,22 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             f"- {'PASS' if item['ok'] else 'REVIEW'} — {item['check']}: {item['detail']}"
             for item in checks
         )
+        client_provenance = [
+            asset
+            for asset in assets
+            if asset.get("provenance_status") == "client_supplied_unverified"
+        ]
+        if client_provenance:
+            report_lines.extend(["", "## Client-supplied provenance"])
+            report_lines.extend(
+                "- `{}; client={}; provider={}; model={}` (self-reported; not authenticated)".format(
+                    asset["filename"],
+                    asset["provenance"].get("client", ""),
+                    asset["provenance"].get("provider") or "unspecified",
+                    asset["provenance"].get("model") or "unspecified",
+                )
+                for asset in client_provenance
+            )
         report_lines.extend(["", "## Redaction and R1–R5 detail", gate_report_md(redaction, gate)])
         report_task = _asset_task_id(canonical_id, "publish-gate", campaign["version"])
         report_result = submit_to_bus(DEPARTMENT, report_task, "\n".join(report_lines), "md")
@@ -1660,7 +1773,8 @@ def sop_resource() -> str:
         "# Content Creator SOP\n",
         "หัวหน้าแผนก: เสก (Sek)\n",
         "Specialists: Kawee (copy), Film (script), Art (visual), Sound (audio), Ink (strategy and publish gate).\n",
-        "Lifecycle: scaffold → llm_generated → human_edited → review_required → approved; state changes require evidence.\n",
+        "Lifecycle: scaffold → client_generated → llm_generated → human_edited → review_required → approved; state changes require evidence.\n",
+        "Client/provider/model provenance is client-supplied and unverified; API keys must never be sent to MCP.\n",
         "Audio cue and voice/lip-sync tools only create files; they never call external providers.\n",
         "\n## Operating rules\n",
         "1. ทุกชิ้นต้องมีเป้าหมาย กลุ่มเป้าหมาย และแพลตฟอร์ม\n",

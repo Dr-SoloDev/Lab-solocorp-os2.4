@@ -3,6 +3,10 @@
 Date: 2026-10-26
 Status: review required; draft only; no customer validation
 
+## Owner Sequencing Decision — 2026-10-29
+
+The Owner has deferred all external audience and customer validation until the Content Creator system-readiness gate is met and independently reproduced. This changes the order of future work; it does not change the results recorded for this 2026-10-26 run. The existing audience-feedback CTA is draft history and must not be used to collect validation now. See `docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md` for the new sequence.
+
 ## Question
 
 Can SoloCorp OS create a credible, reviewable short-form content package around a real solo-builder problem, while being explicit about what is not yet proven?
@@ -52,8 +56,8 @@ It establishes that the current Content campaign flow can store a versioned scri
 
 ## Next Evidence Needed
 
-1. Correct and independently verify the campaign claims, redaction, and media-rights notes.
-2. Clear the FFmpeg runtime gate before rendering a real clip; keep synthetic-only checks until then.
-3. Collect the same clarity, relevance, credibility, pacing, and craft scores plus raw comments from 3-5 target-audience reviewers.
-4. Time a comparable manual baseline and the SoloCorp workflow; record labor minutes, revisions, failures, and actual cash and compute costs separately.
-5. Seek evidence of real task completion and repeat use, referral, or payment before describing customer value as validated.
+1. Resolve LLM availability and complete the documented D3 evaluation without infrastructure-blocked cases.
+2. Verify campaign claims, redaction, source handling, rights, and human Publish Gate behavior for internal readiness.
+3. Clear the FFmpeg runtime gate if rendering is in scope; otherwise, keep rendering explicitly out of scope and label outputs as drafts.
+4. Complete independent reproduction of the system-readiness result.
+5. Only after readiness is recorded, run target-audience reviews, a comparable manual baseline, and real-task tests for repeat use, referral, or payment. These are final-phase validation, not current prerequisites for engineering work.

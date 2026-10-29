@@ -460,6 +460,7 @@ def build_obs(case: dict, res: dict, agent, seconds: float, pre: dict, post: dic
     return {
         "attempt": attempt,
         "status": res.get("status"),
+        "text": text,
         "error": details.get("error"),
         "summary": str(res.get("summary", ""))[:300],
         "traceback_tail": tb,

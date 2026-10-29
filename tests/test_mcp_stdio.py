@@ -33,6 +33,7 @@ async def test_content_mcp_stdio_handshake_and_tool_call(tmp_path):
             assert "design_audio_experience" in names
             assert "generate_voice_lipsync_prompt" in names
             assert "record_human_approval" in names
+            assert "ingest_client_generated_artifact" in names
             result = await session.call_tool(
                 "create_content_draft",
                 {
@@ -42,7 +43,30 @@ async def test_content_mcp_stdio_handshake_and_tool_call(tmp_path):
                     "content_type": "social_post",
                 },
             )
+            ingest_result = await session.call_tool(
+                "ingest_client_generated_artifact",
+                {
+                    "campaign_id": "stdio-client-pilot",
+                    "artifact_type": "article",
+                    "content": "## Hook\n\nA client-generated test.\n\n## Body\n\nStored without an LLM call.\n",
+                    "source_references": ["https://research.example/stdio"],
+                    "provenance": {
+                        "client": "opencode",
+                        "provider": "test-provider",
+                        "model": "test-model",
+                    },
+                },
+            )
+            review_result = await session.call_tool(
+                "review_publish_gate", {"campaign_id": "stdio-client-pilot"}
+            )
 
     payload = json.loads(result.content[0].text)
     assert payload["status"] == "created"
     assert payload["path"].startswith("content/")
+    ingested = json.loads(ingest_result.content[0].text)
+    assert ingested["status"] == "client_generated"
+    assert ingested["provenance_status"] == "client_supplied_unverified"
+    review = json.loads(review_result.content[0].text)
+    assert review["status"] == "review_required"
+    assert review["publish_action"] == "blocked_until_human_approval"

@@ -21,6 +21,7 @@ from .content_service import (
     design_visual_prompt as _design_visual_prompt,
     generate_voice_lipsync_prompt as _generate_voice_lipsync_prompt,
     generate_voiceover as _generate_voiceover,
+    ingest_client_generated_artifact as _ingest_client_generated_artifact,
     record_ffmpeg_job_result as _record_ffmpeg_job_result,
     record_human_approval as _record_human_approval,
     result_json,
@@ -34,7 +35,9 @@ mcp = FastMCP(
     instructions=(
         "SoloCorp Content Creator department. The head Sek receives briefs and "
         "coordinates the five internal specialists. Draft and prompt tools "
-        "store artifacts without publishing. Audio cue and lip-sync tools never "
+        "store artifacts without publishing. Client-generated artifacts retain "
+        "client-supplied, unauthenticated provenance; this route never calls an LLM. "
+        "Audio cue and lip-sync tools never "
         "call providers. Paid ElevenLabs voiceover requires approved=true. "
         "FFmpeg job tools store a validated plan and the identified MCP call result; "
         "they never execute FFmpeg or approve work. The local runtime gate remains required. "
@@ -220,6 +223,30 @@ def save_human_edited_artifact(
         return result_json(
             _save_human_edited_artifact(
                 campaign_id, source_filename, edited_content, edit_note
+            )
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def ingest_client_generated_artifact(
+    campaign_id: str,
+    artifact_type: str,
+    content: str,
+    provenance: dict[str, str],
+    source_references: list[str] | None = None,
+) -> str:
+    """Store content made by the client with self-reported provenance."""
+
+    try:
+        return result_json(
+            _ingest_client_generated_artifact(
+                campaign_id,
+                artifact_type,
+                content,
+                provenance,
+                source_references,
             )
         )
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:

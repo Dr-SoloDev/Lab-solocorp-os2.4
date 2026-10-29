@@ -1,0 +1,43 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-29T20:54:12.636684+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205412636684Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205412636684Z.md",
+      "provenance": {
+        "client": "codex_cli",
+        "model": "gpt-4o",
+        "provider": "openai"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v1"
+    }
+  ],
+  "campaign_id": "campaign_solocorp_os_1pt5m_narrative",
+  "campaign_key": "campaign_solocorp_os_1pt5m_narrative",
+  "created_at": "2026-10-29T20:54:12.636443+00:00",
+  "review": null,
+  "revision": 1,
+  "schema_version": 1,
+  "source_references": [
+    "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+    "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+    "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+  ],
+  "status": "client_generated",
+  "updated_at": "2026-10-29T20:54:12.694144+00:00",
+  "version": "v1",
+  "version_number": 1
+}

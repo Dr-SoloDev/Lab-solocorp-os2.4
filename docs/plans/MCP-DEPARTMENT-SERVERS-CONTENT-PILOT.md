@@ -9,6 +9,26 @@
 1. `central-bus` — MCP infrastructure สำหรับจัดเก็บและอ่าน payload ของแผนก
 2. `content-creator` — MCP department server ของเสก สำหรับสร้างร่างคอนเทนต์ สคริปต์วิดีโอ visual prompt และตรวจ Publish Gate
 
+## Client-managed LLM และ provenance
+
+ใน workflow ปกติ OpenCode, Codex หรือ Local AI เป็นผู้เลือก provider/model และสร้างเนื้อหาเอง ส่วน MCP รับเนื้อหาที่สร้างเสร็จแล้วเพื่อจัดเก็บ versioning ผูก campaign เก็บ source references และตรวจ Publish Gate เท่านั้น เส้นทาง ingestion นี้ไม่เรียก `workers/llm_provider.py` และห้ามส่ง API key หรือ credential เข้า MCP
+
+เครื่องมือ `ingest_client_generated_artifact` รับ `campaign_id`, `artifact_type`, `content`, `source_references` และ `provenance` (`client`, `provider`, `model`) โดย client/provider/model เป็นข้อมูลที่ผู้เรียกแจ้งเอง ไม่ได้พิสูจน์ตัวตนหรือยืนยันการใช้โมเดลจริง ระบบบันทึก `lifecycle_state: client_generated` และ `provenance_status: client_supplied_unverified`; ค่านี้ต้องไม่ถูกนำเสนอเป็น provenance ที่ผ่านการรับรอง `save_human_edited_artifact` ยังคงใช้เฉพาะงานที่มนุษย์แก้ไข
+
+```text
+OpenCode / Codex / Local AI เลือก LLM และสร้างเนื้อหา
+        │
+        ▼
+ingest_client_generated_artifact
+        │ campaign + artifact + references + self-reported provenance
+        ▼
+Central Bus Store → versioned campaign manifest → review_publish_gate
+                                                   │
+                                                   └→ review required; no auto-publish
+```
+
+หากต้องใช้ LLM ฝั่ง background ในอนาคต ให้เป็น adapter เสริมที่ตั้ง provider/model และ credential ใน local config อย่างชัดเจน ห้าม fallback หรือสลับโมเดลโดยเงียบ
+
 ## สถาปัตยกรรม
 
 ```text
@@ -47,6 +67,8 @@ OpenCode V2 / Codex
 - [x] Codex config ต่อได้ทั้งสอง server
 - [x] มี unit tests สำหรับ storage, path safety และ content tools
 - [x] ทดสอบ stdio handshake จริงจาก MCP client ใน environment นี้
+- [x] เพิ่ม ingestion สำหรับ client-generated artifact พร้อม lifecycle state และ provenance ที่ระบุว่า unverified
+- [x] Publish Gate แสดง provenance แบบ self-reported และคง human approval gate
 
 ## วงรอบตรวจสอบ
 
@@ -65,3 +87,16 @@ OpenCode V2 / Codex
 - Auto-QA gate: **PASS**, coverage **75.4%** (threshold 9%)
 - OpenCode `mcp list --pure`: `central-bus` และ `content-creator` = **connected**
 - Codex `mcp list --json`: ลงทะเบียน `central-bus` และ `content-creator` = **enabled**
+
+## Verification — 2026-10-30
+
+- Targeted tests: `tests/test_content_mcp.py` และ `tests/test_mcp_stdio.py` ผ่าน **22 tests**; stdio smoke เรียก ingestion และ Publish Gate ด้วย artifact สังเคราะห์
+- OpenCode แสดง `content-creator` = **connected**; client-native call ยังไม่ถึง MCP tool: ชื่อ model ใน agent config ไม่อยู่ในรายการ CLI และ model ที่ CLI แสดงตอบ HTTP 402 ก่อนการเรียก tool
+- OpenCode Phase 2 attempt (2026-10-30): ตั้ง project `ceo-turbo` เป็น `opencode/beam-free` ซึ่ง CLI แสดงว่า active, รองรับ tool call และมีค่า input/output ที่แสดงเป็น 0 (ยังไม่ยืนยันโควตาหรือความพร้อมใช้งานจริง); การรัน synthetic campaign `campaign_synth_opencode_02` หนึ่งครั้งหยุดก่อน MCP ด้วย HTTP 400 `unsupported_parameter`: endpoint ปฏิเสธ `agents_md` ว่าเป็น argument ที่ไม่รู้จัก
+- ตรวจหลังความล้มเหลวแล้วไม่พบ artifact, manifest หรือ Gate report ของ `campaign_synth_opencode_02`; ไม่มี MCP tool ถูกเรียก จึงไม่ถือว่า OpenCode E2E ผ่าน
+- ปรับ project config ให้ OpenCode Desktop เป็นผู้เลือก model ต่อ session: เอา model override ออกจาก `ceo-turbo` และไม่มี root `model` pin; provider/model ที่เลือกต้องเชื่อมต่อและพร้อมใช้ใน project ก่อน
+- Codex client E2E: **PASS สำหรับการเรียก tool และบันทึกผล** ผ่าน interactive Codex CLI `0.165.0` ด้วย session override `on-request`; อนุมัติ ingestion และ gate แยกเป็นรายครั้ง โดยไม่เปลี่ยน global config
+- Codex synthetic campaign `campaign_synth_codex_01`: artifact `campaign-campaign_synth_codex_01-client-generated-article-ee9197_20261029T180200284565Z.md`; manifest `campaign-campaign_synth_codex_01-manifest_20261029T180215964471Z.json`; report `campaign-campaign_synth_codex_01-publish-gate-v1_20261029T180215910413Z.md`
+- ตรวจ manifest แล้ว: asset เป็น `client_generated`, provenance เป็น `client_supplied_unverified`, Publish Gate เป็น `review_required`, `gate_passed=false`; ไม่มีการ Publish ซึ่งเป็นผลที่คาดหวังสำหรับเนื้อหาสังเคราะห์ที่ไม่ผ่าน R1–R5
+- Codex ใช้ model `gpt-6-luna` ผ่าน provider `maxplus` ตาม config ปัจจุบัน; CLI ยืนยัน credential ถูกตั้งค่าแต่ไม่แสดงยอดโควตาคงเหลือ การเรียกครั้งนี้สำเร็จ แต่ยอดคงเหลือยังไม่ได้รับการยืนยัน; usage ที่ CLI รายงานคือ 42,463 input + 79,949 cached input และ 1,002 output tokens
+- End-to-end ผ่านทั้งสอง client ยัง **pending**: Codex tool workflow ผ่าน; OpenCode ยังไม่ถึง MCP tool เพราะ OpenCode API ปฏิเสธ request ของ `opencode/beam-free` ด้วย HTTP 400; ยังต้องทดสอบ model ที่เลือกจาก Desktop UI

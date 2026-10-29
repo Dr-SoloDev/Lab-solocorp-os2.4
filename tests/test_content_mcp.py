@@ -167,6 +167,72 @@ def test_human_edit_versions_artifact_and_invalidates_old_audio_cue(isolated_bus
     assert audio_check["ok"] is False
 
 
+def test_client_generated_artifact_tracks_provenance_and_gate(isolated_bus):
+    campaign_id = "client-generated-pilot"
+    references = ["https://research.example/source"]
+    provenance = {"client": "codex", "provider": "openai", "model": "gpt-test"}
+    content = "## Hook\n\nA test draft.\n\n## Body\n\nSource-grounded content.\n"
+
+    result = content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "article",
+        content,
+        provenance,
+        references,
+    )
+
+    assert result["status"] == "client_generated"
+    assert result["lifecycle_state"] == "client_generated"
+    assert result["provenance"] == provenance
+    assert result["provenance_status"] == "client_supplied_unverified"
+    assert result["source_references"] == references
+    assert bus_store.fetch_from_bus("content", result["filename"])["content"] == content
+
+    manifest = json.loads(
+        bus_store.fetch_from_bus("content", result["campaign_manifest"]["filename"])["content"]
+    )
+    stored = manifest["assets"][-1]
+    assert stored["status"] == "client_generated"
+    assert stored["provenance"] == provenance
+    assert stored["provenance_status"] == "client_supplied_unverified"
+    assert stored["source_references"] == references
+
+    review = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert review["status"] == "review_required"
+    assert review["approval_required"] is True
+    assert review["publish_action"] == "blocked_until_human_approval"
+    assert review["manifest"]["assets"][0]["provenance"] == provenance
+    report = bus_store.fetch_from_bus("content", review["report"]["filename"])["content"]
+    assert "Client-supplied provenance" in report
+    assert "self-reported; not authenticated" in report
+
+
+def test_client_generated_provenance_rejects_credentials_and_unknown_fields(isolated_bus):
+    args = {
+        "campaign_id": "invalid-provenance-pilot",
+        "artifact_type": "article",
+        "content": "A short draft.",
+        "source_references": [],
+    }
+    with pytest.raises(content_service.ContentServiceError, match="unsupported provenance fields"):
+        content_service.ingest_client_generated_artifact(
+            **args,
+            provenance={"client": "codex", "api_key": "do-not-store"},
+        )
+
+    with pytest.raises(content_service.ContentServiceError, match="credentials must not be sent"):
+        content_service.ingest_client_generated_artifact(
+            **args,
+            provenance={"client": "codex", "provider": "Bearer secret-token-value"},
+        )
+
+    with pytest.raises(content_service.ContentServiceError, match="provenance.model must be text"):
+        content_service.ingest_client_generated_artifact(
+            **args,
+            provenance={"client": "codex", "provider": "openai", "model": 42},
+        )
+
+
 def test_publish_gate_creates_report_and_never_publishes(isolated_bus):
     draft = content_service.create_content_draft(
         "Gate test", "หลักฐานและความโปร่งใส", "ผู้สร้างระบบ", "social_post"
@@ -200,6 +266,7 @@ def test_content_server_contract_and_resource():
         "save_human_edited_artifact",
         "build_ffmpeg_job_manifest",
         "record_ffmpeg_job_result",
+        "ingest_client_generated_artifact",
     }
     assert "Content Creator SOP" in content_sop()
     assert "เสก" in content_sop()
