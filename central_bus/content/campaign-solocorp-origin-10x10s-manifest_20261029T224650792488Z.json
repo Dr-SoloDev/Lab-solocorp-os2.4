@@ -1,0 +1,383 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-29T22:46:47.773458+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-draft-ep01-จ-ดเร-มต-น-02-52_20261029T224647773458Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-draft-ep01-จ-ดเร-มต-น-02-52_20261029T224647773458Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52."
+      ],
+      "status": "scaffold",
+      "type": "draft",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-29T22:46:47.892603+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-script-ep01-จ-ดเร-มต-น-02-52_20261029T224647892603Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-script-ep01-จ-ดเร-มต-น-02-52_20261029T224647892603Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52."
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-29T22:46:48.041790+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-visual-กราฟ-กนาฬ-กา-02-52-ก-บ-te_20261029T224648041790Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-visual-กราฟ-กนาฬ-กา-02-52-ก-บ-te_20261029T224648041790Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52."
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-29T22:46:48.202752+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-draft-ep02-lenovo-z580_20261029T224648202752Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-draft-ep02-lenovo-z580_20261029T224648202752Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580."
+      ],
+      "status": "scaffold",
+      "type": "draft",
+      "version": "v4"
+    },
+    {
+      "created_at": "2026-10-29T22:46:48.372169+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-script-ep02-lenovo-z580_20261029T224648372169Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-script-ep02-lenovo-z580_20261029T224648372169Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580."
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v5"
+    },
+    {
+      "created_at": "2026-10-29T22:46:48.535463+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-visual-ภาพ-schematic-ของ-lenovo_20261029T224648535463Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-visual-ภาพ-schematic-ของ-lenovo_20261029T224648535463Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580."
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v6"
+    },
+    {
+      "created_at": "2026-10-29T22:46:48.683590+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-draft-ep03-ท-าไม-ai-ต-องม-ceo_20261029T224648683590Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-draft-ep03-ท-าไม-ai-ต-องม-ceo_20261029T224648683590Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO."
+      ],
+      "status": "scaffold",
+      "type": "draft",
+      "version": "v7"
+    },
+    {
+      "created_at": "2026-10-29T22:46:48.829962+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-script-ep03-ท-าไม-ai-ต-องม-ceo_20261029T224648829962Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-script-ep03-ท-าไม-ai-ต-องม-ceo_20261029T224648829962Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO."
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v8"
+    },
+    {
+      "created_at": "2026-10-29T22:46:48.975525+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-visual-ภาพแผนผ-ง-ai-หลายบทบาทท-เ_20261029T224648975525Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-visual-ภาพแผนผ-ง-ai-หลายบทบาทท-เ_20261029T224648975525Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO."
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v9"
+    },
+    {
+      "created_at": "2026-10-29T22:46:49.130541+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-draft-ep04-ช-องว-างบนผ-งองค-กร_20261029T224649130541Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-draft-ep04-ช-องว-างบนผ-งองค-กร_20261029T224649130541Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร."
+      ],
+      "status": "scaffold",
+      "type": "draft",
+      "version": "v10"
+    },
+    {
+      "created_at": "2026-10-29T22:46:49.284330+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-script-ep04-ช-องว-างบนผ-งองค-กร_20261029T224649284330Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-script-ep04-ช-องว-างบนผ-งองค-กร_20261029T224649284330Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร."
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v11"
+    },
+    {
+      "created_at": "2026-10-29T22:46:49.447331+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-visual-เท-ยบ-organization-chart_20261029T224649447331Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-visual-เท-ยบ-organization-chart_20261029T224649447331Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร."
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v12"
+    },
+    {
+      "created_at": "2026-10-29T22:46:49.612410+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-draft-ep05-central-bus_20261029T224649612410Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-draft-ep05-central-bus_20261029T224649612410Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร.",
+        "README.md; central_bus/. Story beat EP05: EP05 Central Bus."
+      ],
+      "status": "scaffold",
+      "type": "draft",
+      "version": "v13"
+    },
+    {
+      "created_at": "2026-10-29T22:46:49.778016+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-script-ep05-central-bus_20261029T224649778016Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-script-ep05-central-bus_20261029T224649778016Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร.",
+        "README.md; central_bus/. Story beat EP05: EP05 Central Bus."
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v14"
+    },
+    {
+      "created_at": "2026-10-29T22:46:49.956038+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-visual-แผนภาพ-control-layer-และ_20261029T224649956038Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-visual-แผนภาพ-control-layer-และ_20261029T224649956038Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร.",
+        "README.md; central_bus/. Story beat EP05: EP05 Central Bus."
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v15"
+    },
+    {
+      "created_at": "2026-10-29T22:46:50.110284+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-draft-ep06-content-creator-pilot_20261029T224650110284Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-draft-ep06-content-creator-pilot_20261029T224650110284Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร.",
+        "README.md; central_bus/. Story beat EP05: EP05 Central Bus.",
+        "profiles/15-content-creator/SOUL.md; solocorp_mcp/departments/content_service.py. Story beat EP06: EP06 Content Creator pilot."
+      ],
+      "status": "scaffold",
+      "type": "draft",
+      "version": "v16"
+    },
+    {
+      "created_at": "2026-10-29T22:46:50.261369+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-script-ep06-content-creator-pilo_20261029T224650261369Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-script-ep06-content-creator-pilo_20261029T224650261369Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร.",
+        "README.md; central_bus/. Story beat EP05: EP05 Central Bus.",
+        "profiles/15-content-creator/SOUL.md; solocorp_mcp/departments/content_service.py. Story beat EP06: EP06 Content Creator pilot."
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v17"
+    },
+    {
+      "created_at": "2026-10-29T22:46:50.426163+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-visual-ภาพท-ม-production-ห-าบทบา_20261029T224650426163Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-visual-ภาพท-ม-production-ห-าบทบา_20261029T224650426163Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร.",
+        "README.md; central_bus/. Story beat EP05: EP05 Central Bus.",
+        "profiles/15-content-creator/SOUL.md; solocorp_mcp/departments/content_service.py. Story beat EP06: EP06 Content Creator pilot."
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v18"
+    },
+    {
+      "created_at": "2026-10-29T22:46:50.591319+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-draft-ep07-mcp-สองต-ว_20261029T224650591319Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-draft-ep07-mcp-สองต-ว_20261029T224650591319Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร.",
+        "README.md; central_bus/. Story beat EP05: EP05 Central Bus.",
+        "profiles/15-content-creator/SOUL.md; solocorp_mcp/departments/content_service.py. Story beat EP06: EP06 Content Creator pilot.",
+        "solocorp_mcp/bus_mcp.py; solocorp_mcp/departments/content_mcp.py. Story beat EP07: EP07 MCP สองตัว."
+      ],
+      "status": "scaffold",
+      "type": "draft",
+      "version": "v19"
+    },
+    {
+      "created_at": "2026-10-29T22:46:50.750575+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-origin-10x10s-script-ep07-mcp-สองต-ว_20261029T224650750575Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-origin-10x10s-script-ep07-mcp-สองต-ว_20261029T224650750575Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied Origin brief and history excerpt; independently unverified.",
+        "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+        "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+        "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+        "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร.",
+        "README.md; central_bus/. Story beat EP05: EP05 Central Bus.",
+        "profiles/15-content-creator/SOUL.md; solocorp_mcp/departments/content_service.py. Story beat EP06: EP06 Content Creator pilot.",
+        "solocorp_mcp/bus_mcp.py; solocorp_mcp/departments/content_mcp.py. Story beat EP07: EP07 MCP สองตัว."
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v20"
+    }
+  ],
+  "campaign_id": "solocorp-origin-10x10s",
+  "campaign_key": "solocorp-origin-10x10s",
+  "created_at": "2026-10-29T22:46:47.773271+00:00",
+  "review": null,
+  "revision": 20,
+  "schema_version": 1,
+  "source_references": [
+    "User-supplied Origin brief and history excerpt; independently unverified.",
+    "User-supplied Origin brief; independently unverified. Story beat EP01: EP01 จุดเริ่มต้น 02:52.",
+    "User-supplied Origin brief; independently unverified. Story beat EP02: EP02 Lenovo Z580.",
+    "User-supplied Origin story beat; independently unverified. Story beat EP03: EP03 ทำไม AI ต้องมี CEO.",
+    "README.md; profiles/INDEX.md. Story beat EP04: EP04 ช่องว่างบนผังองค์กร.",
+    "README.md; central_bus/. Story beat EP05: EP05 Central Bus.",
+    "profiles/15-content-creator/SOUL.md; solocorp_mcp/departments/content_service.py. Story beat EP06: EP06 Content Creator pilot.",
+    "solocorp_mcp/bus_mcp.py; solocorp_mcp/departments/content_mcp.py. Story beat EP07: EP07 MCP สองตัว."
+  ],
+  "status": "scaffold",
+  "updated_at": "2026-10-29T22:46:50.791415+00:00",
+  "version": "v20",
+  "version_number": 20
+}

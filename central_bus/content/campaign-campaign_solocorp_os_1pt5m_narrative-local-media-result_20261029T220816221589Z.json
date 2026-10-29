@@ -1,0 +1,11 @@
+{
+  "approval_effect": "none",
+  "campaign_id": "campaign_solocorp_os_1pt5m_narrative",
+  "error": "ContentServiceError",
+  "execution_status": "failed",
+  "job_id": "local-media-b974aab583244524acf42c1b3147e55e",
+  "lifecycle_state": "scaffold",
+  "message": "local media render failed: {\"status\": \"failed\", \"error\": \"RuntimeError\", \"message\": \"voice and local synth mix failed (222): [Parsed_tremolo_4 @ 0x3fb74e40] Value 0.090000 for parameter 'f' out of range [0.1 - 20000]\\nError applying option 'f' to filter 'tremolo': Numerical result out of range\\nFailed to set value '[0:a][1:a][2:a][3:a][4:a][5:a]concat=n=6:v=0:a=1[vo];[6:a]volume=0.055,tremolo=f=0.12:d=0.6[pad1];[7:a]volume=0.028,tremolo=f=0.09:d=0.55[pad2];[vo][pad1][pad2]amix=inputs=3:duration=first:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11:print_format=summary[a]' for option 'filter_complex': Numerical result out of range\\nError parsing global options: Numerical result out of range\\n\"}",
+  "provider": "ffmpeg-cli",
+  "schema_version": 1
+}

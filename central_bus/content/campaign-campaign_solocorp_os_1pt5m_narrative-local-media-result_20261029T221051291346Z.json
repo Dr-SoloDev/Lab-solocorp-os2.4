@@ -1,0 +1,165 @@
+{
+  "approval_effect": "none",
+  "campaign_id": "campaign_solocorp_os_1pt5m_narrative",
+  "execution_mode": "local_ffmpeg_cli",
+  "execution_status": "completed",
+  "job_id": "local-media-c23fa24a396f4c2c943c62fe1e2b0f4a",
+  "lifecycle_state": "scaffold",
+  "provider": "ffmpeg-cli",
+  "render": {
+    "audio": {
+      "bytes": 17280078,
+      "channels": 2,
+      "codec": "aac",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/audio-mix.wav",
+      "sample_rate": "48000",
+      "sha256": "4e37198741e57ab9ad828495ead6c9fb2831f26d8b5be00024d8386a8a4d0c70"
+    },
+    "audio_duration_seconds": 90.0,
+    "audio_engine": "Piper local Thai TTS",
+    "audio_target": {
+      "lufs": -16.0,
+      "normalizer": "loudnorm single-pass",
+      "standard": "EBU_R128",
+      "true_peak_dbtp": -1.5
+    },
+    "caption_timing": "scene-level from supplied script; no word-level alignment",
+    "duration_seconds": 90.0,
+    "execution_mode": "local_ffmpeg_cli",
+    "fps": 30,
+    "frames": [
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/frames/scene-01.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/frames/scene-02.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/frames/scene-03.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/frames/scene-04.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/frames/scene-05.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/frames/scene-06.png"
+    ],
+    "local_only": true,
+    "media_rights_status": "human_confirmation_required",
+    "network_used": false,
+    "scene_count": 6,
+    "silence_removal": {
+      "minimum_seconds": 0.4,
+      "threshold_db": -35
+    },
+    "status": "completed",
+    "synthetic_inputs_only": true,
+    "video": {
+      "bytes": 3282240,
+      "codec": "h264",
+      "frame_rate": "30/1",
+      "height": 1920,
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/campaign_solocorp_os_1pt5m_narrative_rendered.mp4",
+      "sha256": "48dd5633fc4f3e2493c515015bba1dcb0f26a69b140a3beb3623b604d0117f39",
+      "width": 1080
+    },
+    "visual_engine": "Three.js via pdoom-video dependencies",
+    "voice_model_license": "CC-BY-NC-SA-3.0",
+    "voice_segments": [
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 13.537,
+          "frames": 298496,
+          "sample_rate": 22050
+        },
+        "bytes": 597036,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/voice/scene-01.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 9.892,
+          "frames": 218112,
+          "sample_rate": 22050
+        },
+        "bytes": 436268,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/voice/scene-02.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 10.391,
+          "frames": 229120,
+          "sample_rate": 22050
+        },
+        "bytes": 458284,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/voice/scene-03.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 10.194,
+          "frames": 224768,
+          "sample_rate": 22050
+        },
+        "bytes": 449580,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/voice/scene-04.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 7.639,
+          "frames": 168448,
+          "sample_rate": 22050
+        },
+        "bytes": 336940,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/voice/scene-05.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 10.344,
+          "frames": 228096,
+          "sample_rate": 22050
+        },
+        "bytes": 456236,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/local-media-c23fa24a396f4c2c943c62fe1e2b0f4a/voice/scene-06.wav",
+        "status": "completed"
+      }
+    ]
+  },
+  "schema_version": 1
+}
