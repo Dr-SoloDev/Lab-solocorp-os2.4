@@ -1,0 +1,39 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-29T18:02:00.284565+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_synth_codex_01-client-generated-article-ee9197_20261029T180200284565Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_synth_codex_01-client-generated-article-ee9197_20261029T180200284565Z.md",
+      "provenance": {
+        "client": "codex",
+        "model": "gpt-6-luna",
+        "provider": "maxplus"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "https://example.invalid/synthetic-codex"
+      ],
+      "status": "client_generated",
+      "type": "article",
+      "version": "v1"
+    }
+  ],
+  "campaign_id": "campaign_synth_codex_01",
+  "campaign_key": "campaign_synth_codex_01",
+  "created_at": "2026-10-29T18:02:00.284328+00:00",
+  "review": null,
+  "revision": 1,
+  "schema_version": 1,
+  "source_references": [
+    "https://example.invalid/synthetic-codex"
+  ],
+  "status": "client_generated",
+  "updated_at": "2026-10-29T18:02:00.350808+00:00",
+  "version": "v1",
+  "version_number": 1
+}
