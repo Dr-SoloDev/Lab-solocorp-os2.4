@@ -1002,3 +1002,102 @@ python scripts/d3_content_creator_eval.py --out-dir bus/evidence/2026-10-25/d3 -
 - D3 เต็ม 20 เคส + ซ้ำ 3 รอบ (ติดโควตา)
 - ผู้ตรวจอิสระ (`pipeline-auditor` เคส 1/11/17) + Owner เซ็น
 - `max_tokens` ไม่ถูกส่งไป API · `opencode.db` 1.9 GB ยังไม่มี housekeeping
+
+## Session Auto-Summary — 2026-10-30 00:39 UTC
+
+### Git
+```
+f0529f9 chore(brain): auto-commit 79 brain files
+b9ef31b chore(brain): auto-commit 92 brain files
+9876d7d chore(brain): auto-commit 1 brain files
+131d958 feat(content): add client ingestion pilot and evidence
+9bc7b8d chore(brain): auto-commit 5 brain files
+67e184d chore(brain): auto-commit 1 brain files
+9c1f202 chore(brain): auto-commit 1 brain files
+11d300b chore(brain): auto-commit 27 brain files
+a1ebbed feat(content): add validated ffmpeg MCP job bridge
+715ac59 chore(brain): auto-commit 13 br
+```
+Uncommitted: 72 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- 🔴 F0: rotate 2 คีย์ที่หลุดในประวัติ repo public — ccsk-8fc78b9… (c33a09a) · sk-gDFLCDp1p… (d6ec613)
+- 🔴 F2: policy limitDollars 0 → 5 + ตัดสินใจ exemption ของ svc acct …AHRR (ตอนนี้คนถูกห้าม ระบบไม่ถูกคุม)
+- 🔴 F1/F5: คีย์ 3 ตัว permissions: all → inference-only · เก็บไม่เกิน 2 ตัว
+- 🟡 D3 เต็ม 20 เคส + ซ้ำ 3 รอบ (3/15/17/20) — ติดโควตา 429 (lock หมดอายุ 14:31:46)
+- 🟡 D3 ผู้ตรวจอิสระ pipeline-auditor (เคส 1/11/17, ไม่เห็นผลคาด) → Owner เซ็น
+- 🟡 ยังไม่ push — 16 commits local รอ Owner สั่ง
+- 🟡 F0.5: รวม .env 27 จุดเป็นแหล่งเดียว + ENV-INVENTORY (ยังไม่ทำ — รอ Owner เคาะ)
+- 🟡 อีก 19 แผนกยัง D0 — ใช้ content-creator เป็นแม่แบบ
+
+---
+
+## Session Auto-Summary — 2026-10-30 01:29 UTC
+
+### Git
+```
+f0529f9 chore(brain): auto-commit 79 brain files
+b9ef31b chore(brain): auto-commit 92 brain files
+9876d7d chore(brain): auto-commit 1 brain files
+131d958 feat(content): add client ingestion pilot and evidence
+9bc7b8d chore(brain): auto-commit 5 brain files
+67e184d chore(brain): auto-commit 1 brain files
+9c1f202 chore(brain): auto-commit 1 brain files
+11d300b chore(brain): auto-commit 27 brain files
+a1ebbed feat(content): add validated ffmpeg MCP job bridge
+715ac59 chore(brain): auto-commit 13 br
+```
+Uncommitted: 100 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- 🔴 F0: rotate 2 คีย์ที่หลุดในประวัติ repo public — ccsk-8fc78b9… (c33a09a) · sk-gDFLCDp1p… (d6ec613)
+- 🔴 F2: policy limitDollars 0 → 5 + ตัดสินใจ exemption ของ svc acct …AHRR (ตอนนี้คนถูกห้าม ระบบไม่ถูกคุม)
+- 🔴 F1/F5: คีย์ 3 ตัว permissions: all → inference-only · เก็บไม่เกิน 2 ตัว
+- 🟡 D3 เต็ม 20 เคส + ซ้ำ 3 รอบ (3/15/17/20) — ติดโควตา 429 (lock หมดอายุ 14:31:46)
+- 🟡 D3 ผู้ตรวจอิสระ pipeline-auditor (เคส 1/11/17, ไม่เห็นผลคาด) → Owner เซ็น
+- 🟡 ยังไม่ push — 16 commits local รอ Owner สั่ง
+- 🟡 F0.5: รวม .env 27 จุดเป็นแหล่งเดียว + ENV-INVENTORY (ยังไม่ทำ — รอ Owner เคาะ)
+- 🟡 อีก 19 แผนกยัง D0 — ใช้ content-creator เป็นแม่แบบ
+
+---
+
+## Session Auto-Summary — 2026-10-30 03:13 UTC
+
+### Git
+```
+0d7e25c chore(brain): auto-commit 79 brain files
+f0529f9 chore(brain): auto-commit 79 brain files
+b9ef31b chore(brain): auto-commit 92 brain files
+9876d7d chore(brain): auto-commit 1 brain files
+131d958 feat(content): add client ingestion pilot and evidence
+9bc7b8d chore(brain): auto-commit 5 brain files
+67e184d chore(brain): auto-commit 1 brain files
+9c1f202 chore(brain): auto-commit 1 brain files
+11d300b chore(brain): auto-commit 27 brain files
+a1ebbed feat(content): add validated ffmpeg MCP j
+```
+Uncommitted: 74 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- 🔴 F0: rotate 2 คีย์ที่หลุดในประวัติ repo public — ccsk-8fc78b9… (c33a09a) · sk-gDFLCDp1p… (d6ec613)
+- 🔴 F2: policy limitDollars 0 → 5 + ตัดสินใจ exemption ของ svc acct …AHRR (ตอนนี้คนถูกห้าม ระบบไม่ถูกคุม)
+- 🔴 F1/F5: คีย์ 3 ตัว permissions: all → inference-only · เก็บไม่เกิน 2 ตัว
+- 🟡 D3 เต็ม 20 เคส + ซ้ำ 3 รอบ (3/15/17/20) — ติดโควตา 429 (lock หมดอายุ 14:31:46)
+- 🟡 D3 ผู้ตรวจอิสระ pipeline-auditor (เคส 1/11/17, ไม่เห็นผลคาด) → Owner เซ็น
+- 🟡 ยังไม่ push — 16 commits local รอ Owner สั่ง
+- 🟡 F0.5: รวม .env 27 จุดเป็นแหล่งเดียว + ENV-INVENTORY (ยังไม่ทำ — รอ Owner เคาะ)
+- 🟡 อีก 19 แผนกยัง D0 — ใช้ content-creator เป็นแม่แบบ
+
+---
