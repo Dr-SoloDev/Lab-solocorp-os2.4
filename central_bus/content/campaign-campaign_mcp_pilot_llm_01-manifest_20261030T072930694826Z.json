@@ -1,0 +1,94 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T07:26:22.824796+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_01-client-generated-article-cfd2_20261030T072622824796Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_01-client-generated-article-cfd2_20261030T072622824796Z.md",
+      "provenance": {
+        "client": "perch-desktop-saffron",
+        "model": "glm-5.3-flash-starter",
+        "provider": "perch-roost"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/INDEX.md",
+        "rules/06-certification.md",
+        "docs/plans/MCP-DEPARTMENT-SERVERS-CONTENT-PILOT.md"
+      ],
+      "status": "client_generated",
+      "type": "article",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-30T07:28:42.570778+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_01-client-generated-article-db91_20261030T072842570778Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_01-client-generated-article-db91_20261030T072842570778Z.md",
+      "provenance": {
+        "client": "perch-desktop-saffron",
+        "model": "glm-5.3-flash-starter",
+        "provider": "perch-roost"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/INDEX.md",
+        "rules/06-certification.md",
+        "docs/plans/MCP-DEPARTMENT-SERVERS-CONTENT-PILOT.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "client_generated",
+      "type": "article",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-30T07:29:30.651815+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_01-client-generated-article-9a36_20261030T072930651815Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_01-client-generated-article-9a36_20261030T072930651815Z.md",
+      "provenance": {
+        "client": "perch-desktop-saffron",
+        "model": "glm-5.3-flash-starter",
+        "provider": "perch-roost"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/INDEX.md",
+        "rules/06-certification.md",
+        "docs/plans/MCP-DEPARTMENT-SERVERS-CONTENT-PILOT.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md",
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py"
+      ],
+      "status": "client_generated",
+      "type": "article",
+      "version": "v3"
+    }
+  ],
+  "campaign_id": "campaign_mcp_pilot_llm_01",
+  "campaign_key": "campaign_mcp_pilot_llm_01",
+  "created_at": "2026-10-30T07:26:22.824615+00:00",
+  "review": null,
+  "revision": 5,
+  "schema_version": 1,
+  "source_references": [
+    "profiles/INDEX.md",
+    "rules/06-certification.md",
+    "docs/plans/MCP-DEPARTMENT-SERVERS-CONTENT-PILOT.md",
+    "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md",
+    "tests/test_content_mcp.py",
+    "tests/test_mcp_stdio.py"
+  ],
+  "status": "client_generated",
+  "updated_at": "2026-10-30T07:29:30.694410+00:00",
+  "version": "v3",
+  "version_number": 3
+}

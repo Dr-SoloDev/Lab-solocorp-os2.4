@@ -1,0 +1,93 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T07:36:52.486305+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_04-script-solocorp-os-องค-กรของ_20261030T073652486305Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_04-script-solocorp-os-องค-กรของ_20261030T073652486305Z.md",
+      "source_reference_status": "none_provided",
+      "source_references": [],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-30T07:36:52.687821+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_04-client-generated-article-b675_20261030T073652687821Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_04-client-generated-article-b675_20261030T073652687821Z.md",
+      "provenance": {
+        "client": "perch-desktop-saffron",
+        "model": "glm-5.3-flash-starter",
+        "provider": "perch-roost"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "client_generated",
+      "type": "article",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-30T07:36:56.068144+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_04-visual-องค-กร-ai-ท-ม-สายบ-งค_20261030T073656068144Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_04-visual-องค-กร-ai-ท-ม-สายบ-งค_20261030T073656068144Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-30T07:36:59.534517+00:00",
+      "dependencies": [
+        "campaign-campaign_mcp_pilot_llm_04-script-solocorp-os-องค-กรของ_20261030T073652486305Z.md"
+      ],
+      "filename": "campaign-campaign_mcp_pilot_llm_04-audio-cue-campaign-campaign_m_20261030T073659534517Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_04-audio-cue-campaign-campaign_m_20261030T073659534517Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v4"
+    }
+  ],
+  "campaign_id": "campaign_mcp_pilot_llm_04",
+  "campaign_key": "campaign_mcp_pilot_llm_04",
+  "created_at": "2026-10-30T07:36:52.486118+00:00",
+  "review": null,
+  "revision": 4,
+  "schema_version": 1,
+  "source_references": [
+    "tests/test_content_mcp.py",
+    "tests/test_mcp_stdio.py",
+    "rules/06-certification.md",
+    "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+  ],
+  "status": "scaffold",
+  "updated_at": "2026-10-30T07:36:59.575620+00:00",
+  "version": "v4",
+  "version_number": 4
+}

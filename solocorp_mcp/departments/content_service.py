@@ -707,7 +707,7 @@ def design_visual_prompt(
         f"Create a clear, platform-native visual about {theme}. Use a human, honest, "
         "practical editorial style with strong subject hierarchy, readable negative space, "
         "and a single focal point. Keep the visual consistent with SoloCorp's brand voice: "
-        "clear, sincere, and hands-on. Do not invent logos, customer data, or claims.\n\n"
+        "clear, sincere, and hands-on. Do not invent logos, personal data, or claims.\n\n"
         "## Negative Prompt\n\n"
         "No watermark, no fake text, no unlicensed logos, no exaggerated success claims, "
         "no identifiable private information.\n\n"

@@ -1,0 +1,29 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T07:36:52.486305+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_04-script-solocorp-os-องค-กรของ_20261030T073652486305Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_04-script-solocorp-os-องค-กรของ_20261030T073652486305Z.md",
+      "source_reference_status": "none_provided",
+      "source_references": [],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v1"
+    }
+  ],
+  "campaign_id": "campaign_mcp_pilot_llm_04",
+  "campaign_key": "campaign_mcp_pilot_llm_04",
+  "created_at": "2026-10-30T07:36:52.486118+00:00",
+  "review": null,
+  "revision": 1,
+  "schema_version": 1,
+  "source_references": [],
+  "status": "scaffold",
+  "updated_at": "2026-10-30T07:36:52.539584+00:00",
+  "version": "v1",
+  "version_number": 1
+}

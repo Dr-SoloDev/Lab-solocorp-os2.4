@@ -1,0 +1,207 @@
+{
+  "approval_records": [
+    {
+      "approver_note": "ยืนยัน source verification: ตรวจ tests/test_content_mcp.py, tests/test_mcp_stdio.py, commit b5f2cf5 แล้ว / ยืนยัน media rights: บทความนี้ไม่มีภาพ/เสียง/เพลงจากภายนอก",
+      "campaign_id": "campaign_mcp_pilot_llm_02",
+      "filename": "campaign-campaign_mcp_pilot_llm_02-approval-v1_20261030T073248831783Z.json",
+      "gate_passed": false,
+      "overrides_failed_checks": [
+        "dependencies: visual prompt",
+        "claims: source verification",
+        "media rights"
+      ],
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_02-approval-v1_20261030T073248831783Z.json",
+      "recorded_at": "2026-10-30T07:32:48.831548+00:00",
+      "recorded_by": "human MCP caller; identity is not independently authenticated",
+      "review_report": {
+        "filename": "campaign-campaign_mcp_pilot_llm_02-publish-gate-v1_20261030T073000290419Z.md",
+        "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_02-publish-gate-v1_20261030T073000290419Z.md"
+      },
+      "status": "approved",
+      "version": "v1"
+    }
+  ],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T07:29:55.873178+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_02-client-generated-article-f209_20261030T072955873178Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_02-client-generated-article-f209_20261030T072955873178Z.md",
+      "provenance": {
+        "client": "perch-desktop-saffron",
+        "model": "glm-5.3-flash-starter",
+        "provider": "perch-roost"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "client_generated",
+      "type": "article",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-30T07:34:09.810274+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_02-visual-องค-กร-ai-ท-ม-สายบ-งค_20261030T073409810274Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_02-visual-องค-กร-ai-ท-ม-สายบ-งค_20261030T073409810274Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-30T07:34:21.654202+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_02-script-solocorp-os-องค-กรของ_20261030T073421654202Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_02-script-solocorp-os-องค-กรของ_20261030T073421654202Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-30T07:34:25.154987+00:00",
+      "dependencies": [
+        "campaign-campaign_mcp_pilot_llm_02-script-solocorp-os-องค-กรของ_20261030T073421654202Z.md"
+      ],
+      "filename": "campaign-campaign_mcp_pilot_llm_02-audio-cue-campaign-campaign_m_20261030T073425154987Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_02-audio-cue-campaign-campaign_m_20261030T073425154987Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v4"
+    },
+    {
+      "created_at": "2026-10-30T07:35:10.878280+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_02-visual-องค-กร-ai-ท-ม-สายบ-งค_20261030T073510878280Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_02-visual-องค-กร-ai-ท-ม-สายบ-งค_20261030T073510878280Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v5"
+    }
+  ],
+  "campaign_id": "campaign_mcp_pilot_llm_02",
+  "campaign_key": "campaign_mcp_pilot_llm_02",
+  "created_at": "2026-10-30T07:29:55.873002+00:00",
+  "review": {
+    "checks": [
+      {
+        "check": "dependencies: primary content",
+        "detail": "พบ draft/script",
+        "ok": true
+      },
+      {
+        "check": "dependencies: visual prompt",
+        "detail": "พบ visual prompt",
+        "ok": true
+      },
+      {
+        "check": "dependencies: audio cue sheet",
+        "detail": "audio cue อ้างถึงสคริปต์ล่าสุด",
+        "ok": true
+      },
+      {
+        "check": "claims: source references supplied",
+        "detail": "พบ 4 รายการ",
+        "ok": true
+      },
+      {
+        "check": "claims: source verification",
+        "detail": "ระบบยังไม่ได้ตรวจสอบแหล่งอ้างอิงโดยอิสระ; ต้องให้มนุษย์ยืนยัน",
+        "ok": false
+      },
+      {
+        "check": "media rights",
+        "detail": "ต้องยืนยันลิขสิทธิ์ภาพ/เพลง/เสียงก่อนเผยแพร่",
+        "ok": false
+      },
+      {
+        "check": "redaction",
+        "detail": "พบข้อมูลที่ต้อง redact หรือให้มนุษย์ตรวจ",
+        "ok": false
+      },
+      {
+        "check": "R1 มีหลักฐานตรวจสอบได้อย่างน้อย 1 อัน",
+        "detail": "3 รายการ: tests/test_content_mcp.py, tests/test_mcp_stdio.py, b5f2cf5",
+        "ok": true
+      },
+      {
+        "check": "R2 แสดงความล้มเหลวและต้นทุน/เหตุผล",
+        "detail": "มีรอยแผล",
+        "ok": true
+      },
+      {
+        "check": "R3 มีบรรทัด 'ยังไม่ได้/ยังไม่รู้' (calibration)",
+        "detail": "ยังไม่รู้",
+        "ok": true
+      },
+      {
+        "check": "R4 ไม่เทียบ/ไม่วัดคนอื่น ไม่มีคำสั่ง",
+        "detail": "สะอาด",
+        "ok": true
+      },
+      {
+        "check": "R5 ปิดด้วยคำถามเปิด 1 ข้อ",
+        "detail": "มีคำถาม",
+        "ok": true
+      }
+    ],
+    "gate_passed": false,
+    "report": {
+      "filename": "campaign-campaign_mcp_pilot_llm_02-publish-gate-v5_20261030T073513256807Z.md",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_02-publish-gate-v5_20261030T073513256807Z.md"
+    },
+    "reviewed_at": "2026-10-30T07:35:13.303322+00:00",
+    "status": "review_required",
+    "version": "v5"
+  },
+  "revision": 9,
+  "schema_version": 1,
+  "source_references": [
+    "tests/test_content_mcp.py",
+    "tests/test_mcp_stdio.py",
+    "rules/06-certification.md",
+    "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+  ],
+  "status": "review_required",
+  "updated_at": "2026-10-30T07:35:13.303342+00:00",
+  "version": "v5",
+  "version_number": 5
+}

@@ -1,0 +1,98 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T07:35:52.906905+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_03-client-generated-article-0372_20261030T073552906905Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_03-client-generated-article-0372_20261030T073552906905Z.md",
+      "provenance": {
+        "client": "perch-desktop-saffron",
+        "model": "glm-5.3-flash-starter",
+        "provider": "perch-roost"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "client_generated",
+      "type": "article",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-30T07:36:01.878341+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_03-visual-องค-กร-ai-ท-ม-สายบ-งค_20261030T073601878341Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_03-visual-องค-กร-ai-ท-ม-สายบ-งค_20261030T073601878341Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-30T07:36:02.432999+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_mcp_pilot_llm_03-script-solocorp-os-องค-กรของ_20261030T073602432999Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_03-script-solocorp-os-องค-กรของ_20261030T073602432999Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-30T07:36:11.291125+00:00",
+      "dependencies": [
+        "campaign-campaign_mcp_pilot_llm_03-script-solocorp-os-องค-กรของ_20261030T073602432999Z.md"
+      ],
+      "filename": "campaign-campaign_mcp_pilot_llm_03-audio-cue-campaign-campaign_m_20261030T073611291125Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_mcp_pilot_llm_03-audio-cue-campaign-campaign_m_20261030T073611291125Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "tests/test_content_mcp.py",
+        "tests/test_mcp_stdio.py",
+        "rules/06-certification.md",
+        "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v4"
+    }
+  ],
+  "campaign_id": "campaign_mcp_pilot_llm_03",
+  "campaign_key": "campaign_mcp_pilot_llm_03",
+  "created_at": "2026-10-30T07:35:52.906724+00:00",
+  "review": null,
+  "revision": 4,
+  "schema_version": 1,
+  "source_references": [
+    "tests/test_content_mcp.py",
+    "tests/test_mcp_stdio.py",
+    "rules/06-certification.md",
+    "central_bus/content/campaign-campaign_mcp_pilot_llm_01-publish-gate-v1_20261030T072628111671Z.md"
+  ],
+  "status": "scaffold",
+  "updated_at": "2026-10-30T07:36:11.332978+00:00",
+  "version": "v4",
+  "version_number": 4
+}
