@@ -1,0 +1,9 @@
+{
+  "voice": "th_TH-tsync2-medium",
+  "license": "CC-BY-NC-SA-3.0",
+  "commercial_use": false,
+  "rights_status": "human_confirmation_required",
+  "dataset": "dubbing-ai/vaja-thai (tsync2 config)",
+  "model_card_path": "https://huggingface.co/rhasspy/piper-voices/resolve/main/th/th_TH/tsync2/medium/MODEL_CARD",
+  "sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+}

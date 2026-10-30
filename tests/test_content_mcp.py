@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
 from solocorp_mcp import bus_store
-from solocorp_mcp.departments import content_service
+from solocorp_mcp.departments import content_helpers, content_service
 from solocorp_mcp.departments.content_mcp import content_sop, mcp
 
 
@@ -65,6 +66,8 @@ def test_draft_is_written_to_content_bus(isolated_bus):
     assert result["path"].startswith("content/")
     artifact = bus_store.fetch_from_bus("content", result["filename"])
     assert "## Hook" in artifact["content"]
+    assert "## Brand Context" in artifact["content"]
+    assert "Clear > Clever" in artifact["content"]
     assert result["human_review_required"] is True
 
 
@@ -75,6 +78,74 @@ def test_video_and_visual_tools_write_artifacts(isolated_bus):
     assert visual["filename"].endswith(".md")
     assert "Visual scene" in bus_store.fetch_from_bus("content", video["filename"])["content"]
     assert "Negative Prompt" in bus_store.fetch_from_bus("content", visual["filename"])["content"]
+
+
+def test_campaign_lock_uses_windows_lock_backend_when_fcntl_is_unavailable(isolated_bus, monkeypatch):
+    class FakeMsvcrt:
+        LK_NBLCK = 1
+        LK_UNLCK = 2
+
+        def __init__(self):
+            self.operations = []
+
+        def locking(self, fd, operation, length):
+            self.operations.append((operation, length))
+
+    fake_msvcrt = FakeMsvcrt()
+    monkeypatch.setattr(content_service, "fcntl", None)
+    monkeypatch.setattr(content_service, "msvcrt", fake_msvcrt)
+
+    with content_service._campaign_lock("windows-lock-test"):
+        assert (isolated_bus / "content" / ".windows-lock-test.lock").read_bytes() == b"\0"
+
+    assert fake_msvcrt.operations == [(FakeMsvcrt.LK_NBLCK, 1), (FakeMsvcrt.LK_UNLCK, 1)]
+
+
+def test_create_10s_series_writes_30_ordered_artifacts(isolated_bus):
+    history = "\n".join(
+        (
+            "Origin brief ระบุเวลา 02:52 วันที่ 15 มิถุนายน 2026",
+            "Lenovo Z580 คืออุปกรณ์ที่ระบุใน brief",
+            "เรื่องนี้ตั้งคำถามว่าทีม AI ต้องมีผู้ประสานงานหรือไม่",
+            "README ระบุ 18 Heads บน chart และมี COO กับ R&D ใน tree",
+            "Central Bus แยก data flow จาก control flow",
+            "Content Creator เป็น MCP pilot ที่มี specialist ห้าบทบาท",
+            "bus_mcp และ content_mcp มีหน้าที่คนละส่วน",
+            "Publish Gate ต้องรอ human approval",
+            "SoloCorp OS v2.4 เป็น product pack แบบ pre-release",
+            "ผู้สร้างร่วมทดลองและพัฒนาระบบเปิดได้",
+        )
+    )
+
+    results = content_helpers.create_10s_series(history, campaign_id="solocorp-origin-10x10s")
+
+    assert len(results) == 30
+    assert [result["version"] for result in results] == [f"v{index}" for index in range(1, 31)]
+    assert [result["type"] for result in results] == [
+        kind for _ in range(10) for kind in ("draft", "video_script", "visual_prompt")
+    ]
+    assert len({result["filename"] for result in results}) == 30
+    scripts = [result for result in results if result["type"] == "video_script"]
+    assert all(result["duration_seconds"] == 10 for result in scripts)
+    sample_script = bus_store.fetch_from_bus("content", scripts[0]["filename"])["content"]
+    assert "0–2s" in sample_script
+    assert "2–7s" in sample_script
+    first_draft = bus_store.fetch_from_bus("content", results[0]["filename"])["content"]
+    assert "User-supplied Origin brief" in first_draft
+    assert "Brand Context" in first_draft
+
+    campaign_key, _ = content_service._campaign_identity("solocorp-origin-10x10s")
+    campaign = content_service._load_campaign(campaign_key)
+    assert campaign["version"] == "v30"
+    assert campaign["version_number"] == 30
+    assert campaign["approved_version"] is None
+    assert campaign["review"] is None
+
+
+def test_split_long_thai_text_returns_ten_nonempty_chunks():
+    chunks = content_helpers._split_long_text_to_10("เริ่มจากศูนย์แล้วค่อยๆ สร้างระบบทีละส่วน")
+    assert len(chunks) == 10
+    assert all(chunk for chunk in chunks)
 
 
 def test_campaign_bundle_tracks_versions_audio_and_human_approval(isolated_bus):
@@ -265,7 +336,10 @@ def test_content_server_contract_and_resource():
         "record_human_approval",
         "save_human_edited_artifact",
         "build_ffmpeg_job_manifest",
+        "build_ff_tracking_manifest",
         "record_ffmpeg_job_result",
+        "render_campaign_media_local",
+        "render_campaign_with_concat",
         "ingest_client_generated_artifact",
     }
     assert "Content Creator SOP" in content_sop()
@@ -433,3 +507,151 @@ def test_ffmpeg_result_rejects_campaign_mismatch_and_unknown_job(isolated_bus):
         content_service.record_ffmpeg_job_result(
             "ffmpeg-campaign-a", "ffmpeg-unknown-job", job["version"], 0, empty_result
         )
+
+
+def test_ff_tracking_manifest_stores_validated_plan_without_execution(isolated_bus):
+    campaign_id = "ff-tracking-manifest-test"
+    script = content_service.create_video_script(
+        "Tracking test", "Show a clear scripted workflow", 10, campaign_id
+    )
+    result = content_service.build_ff_tracking_manifest(
+        campaign_id,
+        [
+            {
+                "scene_id": "scene-01",
+                "episode_id": "EP01",
+                "kind": "Typing",
+                "text": "READ THE BRIEF",
+                "palette": "Thermal",
+                "camera": {"zoom_start": 1.5},
+                "hero": [400, 540],
+                "size": 72,
+            }
+        ],
+        {"tilt_x": 0.15},
+    )
+
+    stored = json.loads(bus_store.fetch_from_bus("content", result["filename"])["content"])
+    scene = stored["scene_definitions"][0]
+    assert result["scene_count"] == 1
+    assert result["planned_duration_seconds"] == 0.5
+    assert result["render_ready"] is False
+    assert result["execution_status"] == "not_started"
+    assert result["approval_required"] is True
+    assert result["published"] is False
+    assert stored["scene_definitions"][0]["scene_id"] == "scene-01"
+    assert scene["cam"]["tilt_x"] == 0.15
+    assert scene["cam"]["zoom"] == [1.5, 2.2]
+    assert scene["hero"] == [400.0, 540.0]
+    assert stored["script_filename"] == script["filename"]
+    assert stored["execution"]["automatic_execution"] is False
+    assert stored["publication"]["published"] is False
+    assert stored["upstream_contract"]["json_manifest_consumed_by_stock_renderer"] is False
+
+    campaign = content_service._load_campaign("ff-tracking-manifest-test")
+    assert campaign["version"] == "v2"
+    assert campaign["approved_version"] is None
+    assert campaign["review"] is None
+
+
+@pytest.mark.parametrize(
+    ("scenes", "camera_params", "message"),
+    [
+        ([{"text": "สวัสดี", "kind": "Typing"}], None, "printable ASCII"),
+        ([{"text": "VALID", "kind": "Typing", "palette": "Unknown"}], None, "palette is unsupported"),
+        ([{"text": "VALID", "kind": "Typing"}], {"shake": 13}, "shake must be between"),
+    ],
+)
+def test_ff_tracking_manifest_rejects_invalid_inputs_without_appending(
+    isolated_bus, scenes, camera_params, message
+):
+    campaign_id = "ff-tracking-invalid-test"
+    content_service.create_video_script("Tracking test", "A scripted workflow", 10, campaign_id)
+    with pytest.raises(content_service.ContentServiceError, match=message):
+        content_service.build_ff_tracking_manifest(campaign_id, scenes, camera_params)
+
+    campaign = content_service._load_campaign("ff-tracking-invalid-test")
+    assert campaign["version"] == "v1"
+    assert all(asset["type"] != "ff_tracking_job_manifest" for asset in campaign["assets"])
+
+
+def _local_render_script(scene_count=6):
+    scenes = [
+        ("0", "15", "Hook: ภาระงานของผู้สร้าง", "คุณเคยรู้สึกไหมว่าต้องแบกงานหลายอย่างไว้คนเดียว?"),
+        ("15", "30", "Architecture: Control Layer กับ Central Bus", "SoloCorp OS แยกชั้นสั่งการออกจากชั้นส่งผ่านข้อมูลจริง"),
+        ("30", "45", "Departments: ทีมงานเสมือน", "เปลี่ยน AI ตัวเดียวให้กลายเป็นทีมงานเสมือนที่มีเจ้าของงานชัดเจน"),
+        ("45", "60", "Local Engine: ประมวลผลในเครื่อง", "สร้างเสียงและภาพด้วยเครื่องมือท้องถิ่นโดยไม่พึ่ง Cloud"),
+        ("60", "75", "Publish Gate: Human in the Loop", "คุณยังเป็นผู้ตัดสินใจขั้นสุดท้ายก่อนเผยแพร่เสมอ"),
+        ("75", "90", "The Power of One: ก้าวถัดไป", "SoloCorp OS พร้อมให้ผู้สร้างเริ่มต้นจากสิ่งที่สำคัญกับตัวเอง"),
+    ]
+    rows = [
+        f'| {start}-{end}s | {visual} | VO: "{voice}" BGM: local synthetic bed. |'
+        for start, end, visual, voice in scenes[:scene_count]
+    ]
+    return "# Local media test\n\n**Duration:** 90 seconds\n\n" + "\n".join(rows) + "\n"
+
+
+def test_local_media_render_records_cli_and_keeps_publish_gate(isolated_bus, monkeypatch):
+    campaign_id = "local-media-render-test"
+    script = content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+        ["local synthetic fixture"],
+    )
+    content_service.design_visual_prompt("synthetic scenes", "short-form", "9:16", campaign_id)
+    content_service.design_audio_experience(campaign_id, script["filename"])
+
+    def fake_pipeline(payload):
+        output_dir = Path(payload["output_dir"])
+        output_dir.mkdir(parents=True)
+        video_path = output_dir / "test_render.mp4"
+        video_path.write_bytes(b"synthetic mp4 placeholder")
+        return {
+            "status": "completed",
+            "execution_mode": "local_ffmpeg_cli",
+            "video": {
+                "path": str(video_path),
+                "bytes": video_path.stat().st_size,
+                "sha256": "a" * 64,
+                "codec": "h264",
+                "width": 1080,
+                "height": 1920,
+            },
+        }
+
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", fake_pipeline)
+    result = content_service.render_campaign_media_local(campaign_id)
+
+    assert result["execution_status"] == "completed"
+    assert result["execution_mode"] == "local_ffmpeg_cli"
+    assert result["status"] == "review_required"
+    assert result["approval_required"] is True
+    assert result["published"] is False
+    assert result["publish_gate"]["status"] == "review_required"
+    assert result["publish_gate"]["gate_passed"] is False
+
+    campaign = content_service._load_campaign("local-media-render-test")
+    job = next(asset for asset in campaign["assets"] if asset["type"] == "local_media_render_job")
+    recorded = next(asset for asset in campaign["assets"] if asset["type"] == "local_media_render_result")
+    assert job["provider"] == "ffmpeg-cli"
+    assert job["execution_status"] == "in_progress"
+    assert recorded["execution_status"] == "completed"
+    assert recorded["media_rights_status"] == "human_confirmation_required"
+    assert campaign["approved_version"] is None
+
+
+def test_local_media_render_rejects_non_six_scene_storyboard(isolated_bus):
+    campaign_id = "local-media-invalid-storyboard"
+    content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(scene_count=5),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+    with pytest.raises(
+        content_service.ContentServiceError,
+        match="supports six 15-second scenes or ten 10-second episodes",
+    ):
+        content_service.render_campaign_media_local(campaign_id)

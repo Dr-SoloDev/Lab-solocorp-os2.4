@@ -24,3 +24,49 @@ enabled = true
 BROWSER_IDLE_TIMEOUT = "600"
 BROWSER_FILE_UPLOAD_ALLOWED_DIRS = "."
 STEALTH_BROWSER_DEBUG = "0"
+
+[mcp_servers.concat]
+command = "/home/drsolodev/.opencode/concat/Concat-0.2.8-x86_64.AppImage"
+args = ["--mcp", "headless"]
+cwd = "."
+startup_timeout_sec = 30
+tool_timeout_sec = 1800
+default_tools_approval_mode = "prompt"
+enabled = true
+
+[mcp_servers.concat.env]
+CONCAT_MCP_ROOTS = "/data/projects/Lab-solocorp-os2.4/central_bus/content"
+XDG_CONFIG_HOME = "/home/drsolodev/.opencode/concat/config"
+XDG_DATA_HOME = "/home/drsolodev/.opencode/concat/data"
+
+[mcp_servers.content-creator]
+command = ".venv/bin/python3"
+args = ["-m", "solocorp_mcp.departments.content_mcp"]
+cwd = "."
+startup_timeout_sec = 30
+tool_timeout_sec = 1800
+default_tools_approval_mode = "prompt"
+enabled = true
+
+[mcp_servers.content-creator.env]
+CONCAT_BIN = "/home/drsolodev/.opencode/concat/Concat-0.2.8-x86_64.AppImage"
+CONCAT_MCP_ROOTS = "/data/projects/Lab-solocorp-os2.4/central_bus/content"
+XDG_CONFIG_HOME = "/home/drsolodev/.opencode/concat/config"
+XDG_DATA_HOME = "/home/drsolodev/.opencode/concat/data"
+
+[mcp_servers.sound-studio]
+command = ".venv/bin/python3"
+args = ["-m", "solocorp_mcp.departments.sound_mcp"]
+cwd = "."
+startup_timeout_sec = 30
+tool_timeout_sec = 900
+default_tools_approval_mode = "prompt"
+enabled = true
+
+[mcp_servers.sound-studio.env]
+EARSHOT_BIN = "/home/drsolodev/.opencode/earshot/venv-cpu/bin/earshot"
+EARSHOT_HOME = "/home/drsolodev/.opencode/earshot/cache"
+EARSHOT_THREADS = "4"
+EARSHOT_OFFLINE = "1"
+HF_HUB_OFFLINE = "1"
+TRANSFORMERS_OFFLINE = "1"

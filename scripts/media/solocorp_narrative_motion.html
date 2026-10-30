@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="th"><meta charset="utf-8">
+<style>html,body{margin:0;background:#101719;overflow:hidden}canvas{display:block}</style>
+<canvas id="film" width="1080" height="1920"></canvas>
+<script>
+const canvas=document.getElementById('film'),g=canvas.getContext('2d');
+const C={bg:'#101719',panel:'#1b2829',inset:'#111d1e',line:'#38514d',white:'#f1f4ed',muted:'#aab9b0',mint:'#8ee4bf',amber:'#ffc66e',red:'#ff8377',blue:'#92c7e8',violet:'#b6a6df'};
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),ease=x=>1-Math.pow(1-clamp(x),3);
+const font=(s,w=500,mono=false)=>`${w} ${s}px ${mono?'"DejaVu Sans Mono"':'"Noto Sans Thai",sans-serif'}`;
+function txt(v,x,y,s=36,c=C.white,w=500,a='left',m=false){g.font=font(s,w,m);g.fillStyle=c;g.textAlign=a;g.textBaseline='alphabetic';g.fillText(v,x,y)}
+function box(x,y,w,h,r=22,fill=C.panel,stroke=null){g.beginPath();g.roundRect(x,y,w,h,r);g.fillStyle=fill;g.fill();if(stroke){g.lineWidth=2;g.strokeStyle=stroke;g.stroke()}}
+function ln(x1,y1,x2,y2,c=C.line,w=3){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.strokeStyle=c;g.lineWidth=w;g.stroke()}
+function circ(x,y,r,c){g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fillStyle=c;g.fill()}
+function pill(s,x,y,w,c=C.mint){box(x,y,w,52,26,C.inset,c);txt(s,x+w/2,y+35,23,c,650,'center')}
+function drawHeader(s,i,p,t){
+ txt('SOLOCORP OS',76,108,34,C.white,750);txt('THE POWER OF ONE',370,108,24,C.muted,550,'left',true);
+ pill('ภาพจำลองประกอบเรื่องเล่า',720,67,284,C.amber);ln(76,160,1004,160);
+ const q=ease(p/.12);g.save();g.globalAlpha=q;g.translate(0,(1-q)*22);txt(s.kicker,76,245,29,C.mint,700);
+ s.title.forEach((v,j)=>txt(v,76,364+j*108,77,j===s.title.length-1?C.mint:C.white,750));g.restore();
+}
+function laptop(x,y,w,h,t){
+ box(x,y,w,h,28,'#172326',C.line);box(x+24,y+25,w-48,h-60,18,'#091112','#54736b');
+ txt('SOLOCORP / WORKSPACE',x+54,y+83,21,C.muted,500,'left',true);
+ for(let k=0;k<4;k++){const yy=y+128+k*74;box(x+50,yy,w-100,55,11,k%2?'#1b2c2b':'#1e2c2e');circ(x+77,yy+27,7,[C.amber,C.blue,C.mint,C.violet][k]);txt(['ADMIN','FINANCE','MARKETING','LEGAL'][k],x+98,yy+35,21,C.muted,550,'left',true);const ww=180+80*Math.sin(t*2+k);box(x+270,yy+21,ww,12,6,'#364946');}
+ box(x-34,y+h-27,w+68,34,13,'#55625d');
+}
+function overload(s,p,t){
+ const bob=Math.sin(t*1.8)*9;g.save();g.shadowColor='#ffb55c33';g.shadowBlur=55;circ(790,960,260,'#253529');g.restore();
+ laptop(100,610+bob,620,500,t);
+ const items=['รายงานรอทำ','ใบแจ้งหนี้','แคมเปญใหม่','สัญญาตรวจ'];
+ items.forEach((v,k)=>{const q=ease((p-.06-k*.09)/.12);g.save();g.globalAlpha=q;g.translate(600+Math.sin(t*1.5+k)*18,590+k*145+(1-q)*35);box(0,0,365,100,18,k%2?'#23322d':'#263133',[C.amber,C.blue,C.mint,C.violet][k]);circ(35,48,10,[C.amber,C.blue,C.mint,C.violet][k]);txt(v,65,58,29,C.white,600);g.restore()});
+ const angle=t*1.5;circ(893,1270,62,'#26302b');ln(893,1270,893+45*Math.cos(angle),1270+45*Math.sin(angle),C.amber,5);circ(893,1270,8,C.amber);txt('งานไหลเข้า · เวลามีเท่าเดิม',540,1400,30,C.muted,550,'center');
+}
+function architecture(s,p,t){
+ const leftX=95, top=650;
+ const q=ease(p/.18);g.save();g.globalAlpha=1-q*.3;box(leftX,top,420,300,34,'#252832','#675b72');txt('AI ตัวเดียว',305,730,37,C.white,650,'center');
+ for(let k=0;k<5;k++){const h=30+Math.sin(t*2+k)*8;box(152,790+k*38,300,h,8,k<3?C.violet:C.red);}
+ txt('บริบทล้น',305,970,31,C.red,650,'center');g.restore();
+ const split=ease((p-.18)/.22);g.save();g.globalAlpha=split;box(585,650,405,170,26,'#183632',C.mint);txt('CONTROL LAYER',787,725,30,C.mint,700,'center',true);txt('กำกับ · มอบหมาย · ตรวจ',787,775,27,C.white,550,'center');
+ box(585,1090,405,170,26,'#203138',C.blue);txt('CENTRAL BUS',787,1165,32,C.blue,700,'center',true);txt('ส่งต่องาน · เก็บข้อมูล',787,1215,27,C.white,550,'center');
+ ln(787,824,787,1085,C.muted,4);ln(787,862,787,1035,C.mint,4);const yy=862+((t*170)%170);circ(787,yy,11,C.amber);g.restore();
+ txt('แยกหน้าที่ · เชื่อมด้วยข้อมูลที่ตรวจได้',540,1395,30,C.muted,550,'center');
+}
+function workforce(s,p,t){
+ const names=['CEO','COO','CFO','CMO','R&D','OPS','ARCH','PRODUCT','ENG','DESIGN','UI','QA','SALES','SUPPORT','LEGAL','CONTENT','NETENG','SECURITY'];
+ const hi=new Set([2,14,15]);
+ names.forEach((name,k)=>{const col=k%3,row=Math.floor(k/3),x=82+col*310,y=590+row*111,q=ease((p-.04-k*.016)/.12);g.save();g.globalAlpha=q;g.translate(0,(1-q)*20);box(x,y,286,84,15,hi.has(k)?'#28443a':C.panel,hi.has(k)?C.mint:C.line);circ(x+28,y+42,9,hi.has(k)?C.amber:C.blue);txt(name,x+55,y+51,25,C.white,650,'left',true);g.restore()});
+ box(82,1280,906,105,20,C.inset,C.line);txt('18 แผนก',126,1345,31,C.mint,700);txt('·',310,1345,30,C.muted,500);txt('Specialist เฉพาะด้าน',350,1345,31,C.white,600);txt('CFO  /  LEGAL  /  CONTENT CREATOR',540,1425,24,C.amber,550,'center',true);
+}
+function localMedia(s,p,t){
+ box(78,590,924,700,28,'#131e20',C.line);box(78,590,924,74,25,'#223231');for(let k=0;k<3;k++)circ(115+k*24,627,6,[C.red,C.amber,C.mint][k]);txt('LOCAL MEDIA PIPELINE',963,638,22,C.muted,500,'right',true);
+ txt('$ ffmpeg --local --portrait 1080x1920',120,742,26,C.mint,600,'left',true);
+ const labels=['1 · ลดช่วงเงียบ','2 · ปรับเสียง EBU R128','3 · จับเวลาซับตามวลี'];
+ labels.forEach((v,k)=>{const q=ease((p-.04-k*.16)/.14),y=820+k*112;g.save();g.globalAlpha=q;circ(140,y-8,14,C.mint);txt('✓',140,y,19,C.bg,800,'center');txt(v,180,y,31,C.white,600);box(180,y+21,700,8,4,C.inset);box(180,y+21,700*q,8,4,[C.blue,C.amber,C.mint][k]);g.restore()});
+ const bars=Array.from({length:48},(_,i)=>8+50*Math.abs(Math.sin(i*1.7+t*2))*Math.min(1,p*1.8));bars.forEach((h,i)=>box(120+i*17,1192-h/2,8,h,4,i%5===0?C.amber:C.blue));
+ box(78,1330,924,90,19,'#213329',C.mint);txt('LOCAL RENDER · NO EXTERNAL API CALL',540,1387,25,C.mint,700,'center',true);
+}
+function governance(s,p,t){
+ box(78,590,924,740,27,C.panel,C.line);box(78,590,924,82,26,'#222e30');txt('PUBLISH GATE / CHECK BEFORE RELEASE',120,644,23,C.muted,550,'left',true);
+ const rows=[['R1','Evidence · หลักฐานตรวจสอบได้'],['R2','Failure · ความล้มเหลวและเหตุผล'],['R3','Calibration · สิ่งที่ยังไม่รู้'],['R4','Boundaries · ไม่เทียบและไม่สั่ง'],['R5','Question · คำถามเปิดท้ายเรื่อง']];
+ rows.forEach((r,i)=>{const y=745+i*107,q=ease((p-.04-i*.10)/.13);g.save();g.globalAlpha=q;box(105,y-45,870,82,14,i%2?'#192527':'#202d2c');txt(r[0],143,y+8,25,C.amber,700,'left',true);txt(r[1],207,y+8,27,C.white,550);pill('ตรวจ',914,y-26,80,C.amber);g.restore()});
+ box(172,1310,736,92,20,'#3d3020',C.amber);txt('review_required · รอการตรวจและอนุมัติจากคน',540,1367,26,C.amber,650,'center');
+}
+function checkmark(x,y,c){g.beginPath();g.moveTo(x-11,y);g.lineTo(x-3,y+9);g.lineTo(x+14,y-12);g.strokeStyle=c;g.lineWidth=5;g.lineCap='round';g.stroke()}
+function closing(s,p,t){
+ g.save();g.fillStyle='#172625';g.beginPath();g.moveTo(760,1260);g.lineTo(900,740);g.lineTo(1040,1260);g.fill();
+ const beam=g.createRadialGradient(903,770,10,903,770,470);beam.addColorStop(0,'#ffe9a866');beam.addColorStop(1,'#ffe9a600');g.fillStyle=beam;g.beginPath();g.moveTo(896,760);g.lineTo(1050,1020);g.lineTo(1075,1310);g.lineTo(880,940);g.fill();
+ box(860,720,86,360,20,'#273835',C.amber);box(882,680,42,60,12,C.amber);circ(903,672,15,C.white);
+ for(let k=0;k<3;k++){const q=(t*.18+k*.32)%1,x=1000-q*860,y=1310+Math.sin(q*Math.PI)*85;circ(x,y,7,C.amber)}
+ ln(110,1350,980,1350,C.line,7);ln(110,1372,980,1372,C.line,4);for(let x=140;x<980;x+=86){ln(x,1338,x-12,1384,C.line,4)}
+ box(735+((t*30)%130),1248,150,67,15,'#2e3a36',C.mint);circ(763+((t*30)%130),1320,12,C.bg);circ(854+((t*30)%130),1320,12,C.bg);g.restore();
+ const a=ease((p-.15)/.2);g.save();g.globalAlpha=a;txt('SOLOCORP OS',540,1050,58,C.white,800,'center');txt('THE POWER OF ONE',540,1112,25,C.mint,600,'center',true);txt('SOURCE CODE LICENSE: MIT',540,1450,22,C.muted,500,'center',true);g.restore();
+}
+const draw={overload,architecture,workforce,local_media:localMedia,governance,closing};
+function wrapThai(value,maxWidth,size){g.font=font(size,550);const toks=[...new Intl.Segmenter('th',{granularity:'word'}).segment(value)].map(a=>a.segment);let lines=[],line='';for(const tok of toks){if(line&&g.measureText(line+tok).width>maxWidth){lines.push(line.trim());line=tok.trimStart()}else line+=tok}if(line.trim())lines.push(line.trim());return lines}
+window.splitText=wrapThai;window.font=font;window.g=g;
+window.renderFrame=function(time){
+ const story=window.story;time=clamp(time,0,story.duration-.001);const s=story.scenes.find(x=>time>=x.start&&time<x.end)||story.scenes.at(-1),i=story.scenes.indexOf(s),local=time-s.start,p=local/(s.end-s.start);
+ g.fillStyle=C.bg;g.fillRect(0,0,1080,1920);const gr=g.createRadialGradient(900,500,0,900,500,920);gr.addColorStop(0,'#28504440');gr.addColorStop(1,'#10171900');g.fillStyle=gr;g.fillRect(0,0,1080,1920);
+ g.save();g.globalAlpha=.12;for(let x=35;x<1080;x+=48)for(let y=190;y<1480;y+=48)circ(x,y,1,C.muted);g.restore();
+ drawHeader(s,i,p,local);draw[s.kind](s,p,local);
+ const cue=s.cues.find(c=>time>=c.start&&time<c.end);if(cue){const rows=wrapThai(cue.text,875,49);if(rows.length>2)throw new Error('caption exceeds two lines: '+cue.text);box(76,1490,928,rows.length===1?132:196,23,'#1b292beF',C.line);rows.forEach((r,j)=>txt(r,540,1572+j*64,49,C.white,600,'center'))}
+ for(let k=0;k<story.scenes.length;k++){const x=76+k*157;box(x,1787,139,7,3,k<i?C.mint:C.line);if(k===i)box(x,1787,139*p,7,3,C.mint)}
+ txt(`${String(i+1).padStart(2,'0')} / 06`,76,1843,24,C.muted,500,'left',true);txt('ร่างภายใน · Piper TTS non-commercial',1004,1843,22,C.muted,500,'right');
+ const fade=Math.min(clamp(time/.25),clamp((story.duration-time)/.35));if(fade<1){g.fillStyle=`rgba(16,23,25,${1-fade})`;g.fillRect(0,0,1080,1920)}return {scene:i,caption:cue?.text||''};
+};
+</script>

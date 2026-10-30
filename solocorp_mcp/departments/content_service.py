@@ -2,18 +2,30 @@
 
 from __future__ import annotations
 
+import errno
 import os
-import fcntl
+import time
 import hashlib
 import json
 import math
 import re
+import subprocess
 import unicodedata
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator
 from uuid import uuid4
+
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - exercised on Windows
+    fcntl = None  # type: ignore[assignment]
+
+try:
+    import msvcrt
+except ImportError:  # pragma: no cover - exercised on POSIX
+    msvcrt = None  # type: ignore[assignment]
 
 from dotenv import load_dotenv
 from solocorp_mcp.bus_store import (
@@ -90,6 +102,27 @@ LIFECYCLE_STATES = {
 FFMPEG_SCHEMA_VERSION = "2.17.1"
 FFMPEG_MAX_OPERATIONS = 12
 FFMPEG_MAX_RESULT_BYTES = 64 * 1024
+FF_TRACKING_REPOSITORY = "https://github.com/mrsarac/ff-tracking"
+FF_TRACKING_FPS = 30
+FF_TRACKING_SCENE_FRAMES = 15
+FF_TRACKING_MAX_SCENES = 120
+FF_TRACKING_PALETTES = {"Paper", "Thermal", "Mono", "Phosphor", "Amber", "Navy", "Neon"}
+FF_TRACKING_KINDS = {"Cursor", "Typing", "Collapse", "Done"}
+FF_TRACKING_CAMERA_DEFAULTS: dict[str, float] = {
+    "tilt_x": 0.25,
+    "tilt_y": -0.2,
+    "roll": 0.0,
+    "zoom_start": 2.0,
+    "zoom_end": 2.2,
+    "pan_x": 0.0,
+    "pan_y": 0.0,
+    "blur": 1.0,
+    "shake": 0.0,
+}
+LOCAL_SCENE_ROW = re.compile(
+    r'^\|\s*(\d+)\s*-\s*(\d+)s\s*\|\s*([^|]+?)\s*\|\s*VO:\s*"([^"]+)"',
+    re.MULTILINE,
+)
 
 # Pinned subset of the installed ffmpeg-skill 2.17.1 tools/list schema.
 # Raw argv and arbitrary tool arguments are intentionally not accepted.
@@ -200,11 +233,34 @@ def _campaign_lock(campaign_key: str) -> Iterator[None]:
     directory.mkdir(parents=True, exist_ok=True)
     lock_path = directory / f".{campaign_key}.lock"
     with lock_path.open("a+b") as handle:
-        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        if fcntl is not None:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+            lock_backend = "fcntl"
+        elif msvcrt is not None:
+            handle.seek(0, os.SEEK_END)
+            if handle.tell() == 0:
+                handle.write(b"\0")
+                handle.flush()
+            while True:
+                handle.seek(0)
+                try:
+                    msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+                    lock_backend = "msvcrt"
+                    break
+                except OSError as exc:
+                    if exc.errno not in {errno.EACCES, errno.EAGAIN, errno.EDEADLK}:
+                        raise
+                    time.sleep(0.05)
+        else:
+            raise ContentServiceError("cross-process campaign locking is unsupported on this platform")
         try:
             yield
         finally:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+            if lock_backend == "fcntl":
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+            else:
+                handle.seek(0)
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
 
 
 def _load_campaign(campaign_key: str) -> dict[str, Any] | None:
@@ -328,6 +384,25 @@ def _source_reference_section(source_references: list[str] | None) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _brand_guidelines_context() -> str:
+    try:
+        source = BRAND_GUIDELINES_PATH.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ContentServiceError(
+            f"approved brand guidelines could not be read: {BRAND_GUIDELINES_PATH}"
+        ) from exc
+
+    sections: list[str] = []
+    for title in ("Brand Foundation", "Voice & Tone"):
+        heading = re.search(rf"(?m)^## \d+\. {re.escape(title)}\s*$", source)
+        if heading is None:
+            raise ContentServiceError(f"brand guidelines are missing the {title} section")
+        following = re.search(r"(?m)^## \d+\. ", source[heading.end():])
+        end = heading.end() + following.start() if following else len(source)
+        sections.append(source[heading.start():end].strip())
+    return "Source: docs/brand/BRAND-GUIDELINES-v1.md\n\n" + "\n\n".join(sections)
+
+
 def _store_assets(
     campaign_id: str | None,
     assets: list[dict[str, Any]],
@@ -380,7 +455,7 @@ def _store_assets(
         expected_version = assets[0].get("expected_campaign_version")
         if expected_version is not None and campaign.get("version") != expected_version:
             raise ContentServiceError(
-                "campaign changed while building the FFmpeg job manifest; retry with current assets"
+                "campaign changed before the artifact batch was stored; retry with current assets"
             )
 
         version_number = int(campaign.get("version_number", 0)) + 1
@@ -492,6 +567,7 @@ def create_content_draft(
         raise ContentServiceError(
             f"content_type must be one of: {', '.join(sorted(CONTENT_TYPES))}"
         )
+    brand_context = _brand_guidelines_context()
 
     if kind == "social_post":
         sections = (
@@ -524,6 +600,8 @@ def create_content_draft(
         "## Brief\n\n"
         f"ชิ้นงานนี้มีเป้าหมายเพื่อช่วย **{audience}** เข้าใจเรื่อง **{topic}** "
         "ด้วยภาษาที่ชัดเจนและเหมาะกับแพลตฟอร์ม ก่อนเผยแพร่ต้องผ่าน Publish Gate\n\n"
+        "## Brand Context\n\n"
+        f"{brand_context}\n\n"
         f"{sections}\n"
         f"\n{_source_reference_section(references)}"
     )
@@ -561,12 +639,15 @@ def create_video_script(
     references = _validated_source_references(source_references)
     if isinstance(duration_seconds, bool) or not isinstance(duration_seconds, int):
         raise ContentServiceError("duration_seconds must be an integer")
-    if duration_seconds < 15 or duration_seconds > 3_600:
-        raise ContentServiceError("duration_seconds must be between 15 and 3,600")
+    if duration_seconds < 10 or duration_seconds > 3_600:
+        raise ContentServiceError("duration_seconds must be between 10 and 3,600")
 
-    hook_end = max(3, round(duration_seconds * 0.08))
-    body_end = max(hook_end + 1, round(duration_seconds * 0.62))
-    example_end = max(body_end + 1, round(duration_seconds * 0.86))
+    if duration_seconds == 10:
+        hook_end, body_end, example_end = 2, 7, 9
+    else:
+        hook_end = max(3, round(duration_seconds * 0.08))
+        body_end = max(hook_end + 1, round(duration_seconds * 0.62))
+        example_end = max(body_end + 1, round(duration_seconds * 0.86))
     script = (
         f"# Video Script — {title}\n\n"
         f"> **Duration:** {duration_seconds} seconds\n"
@@ -957,6 +1038,254 @@ def build_ffmpeg_job_manifest(
     )
 
 
+def _ff_tracking_camera(value: Any, defaults: dict[str, float], label: str) -> dict[str, Any]:
+    if value is None:
+        overrides: dict[str, Any] = {}
+    elif isinstance(value, dict):
+        overrides = value
+    else:
+        raise ContentServiceError(f"{label} must be an object")
+
+    unknown = set(overrides) - set(defaults)
+    if unknown:
+        raise ContentServiceError(f"{label} has unsupported camera keys: {', '.join(sorted(unknown))}")
+    clean = {**defaults, **overrides}
+    bounds = {
+        "tilt_x": (-1.2, 1.2),
+        "tilt_y": (-1.2, 1.2),
+        "roll": (-0.5, 0.5),
+        "zoom_start": (1.0, 5.0),
+        "zoom_end": (1.0, 5.0),
+        "pan_x": (-900.0, 900.0),
+        "pan_y": (-500.0, 500.0),
+        "blur": (0.0, 3.0),
+        "shake": (0.0, 12.0),
+    }
+    normalized: dict[str, float] = {}
+    for key, (minimum, maximum) in bounds.items():
+        number = clean[key]
+        if isinstance(number, bool) or not isinstance(number, (int, float)) or not math.isfinite(number):
+            raise ContentServiceError(f"{label}.{key} must be a finite number")
+        if not minimum <= number <= maximum:
+            raise ContentServiceError(f"{label}.{key} must be between {minimum} and {maximum}")
+        normalized[key] = float(number)
+    return {
+        "tilt_x": normalized["tilt_x"],
+        "tilt_y": normalized["tilt_y"],
+        "roll": normalized["roll"],
+        "zoom": [normalized["zoom_start"], normalized["zoom_end"]],
+        "pan": [normalized["pan_x"], normalized["pan_y"]],
+        "blur": normalized["blur"],
+        "shake": normalized["shake"],
+    }
+
+
+def _validate_ff_tracking_scenes(
+    scene_definitions: Any,
+    camera_params: Any,
+) -> list[dict[str, Any]]:
+    if not isinstance(scene_definitions, list) or not 1 <= len(scene_definitions) <= FF_TRACKING_MAX_SCENES:
+        raise ContentServiceError(
+            f"scene_definitions must be a list of 1-{FF_TRACKING_MAX_SCENES} scenes"
+        )
+    base_camera = _ff_tracking_camera(
+        camera_params, FF_TRACKING_CAMERA_DEFAULTS, "camera_params"
+    )
+    # Convert the normalized camera shape back to input keys for per-scene merging.
+    base_values = {
+        "tilt_x": base_camera["tilt_x"],
+        "tilt_y": base_camera["tilt_y"],
+        "roll": base_camera["roll"],
+        "zoom_start": base_camera["zoom"][0],
+        "zoom_end": base_camera["zoom"][1],
+        "pan_x": base_camera["pan"][0],
+        "pan_y": base_camera["pan"][1],
+        "blur": base_camera["blur"],
+        "shake": base_camera["shake"],
+    }
+    allowed_keys = {"scene_id", "episode_id", "kind", "text", "palette", "camera", "hero", "size"}
+    scenes: list[dict[str, Any]] = []
+    scene_ids: set[str] = set()
+    for index, raw in enumerate(scene_definitions, start=1):
+        if not isinstance(raw, dict):
+            raise ContentServiceError(f"scene_definitions[{index - 1}] must be an object")
+        unknown = set(raw) - allowed_keys
+        if unknown:
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}] has unsupported keys: {', '.join(sorted(unknown))}"
+            )
+        scene_id = raw.get("scene_id", f"scene-{index:02d}")
+        if not isinstance(scene_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", scene_id):
+            raise ContentServiceError(f"scene_definitions[{index - 1}].scene_id must be a short ASCII id")
+        if scene_id in scene_ids:
+            raise ContentServiceError(f"scene_definitions[{index - 1}].scene_id is duplicated")
+        scene_ids.add(scene_id)
+        episode_id = raw.get("episode_id")
+        if episode_id is not None and (
+            not isinstance(episode_id, str) or not re.fullmatch(r"EP\d{2}", episode_id)
+        ):
+            raise ContentServiceError(f"scene_definitions[{index - 1}].episode_id must use EPnn format")
+        kind = raw.get("kind", "Typing")
+        if not isinstance(kind, str) or kind not in FF_TRACKING_KINDS:
+            raise ContentServiceError(f"scene_definitions[{index - 1}].kind is unsupported")
+        text = raw.get("text", "")
+        if (
+            not isinstance(text, str)
+            or len(text) > 80
+            or not text.isascii()
+            or any(ord(character) < 32 or ord(character) > 126 for character in text)
+        ):
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].text must be at most 80 printable ASCII characters"
+            )
+        if kind in {"Typing", "Cursor"} and not text.strip():
+            raise ContentServiceError(f"scene_definitions[{index - 1}].text is required for {kind}")
+        redaction = redact(text)
+        if not redaction.ok:
+            labels = sorted(
+                {
+                    finding["label"]
+                    for finding in redaction.blocked + redaction.flagged + redaction.banned
+                }
+            )
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].text failed redaction checks ({', '.join(labels)}); "
+                "no manifest was stored"
+            )
+        palette = raw.get("palette", "Thermal")
+        if not isinstance(palette, str) or palette not in FF_TRACKING_PALETTES:
+            raise ContentServiceError(f"scene_definitions[{index - 1}].palette is unsupported")
+        scene_camera = _ff_tracking_camera(
+            raw.get("camera"), base_values, f"scene_definitions[{index - 1}].camera"
+        )
+        hero = raw.get("hero", [300.0, 540.0])
+        if not isinstance(hero, (list, tuple)) or len(hero) != 2:
+            raise ContentServiceError(f"scene_definitions[{index - 1}].hero must contain x and y")
+        hero_values: list[float] = []
+        for axis, value, maximum in (("x", hero[0], 1860.0), ("y", hero[1], 1040.0)):
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+                raise ContentServiceError(f"scene_definitions[{index - 1}].hero.{axis} must be finite")
+            if not 60.0 <= value <= maximum:
+                raise ContentServiceError(f"scene_definitions[{index - 1}].hero.{axis} is outside the render canvas")
+            hero_values.append(float(value))
+        size = raw.get("size", 72.0)
+        if isinstance(size, bool) or not isinstance(size, (int, float)) or not math.isfinite(size):
+            raise ContentServiceError(f"scene_definitions[{index - 1}].size must be finite")
+        if not 24.0 <= size <= 160.0:
+            raise ContentServiceError(f"scene_definitions[{index - 1}].size must be between 24 and 160")
+        if hero_values[0] + len(text) * float(size) * 0.6 > 1860.0:
+            raise ContentServiceError(f"scene_definitions[{index - 1}].text does not fit the render canvas")
+        scenes.append(
+            {
+                "scene_id": scene_id,
+                "episode_id": episode_id,
+                "kind": kind,
+                "text": text,
+                "palette": palette,
+                "cam": scene_camera,
+                "hero": hero_values,
+                "size": float(size),
+            }
+        )
+    return scenes
+
+
+def build_ff_tracking_manifest(
+    campaign_id: str,
+    scene_definitions: list[dict[str, Any]],
+    camera_params: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Store a validated ff-tracking scene plan without running its renderer."""
+
+    campaign_key, canonical_id = _campaign_identity(_required(campaign_id, "campaign_id"))
+    campaign = _load_campaign(campaign_key)
+    if campaign is None or campaign.get("campaign_id") != canonical_id:
+        raise ContentServiceError(f"campaign not found: {canonical_id}")
+    script_asset = next(
+        (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
+        None,
+    )
+    if script_asset is None:
+        raise ContentServiceError("campaign has no video script for ff-tracking")
+
+    scenes = _validate_ff_tracking_scenes(scene_definitions, camera_params)
+    job_id = f"ff-tracking-{uuid4().hex}"
+    planned_duration = len(scenes) * FF_TRACKING_SCENE_FRAMES / FF_TRACKING_FPS
+    job_manifest = {
+        "schema_version": 1,
+        "job_id": job_id,
+        "campaign_id": canonical_id,
+        "provider": "ff-tracking",
+        "provider_repository": FF_TRACKING_REPOSITORY,
+        "provider_license": "MIT",
+        "script_filename": script_asset["filename"],
+        "script_version": script_asset.get("version"),
+        "scene_count": len(scenes),
+        "fps": FF_TRACKING_FPS,
+        "frames_per_scene": FF_TRACKING_SCENE_FRAMES,
+        "planned_duration_seconds": planned_duration,
+        "target_dimensions": {"width": 1920, "height": 1080},
+        "scene_definitions": scenes,
+        "storytelling_mode": "scripted_workflow_visualization",
+        "exposes_model_chain_of_thought": False,
+        "upstream_contract": {
+            "scene_source": "hud/src/lib.rs::SCENE_LIST",
+            "stock_scene_count": 12,
+            "stock_frames_per_scene": 15,
+            "stock_fps": 30,
+            "stock_duration_seconds": 6.0,
+            "stock_output_dimensions": {"width": 1920, "height": 1080},
+            "json_manifest_consumed_by_stock_renderer": False,
+        },
+        "render_ready": False,
+        "render_blocker": "a local adapter must materialize this JSON into Rust SCENE_LIST before stock tools/render.sh can use it",
+        "execution": {
+            "status": "not_started",
+            "automatic_execution": False,
+            "runtime_gate": "blocked_pending_scene_materializer_and_local_engine_verification",
+        },
+        "publication": {
+            "status": "review_required",
+            "approval_required": True,
+            "published": False,
+        },
+        "lifecycle_state": "scaffold",
+    }
+    result = _store_assets(
+        canonical_id,
+        [
+            {
+                "task_id": _asset_task_id(canonical_id, "ff-tracking-job", job_id),
+                "content": json.dumps(job_manifest, ensure_ascii=False, sort_keys=True, indent=2),
+                "extension": "json",
+                "type": "ff_tracking_job_manifest",
+                "lifecycle_state": "scaffold",
+                "dependencies": [script_asset["filename"]],
+                "source_references": script_asset.get("source_references", []),
+                "metadata": {
+                    "job_id": job_id,
+                    "provider": "ff-tracking",
+                    "execution_status": "not_started",
+                    "render_ready": False,
+                    "approval_required": True,
+                },
+                "expected_campaign_version": campaign.get("version"),
+            }
+        ],
+    )[0]
+    return _manifest(
+        result,
+        job_id=job_id,
+        provider="ff-tracking",
+        scene_count=len(scenes),
+        planned_duration_seconds=planned_duration,
+        render_ready=False,
+        execution_status="not_started",
+        approval_required=True,
+        published=False,
+    )
+
+
 def _validated_ffmpeg_result(response: Any) -> tuple[dict[str, Any], str, str | None, int | None]:
     if not isinstance(response, dict):
         raise ContentServiceError("execution_result must be an MCP result object")
@@ -1129,6 +1458,233 @@ def record_ffmpeg_job_result(
         approval_effect="none",
         campaign_status="scaffold",
     )
+
+
+def _local_media_scenes(script: str) -> list[dict[str, Any]]:
+    scenes = []
+    for match in LOCAL_SCENE_ROW.finditer(script):
+        start, end = int(match.group(1)), int(match.group(2))
+        description = match.group(3).strip()
+        voiceover = match.group(4).strip()
+        scene_seconds = end - start
+        expected_start = len(scenes) * scene_seconds
+        if scene_seconds not in {10, 15} or start != expected_start:
+            raise ContentServiceError("local scenes must be contiguous 10- or 15-second segments")
+        if scenes and scene_seconds != scenes[0]["end_seconds"] - scenes[0]["start_seconds"]:
+            raise ContentServiceError("all local render scenes must use the same duration")
+        if not description or not voiceover:
+            raise ContentServiceError("every render scene requires a visual and voiceover")
+        title, separator, visual_description = description.partition(" — ")
+        title = title.strip() or f"Scene {len(scenes) + 1:02d}"
+        scenes.append(
+            {
+                "start_seconds": start,
+                "end_seconds": end,
+                "kicker": f"SCENE {len(scenes) + 1:02d}",
+                "title": title[:90],
+                "description": (visual_description if separator else description)[:420],
+                "voiceover": voiceover,
+            }
+        )
+    if not scenes:
+        raise ContentServiceError("local render found no timed scenes with VO text")
+    scene_seconds = scenes[0]["end_seconds"] - scenes[0]["start_seconds"]
+    if (len(scenes), scene_seconds) not in {(6, 15), (10, 10)}:
+        raise ContentServiceError("local render supports six 15-second scenes or ten 10-second episodes")
+    return scenes
+
+
+def _execute_local_media_pipeline(payload: dict[str, Any]) -> dict[str, Any]:
+    command = [str(ROOT / ".venv" / "bin" / "python"), str(ROOT / "scripts" / "render_campaign_media_local.py")]
+    if not Path(command[0]).is_file():
+        command[0] = os.environ.get("PYTHON", "python3")
+    environment = os.environ.copy()
+    environment["SOLOCORP_BUS_ROOT"] = str(bus_store.BUS_ROOT)
+    try:
+        completed = subprocess.run(
+            command,
+            input=json.dumps(payload, ensure_ascii=False),
+            text=True,
+            capture_output=True,
+            timeout=3600,
+            cwd=ROOT,
+            env=environment,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise ContentServiceError("local media render exceeded the 60-minute limit") from exc
+    if completed.returncode != 0:
+        detail = completed.stderr[-1600:].strip() or completed.stdout[-1600:].strip()
+        raise ContentServiceError(f"local media render failed: {detail or completed.returncode}")
+    try:
+        result = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise ContentServiceError("local media renderer returned invalid JSON") from exc
+    if not isinstance(result, dict) or result.get("status") != "completed":
+        raise ContentServiceError("local media renderer did not report completed status")
+    return result
+
+
+def render_campaign_media_local(campaign_id: str) -> dict[str, Any]:
+    """Render script-derived synthetic media locally and leave the campaign gated."""
+
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    campaign = _load_campaign(campaign_key)
+    if campaign is None or campaign.get("campaign_id") != canonical_id:
+        raise ContentServiceError(f"campaign not found: {canonical_id}")
+    script_asset = next(
+        (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
+        None,
+    )
+    if script_asset is None:
+        raise ContentServiceError("campaign has no video script to render")
+    script = fetch_from_bus(DEPARTMENT, script_asset["filename"])["content"]
+    scenes = _local_media_scenes(script)
+    scene_seconds = scenes[0]["end_seconds"] - scenes[0]["start_seconds"]
+    duration_seconds = scenes[-1]["end_seconds"]
+
+    rights_file = ROOT / "tools" / "piper" / "model-rights.json"
+    try:
+        model_rights = json.loads(rights_file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ContentServiceError("local Piper model rights record is missing or invalid") from exc
+    model_license = _required(str(model_rights.get("license", "")), "model license")
+    commercial_use = model_rights.get("commercial_use")
+    if not isinstance(commercial_use, bool):
+        raise ContentServiceError("local Piper voice model must have an explicit commercial_use boolean")
+    voice_rights_status = (
+        "commercial_permitted_pending_human_confirmation"
+        if commercial_use
+        else "noncommercial_only_human_confirmation_required"
+    )
+
+    job_id = f"local-media-{uuid4().hex}"
+    content_root = (bus_store.BUS_ROOT / "content").resolve()
+    output_dir = content_root / "local_media" / campaign_key / job_id
+    if not output_dir.resolve().is_relative_to(content_root):
+        raise ContentServiceError("local media output path escapes central_bus/content")
+    job_manifest = {
+        "schema_version": 1,
+        "job_id": job_id,
+        "campaign_id": canonical_id,
+        "provider": "ffmpeg-cli",
+        "tts_provider": "piper-local",
+        "visual_provider": "three.js-pdoom-local",
+        "script_filename": script_asset["filename"],
+        "script_version": script_asset.get("version"),
+        "execution": {
+            "status": "in_progress",
+            "automatic_execution": False,
+            "requested_by": "content-creator MCP tool call",
+            "runtime_gate": "synthetic_inputs_only_pending_independent_ffmpeg_verification",
+        },
+        "scope": "generated voice, original synthetic 3D scenes, scene-level captions, local FFmpeg CLI",
+        "scene_count": len(scenes),
+        "scene_seconds": scene_seconds,
+        "duration_seconds": duration_seconds,
+        "voice_model_license": model_license,
+        "voice_model_rights_status": voice_rights_status,
+        "publication_status": "blocked_pending_human_approval_and_rights_review",
+        "output_directory": output_dir.relative_to(bus_store.BUS_ROOT.resolve()).as_posix(),
+        "lifecycle_state": "scaffold",
+    }
+    job_asset = _store_assets(
+        canonical_id,
+        [
+            {
+                "task_id": _asset_task_id(canonical_id, "local-media-job", job_id),
+                "content": json.dumps(job_manifest, ensure_ascii=False, sort_keys=True, indent=2),
+                "extension": "json",
+                "type": "local_media_render_job",
+                "lifecycle_state": "scaffold",
+                "dependencies": [script_asset["filename"]],
+                "metadata": {
+                    "job_id": job_id,
+                    "provider": "ffmpeg-cli",
+                    "execution_status": "in_progress",
+                    "media_rights_status": "human_confirmation_required",
+                },
+                "expected_campaign_version": campaign.get("version"),
+            }
+        ],
+    )[0]
+
+    payload = {
+        "campaign_id": campaign_key,
+        "output_dir": str(output_dir),
+        "model_license": model_license,
+        "scene_seconds": scene_seconds,
+        "duration_seconds": duration_seconds,
+        "scenes": scenes,
+    }
+    try:
+        render = _execute_local_media_pipeline(payload)
+        video = render.get("video", {})
+        video_path = Path(str(video.get("path", ""))).resolve(strict=True)
+        if not video_path.is_relative_to(output_dir.resolve()) or not video_path.is_file():
+            raise ContentServiceError("local renderer output must be a file inside its isolated job directory")
+        if not isinstance(video.get("sha256"), str) or len(video["sha256"]) != 64:
+            raise ContentServiceError("local renderer did not return a valid output SHA-256")
+        execution_status = "completed"
+        result_record = {
+            "schema_version": 1,
+            "job_id": job_id,
+            "campaign_id": canonical_id,
+            "provider": "ffmpeg-cli",
+            "execution_status": execution_status,
+            "execution_mode": render.get("execution_mode"),
+            "render": render,
+            "lifecycle_state": "scaffold",
+            "approval_effect": "none",
+        }
+    except (ContentServiceError, OSError, ValueError, TypeError, KeyError) as exc:
+        execution_status = "failed"
+        result_record = {
+            "schema_version": 1,
+            "job_id": job_id,
+            "campaign_id": canonical_id,
+            "provider": "ffmpeg-cli",
+            "execution_status": execution_status,
+            "error": type(exc).__name__,
+            "message": str(exc)[:1600],
+            "lifecycle_state": "scaffold",
+            "approval_effect": "none",
+        }
+
+    result_asset = _store_assets(
+        canonical_id,
+        [
+            {
+                "task_id": _asset_task_id(canonical_id, "local-media-result", job_id),
+                "content": json.dumps(result_record, ensure_ascii=False, sort_keys=True, indent=2),
+                "extension": "json",
+                "type": "local_media_render_result",
+                "lifecycle_state": "scaffold",
+                "dependencies": [job_asset["filename"], script_asset["filename"]],
+                "metadata": {
+                    "job_id": job_id,
+                    "provider": "ffmpeg-cli",
+                    "execution_status": execution_status,
+                    "media_rights_status": "human_confirmation_required",
+                },
+            }
+        ],
+    )[0]
+    review = _review_campaign(canonical_id)
+    return {
+        "campaign_id": canonical_id,
+        "job_id": job_id,
+        "execution_status": execution_status,
+        "execution_mode": "local_ffmpeg_cli",
+        "job_manifest": {"filename": job_asset["filename"], "path": job_asset["path"]},
+        "result_record": {"filename": result_asset["filename"], "path": result_asset["path"]},
+        "render": result_record.get("render"),
+        "error": result_record.get("message") if execution_status == "failed" else None,
+        "publish_gate": review,
+        "status": "review_required",
+        "approval_required": True,
+        "published": False,
+    }
 
 
 def design_audio_experience(

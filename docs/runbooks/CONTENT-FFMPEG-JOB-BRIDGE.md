@@ -4,6 +4,13 @@
 
 The Content Creator MCP stores a versioned plan for the installed `ffmpeg-skill` MCP and records a response returned by that server. It does not launch FFmpeg, copy media, call a cloud provider, approve a campaign, or publish content.
 
+This contract remains specific to the FFmpeg-skill MCP bridge. The separate
+`render_campaign_media_local` tool uses a local CLI pipeline for generated
+synthetic assets only and records `provider: ffmpeg-cli`; its setup, runtime
+gate, and output contract are documented in
+`docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md`. Never submit its local CLI result
+to `record_ffmpeg_job_result` as though it came from MCP.
+
 The accepted argument subset is pinned to the `tools/list` response for `ffmpeg-skill` 2.17.1. The author and independent D2 evidence are:
 
 - `bus/evidence/2026-10-26/ffmpeg-skill-mcp-builder-d2-authored.json`

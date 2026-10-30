@@ -14,6 +14,7 @@ from mcp.server.fastmcp import FastMCP
 from .content_service import (
     ContentServiceError,
     build_ffmpeg_job_manifest as _build_ffmpeg_job_manifest,
+    build_ff_tracking_manifest as _build_ff_tracking_manifest,
     create_content_draft as _create_content_draft,
     create_video_script as _create_video_script,
     department_info,
@@ -25,10 +26,12 @@ from .content_service import (
     record_ffmpeg_job_result as _record_ffmpeg_job_result,
     record_human_approval as _record_human_approval,
     result_json,
+    render_campaign_media_local as _render_campaign_media_local,
     review_publish_gate as _review_publish_gate,
     save_human_edited_artifact as _save_human_edited_artifact,
     sop_resource,
 )
+from .media_service import render_campaign_with_concat as _render_campaign_with_concat
 
 mcp = FastMCP(
     "content-creator",
@@ -39,8 +42,14 @@ mcp = FastMCP(
         "client-supplied, unauthenticated provenance; this route never calls an LLM. "
         "Audio cue and lip-sync tools never "
         "call providers. Paid ElevenLabs voiceover requires approved=true. "
-        "FFmpeg job tools store a validated plan and the identified MCP call result; "
-        "they never execute FFmpeg or approve work. The local runtime gate remains required. "
+        "FFmpeg job tools store a validated plan and the identified MCP call result. "
+        "build_ff_tracking_manifest stores a validated visual plan only; the stock upstream renderer "
+        "does not consume JSON manifests, and this tool never runs Rust or FFmpeg. "
+        "render_campaign_media_local is a separate local CLI path limited to generated "
+        "synthetic assets; it records local CLI provenance, never an MCP result, and never approves work. "
+        "render_campaign_with_concat uses the local Concat MCP engine for project assembly and MP4 export; "
+        "it writes media under central_bus/content, records hashes and ffprobe validation, and keeps review required. "
+        "Real user media remains blocked until independent runtime verification. "
         "Every publication requires recorded human approval for the current "
         "campaign version."
     ),
@@ -269,6 +278,64 @@ def build_ffmpeg_job_manifest(
             )
         )
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def build_ff_tracking_manifest(
+    campaign_id: str,
+    scene_definitions: list[dict[str, Any]],
+    camera_params: dict[str, Any] | None = None,
+) -> str:
+    """Store a validated ff-tracking scene plan; do not execute the renderer."""
+
+    try:
+        return result_json(
+            _build_ff_tracking_manifest(campaign_id, scene_definitions, camera_params)
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def render_campaign_media_local(campaign_id: str) -> str:
+    """Render the latest 90-second synthetic storyboard locally; keep human approval required."""
+
+    try:
+        return result_json(_render_campaign_media_local(campaign_id))
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def render_campaign_with_concat(
+    campaign_id: str,
+    timeline_media: list[dict[str, Any]],
+    captions: list[dict[str, Any]] | None = None,
+    sound_delivery_filename: str = "",
+    concat_project_path: str = "",
+    width: int = 1080,
+    height: int = 1920,
+    fps: int = 30,
+    crf: int = 20,
+) -> str:
+    """Create or copy a Concat project, add generated assets and script-timed captions, then export an MP4."""
+
+    try:
+        return result_json(
+            _render_campaign_with_concat(
+                campaign_id,
+                timeline_media,
+                captions,
+                sound_delivery_filename,
+                concat_project_path,
+                width,
+                height,
+                fps,
+                crf,
+            )
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError, ValueError) as exc:
         return _error(exc)
 
 

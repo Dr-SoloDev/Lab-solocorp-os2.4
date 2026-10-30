@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="th"><meta charset="utf-8">
+<style>html,body{margin:0;background:#14171a;overflow:hidden}canvas{display:block}</style>
+<canvas id="film" width="1080" height="1920"></canvas>
+<script>
+const canvas=document.getElementById('film'),g=canvas.getContext('2d');
+const C={bg:'#14171a',panel:'#20272a',inset:'#171d20',line:'#455056',white:'#f4f2eb',muted:'#b5b8b3',mint:'#82e0c0',orange:'#ffb454',coral:'#ff887a',blue:'#95c7eb',violet:'#c3a9ea'};
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),ease=x=>1-Math.pow(1-clamp(x),3);
+const font=(s,w=500,mono=false)=>`${w} ${s}px ${mono?'"DejaVu Sans Mono"':'"Noto Sans Thai",sans-serif'}`;
+function txt(v,x,y,s=34,c=C.white,w=500,a='left',m=false){g.font=font(s,w,m);g.fillStyle=c;g.textAlign=a;g.textBaseline='alphabetic';g.fillText(v,x,y)}
+function box(x,y,w,h,r=22,fill=C.panel,stroke=null){g.beginPath();g.roundRect(x,y,w,h,r);g.fillStyle=fill;g.fill();if(stroke){g.lineWidth=2;g.strokeStyle=stroke;g.stroke()}}
+function ln(x1,y1,x2,y2,c=C.line,w=3){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.strokeStyle=c;g.lineWidth=w}
+function strokeLine(x1,y1,x2,y2,c=C.line,w=3){ln(x1,y1,x2,y2,c,w);g.stroke()}
+function circ(x,y,r,c){g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fillStyle=c;g.fill()}
+function pill(s,x,y,w,c=C.mint){box(x,y,w,52,26,C.inset,c);txt(s,x+w/2,y+35,22,c,650,'center')}
+function card(x,y,w,h,draw,fill=C.panel){box(x,y,w,h,22,fill,C.line);if(draw)draw()}
+function header(s,p){txt('SOLOCORP OS',76,106,34,C.white,750);txt('CONTENT CREATOR',346,106,24,C.muted,550,'left',true);pill('ภาพจำลองกระบวนการ',749,66,255,C.orange);strokeLine(76,160,1004,160);
+ const q=ease(p/.12);g.save();g.globalAlpha=q;g.translate(0,(1-q)*20);txt(s.kicker,76,244,26,C.mint,650);s.title.forEach((v,i)=>txt(v,76,360+i*100,72,i===s.title.length-1?C.mint:C.white,750));g.restore()}
+function stage(delay,p,draw){const q=ease((p-delay)/.13);g.save();g.globalAlpha=q;g.translate(0,(1-q)*24);draw(q);g.restore()}
+function brief(s,p,t){
+ card(76,590,928,690,()=>{box(76,590,928,78,21,'#283135');circ(112,629,7,C.coral);circ(136,629,7,C.orange);circ(160,629,7,C.mint);txt('CONTENT BRIEF',970,638,22,C.muted,500,'right',true)});
+ const rows=[['เป้าหมาย','ให้ความรู้ / สร้างการมีส่วนร่วม'],['ผู้ชม','ใครควรเห็นเรื่องนี้?'],['สารหลัก','อยากให้จำอะไร?'],['ช่องทาง','วิดีโอ / บทความ / โซเชียล'],['ตัวชี้วัด','จะรู้ได้อย่างไรว่าได้ผล?']];
+ rows.forEach((r,i)=>stage(.04+i*.1,p,()=>{const y=757+i*99;box(112,y-42,856,75,14,i%2?'#20272a':'#252e31');circ(147,y-4,9,[C.orange,C.blue,C.violet,C.mint,C.coral][i]);txt(r[0],180,y+7,27,C.muted,550);txt(r[1],430,y+7,29,C.white,600)}));
+ stage(.55,p,()=>{const x=112+760*((t*.16)%1);circ(x,1218,9,C.orange);strokeLine(126,1218,946,1218,C.line,3);txt('BRIEF',112,1263,19,C.muted,500,'left',true);txt('GOAL',968,1263,19,C.mint,500,'right',true)})
+}
+function storyTeam(s,p,t){
+ const roles=[['เสก','Head · กำกับภาพรวม',C.orange],['กวี','Copywriter · วางโครงเรื่อง',C.mint],['ฟิล์ม','Scriptwriter · บทและจังหวะ',C.blue],['อาร์ต','Visual Designer · แนวภาพ',C.violet],['ซาวด์','Audio Designer · เสียงและคิว',C.coral],['อิงค์','Content Analyst · ตรวจและ Gate',C.orange]];
+ roles.forEach((r,i)=>stage(.03+i*.055,p,()=>{const y=574+i*131;card(80,y,920,104,()=>{circ(143,y+52,23,r[2]);txt(r[0],195,y+46,31,C.white,700);txt(r[1],195,y+77,21,C.muted,500);pill(i===0?'HEAD':'SPECIALIST',766,y+25,196,r[2])},i===0?'#2d2924':C.panel)}));
+ txt('เจ้าของงานชัด · ส่งต่อเป็นลำดับ',540,1382,29,C.mint,600,'center')
+}
+function production(s,p,t){
+ const nodes=[['01','เรื่อง','แกนสาร'],['02','บท','ถ้อยคำ'],['03','ภาพ','องค์ประกอบ'],['04','เสียง','จังหวะ']];
+ nodes.forEach((n,i)=>{const x=80+i*243;stage(.04+i*.12,p,()=>{card(x,675,210,250,()=>{pill(n[0],x+22,700,70,[C.orange,C.mint,C.blue,C.coral][i]);txt(n[1],x+105,825,43,C.white,700,'center');txt(n[2],x+105,883,24,C.muted,500,'center')})});if(i<3)strokeLine(x+211,800,x+239,800,C.mint,4)});
+ card(100,1015,880,260,()=>{txt('STORYBOARD',142,1080,24,C.muted,550,'left',true);for(let i=0;i<9;i++){const x=145+i*91,w=65+((i*43+Math.floor(t*10))%30);box(x,1135,70,w,12,['#f0b65a','#85d4c0','#8db7de','#c5a8e8'][i%4]);box(x,1233,70,12,6,C.line)}});
+ txt('ทุกชิ้นต้องช่วยเล่าเป้าหมายเดียวกัน',540,1383,29,C.white,550,'center')
+}
+function mcpBus(s,p,t){
+ card(78,590,420,670,()=>{txt('MCP TOOLS',116,655,23,C.muted,500,'left',true);const labels=['draft','video script','visual prompt','audio cue'];labels.forEach((v,i)=>stage(.04+i*.12,p,()=>{const y=735+i*118;box(112,y,350,84,16,i%2?'#20272a':'#263033');circ(147,y+42,9,[C.orange,C.mint,C.blue,C.coral][i]);txt(v,180,y+52,28,C.white,550,'left',true);txt('v'+(i+1),430,y+51,20,C.muted,500,'right',true)}))});
+ card(604,720,398,350,()=>{pill('CENTRAL BUS',666,762,270,C.mint);txt('เวอร์ชัน · ที่มา',803,900,31,C.white,600,'center');txt('ตามกลับได้',803,953,25,C.muted,500,'center');
+ for(let i=0;i<3;i++){const q=(t*.25+i/3)%1;circ(500+q*104,880,8,[C.orange,C.blue,C.mint][i])}});
+ strokeLine(500,900,590,900,C.mint,4);txt('เก็บงานเป็นร่องรอย ไม่ใช่แค่ไฟล์จบ',540,1310,28,C.muted,550,'center')
+}
+function gate(s,p,t){
+ card(78,588,924,735,()=>{box(78,588,924,78,21,'#283135');txt('PUBLISH GATE',119,638,23,C.muted,500,'left',true);pill('REVIEW REQUIRED',747,600,220,C.orange)});
+ const rows=[['SOURCES','แหล่งอ้างอิง'],['RIGHTS','สิทธิ์สื่อ'],['REDACTION','ข้อมูลอ่อนไหว'],['R1–R5','คุณภาพและการสอบทาน'],['HUMAN','ผู้อนุมัติ']];
+ rows.forEach((r,i)=>stage(.03+i*.08,p,()=>{const y=731+i*107;box(112,y,856,78,14,i%2?'#20272a':'#252e31');txt(r[0],148,y+48,21,C.orange,650,'left',true);txt(r[1],328,y+48,28,C.white,550);pill('ตรวจ',852,y+13,88,C.orange)}));
+ txt('AI ช่วยเตรียม · คนตัดสินใจเผยแพร่',540,1394,29,C.mint,600,'center')
+}
+function cta(s,p,t){
+ const centers=[252,540,828];const labels=['BRIEF','STORY','REVIEW'];
+ centers.forEach((x,i)=>stage(.05+i*.15,p,()=>{circ(x,825,104,['#3a2f22','#20352f','#2b2c3a'][i]);circ(x,825,70,C.panel);txt(labels[i],x,835,25,[C.orange,C.mint,C.violet][i],650,'center',true);if(i<2)strokeLine(x+111,825,x+177,825,C.muted,4)}));
+ stage(.5,p,()=>{box(76,1060,928,235,25,'#252e31',C.mint);txt('เรื่องถัดไปของคุณ',540,1145,36,C.muted,550,'center');txt('อยากเล่าเรื่องอะไร?',540,1220,55,C.white,750,'center')});
+ txt('FROM BRIEF TO STORY · HUMAN APPROVAL',540,1400,22,C.muted,500,'center',true)
+}
+const draw={brief,story_team:storyTeam,production,mcp_bus:mcpBus,gate,cta};
+function wrapThai(value,maxWidth,size){g.font=font(size,550);const tokens=[...new Intl.Segmenter('th',{granularity:'word'}).segment(value)].map(a=>a.segment);for(let i=1;i<tokens.length;i++){if(/^[?!.,:;…]+$/u.test(tokens[i])){tokens[i-1]+=tokens[i];tokens.splice(i,1);i--}}let rows=[],row='';for(const token of tokens){if(row&&g.measureText(row+token).width>maxWidth){rows.push(row.trim());row=token.trimStart()}else row+=token}if(row.trim())rows.push(row.trim());return rows}
+window.splitText=wrapThai;window.font=font;window.g=g;
+window.renderFrame=function(time){const story=window.story;time=clamp(time,0,story.duration-.001);const s=story.scenes.find(x=>time>=x.start&&time<x.end)||story.scenes.at(-1),i=story.scenes.indexOf(s),local=time-s.start,p=local/(s.end-s.start);
+ g.fillStyle=C.bg;g.fillRect(0,0,1080,1920);const glow=g.createRadialGradient(820,840,5,820,840,900);glow.addColorStop(0,'#4c302426');glow.addColorStop(1,'#14171a00');g.fillStyle=glow;g.fillRect(0,0,1080,1920);
+ g.save();g.globalAlpha=.12;for(let x=35;x<1080;x+=48)for(let y=190;y<1480;y+=48)circ(x,y,1,C.muted);g.restore();header(s,p);draw[s.kind](s,p,local);
+ const cue=s.cues.find(c=>time>=c.start&&time<c.end);if(cue){const rows=wrapThai(cue.text,875,49);if(rows.length>2)throw new Error('caption exceeds two lines: '+cue.text);box(76,1490,928,rows.length===1?132:196,23,'#22292cef',C.line);rows.forEach((row,j)=>txt(row,540,1572+j*64,49,C.white,600,'center'))}
+ for(let k=0;k<story.scenes.length;k++){const x=76+k*157;box(x,1787,139,7,3,k<i?C.mint:C.line);if(k===i)box(x,1787,139*p,7,3,C.mint)}
+ txt(`${String(i+1).padStart(2,'0')} / 06`,76,1843,24,C.muted,500,'left',true);txt('ร่างตรวจ · รออนุมัติโดยมนุษย์',1004,1843,21,C.muted,500,'right');
+ const fade=Math.min(clamp(time/.25),clamp((story.duration-time)/.35));if(fade<1){g.fillStyle=`rgba(20,23,26,${1-fade})`;g.fillRect(0,0,1080,1920)}return {scene:i,caption:cue?.text||''};};
+</script>
