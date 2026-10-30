@@ -1,0 +1,217 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T00:26:52.991024+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-v2-client-generated-video_script_20261030T002652991024Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-v2-client-generated-video_script_20261030T002652991024Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "runtime model identifier not independently verified",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "scripts/media/model_health_v2.json"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-30T00:27:46.520141+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-v2-client-generated-visual_prompt_20261030T002746520141Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-v2-client-generated-visual_prompt_20261030T002746520141Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "runtime model identifier not independently verified",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "scripts/media/model_health_v2.json",
+        "scripts/media/model_health_motion.html",
+        "scripts/render_model_health_story.py"
+      ],
+      "status": "client_generated",
+      "type": "visual_prompt",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-30T00:27:46.676332+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-v2-client-generated-audio_cue_she_20261030T002746676332Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-v2-client-generated-audio_cue_she_20261030T002746676332Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "runtime model identifier not independently verified",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "scripts/media/model_health_v2.json",
+        "scripts/media/model_health_motion.html",
+        "scripts/render_model_health_story.py"
+      ],
+      "status": "client_generated",
+      "type": "audio_cue_sheet",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-30T00:30:17.028084+00:00",
+      "dependencies": [],
+      "execution_status": "in_progress",
+      "filename": "campaign-solocorp-model-health-v2-motion-job_20261030T003017028084Z.json",
+      "job_id": "motion-v2-c3fc17cb8bff",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-v2-motion-job_20261030T003017028084Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "scripts/media/model_health_v2.json",
+        "scripts/media/model_health_motion.html",
+        "scripts/render_model_health_story.py"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_job",
+      "version": "v4"
+    },
+    {
+      "created_at": "2026-10-30T00:36:55.087622+00:00",
+      "dependencies": [
+        "campaign-solocorp-model-health-v2-client-generated-video_script"
+      ],
+      "execution_status": "completed",
+      "filename": "campaign-solocorp-model-health-v2-motion-job-completed_20261030T003655087622Z.json",
+      "job_id": "motion-v2-c3fc17cb8bff",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-v2-motion-job-completed_20261030T003655087622Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "scripts/media/model_health_v2.json",
+        "scripts/media/model_health_motion.html",
+        "scripts/render_model_health_story.py"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_job",
+      "version": "v5"
+    },
+    {
+      "created_at": "2026-10-30T00:36:55.137395+00:00",
+      "dependencies": [
+        "campaign-solocorp-model-health-v2-motion-job-completed"
+      ],
+      "execution_status": "completed",
+      "filename": "campaign-solocorp-model-health-v2-motion-result_20261030T003655137395Z.json",
+      "job_id": "motion-v2-c3fc17cb8bff",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-v2-motion-result_20261030T003655137395Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "scripts/media/model_health_v2.json",
+        "scripts/media/model_health_motion.html",
+        "scripts/render_model_health_story.py"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_result",
+      "version": "v5"
+    }
+  ],
+  "campaign_id": "solocorp-model-health-v2",
+  "campaign_key": "solocorp-model-health-v2",
+  "created_at": "2026-10-30T00:26:52.990807+00:00",
+  "review": {
+    "checks": [
+      {
+        "check": "dependencies: primary content",
+        "detail": "พบ draft/script",
+        "ok": true
+      },
+      {
+        "check": "dependencies: visual prompt",
+        "detail": "พบ visual prompt",
+        "ok": true
+      },
+      {
+        "check": "dependencies: audio cue sheet",
+        "detail": "ต้องสร้าง audio cue sheet ใหม่จากสคริปต์ล่าสุด",
+        "ok": false
+      },
+      {
+        "check": "claims: source references supplied",
+        "detail": "พบ 3 รายการ",
+        "ok": true
+      },
+      {
+        "check": "claims: source verification",
+        "detail": "ระบบยังไม่ได้ตรวจสอบแหล่งอ้างอิงโดยอิสระ; ต้องให้มนุษย์ยืนยัน",
+        "ok": false
+      },
+      {
+        "check": "media rights",
+        "detail": "ต้องยืนยันลิขสิทธิ์ภาพ/เพลง/เสียงก่อนเผยแพร่",
+        "ok": false
+      },
+      {
+        "check": "redaction",
+        "detail": "พบข้อมูลที่ต้อง redact หรือให้มนุษย์ตรวจ",
+        "ok": false
+      },
+      {
+        "check": "R1 มีหลักฐานตรวจสอบได้อย่างน้อย 1 อัน",
+        "detail": "ไม่มี",
+        "ok": false
+      },
+      {
+        "check": "R2 แสดงความล้มเหลวและต้นทุน/เหตุผล",
+        "detail": "มีรอยแผล",
+        "ok": false
+      },
+      {
+        "check": "R3 มีบรรทัด 'ยังไม่ได้/ยังไม่รู้' (calibration)",
+        "detail": "ไม่มี — เสี่ยงดูมั่นใจเกินจริง",
+        "ok": false
+      },
+      {
+        "check": "R4 ไม่เทียบ/ไม่วัดคนอื่น ไม่มีคำสั่ง",
+        "detail": "สะอาด",
+        "ok": true
+      },
+      {
+        "check": "R5 ปิดด้วยคำถามเปิด 1 ข้อ",
+        "detail": "มีคำถาม",
+        "ok": true
+      }
+    ],
+    "gate_passed": false,
+    "report": {
+      "filename": "campaign-solocorp-model-health-v2-publish-gate-v5_20261030T003704565340Z.md",
+      "path": "central_bus/content/campaign-solocorp-model-health-v2-publish-gate-v5_20261030T003704565340Z.md"
+    },
+    "reviewed_at": "2026-10-30T00:37:04.616392+00:00",
+    "status": "review_required",
+    "version": "v5"
+  },
+  "revision": 6,
+  "schema_version": 1,
+  "source_references": [
+    "scripts/media/model_health_v2.json",
+    "scripts/media/model_health_motion.html",
+    "scripts/render_model_health_story.py"
+  ],
+  "status": "review_required",
+  "updated_at": "2026-10-30T00:37:04.616409+00:00",
+  "version": "v5",
+  "version_number": 5
+}

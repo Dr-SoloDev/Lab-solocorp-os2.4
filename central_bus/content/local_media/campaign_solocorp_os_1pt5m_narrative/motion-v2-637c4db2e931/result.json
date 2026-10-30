@@ -1,0 +1,33 @@
+{
+  "status": "completed",
+  "job_id": "motion-v2-637c4db2e931",
+  "campaign_id": "campaign_solocorp_os_1pt5m_narrative",
+  "provider": "ffmpeg-cli",
+  "execution_mode": "local_cli_motion_design_v2",
+  "video": {
+    "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/motion-v2-637c4db2e931/campaign_solocorp_os_1pt5m_narrative-rendered.mp4",
+    "sha256": "b5a27f313000999c6d828ff68042f4aeb8a06e042d28ffd39d455f63a56bdebd",
+    "bytes": 6516754,
+    "codec": "h264",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "duration_seconds": 90.0
+  },
+  "audio": {
+    "codec": "aac",
+    "sample_rate": "48000",
+    "channels": 2,
+    "integrated_lufs": -16.0,
+    "true_peak_dbtp": -4.2
+  },
+  "speech_occupancy": 0.753,
+  "caption_timing": "measured individual TTS phrases; not word-level alignment",
+  "full_decode_check": "passed",
+  "voice_license": "CC-BY-NC-SA-3.0",
+  "commercial_use": false,
+  "publication_status": "review_required",
+  "published": false,
+  "external_network_used": false,
+  "synthetic_inputs_only": true
+}

@@ -1,0 +1,518 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-29T20:54:12.636684+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205412636684Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205412636684Z.md",
+      "provenance": {
+        "client": "codex_cli",
+        "model": "gpt-4o",
+        "provider": "openai"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-29T20:57:50.583965+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md",
+      "provenance": {
+        "client": "codex_cli",
+        "model": "gpt-4o",
+        "provider": "openai"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-29T20:57:50.792830+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-audio-cue-campaign_20261029T205750792830Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-audio-cue-campaign_20261029T205750792830Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-29T20:57:50.960477+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-visual-solocorp-os_20261029T205750960477Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-visual-solocorp-os_20261029T205750960477Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v4"
+    },
+    {
+      "created_at": "2026-10-29T22:07:14.538438+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "in_progress",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T220714538438Z.json",
+      "job_id": "local-media-b974aab583244524acf42c1b3147e55e",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T220714538438Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_job",
+      "version": "v5"
+    },
+    {
+      "created_at": "2026-10-29T22:08:16.221589+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T220714538438Z.json",
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "failed",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T220816221589Z.json",
+      "job_id": "local-media-b974aab583244524acf42c1b3147e55e",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T220816221589Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_result",
+      "version": "v6"
+    },
+    {
+      "created_at": "2026-10-29T22:09:01.174007+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "in_progress",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T220901174007Z.json",
+      "job_id": "local-media-c23fa24a396f4c2c943c62fe1e2b0f4a",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T220901174007Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_job",
+      "version": "v7"
+    },
+    {
+      "created_at": "2026-10-29T22:10:51.291346+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T220901174007Z.json",
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "completed",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T221051291346Z.json",
+      "job_id": "local-media-c23fa24a396f4c2c943c62fe1e2b0f4a",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T221051291346Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_result",
+      "version": "v8"
+    },
+    {
+      "created_at": "2026-10-29T22:14:10.460189+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "in_progress",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T221410460189Z.json",
+      "job_id": "local-media-453c8710d74b4b25ad9b7048002d100c",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T221410460189Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_job",
+      "version": "v9"
+    },
+    {
+      "created_at": "2026-10-29T22:15:59.500087+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T221410460189Z.json",
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "completed",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T221559500087Z.json",
+      "job_id": "local-media-453c8710d74b4b25ad9b7048002d100c",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T221559500087Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_result",
+      "version": "v10"
+    },
+    {
+      "created_at": "2026-10-29T22:16:50.621047+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "in_progress",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T221650621047Z.json",
+      "job_id": "local-media-3fa37b9926bd40508bf536a0a58d5990",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T221650621047Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_job",
+      "version": "v11"
+    },
+    {
+      "created_at": "2026-10-29T22:18:37.186759+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T221650621047Z.json",
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "completed",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T221837186759Z.json",
+      "job_id": "local-media-3fa37b9926bd40508bf536a0a58d5990",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T221837186759Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_result",
+      "version": "v12"
+    },
+    {
+      "created_at": "2026-10-29T22:21:45.961097+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "in_progress",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T222145961097Z.json",
+      "job_id": "local-media-e15ad3f3b36b4302b31084811c2f8d0b",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T222145961097Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_job",
+      "version": "v13"
+    },
+    {
+      "created_at": "2026-10-29T22:23:34.921317+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-job-lo_20261029T222145961097Z.json",
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261029T205750583965Z.md"
+      ],
+      "execution_status": "completed",
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T222334921317Z.json",
+      "job_id": "local-media-e15ad3f3b36b4302b31084811c2f8d0b",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-local-media-result_20261029T222334921317Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract"
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_result",
+      "version": "v14"
+    },
+    {
+      "created_at": "2026-10-30T01:04:08.901341+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T010408901341Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T010408901341Z.md",
+      "provenance": {
+        "client": "User supplied through Codex",
+        "model": "direct user brief; no model generation",
+        "provider": "user"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract",
+        "profiles/INDEX.md",
+        "solocorp_mcp/README.md",
+        "LICENSE",
+        "scripts/render_campaign_media_local.py",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md",
+        "scripts/content_render.py"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v15"
+    },
+    {
+      "created_at": "2026-10-30T01:04:50.679203+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T010450679203Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T010450679203Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "gpt-6-luna",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract",
+        "profiles/INDEX.md",
+        "solocorp_mcp/README.md",
+        "LICENSE",
+        "scripts/render_campaign_media_local.py",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md",
+        "scripts/content_render.py",
+        "scripts/media/solocorp_power_one_90s.json",
+        "scripts/media/solocorp_narrative_motion.html"
+      ],
+      "status": "client_generated",
+      "type": "visual_prompt",
+      "version": "v16"
+    },
+    {
+      "created_at": "2026-10-30T01:04:57.965442+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T010408901341Z.md"
+      ],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-audio-cue-campaign_20261030T010457965442Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-audio-cue-campaign_20261030T010457965442Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract",
+        "profiles/INDEX.md",
+        "solocorp_mcp/README.md",
+        "LICENSE",
+        "scripts/render_campaign_media_local.py",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md",
+        "scripts/content_render.py",
+        "scripts/media/solocorp_power_one_90s.json",
+        "scripts/media/solocorp_narrative_motion.html"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v17"
+    },
+    {
+      "created_at": "2026-10-30T01:07:03.492128+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T010703492128Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T010703492128Z.md",
+      "provenance": {
+        "client": "User supplied through Codex",
+        "model": "direct user brief; no model generation",
+        "provider": "user"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract",
+        "profiles/INDEX.md",
+        "solocorp_mcp/README.md",
+        "LICENSE",
+        "scripts/render_campaign_media_local.py",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md",
+        "scripts/content_render.py",
+        "scripts/media/solocorp_power_one_90s.json",
+        "scripts/media/solocorp_narrative_motion.html"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v18"
+    },
+    {
+      "created_at": "2026-10-30T01:07:03.729353+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T010703492128Z.md"
+      ],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-audio-cue-campaign_20261030T010703729353Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-audio-cue-campaign_20261030T010703729353Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract",
+        "profiles/INDEX.md",
+        "solocorp_mcp/README.md",
+        "LICENSE",
+        "scripts/render_campaign_media_local.py",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md",
+        "scripts/content_render.py",
+        "scripts/media/solocorp_power_one_90s.json",
+        "scripts/media/solocorp_narrative_motion.html"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v19"
+    },
+    {
+      "created_at": "2026-10-30T01:10:20.821898+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T011020821898Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T011020821898Z.md",
+      "provenance": {
+        "client": "User supplied through Codex",
+        "model": "direct user brief; no model generation",
+        "provider": "user"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract",
+        "profiles/INDEX.md",
+        "solocorp_mcp/README.md",
+        "LICENSE",
+        "scripts/render_campaign_media_local.py",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md",
+        "scripts/content_render.py",
+        "scripts/media/solocorp_power_one_90s.json",
+        "scripts/media/solocorp_narrative_motion.html"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v20"
+    },
+    {
+      "created_at": "2026-10-30T01:10:21.085692+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T011020821898Z.md"
+      ],
+      "filename": "campaign-campaign_solocorp_os_1pt5m_narrative-audio-cue-campaign_20261030T011021085692Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_os_1pt5m_narrative-audio-cue-campaign_20261030T011021085692Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+        "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+        "SOURCE_13: ffmpeg-skill Local Video Engine Contract",
+        "profiles/INDEX.md",
+        "solocorp_mcp/README.md",
+        "LICENSE",
+        "scripts/render_campaign_media_local.py",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md",
+        "scripts/content_render.py",
+        "scripts/media/solocorp_power_one_90s.json",
+        "scripts/media/solocorp_narrative_motion.html"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v21"
+    }
+  ],
+  "campaign_id": "campaign_solocorp_os_1pt5m_narrative",
+  "campaign_key": "campaign_solocorp_os_1pt5m_narrative",
+  "created_at": "2026-10-29T20:54:12.636443+00:00",
+  "review": null,
+  "revision": 28,
+  "schema_version": 1,
+  "source_references": [
+    "SOURCE_05: Lab-solocorp-os2.4 Repository Architecture",
+    "SOURCE_06: ElevenLabs Narrative Concept & Philosophy",
+    "SOURCE_13: ffmpeg-skill Local Video Engine Contract",
+    "profiles/INDEX.md",
+    "solocorp_mcp/README.md",
+    "LICENSE",
+    "scripts/render_campaign_media_local.py",
+    "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md",
+    "scripts/content_render.py",
+    "scripts/media/solocorp_power_one_90s.json",
+    "scripts/media/solocorp_narrative_motion.html"
+  ],
+  "status": "scaffold",
+  "updated_at": "2026-10-30T01:10:21.131374+00:00",
+  "version": "v21",
+  "version_number": 21
+}

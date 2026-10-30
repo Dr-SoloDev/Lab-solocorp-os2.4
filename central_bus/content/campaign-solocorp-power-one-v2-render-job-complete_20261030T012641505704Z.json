@@ -1,0 +1,15 @@
+{
+  "campaign_id": "campaign_solocorp_os_1pt5m_narrative",
+  "completed_at": "2026-10-30T01:26:41.404680+00:00",
+  "concat_execution": "unavailable; no binary or MCP endpoint installed",
+  "created_at": "2026-10-30T01:10:32.050970+00:00",
+  "duration_seconds": 90.0,
+  "execution_mode": "local_cli_motion_design_v2",
+  "execution_status": "completed",
+  "ffmpeg_skill_execution": "not_started; manifest stores validation plan only",
+  "inputs": "locally synthesized only",
+  "job_id": "motion-v2-637c4db2e931",
+  "output_sha256": "b5a27f313000999c6d828ff68042f4aeb8a06e042d28ffd39d455f63a56bdebd",
+  "provider": "ffmpeg-cli",
+  "status": "completed"
+}

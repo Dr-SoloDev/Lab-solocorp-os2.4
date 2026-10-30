@@ -1,0 +1,30 @@
+{
+  "status": "scaffold",
+  "dept": "content",
+  "task_id": "campaign-solocorp-model-health-v2-motion-job",
+  "filename": "campaign-solocorp-model-health-v2-motion-job_20261030T003017028084Z.json",
+  "path": "central_bus/content/campaign-solocorp-model-health-v2-motion-job_20261030T003017028084Z.json",
+  "bytes": 1678,
+  "created_at": "2026-10-30T00:30:17.028084+00:00",
+  "campaign_id": "solocorp-model-health-v2",
+  "version": "v4",
+  "type": "local_media_render_job",
+  "lifecycle_state": "scaffold",
+  "operation_status": "created",
+  "source_references": [
+    "scripts/media/model_health_v2.json",
+    "scripts/media/model_health_motion.html",
+    "scripts/render_model_health_story.py"
+  ],
+  "source_reference_status": "user_supplied_unverified",
+  "dependencies": [],
+  "human_review_required": true,
+  "job_id": "motion-v2-c3fc17cb8bff",
+  "provider": "ffmpeg-cli",
+  "execution_status": "in_progress",
+  "media_rights_status": "human_confirmation_required",
+  "campaign_manifest": {
+    "filename": "campaign-solocorp-model-health-v2-manifest_20261030T003017075698Z.json",
+    "path": "central_bus/content/campaign-solocorp-model-health-v2-manifest_20261030T003017075698Z.json"
+  }
+}

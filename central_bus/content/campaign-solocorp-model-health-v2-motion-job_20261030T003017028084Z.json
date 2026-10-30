@@ -1,0 +1,34 @@
+{
+  "job_id": "motion-v2-c3fc17cb8bff",
+  "campaign_id": "solocorp-model-health-v2",
+  "provider": "ffmpeg-cli",
+  "visual_provider": "canvas2d-playwright-local",
+  "tts_provider": "piper-local",
+  "execution_status": "in_progress",
+  "execution_mode": "local_cli_motion_design_v2",
+  "duration_seconds": 63.43333,
+  "scene_count": 6,
+  "output_directory": "central_bus/content/local_media/solocorp-model-health-v2/motion-v2-c3fc17cb8bff",
+  "sources": {
+    "scripts/media/model_health_motion.html": {
+      "snapshot": "central_bus/content/local_media/solocorp-model-health-v2/motion-v2-c3fc17cb8bff/source-model_health_motion.html",
+      "sha256": "786864e8ed4872a69a6b8b0df356887a469f2f8af52842d85c687a93522d5893"
+    },
+    "scripts/media/model_health_v2.json": {
+      "snapshot": "central_bus/content/local_media/solocorp-model-health-v2/motion-v2-c3fc17cb8bff/source-model_health_v2.json",
+      "sha256": "6006aaa86dde9b9bce8c2c6cd7fd53b195f2481c3b77f98092a64f53ae4ae2c8"
+    },
+    "scripts/render_model_health_frames.mjs": {
+      "snapshot": "central_bus/content/local_media/solocorp-model-health-v2/motion-v2-c3fc17cb8bff/source-render_model_health_frames.mjs",
+      "sha256": "51e0039fd05129fbcb7715194d1483833fd98f637443631d13f46374bf257449"
+    },
+    "scripts/render_model_health_story.py": {
+      "snapshot": "central_bus/content/local_media/solocorp-model-health-v2/motion-v2-c3fc17cb8bff/source-render_model_health_story.py",
+      "sha256": "2efdfadd34d9160c74e86c8472e7ccc12cf1cd47ba51d4bc58e79f92c8bb0506"
+    }
+  },
+  "publication_status": "review_required",
+  "human_approval": false,
+  "voice_license": "CC-BY-NC-SA-3.0",
+  "commercial_use": false
+}

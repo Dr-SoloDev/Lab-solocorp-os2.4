@@ -1,0 +1,13 @@
+{
+  "campaign_id": "solocorp-model-health-v2",
+  "completed_at": null,
+  "created_at": "2026-10-30T00:26:06.488848+00:00",
+  "execution_status": "completed",
+  "external_network_used": false,
+  "inputs": "locally synthesized only",
+  "job_id": "motion-v2-c3fc17cb8bff",
+  "output_sha256": "da38fdc875f29c25966872c2f45dc4349a56f7c8a54da3213d5fed1758d83382",
+  "provider": "ffmpeg-cli",
+  "publication_status": "review_required",
+  "status": "completed"
+}

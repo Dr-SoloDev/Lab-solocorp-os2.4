@@ -1,8 +1,13 @@
 {
   "job_id": "motion-v2-c3fc17cb8bff",
   "campaign_id": "solocorp-model-health-v2",
-  "status": "started",
+  "status": "completed",
   "provider": "ffmpeg-cli",
   "inputs": "locally synthesized only",
-  "created_at": "2026-10-30T00:26:06.488848+00:00"
+  "created_at": "2026-10-30T00:26:06.488848+00:00",
+  "completed_at": null,
+  "execution_status": "completed",
+  "output_sha256": "da38fdc875f29c25966872c2f45dc4349a56f7c8a54da3213d5fed1758d83382",
+  "publication_status": "review_required",
+  "external_network_used": false
 }

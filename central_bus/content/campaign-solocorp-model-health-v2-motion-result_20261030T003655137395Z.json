@@ -1,0 +1,70 @@
+{
+  "approval_effect": "none",
+  "campaign_id": "solocorp-model-health-v2",
+  "creative_review": {
+    "limitations": "No audio, motion cadence, or caption-reading-duration review; no D3/D4 certification or publication approval.",
+    "result": "No blocking visual defect found in the six-scene contact sheet.",
+    "review_type": "still-preview advisory review",
+    "reviewer": "Sek / content-creator head",
+    "watch_items": [
+      "Evidence table and footer text are substantially smaller than headlines; review at phone playback size.",
+      "checked_at is a fictional explanatory value, not an actual timestamp."
+    ]
+  },
+  "execution_mode": "local_cli_motion_design_v2",
+  "execution_status": "completed",
+  "job_id": "motion-v2-c3fc17cb8bff",
+  "job_manifest": "central_bus/content/campaign-solocorp-model-health-v2-motion-job_20261030T003017028084Z.json",
+  "lifecycle_state": "scaffold",
+  "local_evidence": {
+    "captions": "captions.srt",
+    "edit": "edit.json",
+    "final_mp4_contact_sheet": "final-contact-sheet.png",
+    "picture_report": "picture-report.json",
+    "preview_report": "preview-report.json",
+    "review_contact_sheet": "contact-sheet-review.png",
+    "source_snapshots": {
+      "source-model_health_motion.html": "786864e8ed4872a69a6b8b0df356887a469f2f8af52842d85c687a93522d5893",
+      "source-model_health_v2.json": "6006aaa86dde9b9bce8c2c6cd7fd53b195f2481c3b77f98092a64f53ae4ae2c8",
+      "source-render_model_health_frames.mjs": "51e0039fd05129fbcb7715194d1483833fd98f637443631d13f46374bf257449",
+      "source-render_model_health_story.py": "2efdfadd34d9160c74e86c8472e7ccc12cf1cd47ba51d4bc58e79f92c8bb0506"
+    },
+    "storyboard": "storyboard.json"
+  },
+  "provider": "ffmpeg-cli",
+  "publication_status": "review_required",
+  "render": {
+    "audio": {
+      "channels": 2,
+      "codec": "aac",
+      "integrated_lufs": -16.0,
+      "sample_rate": "48000",
+      "true_peak_dbtp": -4.5
+    },
+    "campaign_id": "solocorp-model-health-v2",
+    "caption_timing": "measured individual TTS phrases; not word-level alignment",
+    "commercial_use": false,
+    "execution_mode": "local_cli_motion_design_v2",
+    "external_network_used": false,
+    "full_decode_check": "passed",
+    "job_id": "motion-v2-c3fc17cb8bff",
+    "provider": "ffmpeg-cli",
+    "publication_status": "review_required",
+    "published": false,
+    "speech_occupancy": 0.849,
+    "status": "completed",
+    "synthetic_inputs_only": true,
+    "video": {
+      "bytes": 4124739,
+      "codec": "h264",
+      "duration_seconds": 63.433333,
+      "fps": 30,
+      "height": 1920,
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-v2/motion-v2-c3fc17cb8bff/solocorp-model-health-v2.mp4",
+      "sha256": "da38fdc875f29c25966872c2f45dc4349a56f7c8a54da3213d5fed1758d83382",
+      "width": 1080
+    },
+    "voice_license": "CC-BY-NC-SA-3.0"
+  },
+  "schema_version": 1
+}

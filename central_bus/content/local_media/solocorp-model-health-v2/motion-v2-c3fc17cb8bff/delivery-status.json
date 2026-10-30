@@ -1,0 +1,52 @@
+{
+  "campaign_id": "solocorp-model-health-v2",
+  "job_id": "motion-v2-c3fc17cb8bff",
+  "result": {
+    "status": "completed",
+    "job_id": "motion-v2-c3fc17cb8bff",
+    "campaign_id": "solocorp-model-health-v2",
+    "provider": "ffmpeg-cli",
+    "execution_mode": "local_cli_motion_design_v2",
+    "video": {
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-v2/motion-v2-c3fc17cb8bff/solocorp-model-health-v2.mp4",
+      "sha256": "da38fdc875f29c25966872c2f45dc4349a56f7c8a54da3213d5fed1758d83382",
+      "bytes": 4124739,
+      "codec": "h264",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "duration_seconds": 63.433333
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate": "48000",
+      "channels": 2,
+      "integrated_lufs": -16.0,
+      "true_peak_dbtp": -4.5
+    },
+    "speech_occupancy": 0.849,
+    "caption_timing": "measured individual TTS phrases; not word-level alignment",
+    "full_decode_check": "passed",
+    "voice_license": "CC-BY-NC-SA-3.0",
+    "commercial_use": false,
+    "publication_status": "review_required",
+    "published": false,
+    "external_network_used": false,
+    "synthetic_inputs_only": true
+  },
+  "campaign_status": {
+    "version": "v7",
+    "status": "review_required",
+    "gate_passed": false,
+    "approved_version": null,
+    "gate_report": "central_bus/content/campaign-solocorp-model-health-v2-publish-gate-v7_20261030T003832953376Z.md"
+  },
+  "creative_review": "central_bus/content/model-health-v2-sek-preview-review_20261030T003642635883Z.json",
+  "mp4_contact_sheet": "final-contact-sheet.png",
+  "caption_check": {
+    "count": 18,
+    "max_lines": 2,
+    "maximum_measured_width_px": 768
+  },
+  "publication_decision": "Not approved or published. Keep internal; Piper license is non-commercial only."
+}

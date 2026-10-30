@@ -1,0 +1,44 @@
+{
+  "audio_cue_filename": "campaign-campaign_solocorp_os_1pt5m_narrative-audio-cue-campaign_20261030T011021085692Z.md",
+  "audio_cue_version": "v21",
+  "campaign_id": "campaign_solocorp_os_1pt5m_narrative",
+  "execution": {
+    "automatic_execution": false,
+    "runtime_gate": "blocked_pending_independent_runtime_verification",
+    "status": "not_started"
+  },
+  "job_id": "ffmpeg-403255c120b64bcaaea2e2cb51ad65ac",
+  "lifecycle_state": "scaffold",
+  "operations": [
+    {
+      "arguments": {
+        "analyze": true,
+        "compact": true,
+        "inputs": [
+          "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/motion-v2-637c4db2e931/campaign_solocorp_os_1pt5m_narrative-rendered.mp4"
+        ],
+        "json_brief": true
+      },
+      "tool": "probe"
+    },
+    {
+      "arguments": {
+        "aspect": "9:16",
+        "content": true,
+        "dry_run": true,
+        "fast": true,
+        "input": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_os_1pt5m_narrative/motion-v2-637c4db2e931/campaign_solocorp_os_1pt5m_narrative-rendered.mp4",
+        "json_brief": true,
+        "lufs": -16,
+        "max_duration": 90,
+        "tp": -1.5
+      },
+      "tool": "check"
+    }
+  ],
+  "provider": "ffmpeg-skill",
+  "provider_contract_version": "2.17.1",
+  "schema_version": 1,
+  "script_filename": "campaign-campaign_solocorp_os_1pt5m_narrative-client-generated-v_20261030T011020821898Z.md",
+  "script_version": "v20"
+}
