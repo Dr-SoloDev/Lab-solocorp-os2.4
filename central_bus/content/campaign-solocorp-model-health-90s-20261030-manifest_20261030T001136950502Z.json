@@ -1,0 +1,312 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T00:07:37.274721+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000737274721Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000737274721Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits."
+      ],
+      "status": "client_generated",
+      "type": "draft",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-30T00:08:07.099470+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000807099470Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000807099470Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030."
+      ],
+      "status": "client_generated",
+      "type": "draft",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-30T00:08:29.013482+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-90s-20261030-draft-หน-าจอเข-ยว-แต_20261030T000829013482Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-draft-หน-าจอเข-ยว-แต_20261030T000829013482Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030."
+      ],
+      "status": "scaffold",
+      "type": "draft",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-30T00:08:29.240043+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000829240043Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000829240043Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030."
+      ],
+      "status": "client_generated",
+      "type": "draft",
+      "version": "v4"
+    },
+    {
+      "created_at": "2026-10-30T00:08:53.821408+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-90s-20261030-script-model-health_20261030T000853821408Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-script-model-health_20261030T000853821408Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030.",
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; internal claim, independently unverified.",
+        "Sek production brief and Kawee narrative stored in campaign solocorp-model-health-90s-20261030."
+      ],
+      "status": "scaffold",
+      "type": "video_script",
+      "version": "v5"
+    },
+    {
+      "created_at": "2026-10-30T00:08:54.033230+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030.",
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; internal claim, independently unverified.",
+        "Sek production brief and Kawee narrative stored in campaign solocorp-model-health-90s-20261030."
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v6"
+    },
+    {
+      "created_at": "2026-10-30T00:09:09.669059+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-90s-20261030-visual-vertical-9-16_20261030T000909669059Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-visual-vertical-9-16_20261030T000909669059Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030.",
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; internal claim, independently unverified.",
+        "Sek production brief and Kawee narrative stored in campaign solocorp-model-health-90s-20261030.",
+        "Final video script: campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md.",
+        "Local renderer generates procedural scenes; no stock footage, third-party logos, or external music."
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v7"
+    },
+    {
+      "created_at": "2026-10-30T00:09:09.923712+00:00",
+      "dependencies": [
+        "campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md"
+      ],
+      "filename": "campaign-solocorp-model-health-90s-20261030-audio-cue-campaign-s_20261030T000909923712Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-audio-cue-campaign-s_20261030T000909923712Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030.",
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; internal claim, independently unverified.",
+        "Sek production brief and Kawee narrative stored in campaign solocorp-model-health-90s-20261030.",
+        "Final video script: campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md.",
+        "Local renderer generates procedural scenes; no stock footage, third-party logos, or external music."
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v8"
+    },
+    {
+      "created_at": "2026-10-30T00:09:57.984765+00:00",
+      "dependencies": [
+        "campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md"
+      ],
+      "execution_status": "in_progress",
+      "filename": "campaign-solocorp-model-health-90s-20261030-local-media-job-loca_20261030T000957984765Z.json",
+      "job_id": "local-media-ebb4b9e4d37d47e5bfafc32e5937b961",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-local-media-job-loca_20261030T000957984765Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030.",
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; internal claim, independently unverified.",
+        "Sek production brief and Kawee narrative stored in campaign solocorp-model-health-90s-20261030.",
+        "Final video script: campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md.",
+        "Local renderer generates procedural scenes; no stock footage, third-party logos, or external music."
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_job",
+      "version": "v9"
+    },
+    {
+      "created_at": "2026-10-30T00:11:36.718784+00:00",
+      "dependencies": [
+        "campaign-solocorp-model-health-90s-20261030-local-media-job-loca_20261030T000957984765Z.json",
+        "campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md"
+      ],
+      "execution_status": "completed",
+      "filename": "campaign-solocorp-model-health-90s-20261030-local-media-result-l_20261030T001136718784Z.json",
+      "job_id": "local-media-ebb4b9e4d37d47e5bfafc32e5937b961",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-local-media-result-l_20261030T001136718784Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030.",
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; internal claim, independently unverified.",
+        "Sek production brief and Kawee narrative stored in campaign solocorp-model-health-90s-20261030.",
+        "Final video script: campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md.",
+        "Local renderer generates procedural scenes; no stock footage, third-party logos, or external music."
+      ],
+      "status": "scaffold",
+      "type": "local_media_render_result",
+      "version": "v10"
+    }
+  ],
+  "campaign_id": "solocorp-model-health-90s-20261030",
+  "campaign_key": "solocorp-model-health-90s-20261030",
+  "created_at": "2026-10-30T00:07:37.274462+00:00",
+  "review": {
+    "checks": [
+      {
+        "check": "dependencies: primary content",
+        "detail": "พบ draft/script",
+        "ok": true
+      },
+      {
+        "check": "dependencies: visual prompt",
+        "detail": "พบ visual prompt",
+        "ok": true
+      },
+      {
+        "check": "dependencies: audio cue sheet",
+        "detail": "audio cue อ้างถึงสคริปต์ล่าสุด",
+        "ok": true
+      },
+      {
+        "check": "claims: source references supplied",
+        "detail": "พบ 7 รายการ",
+        "ok": true
+      },
+      {
+        "check": "claims: source verification",
+        "detail": "ระบบยังไม่ได้ตรวจสอบแหล่งอ้างอิงโดยอิสระ; ต้องให้มนุษย์ยืนยัน",
+        "ok": false
+      },
+      {
+        "check": "media rights",
+        "detail": "ต้องยืนยันลิขสิทธิ์ภาพ/เพลง/เสียงก่อนเผยแพร่",
+        "ok": false
+      },
+      {
+        "check": "redaction",
+        "detail": "พบข้อมูลที่ต้อง redact หรือให้มนุษย์ตรวจ",
+        "ok": false
+      },
+      {
+        "check": "R1 มีหลักฐานตรวจสอบได้อย่างน้อย 1 อัน",
+        "detail": "7 รายการ: 20261030, 20261030, 20261030",
+        "ok": true
+      },
+      {
+        "check": "R2 แสดงความล้มเหลวและต้นทุน/เหตุผล",
+        "detail": "มีรอยแผล",
+        "ok": true
+      },
+      {
+        "check": "R3 มีบรรทัด 'ยังไม่ได้/ยังไม่รู้' (calibration)",
+        "detail": "ยังไม่ได้",
+        "ok": true
+      },
+      {
+        "check": "R4 ไม่เทียบ/ไม่วัดคนอื่น ไม่มีคำสั่ง",
+        "detail": "สะอาด",
+        "ok": true
+      },
+      {
+        "check": "R5 ปิดด้วยคำถามเปิด 1 ข้อ",
+        "detail": "มีคำถาม",
+        "ok": true
+      }
+    ],
+    "gate_passed": false,
+    "report": {
+      "filename": "campaign-solocorp-model-health-90s-20261030-publish-gate-v10_20261030T001136906480Z.md",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-publish-gate-v10_20261030T001136906480Z.md"
+    },
+    "reviewed_at": "2026-10-30T00:11:36.949754+00:00",
+    "status": "review_required",
+    "version": "v10"
+  },
+  "revision": 12,
+  "schema_version": 1,
+  "source_references": [
+    "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+    "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+    "Sek production brief stored in campaign solocorp-model-health-90s-20261030.",
+    "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; internal claim, independently unverified.",
+    "Sek production brief and Kawee narrative stored in campaign solocorp-model-health-90s-20261030.",
+    "Final video script: campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md.",
+    "Local renderer generates procedural scenes; no stock footage, third-party logos, or external music."
+  ],
+  "status": "review_required",
+  "updated_at": "2026-10-30T00:11:36.949767+00:00",
+  "version": "v10",
+  "version_number": 10
+}

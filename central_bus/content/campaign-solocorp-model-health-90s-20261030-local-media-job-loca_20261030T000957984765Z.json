@@ -1,0 +1,25 @@
+{
+  "campaign_id": "solocorp-model-health-90s-20261030",
+  "duration_seconds": 90,
+  "execution": {
+    "automatic_execution": false,
+    "requested_by": "content-creator MCP tool call",
+    "runtime_gate": "synthetic_inputs_only_pending_independent_ffmpeg_verification",
+    "status": "in_progress"
+  },
+  "job_id": "local-media-ebb4b9e4d37d47e5bfafc32e5937b961",
+  "lifecycle_state": "scaffold",
+  "output_directory": "content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961",
+  "provider": "ffmpeg-cli",
+  "publication_status": "blocked_pending_human_approval_and_rights_review",
+  "scene_count": 6,
+  "scene_seconds": 15,
+  "schema_version": 1,
+  "scope": "generated voice, original synthetic 3D scenes, scene-level captions, local FFmpeg CLI",
+  "script_filename": "campaign-solocorp-model-health-90s-20261030-client-generated-vid_20261030T000854033230Z.md",
+  "script_version": "v6",
+  "tts_provider": "piper-local",
+  "visual_provider": "three.js-pdoom-local",
+  "voice_model_license": "CC-BY-NC-SA-3.0",
+  "voice_model_rights_status": "noncommercial_only_human_confirmation_required"
+}

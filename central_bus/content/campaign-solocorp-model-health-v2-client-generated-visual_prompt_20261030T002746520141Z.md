@@ -1,0 +1,3 @@
+# V2 original UI motion direction
+
+Synthetic Canvas2D visuals only. Six scenes: status, split, probe, evidence, alert, question. Thai two-line headlines, explicit request ตอบคำว่า พร้อม and response พร้อม, traceable demo record, visible failure alert, final auditability question. Label ตัวอย่างจำลอง persists. No real personal or customer data. All captions measured from phrase WAVs and word-segmented with Intl.Segmenter(th). Native 1080×1920 at 30fps. Source: scripts/media/model_health_motion.html.

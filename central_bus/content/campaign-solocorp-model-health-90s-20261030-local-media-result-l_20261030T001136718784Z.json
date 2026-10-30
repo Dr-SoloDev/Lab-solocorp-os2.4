@@ -1,0 +1,178 @@
+{
+  "approval_effect": "none",
+  "campaign_id": "solocorp-model-health-90s-20261030",
+  "execution_mode": "local_ffmpeg_cli",
+  "execution_status": "completed",
+  "job_id": "local-media-ebb4b9e4d37d47e5bfafc32e5937b961",
+  "lifecycle_state": "scaffold",
+  "provider": "ffmpeg-cli",
+  "render": {
+    "audio": {
+      "channels": 2,
+      "codec": "aac",
+      "muxed_in_video": true,
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/solocorp-model-health-90s-20261030_rendered.mp4",
+      "sample_rate": "48000",
+      "stream_index": 1
+    },
+    "audio_duration_seconds": 90.0,
+    "audio_engine": "Piper local Thai TTS",
+    "audio_measurement": {
+      "integrated_lufs": -16.0,
+      "true_peak_dbtp": -3.7
+    },
+    "audio_mix": {
+      "bytes": 17280078,
+      "channels": 2,
+      "codec": "pcm_s16le",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/audio-mix.wav",
+      "sample_rate": "48000",
+      "sha256": "42c5eea0b9b3cce0cd94e1c3926b2bf92304c4d6356e76c10e1f53d325e57d55"
+    },
+    "audio_target": {
+      "lufs": -16.0,
+      "normalizer": "loudnorm two-pass",
+      "standard": "EBU_R128",
+      "true_peak_dbtp": -1.5
+    },
+    "caption_timing": "scene-level from supplied script; no word-level alignment",
+    "duration_seconds": 90.0,
+    "execution_mode": "local_ffmpeg_cli",
+    "fps": 30,
+    "frames": [
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/frames/scene-01.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/frames/scene-02.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/frames/scene-03.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/frames/scene-04.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/frames/scene-05.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/frames/scene-06.png"
+    ],
+    "local_only": true,
+    "media_rights_status": "human_confirmation_required",
+    "network_used": false,
+    "scene_count": 6,
+    "scene_seconds": 15,
+    "silence_removal": {
+      "minimum_seconds": 0.4,
+      "threshold_db": -35
+    },
+    "status": "completed",
+    "synthetic_inputs_only": true,
+    "video": {
+      "bytes": 2888543,
+      "codec": "h264",
+      "frame_rate": "30/1",
+      "height": 1920,
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/solocorp-model-health-90s-20261030_rendered.mp4",
+      "sha256": "8622cfde90a343472a0f9c189334ba70ea384ab0e1065f016cf2b84bf1cbd1d8",
+      "width": 1080
+    },
+    "visual_engine": "Three.js via pdoom-video dependencies",
+    "voice_model_license": "CC-BY-NC-SA-3.0",
+    "voice_segments": [
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 7.57,
+          "frames": 166912,
+          "sample_rate": 22050
+        },
+        "bytes": 333868,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/voice/scene-01.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 9.752,
+          "frames": 215040,
+          "sample_rate": 22050
+        },
+        "bytes": 430124,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/voice/scene-02.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 7.036,
+          "frames": 155136,
+          "sample_rate": 22050
+        },
+        "bytes": 310316,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/voice/scene-03.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 4.841,
+          "frames": 106752,
+          "sample_rate": 22050
+        },
+        "bytes": 213548,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/voice/scene-04.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 7.129,
+          "frames": 157184,
+          "sample_rate": 22050
+        },
+        "bytes": 314412,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/voice/scene-05.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 5.433,
+          "frames": 119808,
+          "sample_rate": 22050
+        },
+        "bytes": 239660,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/solocorp-model-health-90s-20261030/local-media-ebb4b9e4d37d47e5bfafc32e5937b961/voice/scene-06.wav",
+        "status": "completed"
+      }
+    ]
+  },
+  "schema_version": 1
+}

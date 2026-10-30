@@ -1,0 +1,64 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T00:07:37.274721+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000737274721Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000737274721Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits."
+      ],
+      "status": "client_generated",
+      "type": "draft",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-30T00:08:07.099470+00:00",
+      "dependencies": [],
+      "filename": "campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000807099470Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-solocorp-model-health-90s-20261030-client-generated-dra_20261030T000807099470Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+        "Sek production brief stored in campaign solocorp-model-health-90s-20261030."
+      ],
+      "status": "client_generated",
+      "type": "draft",
+      "version": "v2"
+    }
+  ],
+  "campaign_id": "solocorp-model-health-90s-20261030",
+  "campaign_key": "solocorp-model-health-90s-20261030",
+  "created_at": "2026-10-30T00:07:37.274462+00:00",
+  "review": null,
+  "revision": 2,
+  "schema_version": 1,
+  "source_references": [
+    "User-supplied internal script: bus/media/creator/dr-solodev/2026-10-30/dr-solodev-20261030-000002-01.script.md; claims are not independently verified.",
+    "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md; local renderer and synthetic-only limits.",
+    "Sek production brief stored in campaign solocorp-model-health-90s-20261030."
+  ],
+  "status": "client_generated",
+  "updated_at": "2026-10-30T00:08:07.165295+00:00",
+  "version": "v2",
+  "version_number": 2
+}

@@ -1,0 +1,18 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Noto Sans Thai,42,&H00FFFFFF,&H0000FFFF,&H00101B26,&H9909151E,0,0,0,0,100,100,0,0,1,2.5,0.8,2,72,72,260,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:15.00,Default,,0,0,0,,หน้าจอขึ้นว่าสำเร็จ\Nแต่เคยตรวจไหมว่าโมเดลตอบกลับจริง\Nหรือมีแค่ระบบรายงานว่าเรียบร้อย?
+Dialogue: 0,0:00:15.00,0:00:30.00,Default,,0,0,0,,ในบันทึกงานภายในของเรา เคยพบชื่อโม\Nเดลที่ใช้ไม่ได้สองรายการ\Nแต่รายงานยังขึ้นว่าสำเร็จ\Nเรื่องนี้ยังต้องตรวจหลักฐานเพิ่ม
+Dialogue: 0,0:00:30.00,0:00:45.00,Default,,0,0,0,,เพราะระบบรับคำสั่งสำเร็จ\Nไม่ได้แปลว่าปลายทางยังพร้อมใช้\Nและไม่ได้ยืนยันว่า agent ทำงานครบ
+Dialogue: 0,0:00:45.00,0:01:00.00,Default,,0,0,0,,เริ่มจากตรวจ provider กับชื่อ\Nmodel แล้วทดลองเรียกจริง เก็บ\Nrequest, response และ exit status\Nทุกครั้ง
+Dialogue: 0,0:01:00.00,0:01:15.00,Default,,0,0,0,,ตั้ง health check\Nให้เห็นความผิดปกติเร็ว\Nเป้าหมายคือเตือนภายในหกชั่วโมง\Nไม่ใช่ SLA\Nที่อ้างว่าเปิดใช้อยู่แล้ว
+Dialogue: 0,0:01:15.00,0:01:30.00,Default,,0,0,0,,ถ้าคุณสร้าง agent อย่าหยุดที่คำว่า\Nsuccess ลองเรียกจริง เก็บหลักฐาน\Nแล้วค่อยเชื่อผล

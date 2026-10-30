@@ -1,0 +1,3 @@
+# V2 local audio design
+
+Piper th_TH-tsync2-medium voice; CC-BY-NC-SA-3.0; commercial_use=false; internal review only. Eighteen separate phrase WAVs, 48 kHz, atempo 0.96, leading/trailing silence trimmed with 70 ms pad; phrase cues follow measured samples. Scene lead 0.42s, phrase gap 0.18s, scene tail 0.52s, final tail 1.1s. Original short sine/harmonic accents per scene, no continuous drone. Final AAC target -16 LUFS, true peak <= -1.5 dBTP, checked after encoding. Actual metrics attach after successful finish; this cue sheet is a plan, not run evidence.

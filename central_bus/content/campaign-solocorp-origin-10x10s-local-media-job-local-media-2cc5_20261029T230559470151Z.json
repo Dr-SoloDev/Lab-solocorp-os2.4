@@ -1,0 +1,25 @@
+{
+  "campaign_id": "solocorp-origin-10x10s",
+  "duration_seconds": 100,
+  "execution": {
+    "automatic_execution": false,
+    "requested_by": "content-creator MCP tool call",
+    "runtime_gate": "synthetic_inputs_only_pending_independent_ffmpeg_verification",
+    "status": "in_progress"
+  },
+  "job_id": "local-media-2cc5b371d29d4504b3ab8e8b3f1bd28f",
+  "lifecycle_state": "scaffold",
+  "output_directory": "content/local_media/solocorp-origin-10x10s/local-media-2cc5b371d29d4504b3ab8e8b3f1bd28f",
+  "provider": "ffmpeg-cli",
+  "publication_status": "blocked_pending_human_approval_and_rights_review",
+  "scene_count": 10,
+  "scene_seconds": 10,
+  "schema_version": 1,
+  "scope": "generated voice, original synthetic 3D scenes, scene-level captions, local FFmpeg CLI",
+  "script_filename": "campaign-solocorp-origin-10x10s-client-generated-video_script-2e_20261029T230324782144Z.md",
+  "script_version": "v31",
+  "tts_provider": "piper-local",
+  "visual_provider": "three.js-pdoom-local",
+  "voice_model_license": "CC-BY-NC-SA-3.0",
+  "voice_model_rights_status": "noncommercial_only_human_confirmation_required"
+}
