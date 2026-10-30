@@ -1,0 +1,208 @@
+{
+  "campaign_id": "campaign_solocorp_content_creator_60s",
+  "title": "Content Creator — From Brief to Story",
+  "duration_seconds": 60,
+  "scene_seconds": 10,
+  "motion_template": "content_creator_story_motion.html",
+  "output_filename": "solocorp-content-creator-60s.mp4",
+  "demo_label": "ภาพจำลองกระบวนการ",
+  "scenes": [
+    {
+      "kind": "brief",
+      "kicker": "01 / FROM BRIEF TO GOAL",
+      "title": [
+        "เริ่มจากโจทย์ที่ชัด",
+        "ไม่ใช่แค่โพสต์ให้เสร็จ"
+      ],
+      "narration": [
+        "ทุกคอนเทนต์ที่ดี เริ่มจากโจทย์ที่ชัด",
+        "ใครคือผู้ชม และอยากให้เขาทำอะไรหลังดูจบ?"
+      ],
+      "start": 0,
+      "cues": [
+        {
+          "text": "ทุกคอนเทนต์ที่ดี เริ่มจากโจทย์ที่ชัด",
+          "start": 0.42,
+          "end": 3.37246,
+          "voice_duration": 2.95246,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        },
+        {
+          "text": "ใครคือผู้ชม และอยากให้เขาทำอะไรหลังดูจบ?",
+          "start": 3.55246,
+          "end": 7.386,
+          "voice_duration": 3.83354,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        }
+      ],
+      "end": 10
+    },
+    {
+      "kind": "story_team",
+      "kicker": "02 / NAMED SPECIALISTS",
+      "title": [
+        "ทีมคอนเทนต์",
+        "แบ่งหน้าที่ชัดเจน"
+      ],
+      "narration": [
+        "เสกดูแลทีม Content Creator",
+        "กวีวางเรื่อง ฟิล์มเขียนบท",
+        "อาร์ตดูภาพ ซาวด์ดูเสียง อิงค์ตรวจงานก่อนเผยแพร่"
+      ],
+      "start": 10,
+      "cues": [
+        {
+          "text": "เสกดูแลทีม Content Creator",
+          "start": 10.42,
+          "end": 12.26165,
+          "voice_duration": 1.84165,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        },
+        {
+          "text": "กวีวางเรื่อง ฟิล์มเขียนบท",
+          "start": 12.44165,
+          "end": 14.46667,
+          "voice_duration": 2.02502,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        },
+        {
+          "text": "อาร์ตดูภาพ ซาวด์ดูเสียง อิงค์ตรวจงานก่อนเผยแพร่",
+          "start": 14.64667,
+          "end": 18.55765,
+          "voice_duration": 3.91098,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        }
+      ],
+      "end": 20
+    },
+    {
+      "kind": "production",
+      "kicker": "03 / ONE STORY, EVERY MEDIUM",
+      "title": [
+        "คำ ภาพ เสียง",
+        "เล่าเรื่องเดียวกัน"
+      ],
+      "narration": [
+        "ทีมจัดเนื้อหาให้ไปทางเดียวกัน",
+        "ภาพ เสียง และคำพากย์เล่าเรื่องเดียวกัน"
+      ],
+      "start": 20,
+      "cues": [
+        {
+          "text": "ทีมจัดเนื้อหาให้ไปทางเดียวกัน",
+          "start": 20.42,
+          "end": 23.56527,
+          "voice_duration": 3.14527,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        },
+        {
+          "text": "ภาพ เสียง และคำพากย์เล่าเรื่องเดียวกัน",
+          "start": 23.74527,
+          "end": 26.8925,
+          "voice_duration": 3.14723,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        }
+      ],
+      "end": 30
+    },
+    {
+      "kind": "mcp_bus",
+      "kicker": "04 / MCP + CENTRAL BUS",
+      "title": [
+        "ทำงานผ่าน MCP",
+        "เก็บร่องรอยบน Central Bus"
+      ],
+      "narration": [
+        "MCP เก็บ draft, script, visual prompt และ audio cue",
+        "ให้ติดตามเวอร์ชันและที่มาบน Central Bus"
+      ],
+      "start": 30,
+      "cues": [
+        {
+          "text": "MCP เก็บ draft, script, visual prompt และ audio cue",
+          "start": 30.42,
+          "end": 31.33158,
+          "voice_duration": 0.91158,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        },
+        {
+          "text": "ให้ติดตามเวอร์ชันและที่มาบน Central Bus",
+          "start": 31.51158,
+          "end": 34.41329,
+          "voice_duration": 2.90171,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        }
+      ],
+      "end": 40
+    },
+    {
+      "kind": "gate",
+      "kicker": "05 / HUMAN REVIEW",
+      "title": [
+        "Publish Gate",
+        "ให้คนเป็นผู้อนุมัติ"
+      ],
+      "narration": [
+        "Publish Gate ตรวจแหล่งอ้างอิง สิทธิ์ และข้อมูลอ่อนไหว",
+        "งานค้างที่ review required จนคนตรวจและอนุมัติ"
+      ],
+      "start": 40,
+      "cues": [
+        {
+          "text": "Publish Gate ตรวจแหล่งอ้างอิง สิทธิ์ และข้อมูลอ่อนไหว",
+          "start": 40.42,
+          "end": 43.86846,
+          "voice_duration": 3.44846,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        },
+        {
+          "text": "งานค้างที่ review required จนคนตรวจและอนุมัติ",
+          "start": 44.04846,
+          "end": 46.92648,
+          "voice_duration": 2.87802,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        }
+      ],
+      "end": 50
+    },
+    {
+      "kind": "cta",
+      "kicker": "06 / YOUR NEXT STORY",
+      "title": [
+        "Content Creator",
+        "คุณอยากเล่าเรื่องอะไร?"
+      ],
+      "narration": [
+        "AI ช่วยสร้างงาน แต่ไม่เผยแพร่แทนคุณ",
+        "แล้วคุณอยากเล่าเรื่องอะไร?"
+      ],
+      "start": 50,
+      "cues": [
+        {
+          "text": "AI ช่วยสร้างงาน แต่ไม่เผยแพร่แทนคุณ",
+          "start": 50.42,
+          "end": 53.69852,
+          "voice_duration": 3.27852,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        },
+        {
+          "text": "แล้วคุณอยากเล่าเรื่องอะไร?",
+          "start": 53.87852,
+          "end": 56.42165,
+          "voice_duration": 2.54312,
+          "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f"
+        }
+      ],
+      "end": 60
+    }
+  ],
+  "job_id": "motion-v2-1fd8981dad53",
+  "duration": 60,
+  "fps": 30,
+  "caption_timing": "measured individual TTS phrases; not word-level alignment",
+  "voice_license": "CC-BY-NC-SA-3.0",
+  "commercial_use": false,
+  "output_dir": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-1fd8981dad53",
+  "speech_duration_seconds": 36.818,
+  "speech_occupancy": 0.614
+}

@@ -1,0 +1,75 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T02:40:39.605486+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T024039605486Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T024039605486Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "gpt-6-luna",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-30T02:40:58.771488+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T024058771488Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T024058771488Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "gpt-6-luna",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "client_generated",
+      "type": "visual_prompt",
+      "version": "v2"
+    }
+  ],
+  "campaign_id": "campaign_solocorp_content_creator_60s",
+  "campaign_key": "campaign_solocorp_content_creator_60s",
+  "created_at": "2026-10-30T02:40:39.605272+00:00",
+  "review": null,
+  "revision": 2,
+  "schema_version": 1,
+  "source_references": [
+    "profiles/15-content-creator/SOUL.md",
+    "profiles/INDEX.md",
+    "solocorp_mcp/departments/content_mcp.py",
+    "solocorp_mcp/departments/content_service.py",
+    "LICENSE",
+    "scripts/media/content_creator_story_60s.json",
+    "scripts/media/content_creator_story_motion.html"
+  ],
+  "status": "client_generated",
+  "updated_at": "2026-10-30T02:40:58.812879+00:00",
+  "version": "v2",
+  "version_number": 2
+}

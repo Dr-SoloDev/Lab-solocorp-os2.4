@@ -1,0 +1,34 @@
+{
+  "audio": {
+    "channels": 2,
+    "codec": "aac",
+    "integrated_lufs": -16.0,
+    "sample_rate": "48000",
+    "synth_bed": true,
+    "true_peak_dbtp": -3.4
+  },
+  "campaign_id": "campaign_solocorp_content_creator_60s",
+  "caption_timing": "measured individual TTS phrases; not word-level alignment",
+  "commercial_use": false,
+  "execution_mode": "local_cli_motion_design_v2",
+  "external_network_used": false,
+  "full_decode_check": "passed",
+  "job_id": "motion-v2-7b80c8018b1a",
+  "provider": "ffmpeg-cli",
+  "publication_status": "review_required",
+  "published": false,
+  "speech_occupancy": 0.656,
+  "status": "completed",
+  "synthetic_inputs_only": true,
+  "video": {
+    "bytes": 4178092,
+    "codec": "h264",
+    "duration_seconds": 60.0,
+    "fps": 30,
+    "height": 1920,
+    "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-7b80c8018b1a/solocorp-content-creator-60s.mp4",
+    "sha256": "09c1d1effee909eb7d80ca2bd0bf956ea4968f7f3623a13b97199136c3828ed4",
+    "width": 1080
+  },
+  "voice_license": "CC-BY-NC-SA-3.0"
+}

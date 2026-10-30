@@ -1,0 +1,137 @@
+{
+  "status": "completed",
+  "engine": "canvas2d-motion-v2",
+  "fps": 30,
+  "duration": 60,
+  "previews": [
+    "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-7b80c8018b1a/previews/scene-01.png",
+    "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-7b80c8018b1a/previews/scene-02.png",
+    "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-7b80c8018b1a/previews/scene-03.png",
+    "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-7b80c8018b1a/previews/scene-04.png",
+    "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-7b80c8018b1a/previews/scene-05.png",
+    "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-7b80c8018b1a/previews/scene-06.png"
+  ],
+  "captionChecks": [
+    {
+      "text": "ทุกคอนเทนต์ที่ดี เริ่มจากโจทย์ที่ชัด",
+      "lines": 1,
+      "widths": [
+        749
+      ],
+      "start": 0.42,
+      "end": 3.59198
+    },
+    {
+      "text": "ใครคือคนดู และอยากให้เขาทำอะไรต่อ?",
+      "lines": 1,
+      "widths": [
+        839
+      ],
+      "start": 3.77198,
+      "end": 7.40212
+    },
+    {
+      "text": "เสกนำทีมคอนเทนต์",
+      "lines": 1,
+      "widths": [
+        430
+      ],
+      "start": 10.42,
+      "end": 12.30133
+    },
+    {
+      "text": "กวีวางเรื่อง ฟิล์มเขียนบท",
+      "lines": 1,
+      "widths": [
+        548
+      ],
+      "start": 12.48133,
+      "end": 14.4399
+    },
+    {
+      "text": "อาร์ตดูภาพ ซาวด์ดูเสียง อิงค์ตรวจเกต",
+      "lines": 1,
+      "widths": [
+        836
+      ],
+      "start": 14.6199,
+      "end": 17.51119
+    },
+    {
+      "text": "ทีมจัดเนื้อหาให้ไปทางเดียวกัน",
+      "lines": 1,
+      "widths": [
+        640
+      ],
+      "start": 20.42,
+      "end": 23.63244
+    },
+    {
+      "text": "ภาพ เสียง และคำพากย์เล่าเรื่องเดียวกัน",
+      "lines": 2,
+      "widths": [
+        685,
+        179
+      ],
+      "start": 23.81244,
+      "end": 26.83454
+    },
+    {
+      "text": "เอ็มซีพีส่งดราฟต์ บท ภาพ และเสียง",
+      "lines": 1,
+      "widths": [
+        775
+      ],
+      "start": 30.42,
+      "end": 33.8879
+    },
+    {
+      "text": "เซ็นทรัลบัสเก็บเวอร์ชันและที่มา",
+      "lines": 1,
+      "widths": [
+        672
+      ],
+      "start": 34.0679,
+      "end": 37.32121
+    },
+    {
+      "text": "พับลิชเกตตรวจสิทธิ์ แหล่งอ้างอิง และข้อมูลอ่อนไหว",
+      "lines": 2,
+      "widths": [
+        824,
+        304
+      ],
+      "start": 40.42,
+      "end": 44.84179
+    },
+    {
+      "text": "งานรอคนตรวจและอนุมัติ",
+      "lines": 1,
+      "widths": [
+        553
+      ],
+      "start": 45.02179,
+      "end": 47.32571
+    },
+    {
+      "text": "เอไอช่วยสร้างงาน แต่ไม่เผยแพร่แทนคุณ",
+      "lines": 2,
+      "widths": [
+        712,
+        186
+      ],
+      "start": 50.42,
+      "end": 54.13715
+    },
+    {
+      "text": "แล้วคุณอยากเล่าเรื่องอะไร?",
+      "lines": 1,
+      "widths": [
+        605
+      ],
+      "start": 54.31715,
+      "end": 56.72229
+    }
+  ],
+  "external_network_used": false
+}

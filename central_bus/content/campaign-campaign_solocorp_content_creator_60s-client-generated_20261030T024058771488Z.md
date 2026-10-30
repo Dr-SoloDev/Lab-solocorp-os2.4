@@ -1,0 +1,7 @@
+# Content Creator 60-second vertical motion plan
+
+Use an original, readable Canvas2D animation, native 1080×1920 at 30 fps. Six chapters are exactly ten seconds. Persistent label: ภาพจำลองกระบวนการ. Thai headlines and two-line phrase captions. Show the actual roles in the repository: Sek leads; Kawee writes copy, Film scripts, Art designs visuals, Sound designs audio, Ink handles content analysis and Publish Gate. Use role cards, not fabricated employee footage.
+
+Narrative visuals: brief card with audience/objective/key message/platform/metric; role cards in handoff order; storyboard strip that unifies copy, image, voice; MCP artifacts flowing into Central Bus with versions/provenance; Publish Gate shows sources, rights, redaction, R1-R5 and review_required; final brief→story→review sequence with open audience question. Do not imply automatic approval or publication.
+
+Palette: charcoal, mint, blue, coral, amber, violet. Use animated handoffs, progress strokes, and artifact status updates. No external images, network media, or licensed music. Use only the approved synthetic local voice and short original synthesized transition accents. Clearly mark the clip as draft pending human approval.

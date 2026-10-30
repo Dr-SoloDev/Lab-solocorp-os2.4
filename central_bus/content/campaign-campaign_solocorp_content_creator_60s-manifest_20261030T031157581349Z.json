@@ -1,0 +1,320 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-10-30T02:40:39.605486+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T024039605486Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T024039605486Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "gpt-6-luna",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v1"
+    },
+    {
+      "created_at": "2026-10-30T02:40:58.771488+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T024058771488Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T024058771488Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "gpt-6-luna",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "client_generated",
+      "type": "visual_prompt",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-10-30T02:41:10.979482+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T024039605486Z.md"
+      ],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T024110979482Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T024110979482Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v3"
+    },
+    {
+      "created_at": "2026-10-30T02:56:46.800100+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T025646800100Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T025646800100Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v4"
+    },
+    {
+      "created_at": "2026-10-30T02:56:59.350417+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T025646800100Z.md"
+      ],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T025659350417Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T025659350417Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v5"
+    },
+    {
+      "created_at": "2026-10-30T02:59:27.584248+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T025927584248Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T025927584248Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v6"
+    },
+    {
+      "created_at": "2026-10-30T02:59:39.072334+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T025927584248Z.md"
+      ],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T025939072334Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T025939072334Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v7"
+    },
+    {
+      "created_at": "2026-10-30T03:00:49.668125+00:00",
+      "dependencies": [],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T030049668125Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T030049668125Z.md",
+      "provenance": {
+        "client": "Codex",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v8"
+    },
+    {
+      "created_at": "2026-10-30T03:01:02.296672+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T030049668125Z.md"
+      ],
+      "filename": "campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T030102296672Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T030102296672Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v9"
+    },
+    {
+      "created_at": "2026-10-30T03:11:08.337782+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T030049668125Z.md",
+        "campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T030102296672Z.md"
+      ],
+      "execution_mode": "local_cli_motion_design_v2",
+      "filename": "campaign-content-creator-60s-motion-job_20261030T031108337782Z.json",
+      "job_id": "motion-v2-7b80c8018b1a",
+      "media_rights_status": "noncommercial_only_human_confirmation_required",
+      "path": "central_bus/content/campaign-content-creator-60s-motion-job_20261030T031108337782Z.json",
+      "provider": "ffmpeg-cli",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "review_required",
+      "type": "local_media_render_job",
+      "version": "v10"
+    },
+    {
+      "created_at": "2026-10-30T03:11:08.386715+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T030049668125Z.md",
+        "campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T030102296672Z.md"
+      ],
+      "filename": "campaign-content-creator-60s-motion-result_20261030T031108386715Z.json",
+      "job_id": "motion-v2-7b80c8018b1a",
+      "media_rights_status": "noncommercial_only_human_confirmation_required",
+      "path": "central_bus/content/campaign-content-creator-60s-motion-result_20261030T031108386715Z.json",
+      "provider": "ffmpeg-cli",
+      "sha256": "09c1d1effee909eb7d80ca2bd0bf956ea4968f7f3623a13b97199136c3828ed4",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "review_required",
+      "type": "local_media_render_result",
+      "version": "v10"
+    },
+    {
+      "created_at": "2026-10-30T03:11:57.527693+00:00",
+      "dependencies": [
+        "campaign-campaign_solocorp_content_creator_60s-client-generated_20261030T030049668125Z.md",
+        "campaign-campaign_solocorp_content_creator_60s-audio-cue-campaig_20261030T030102296672Z.md"
+      ],
+      "execution_status": "not_started",
+      "filename": "campaign-campaign_solocorp_content_creator_60s-ffmpeg-job-ffmpeg_20261030T031157527693Z.json",
+      "job_id": "ffmpeg-1cca4bd675c44149961e47d9d1f5ddd1",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-campaign_solocorp_content_creator_60s-ffmpeg-job-ffmpeg_20261030T031157527693Z.json",
+      "provider": "ffmpeg-skill",
+      "provider_contract_version": "2.17.1",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "profiles/INDEX.md",
+        "solocorp_mcp/departments/content_mcp.py",
+        "solocorp_mcp/departments/content_service.py",
+        "LICENSE",
+        "scripts/media/content_creator_story_60s.json",
+        "scripts/media/content_creator_story_motion.html"
+      ],
+      "status": "scaffold",
+      "type": "ffmpeg_job_manifest",
+      "version": "v11"
+    }
+  ],
+  "campaign_id": "campaign_solocorp_content_creator_60s",
+  "campaign_key": "campaign_solocorp_content_creator_60s",
+  "created_at": "2026-10-30T02:40:39.605272+00:00",
+  "review": null,
+  "revision": 12,
+  "schema_version": 1,
+  "source_references": [
+    "profiles/15-content-creator/SOUL.md",
+    "profiles/INDEX.md",
+    "solocorp_mcp/departments/content_mcp.py",
+    "solocorp_mcp/departments/content_service.py",
+    "LICENSE",
+    "scripts/media/content_creator_story_60s.json",
+    "scripts/media/content_creator_story_motion.html"
+  ],
+  "status": "scaffold",
+  "updated_at": "2026-10-30T03:11:57.580658+00:00",
+  "version": "v11",
+  "version_number": 11
+}
