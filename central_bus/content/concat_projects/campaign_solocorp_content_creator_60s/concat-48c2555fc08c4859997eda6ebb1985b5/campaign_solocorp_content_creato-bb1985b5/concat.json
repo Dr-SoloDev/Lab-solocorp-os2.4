@@ -1,0 +1,265 @@
+{
+  "activeTimelineId": "TL1",
+  "clips": [
+    {
+      "duration": 60.0,
+      "fadeIn": 0.0,
+      "fadeOut": 0.0,
+      "filters": [],
+      "id": "c2",
+      "kind": "video",
+      "mediaId": "m1",
+      "name": "picture.mp4",
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "opacity": 1.0,
+      "preservePitch": true,
+      "rotation": 0.0,
+      "scale": 1.0,
+      "sourceStart": 0.0,
+      "speed": 1.0,
+      "start": 0.0,
+      "trackId": "T1",
+      "videoEffects": [],
+      "volume": 1.0
+    },
+    {
+      "duration": 60.0,
+      "fadeIn": 0.0,
+      "fadeOut": 0.0,
+      "filters": [],
+      "id": "c4",
+      "kind": "audio",
+      "mediaId": "m3",
+      "name": "audio-mix-elevenlabs.wav",
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "opacity": 1.0,
+      "preservePitch": true,
+      "rotation": 0.0,
+      "scale": 1.0,
+      "sourceStart": 0.0,
+      "speed": 1.0,
+      "start": 0.0,
+      "trackId": "T2",
+      "videoEffects": [],
+      "volume": 1.0
+    },
+    {
+      "duration": 0.55,
+      "fadeIn": 0.0,
+      "fadeOut": 0.0,
+      "filters": [],
+      "id": "c6",
+      "kind": "audio",
+      "mediaId": "m5",
+      "name": "sfx.wav",
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "opacity": 1.0,
+      "preservePitch": true,
+      "rotation": 0.0,
+      "scale": 1.0,
+      "sourceStart": 0.0,
+      "speed": 1.0,
+      "start": 60.0,
+      "trackId": "T2",
+      "videoEffects": [],
+      "volume": 0.25
+    }
+  ],
+  "concat": "0.1.0",
+  "fonts": [],
+  "media": [
+    {
+      "audioCodec": null,
+      "duration": 60.0,
+      "frameRate": 30.0,
+      "frameRateFraction": "30/1",
+      "hasAudio": false,
+      "height": 1920,
+      "id": "m1",
+      "kind": "video",
+      "name": "picture.mp4",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-7b80c8018b1a/picture.mp4",
+      "videoCodec": "h264",
+      "width": 1080
+    },
+    {
+      "audioCodec": "pcm_s16le",
+      "audioTracks": [
+        {
+          "channels": 2,
+          "codec": "pcm_s16le",
+          "index": 0,
+          "sampleRate": 48000
+        }
+      ],
+      "duration": 60.0,
+      "frameRate": null,
+      "frameRateFraction": null,
+      "hasAudio": true,
+      "height": null,
+      "id": "m3",
+      "kind": "audio",
+      "name": "audio-mix-elevenlabs.wav",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_solocorp_content_creator_60s/motion-v2-7b80c8018b1a/audio-mix-elevenlabs.wav",
+      "videoCodec": null,
+      "width": null
+    },
+    {
+      "audioCodec": "pcm_s24le",
+      "audioTracks": [
+        {
+          "channels": 2,
+          "codec": "pcm_s24le",
+          "index": 0,
+          "sampleRate": 48000
+        }
+      ],
+      "duration": 0.55,
+      "frameRate": null,
+      "frameRateFraction": null,
+      "hasAudio": true,
+      "height": null,
+      "id": "m5",
+      "kind": "audio",
+      "name": "sfx.wav",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/sound/campaign_solocorp_content_creator_60s/sound-sfx-57c2e654757a49ab8ded066c429b644b/sfx.wav",
+      "videoCodec": null,
+      "width": null
+    }
+  ],
+  "name": "campaign_solocorp_content_creato-bb1985b5",
+  "timelines": [
+    {
+      "clips": [
+        {
+          "duration": 60.0,
+          "fadeIn": 0.0,
+          "fadeOut": 0.0,
+          "filters": [],
+          "id": "c2",
+          "kind": "video",
+          "mediaId": "m1",
+          "name": "picture.mp4",
+          "offsetX": 0.0,
+          "offsetY": 0.0,
+          "opacity": 1.0,
+          "preservePitch": true,
+          "rotation": 0.0,
+          "scale": 1.0,
+          "sourceStart": 0.0,
+          "speed": 1.0,
+          "start": 0.0,
+          "trackId": "T1",
+          "videoEffects": [],
+          "volume": 1.0
+        },
+        {
+          "duration": 60.0,
+          "fadeIn": 0.0,
+          "fadeOut": 0.0,
+          "filters": [],
+          "id": "c4",
+          "kind": "audio",
+          "mediaId": "m3",
+          "name": "audio-mix-elevenlabs.wav",
+          "offsetX": 0.0,
+          "offsetY": 0.0,
+          "opacity": 1.0,
+          "preservePitch": true,
+          "rotation": 0.0,
+          "scale": 1.0,
+          "sourceStart": 0.0,
+          "speed": 1.0,
+          "start": 0.0,
+          "trackId": "T2",
+          "videoEffects": [],
+          "volume": 1.0
+        },
+        {
+          "duration": 0.55,
+          "fadeIn": 0.0,
+          "fadeOut": 0.0,
+          "filters": [],
+          "id": "c6",
+          "kind": "audio",
+          "mediaId": "m5",
+          "name": "sfx.wav",
+          "offsetX": 0.0,
+          "offsetY": 0.0,
+          "opacity": 1.0,
+          "preservePitch": true,
+          "rotation": 0.0,
+          "scale": 1.0,
+          "sourceStart": 0.0,
+          "speed": 1.0,
+          "start": 60.0,
+          "trackId": "T2",
+          "videoEffects": [],
+          "volume": 0.25
+        }
+      ],
+      "id": "TL1",
+      "name": "Timeline 1",
+      "tracks": [
+        {
+          "id": "T1",
+          "muted": false,
+          "visible": true
+        },
+        {
+          "id": "T2",
+          "muted": false,
+          "visible": true
+        },
+        {
+          "id": "T3",
+          "muted": false,
+          "visible": true
+        },
+        {
+          "id": "T4",
+          "muted": false,
+          "visible": true
+        }
+      ],
+      "video": {
+        "height": 1920,
+        "rateDen": 1,
+        "rateNum": 30,
+        "width": 1080
+      }
+    }
+  ],
+  "tracks": [
+    {
+      "id": "T1",
+      "muted": false,
+      "visible": true
+    },
+    {
+      "id": "T2",
+      "muted": false,
+      "visible": true
+    },
+    {
+      "id": "T3",
+      "muted": false,
+      "visible": true
+    },
+    {
+      "id": "T4",
+      "muted": false,
+      "visible": true
+    }
+  ],
+  "version": 1,
+  "video": {
+    "height": 1920,
+    "rateDen": 1,
+    "rateNum": 30,
+    "width": 1080
+  }
+}

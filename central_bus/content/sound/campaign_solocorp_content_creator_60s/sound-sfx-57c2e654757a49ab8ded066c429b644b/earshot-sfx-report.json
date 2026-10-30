@@ -1,0 +1,124 @@
+{
+  "campaign_id": "campaign_solocorp_content_creator_60s",
+  "measure": {
+    "attack_at": 0.094,
+    "attack_ms": 64.0,
+    "bands_db": {
+      "air": -29.0,
+      "low": -17.4,
+      "lowmid": -0.8,
+      "mid": -8.4,
+      "presence": -24.0,
+      "sub": -31.7,
+      "top": -45.3
+    },
+    "bandwidth_hz": 20480,
+    "brightness_hz": 1817,
+    "centroid_hz": 733,
+    "clipped_samples": 0,
+    "correlation": 0.983,
+    "dc": -0.0,
+    "decay_ms": 103.0,
+    "digital_silence_frac": 0.0467,
+    "duration": 0.55,
+    "dynamic_range_db": 65.0,
+    "flatness": 0.0002,
+    "harmonic_ratio": 0.004,
+    "lufs": -24.2,
+    "noise_floor_dbfs": -82.8,
+    "onset_count": 3,
+    "onsets": [
+      0.046,
+      0.116,
+      0.116
+    ],
+    "onsets_per_s": 5.45,
+    "peak_at": 0.163,
+    "peak_dbfs": -9.0,
+    "rms_dbfs": -28.3,
+    "rolloff95_hz": 1434,
+    "side_to_mid_db": -20.6,
+    "summary": "0.550 s, -24.2 LUFS integrated, true peak -9.0 dBTP, noise floor -82.8 dBFS, brightness 1.8 kHz, bandwidth 20.5 kHz, attack 64 ms, decay 103 ms, 3 onsets. 4.7% exact digital zeros (usually edit, fade or gate padding; weak evidence on its own: use realness to judge real vs synthesized).",
+    "tonal_peak_ratio_db": 50.1,
+    "true_peak_dbtp": -9.0
+  },
+  "network_used": false,
+  "provider": "earshot",
+  "render": {
+    "file": "/data/projects/Lab-solocorp-os2.4/central_bus/content/sound/campaign_solocorp_content_creator_60s/sound-sfx-57c2e654757a49ab8ded066c429b644b/sfx.wav",
+    "meta": {
+      "checks": {
+        "context": {
+          "category": "whoosh_fast",
+          "sound": "whoosh_fast/tight"
+        },
+        "glide": {
+          "from_s": null,
+          "rise_st": 0.0,
+          "to_s": null,
+          "tonal_share": 0.38
+        },
+        "layers": {
+          "attacks": [
+            0.158
+          ],
+          "count": 1,
+          "pre_swell_ms": 105.0
+        },
+        "measures": {
+          "attack_ms": 15.25,
+          "bump_db": 0.3,
+          "clicks": 0,
+          "clip_runs": 0,
+          "crest_db": 9.0,
+          "dc_db": -115.7,
+          "edge_db": -240.0,
+          "live_ms": 275.75,
+          "overs": 0,
+          "peak_dbfs": -9.0,
+          "res_db": 5.5,
+          "res_hz": 2691,
+          "ring_z": 4.3,
+          "silence_ms": 0.0,
+          "t40_ms": 180.0,
+          "trunc_db": null
+        },
+        "notes": [],
+        "ok": true,
+        "summary": "whoosh_fast/tight: clean",
+        "warnings": []
+      },
+      "dur_s": 0.55,
+      "edits": {
+        "apex": {
+          "err_ms": -0.5,
+          "fit": "head trim 6.0 ms",
+          "measured": 0.1595,
+          "ok": true,
+          "renders": 3,
+          "rise": 0.12529,
+          "search_err_ms": 5.5,
+          "target": 0.16
+        },
+        "dur": {
+          "fit": "pad 15 ms",
+          "method": "shape",
+          "post_scale": 0.9802,
+          "renders": 3,
+          "target": 0.55
+        }
+      },
+      "end_s": 0.374,
+      "id": "whoosh_fast/tight",
+      "lufs_m_max": -24.17,
+      "onset_s": 0.0392,
+      "peak_db": -9.0,
+      "peak_s": 0.1595,
+      "seed": 1621782255,
+      "sr": 48000
+    },
+    "summary": "wrote /data/projects/Lab-solocorp-os2.4/central_bus/content/sound/campaign_solocorp_content_creator_60s/sound-sfx-57c2e654757a49ab8ded066c429b644b/sfx.wav: whoosh_fast/tight seed 1621782255: 0.550 s, onset 0.039 s, peak at 0.160 s, end 0.374 s, -9.0 dBFS, -24.2 LUFS momentary max; apex 0.160 s (measured 0.160, -0 ms); dur 0.550 s (shape, pad 15 ms); checks: clean"
+  },
+  "schema_version": 1,
+  "sound": "whoosh_fast/tight"
+}
