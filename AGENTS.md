@@ -1,6 +1,6 @@
 # SoloCorp OS 2.4 — Agent Quickstart
 
-An **organizational OS for AI agents**, not a normal codebase. The "product" is docs-as-code (`profiles/*/SOUL.md`, `rules/`, `sop/`); `central_bus/` is the only real service. Authoritative roster: `profiles/INDEX.md`. Auto-loaded context: `opencode.json` → `instructions` (`CLAUDE.md` + `rules/INDEX.md`).
+SoloCorp OS is an **organizational OS for AI agents and a modular MCP product**. The current repo contains docs-as-code (`profiles/*/SOUL.md`, `rules/`, `sop/`), the Central Bus service, the legacy Core MCP, and independent department MCP adapters. The approved product target is a local-first SoloCorp App with one CEO experience, a module registry, and a task queue. The target app is not implemented yet. Product direction and MVP scope live in [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md). Authoritative roster: `profiles/INDEX.md`. Auto-loaded behavior context: `opencode.json` → `instructions` (`CLAUDE.md` + `rules/INDEX.md`).
 
 ## Start here
 
@@ -8,17 +8,15 @@ An **organizational OS for AI agents**, not a normal codebase. The "product" is 
 @rules/INDEX.md   ← 30-sec behavior map (6 files: receive, work, session, safety, env, certification)
 ```
 
-## Resume checkpoint — MCP Content Creator pilot (2026-10-26)
+## Current Product Direction — Owner-approved (2026-11-01)
 
-- ทำงานที่ repo หลัก `/home/drsolodev/projects/Lab-solocorp-os2.4`; ไม่ใช้ FreeBuff ในแผนนี้
-- เป้าหมาย: MCP แยกตามแผนก ให้ OpenCode V2 และ Codex ต่อใช้ได้; pilot แรกคือ Content Creator
-- เพิ่ม `solocorp_mcp.bus_mcp`, shared storage `bus_store.py` และ `solocorp_mcp.departments.content_mcp` พร้อม tools สร้าง draft/script/visual prompt และตรวจ Publish Gate
-- OpenCode เห็น `central-bus` และ `content-creator` connected; Codex CLI ใช้ global `~/.codex/config.toml` และแสดง server ทั้งคู่ enabled
-- ตรวจแล้ว: stdio handshake ผ่าน, full suite `959 passed`, Auto-QA PASS (75.4%). Content tools ตอนนี้สร้างโครงร่าง/scaffold; การสร้างเนื้อหาเต็มด้วย LLM ยังเป็นงานถัดไป
-- แผนและผลตรวจอยู่ `docs/plans/MCP-DEPARTMENT-SERVERS-CONTENT-PILOT.md`
-- งานปัจจุบันยังไม่ commit: ตรวจ `git status`/`git diff` ก่อนแก้ต่อ; อย่าทับไฟล์ที่เปลี่ยนแล้ว
-- ขั้นต่อไป: เปิด MCP tools จาก Codex/OpenCode แล้วทดสอบ workflow Content Creator จริง จากนั้นต่อ LLM generation และตรวจ Publish Gate ให้ครบ
-- Owner ขอประหยัดเครดิต/token: อ่าน checkpoint กับเอกสารแผนก่อน ไม่ต้องสรุปบทสนทนาเดิมใหม่
+- **Source of truth:** `docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`. Use it for product target, MVP scope, sequencing, and deferred work.
+- **Target:** Local-first SoloCorp App. Its host manages enabled department MCP connections; one CEO agent receives human briefs, routes work, and tracks task state through the registry and Central Bus queue.
+- **Standalone requirement:** A department MCP remains usable by itself through an external compatible client. It must not require the CEO MCP or SoloCorp App for department-scoped capability.
+- **MVP:** Local single-user app, explicit model/provider configuration, module toggles and health state, and one Content Creator end-to-end task path. Hosted multi-user service, billing, all departments, and a full autonomous worker pool are later phases.
+- **Current implementation:** The Content Creator MCP pilot and Central Bus exist. The first-party SoloCorp App, local MCP host/registry UI, and product task workflow are **not implemented**. The pilot document is evidence, not proof that the app is complete.
+- **Release assurance:** Production audit findings remain visible for pre-release work. They do not replace the MVP roadmap; never describe a known limitation as a passed production guarantee.
+- This repo has pre-existing untracked generated artifacts and work. Check `git status` and `git diff` before edits or commits; do not clean or overwrite unrelated files.
 
 Default agent is `ceo-turbo` (strategy + routing + final call). Owner (Dr.solodev) decides L5 only.
 
@@ -41,9 +39,10 @@ Owner — L5: vision / org / core product ONLY
 - End: `/summary` (or `python scripts/session-summary.py --save`) — appends to `brain/session-log.md` (append-only; never rewrite history).
 - Memory files are git-tracked: `brain/ceo-identity.md` (who), `brain/ceo-memory.json` (what), `brain/session-log.md` (history), `brain/learnt.md` (lessons).
 
-## Multi-chat workspaces (1 dept = 1 chat)
+## Cross-department workspaces (current manual client workflow)
 
-- `/workspace [dept] [task]` (skill: `skills/@solocorp/cross-dept/dept-workspace/`) — open a NEW session, title tab `[dept]+task`, paste the context bundle, work there, bring the return-report back to CEO chat.
+- `/workspace [dept] [task]` (skill: `skills/@solocorp/cross-dept/dept-workspace/`) remains the manual OpenCode workflow for work that needs a separate agent session.
+- In the planned SoloCorp App, the CEO can call tools from already-connected department MCPs in the same user conversation. That app behavior is a target, not an implemented feature yet.
 - Human + visiting-agent manual: `docs/OPENCODE-GUIDE.md` (one file, both audiences).
 
 ## Python prep (required before any python work)
@@ -52,7 +51,7 @@ Owner — L5: vision / org / core product ONLY
 source .venv/bin/activate && export PYTHONPATH=.
 ```
 
-CI uses **Python 3.12**. MCP server must run via `.venv/bin/python3` (`python -m solocorp_mcp.server`) with `SOLOCORP_API_KEY` set.
+CI uses **Python 3.12**. Run repo MCP servers with the project `.venv` and their documented module command. `SOLOCORP_API_KEY` applies to scoped Core MCP / API operations that require it; do not make it a dependency of standalone department MCPs.
 
 ## Services (only when bus-dependent work needs them)
 
@@ -108,6 +107,8 @@ From `rules/06-certification.md` (incident: work reported complete with zero cod
 | `sop/` | Standard Operating Procedures (SOP-01–06) |
 | `profiles/` | Department identities (`SOUL.md`); roster in `profiles/INDEX.md` |
 | `central_bus/` | FastAPI daemon (30+ modules): queue, routing, mirror |
+| `docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md` | Current product direction and MVP source of truth |
+| `solocorp_mcp/` | Core MCP and independent department MCP adapters |
 | `workers/agents/` | Agent workers (`BaseAgent.think()` in `base_agent.py`) |
 | `decisions/` | ADRs — check before changing architecture |
 | `bus/` | Queue, dispatch records, evidence, proposals |

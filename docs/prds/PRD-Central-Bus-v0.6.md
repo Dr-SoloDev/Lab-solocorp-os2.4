@@ -4,11 +4,13 @@
 |------|-------|
 | **Product** | SoloCorp OS v2.5 "The Reliability Release" |
 | **Feature** | Central Bus v0.6 |
-| **Status** | Draft v2 |
+| **Status** | Historical component design draft; not the active SoloCorp App roadmap |
 | **Owner** | Product (โปรดัค) |
 | **Architect** | Architect (พี่ทรงศักดิ์) |
 | **Engineering** | Engineering (ช่างฟูล) |
 | **Target** | 3 weeks (21 days) |
+
+> **ขอบเขตและสถานะ:** เอกสารนี้เป็น design PRD ของ Central Bus component และเก็บเป้าหมายเวลาจากการวางแผนเดิมไว้เป็นประวัติ ไม่ใช่ roadmap ปัจจุบันของ SoloCorp App. สถานะโค้ดจริงต้องตรวจจาก `central_bus/`; การนำ queue/API ไปใช้ใน local app อยู่ภายใต้ [`PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
 
 ---
 

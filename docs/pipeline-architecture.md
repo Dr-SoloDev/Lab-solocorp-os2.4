@@ -1,5 +1,7 @@
 # SoloCorp OS — E2E Pipeline Architecture
 
+> **ขอบเขต:** เอกสารนี้อธิบาย Central Bus / govctl pipeline dashboard ของระบบเดิม คำว่า “Dashboard MVP” และ topology ด้านล่างหมายถึงเครื่องมือนั้น ไม่ใช่ SoloCorp App ที่ผู้ใช้ brief CEO และเปิด/ปิด department MCP. Product target และ MVP ปัจจุบันอยู่ใน [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
+
 > **Author:** Software Architect (พี่ทรงศักดิ์) · **Phase:** 3-4 Pipeline + API Design
 > **Status:** Accepted · **Last Updated:** 2026-07-05
 

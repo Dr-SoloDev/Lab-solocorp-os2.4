@@ -1,5 +1,7 @@
 # Lab-solocorp-os2.4 — Architecture Overview
 
+> **ขอบเขตและสถานะ:** เอกสารนี้อธิบายโครงสร้าง organization/agent และ Central Bus ที่มีอยู่ ส่วน product architecture เป้าหมายของ local-first SoloCorp App, CEO session, MCP registry และ task workflow ให้ยึด [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md). การประสาน Head-to-Head ภายในแผนกยังใช้ได้; การรับ brief จากมนุษย์และ route งานใน App เป็นอีก flow หนึ่ง.
+
 > System Architecture for SoloCorp OS
 > Designed: 2026-06-26 | Last Updated: 2026-09-27 | Version: 2.4
 

@@ -5,6 +5,8 @@
 **Date:** 2026-07-06
 **Status:** Approved
 
+> **ขอบเขต:** PRD นี้กำหนดบริบท compatibility ของ agent clients ภายนอก ไม่ใช่ roadmap ของ SoloCorp App. การใช้ MCP แผนกแบบ standalone เป็น requirement ที่คงอยู่; target app และลำดับ MVP ปัจจุบันอยู่ใน [`PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
+
 ---
 
 ## Problem Statement

@@ -2,6 +2,8 @@
 
 ให้ external coding agents เชื่อมต่อ SoloCorp OS ผ่าน MCP protocol
 
+> **รูปแบบ connection:** OpenCode/Codex หรือ client ภายนอกเป็นผู้จัดการ connection ของ MCP ที่ลงทะเบียนใน client นั้น. ต่อเฉพาะ Department MCP ได้เมื่อใช้แผนกเดียว; Core MCP ไม่ได้เห็นหรือควบคุม connection อื่นของ client. ในเป้าหมาย SoloCorp App, local app runtime จะเป็น host ที่จัดการ registry และ toggle ของตัวเอง. ดู [PRD ปัจจุบัน](../docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md); app runtime ยังไม่ implement.
+
 ---
 
 ## Department MCP servers (Content Creator pilot)

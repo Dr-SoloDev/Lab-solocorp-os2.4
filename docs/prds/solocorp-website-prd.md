@@ -1,5 +1,7 @@
 # PRD: SoloCorp OS Official Website
 
+> **ขอบเขต:** เอกสารนี้เป็น PRD ของเว็บไซต์สาธารณะ/การตลาดเท่านั้น ไม่ใช่ PRD ของ web app ที่ผู้ใช้จัดการ CEO และ department MCP. Product app roadmap ปัจจุบันอยู่ใน [`PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
+
 | Meta | Value |
 |:-----|:------|
 | **Product** | SoloCorp OS Official Website |

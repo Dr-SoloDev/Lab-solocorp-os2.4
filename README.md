@@ -46,6 +46,8 @@ This repository is a **pre-release**. **v2.4.0 is the product-pack line** (CFO, 
 > **License:** [MIT](LICENSE) — เอาไปใช้ ปรับ แจก ขายต่อได้อิสระ ขอแค่เก็บ copyright ไว้
 > ⭐ ถ้าชอบ ฝากกด **Star** เป็นกำลังใจ — แล้วเอาทีมของคุณมาอวดใน [Discussions](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/discussions)!
 
+> **Current product direction (2026-11-01):** build a local-first SoloCorp App with one CEO experience, optional department MCPs, registry, and task queue. Department MCPs remain independently usable from external clients. The app is a planned MVP, not a feature already delivered. See the [current product PRD](./docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
+
 ## 🌱 หนึ่งแกน หลายตัวตน
 
 SoloCorp OS เกิดจากแกนเดียวกัน แต่**ไม่จำเป็นต้องเหมือนกัน** — fork ไป เปลี่ยนชื่อ

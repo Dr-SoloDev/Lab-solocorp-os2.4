@@ -1,5 +1,9 @@
 # MCP Department Servers — Content Creator Pilot
 
+> **สถานะ ณ 2026-11-01:** เอกสารนี้เก็บ implementation และ verification history ของ Content Creator MCP pilot. ใช้ [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](../prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md) เป็น roadmap ปัจจุบันสำหรับ SoloCorp App. Pilot นี้ยังไม่ใช่ first-party app, module registry, หรือหลักฐานว่าทุก MCP client ผ่าน end-to-end. Codex และ Perch workflow มีหลักฐานในบันทึกด้านล่าง; OpenCode E2E ยังมีข้อจำกัดตามบันทึกเดิม.
+
+ข้อกำหนดที่ยังใช้ต่อ: Content Creator MCP ต้องคงการใช้งานแบบ standalone และ client-managed model. งาน MVP ถัดไปคือเชื่อม pilot นี้เข้ากับ local app/registry/task history; การสร้าง LLM ภายใน department server ไม่ใช่เงื่อนไขเริ่ม MVP.
+
 ## เป้าหมาย
 
 สร้างรูปแบบที่ผู้ใช้เลือกเสียบ MCP server เฉพาะแผนกที่ต้องการได้ทันที โดยแต่ละ server มีหัวหน้าเป็นประตูรับงานและซ่อนรายละเอียดการทำงานของ specialist ไว้ภายในแผนก
