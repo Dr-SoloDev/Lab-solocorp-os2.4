@@ -1,0 +1,25 @@
+{
+  "campaign_id": "content_dept_launch_ep01_20261102",
+  "duration_seconds": 90,
+  "execution": {
+    "automatic_execution": false,
+    "requested_by": "content-creator MCP tool call",
+    "runtime_gate": "synthetic_inputs_only_pending_independent_ffmpeg_verification",
+    "status": "in_progress"
+  },
+  "job_id": "local-media-0599a006e9754ebc87a72dc77fe34ce1",
+  "lifecycle_state": "scaffold",
+  "output_directory": "content/local_media/content_dept_launch_ep01_20261102/local-media-0599a006e9754ebc87a72dc77fe34ce1",
+  "provider": "ffmpeg-cli",
+  "publication_status": "blocked_pending_human_approval_and_rights_review",
+  "scene_count": 6,
+  "scene_seconds": 15,
+  "schema_version": 1,
+  "scope": "generated voice, original synthetic 3D scenes, scene-level captions, local FFmpeg CLI",
+  "script_filename": "campaign-content_dept_launch_ep01_20261102-client-generated-vide_20261102T165030525056Z.md",
+  "script_version": "v8",
+  "tts_provider": "piper-local",
+  "visual_provider": "three.js-pdoom-local",
+  "voice_model_license": "CC-BY-NC-SA-3.0",
+  "voice_model_rights_status": "noncommercial_only_human_confirmation_required"
+}

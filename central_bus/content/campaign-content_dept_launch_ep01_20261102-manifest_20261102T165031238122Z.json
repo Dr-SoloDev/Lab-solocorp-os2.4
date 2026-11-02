@@ -1,0 +1,162 @@
+{
+  "approval_records": [],
+  "approved_version": null,
+  "assets": [
+    {
+      "created_at": "2026-11-02T16:36:55.697841+00:00",
+      "dependencies": [],
+      "filename": "campaign-content_dept_launch_ep01_20261102-visual-honest-behind_20261102T163655697841Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-content_dept_launch_ep01_20261102-visual-honest-behind_20261102T163655697841Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "docs/runbooks/CONTENT-SOLOCORP-POWER-ONE-90S.md",
+        "Project brief: บรีฟโปรเจกต์.md",
+        "Project workflow: workflows/ผลิตคลิปหนึ่งตอน.md",
+        "Content MCP department_info response checked 2026-11-02"
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v2"
+    },
+    {
+      "created_at": "2026-11-02T16:39:06.860532+00:00",
+      "dependencies": [],
+      "filename": "campaign-content_dept_launch_ep01_20261102-client-generated-vide_20261102T163906860532Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-content_dept_launch_ep01_20261102-client-generated-vide_20261102T163906860532Z.md",
+      "provenance": {
+        "client": "Codex external Responses API client",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "docs/runbooks/CONTENT-SOLOCORP-POWER-ONE-90S.md",
+        "Project brief: บรีฟโปรเจกต์.md",
+        "Project workflow: workflows/ผลิตคลิปหนึ่งตอน.md",
+        "Content MCP department_info response checked 2026-11-02",
+        "profiles/15-content-creator/SOUL.md at commit git 19b5e59"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v4"
+    },
+    {
+      "created_at": "2026-11-02T16:50:30.525056+00:00",
+      "dependencies": [],
+      "filename": "campaign-content_dept_launch_ep01_20261102-client-generated-vide_20261102T165030525056Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-content_dept_launch_ep01_20261102-client-generated-vide_20261102T165030525056Z.md",
+      "provenance": {
+        "client": "Codex external Responses API client",
+        "model": "GPT-6",
+        "provider": "OpenAI"
+      },
+      "provenance_status": "client_supplied_unverified",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "docs/runbooks/CONTENT-SOLOCORP-POWER-ONE-90S.md",
+        "Project brief: บรีฟโปรเจกต์.md",
+        "Project workflow: workflows/ผลิตคลิปหนึ่งตอน.md",
+        "Content MCP department_info response checked 2026-11-02",
+        "profiles/15-content-creator/SOUL.md at commit git 19b5e59",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md"
+      ],
+      "status": "client_generated",
+      "type": "video_script",
+      "version": "v8"
+    },
+    {
+      "created_at": "2026-11-02T16:50:30.745097+00:00",
+      "dependencies": [],
+      "filename": "campaign-content_dept_launch_ep01_20261102-visual-internal-90-se_20261102T165030745097Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-content_dept_launch_ep01_20261102-visual-internal-90-se_20261102T165030745097Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "docs/runbooks/CONTENT-SOLOCORP-POWER-ONE-90S.md",
+        "Project brief: บรีฟโปรเจกต์.md",
+        "Project workflow: workflows/ผลิตคลิปหนึ่งตอน.md",
+        "Content MCP department_info response checked 2026-11-02",
+        "profiles/15-content-creator/SOUL.md at commit git 19b5e59",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md"
+      ],
+      "status": "scaffold",
+      "type": "visual_prompt",
+      "version": "v9"
+    },
+    {
+      "created_at": "2026-11-02T16:50:31.039217+00:00",
+      "dependencies": [
+        "campaign-content_dept_launch_ep01_20261102-client-generated-vide_20261102T165030525056Z.md"
+      ],
+      "filename": "campaign-content_dept_launch_ep01_20261102-audio-cue-campaign-co_20261102T165031039217Z.md",
+      "media_rights_status": "human_confirmation_required",
+      "path": "central_bus/content/campaign-content_dept_launch_ep01_20261102-audio-cue-campaign-co_20261102T165031039217Z.md",
+      "source_reference_status": "user_supplied_unverified",
+      "source_references": [
+        "profiles/15-content-creator/SOUL.md",
+        "docs/runbooks/CONTENT-SOLOCORP-POWER-ONE-90S.md",
+        "Project brief: บรีฟโปรเจกต์.md",
+        "Project workflow: workflows/ผลิตคลิปหนึ่งตอน.md",
+        "Content MCP department_info response checked 2026-11-02",
+        "profiles/15-content-creator/SOUL.md at commit git 19b5e59",
+        "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md"
+      ],
+      "status": "scaffold",
+      "type": "audio_cue_sheet",
+      "version": "v10"
+    }
+  ],
+  "campaign_id": "content_dept_launch_ep01_20261102",
+  "campaign_key": "content_dept_launch_ep01_20261102",
+  "created_at": "2026-11-02T16:36:55.480334+00:00",
+  "removal_records": [
+    {
+      "file_retained_on_bus": true,
+      "filename": "campaign-content_dept_launch_ep01_20261102-audio-cue-campaign-co_20261102T163655974743Z.md",
+      "reason": "Superseded by the revised EP01 script and its matching 90-second cue sheet; prior payload remains in the audit trail.",
+      "removed_at": "2026-11-02T16:39:07.339098+00:00",
+      "removed_from_version": "v3",
+      "type": "audio_cue_sheet"
+    },
+    {
+      "file_retained_on_bus": true,
+      "filename": "campaign-content_dept_launch_ep01_20261102-client-generated-vide_20261102T163655480558Z.md",
+      "reason": "Superseded by the corrected EP01 script with explicit duration and a verifiable profile commit; prior payload remains in the audit trail.",
+      "removed_at": "2026-11-02T16:39:07.491934+00:00",
+      "removed_from_version": "v1",
+      "type": "video_script"
+    },
+    {
+      "file_retained_on_bus": true,
+      "filename": "campaign-content_dept_launch_ep01_20261102-audio-cue-campaign-co_20261102T163907132282Z.md",
+      "reason": "Replaced by renderer-compatible 90-second scene cues.",
+      "removed_at": "2026-11-02T16:50:31.237710+00:00",
+      "removed_from_version": "v5",
+      "type": "audio_cue_sheet"
+    }
+  ],
+  "review": null,
+  "revision": 13,
+  "schema_version": 1,
+  "source_references": [
+    "profiles/15-content-creator/SOUL.md",
+    "docs/runbooks/CONTENT-SOLOCORP-POWER-ONE-90S.md",
+    "Project brief: บรีฟโปรเจกต์.md",
+    "Project workflow: workflows/ผลิตคลิปหนึ่งตอน.md",
+    "Content MCP department_info response checked 2026-11-02",
+    "profiles/15-content-creator/SOUL.md at commit git 19b5e59",
+    "docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md"
+  ],
+  "status": "scaffold",
+  "updated_at": "2026-11-02T16:50:31.237721+00:00",
+  "version": "v11",
+  "version_number": 11
+}
