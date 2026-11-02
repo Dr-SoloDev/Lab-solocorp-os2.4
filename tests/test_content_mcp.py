@@ -6,8 +6,9 @@ from pathlib import Path
 import pytest
 
 from solocorp_mcp import bus_store
-from solocorp_mcp.departments import content_helpers, content_service
+from solocorp_mcp.departments import content_helpers, content_mcp, content_service
 from solocorp_mcp.departments.content_mcp import content_sop, mcp
+from solocorp_mcp.task_tracking import TaskTracker
 
 
 @pytest.fixture
@@ -365,6 +366,30 @@ def test_content_server_contract_and_resource():
     assert names & ADMIN_ONLY_REGISTRY_TOOLS == set()
     assert "Content Creator SOP" in content_sop()
     assert "เสก" in content_sop()
+
+
+def test_content_task_tools_cannot_read_or_update_other_departments(tmp_path, monkeypatch):
+    tracker = TaskTracker(tmp_path / "tasks")
+    monkeypatch.setattr(content_mcp, "_task_tracker", tracker)
+    content_task = tracker.create("content", "content-creator", "private content brief")
+    qa_task = tracker.create("qa", "qa", "private QA brief")
+
+    get_task = mcp._tool_manager.get_tool("task_get_status").fn
+    list_tasks = mcp._tool_manager.get_tool("task_list").fn
+    update_task = mcp._tool_manager.get_tool("task_update_status").fn
+    create_task = mcp._tool_manager.get_tool("task_create").fn
+
+    assert json.loads(get_task(content_task["task_id"]))["task_id"] == content_task["task_id"]
+    assert json.loads(get_task(qa_task["task_id"]))["error"] == "task_not_found"
+
+    listed = json.loads(list_tasks())
+    assert [record["task_id"] for record in listed["tasks"]] == [content_task["task_id"]]
+    assert json.loads(list_tasks("qa"))["error"] == "task_scope_violation"
+
+    assert json.loads(update_task(qa_task["task_id"], "completed"))["error"] == "task_not_found"
+    assert tracker.get(qa_task["task_id"])["status"] == "pending"
+    assert json.loads(update_task(content_task["task_id"], "completed"))["status"] == "completed"
+    assert json.loads(create_task("qa", "qa", "brief"))["error"] == "task_scope_violation"
 
 
 def test_generated_audio_storage_is_binary_safe(isolated_bus):

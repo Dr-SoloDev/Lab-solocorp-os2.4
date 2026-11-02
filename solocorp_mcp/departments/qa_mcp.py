@@ -98,8 +98,11 @@ def qa_list_test_suites(limit: int = 10) -> str:
     if QA_RESULTS_ROOT.exists():
         for path in QA_RESULTS_ROOT.glob("qa-*.json"):
             try:
-                payload = json.loads(path.read_text(encoding="utf-8"))
+                evidence_bytes = path.read_bytes()
+                payload = json.loads(evidence_bytes.decode("utf-8"))
             except (json.JSONDecodeError, OSError):
+                continue
+            except UnicodeError:
                 continue
             suite_id = payload.get("suite_id")
             if not suite_id:
@@ -114,7 +117,7 @@ def qa_list_test_suites(limit: int = 10) -> str:
                     "recorded_at": recorded_at,
                     "task_id": payload.get("task_id"),
                     "evidence_file": path.name,
-                    "sha256": payload.get("sha256"),
+                    "sha256": hashlib.sha256(evidence_bytes).hexdigest(),
                 }
 
     test_suites = sorted(

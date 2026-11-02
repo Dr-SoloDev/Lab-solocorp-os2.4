@@ -491,9 +491,35 @@ def task_create(
 ) -> str:
     """Create a new task record and return its task_id."""
     try:
+        if dept != "content" or module != "content-creator":
+            return result_json(
+                {
+                    "status": "error",
+                    "error": "task_scope_violation",
+                    "message": "Content MCP tasks must use dept='content' and module='content-creator'.",
+                }
+            )
         return result_json(_task_tracker.create(dept, module, brief, task_type))
     except Exception as exc:
         return _error(exc)
+
+
+def _is_content_task(record: dict[str, Any] | None) -> bool:
+    return bool(
+        record
+        and record.get("dept") == "content"
+        and record.get("module") == "content-creator"
+    )
+
+
+def _task_not_found(task_id: str) -> str:
+    return result_json(
+        {
+            "status": "error",
+            "error": "task_not_found",
+            "message": f"task {task_id} not found",
+        }
+    )
 
 
 @mcp.tool()
@@ -501,8 +527,8 @@ def task_get_status(task_id: str) -> str:
     """Return the current status record for a task."""
     try:
         record = _task_tracker.get(task_id)
-        if record is None:
-            return result_json({"status": "error", "error": "task_not_found", "message": f"task {task_id} not found"})
+        if not _is_content_task(record):
+            return _task_not_found(task_id)
         return result_json(record)
     except Exception as exc:
         return _error(exc)
@@ -510,9 +536,17 @@ def task_get_status(task_id: str) -> str:
 
 @mcp.tool()
 def task_list(dept: str = "") -> str:
-    """List all tasks, optionally filtered by department."""
+    """List Content Creator tasks only."""
     try:
-        records = _task_tracker.list_tasks(dept or None)
+        if dept not in {"", "content"}:
+            return result_json(
+                {
+                    "status": "error",
+                    "error": "task_scope_violation",
+                    "message": "Content MCP can list only dept='content' tasks.",
+                }
+            )
+        records = _task_tracker.list_tasks("content")
         return result_json({"count": len(records), "tasks": records})
     except Exception as exc:
         return _error(exc)
@@ -527,6 +561,8 @@ def task_update_status(
 ) -> str:
     """Update task status and optional result/error detail."""
     try:
+        if not _is_content_task(_task_tracker.get(task_id)):
+            return _task_not_found(task_id)
         record = _task_tracker.update_status(
             task_id,
             status,
