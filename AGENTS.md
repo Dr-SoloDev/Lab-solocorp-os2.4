@@ -61,6 +61,12 @@ CI uses **Python 3.12**. Run repo MCP servers with the project `.venv` and their
 | govctl API | `python -m govctl_cli api start` | 8765 |
 | Loop Runner | `python -m loop_runner.main` | cron 30m |
 
+**MCP servers load their code once at startup.** An edit afterwards is invisible
+to the running process — a tool can answer from code that no longer exists.
+Check `runtime.restart_required` in any `*_department_info()` response, or run
+`scripts/restart-mcp.sh` (dry run by default, `--yes` to kill stale generations)
+and the host respawns a fresh one on the next call.
+
 ## Test (CI's exact invocation — copy verbatim)
 
 ```bash
