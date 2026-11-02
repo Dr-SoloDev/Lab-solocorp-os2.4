@@ -363,3 +363,65 @@
 - `docs/API-KEY-PROTECTION.md`: Layer 2.5 (สแกนประวัติ) + Layer 4 (console-side: สโคป/อายุ/จำนวน/งบ/โมเดล)
   + incident table 2 ค่า
 - `bus/evidence/2026-10-25/workspace-audit/`: audit.json (sha256) + REVIEW.md (F0–F7) + secret-scan.log
+
+## Session 2026-11-02 — ตรวจ repo, ปิด Wave A/B/C, และเจอ "หลักฐานปลอม" ที่ตัวเองสร้าง
+
+### ❌ What didn't (ของจริงที่ผมทำพลาดวันนี้)
+1. **ผมตั้งคำถามผิดจน Owner ตัดสินไม่ได้** — เอาคำถามที่ย้อนกลับได้ใน 20 นาที
+   ไปพ่วงกับคำถามที่ย้อนกลับไม่ได้ตลอดชีพ (rewrite history) แล้วเรียกมันว่า
+   "การตัดสินใจเดียว" → Owner ตอบตรง ๆ ว่า "ฉันไม่สามารถตัดสินใจง่าย ๆ ได้"
+   **ความผิดอยู่ที่ framing ไม่ใช่ที่ Owner**
+2. **ผมรายงานว่า "QA checker ผ่าน" ทั้งที่หลักฐานไม่เคยลงดิสก์** — MCP ตอบ `ok`
+   แต่ไม่มี `task_id` ไม่มี `sha256` และ `recorded_at` เป็น `00:00:00Z`
+   เพราะ process เป็นรุ่นก่อนการแก้ (โหลดโค้ดครั้งเดียวตอน start)
+3. **ผมเกือบ commit upstream checkout 2.5 MB** (`workers/skills/ai_animation`)
+   เพราะคิดว่า "ถูกอ้างถึง = ควรอยู่ใน git" — อ่าน runbook จึงรู้ว่าเป็น
+   sparse checkout ที่ต้อง ignore ตาม convention เดียวกับ `/reference/*`
+4. **ผมเขียนว่า "scope guard ✅ แก้แล้ว"** (ตาม audit เดิม) ทั้งที่ตรวจแค่ Core MCP —
+   `content_mcp.py` มี guard 1 จุดจาก 5 จุดที่ควรมี
+5. **ผมเสนอ "ให้ commit" ก่อนอ่าน provenance** — เปลี่ยนใจได้ตอนเห็น diff ก็จริง
+   แต่ควรอ่านก่อนเสนอ ไม่ใช่หลัง Owner อนุมัติแล้ว
+
+### 💡 Insights (เอาไปใช้ซ้ำได้)
+1. **คำถามที่ Owner ตัดสินไม่ได้ = สัญญาณว่าคำถามพัง** ไม่ใช่สัญญาณว่า Owner อ่อน
+   รัน 3 ข้อก่อนเสนอทุกครั้ง: (ก) สร้างใหม่ได้ไหม (ข) ย้อนกลับได้ไหม (ค) เจ็บตอนนี้ไหม
+   ถ้าตกข้อ (ก) — มันไม่เคยเป็นคำถามของ Owner ตั้งแต่แรก
+2. **วัดก่อนเสนอ** — "614 MB ใน git ควรทำยังไง" กลายเป็นเรื่องง่ายทันทีที่รู้ว่า
+   97% เป็น build artifact อยู่โฟลเดอร์เดียว ตัวเลขเปลี่ยนคำถามทั้งข้อ
+   ไม่ใช่แค่ทำให้ตอบง่ายขึ้น
+3. **"connected" ≠ "current"** — process ที่รันนานตอบจากโค้ดที่ถูกลบไปแล้วได้
+   อย่างมั่นใจ ต้องเทียบ "เวลา process เริ่ม" กับ "mtime ของ source"
+4. **ต้องตรวจ response shape ของ tool ที่ใช้อ้างหลักฐาน** — ถ้า response ไม่ตรงกับ
+   โค้ดบนดิสก์ (ฟิลด์หาย, timestamp แปลก) = หลักฐานนั้นไม่มีจริง
+   **tool ที่ใช้ตรวจผู้อื่น ต้องถูกตรวจด้วย**
+5. **copy-paste ระหว่างไฟล์ = จุดที่การแก้หลุด** — guard ถูกเพิ่มที่ `server.py`
+   แต่ department adapter (ตัวที่ใช้งานจริง) ไม่ได้ตาม เวลาแก้ security ใน
+   duplicated code ต้อง grep หา copy ทั้งหมดก่อนปิดงาน
+6. **build artifact ≠ ข้อมูลธุรกิจ** — ก่อนถาม "เก็บที่ไหน" ให้ถาม "สร้างใหม่ได้ไหม"
+   และอ่าน `.gitignore` ที่มีอยู่ก่อน — นโยบายอาจมีแล้วแต่ไม่ได้บังคับใช้
+   (`voiceover-*` ถูก ignore มาก่อน แต่ `local_media/` ไม่)
+7. **หลักฐาน = ไฟล์จริง + sha256 + task_id** — คำว่า "อยู่ใน git" ไม่ใช่คำตอบ
+   ถ้าไฟล์นั้นเป็น artifact ที่สร้างใหม่ได้
+8. **สคริปต์ที่ทำให้ของที่มองไม่เห็นกลายเป็นมองเห็น คือเครื่องมือ CEO ที่คุ้มที่สุด**
+   `restart-mcp.sh` ทำให้เห็น 16 process / 6 รุ่น / 15 ชั่วโมง ใน 1 วินาที
+   — ปัญหาที่แก้ไม่ได้ส่วนใหญ่ จริง ๆ คือปัญหาที่ยังไม่ถูกมองเห็น
+
+### 🔧 ที่ทำแล้ว (9 commits, `014ddee` → `23d8eda`)
+- `014ddee` contract test 16→21 tools + assert admin tool ไม่หลุดเข้า department scope
+- `2ae1006` untrack render output — tracked 640.5 MB → 10.4 MB (ไฟล์อยู่บนดิสก์ครบ)
+- `43fef13` แยก config ออกจาก runtime state + 8 tests ใหม่ (เดิมไม่มี test เลย)
+- `92d1003` SOP-06: git-of-record vs disk-of-record
+- `6f6ca24` commit 25 drafts ที่ manifest อ้างถึง (สแกน PII ก่อน)
+- `8b5c599` audit รอบ 3 + แก้คำกล่าวอ้างที่ผิดของตัวเอง
+- `e52dea3` QA evidence จริง 4 ไฟล์ (หลังพบว่า record ก่อนหน้าเป็นของปลอม)
+- `b9dc19c` ทุกแผนกตอบได้ว่า "ฉันเป็นโค้ดชุดไหน" (`runtime.restart_required`) + 11 tests
+- `23d8eda` `scripts/restart-mcp.sh` — เห็นและล้าง MCP generation ค้าง
+
+**ยืนยัน:** 1011 passed · tree สะอาด · MCP 16 รุ่น → 0 · รุ่นใหม่รายงาน `current`
+
+### 📌 Pending for next session
+- P1: scope guard ที่ department adapter (`task_get_status` / `task_list` / `task_update_status`)
+- P2: `sha256` ไม่ถูกเก็บลง evidence payload (list แสดง `null`)
+- P2: `qa_record_test_result` ยังรับ `recorded_at` จาก caller
+- L5 (parked): P1-1 history 400 MB ใน `.git` — รอ Owner, ไม่เร่ง
+- 9 commits ยังไม่ push ขึ้น `origin/main`

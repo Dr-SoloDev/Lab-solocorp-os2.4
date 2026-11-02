@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-10-25T07:12:04Z",
+  "last_updated": "2026-11-02T04:45:00Z",
   "ceo_identity": {
     "manifest": "brain/ceo-identity.md",
     "name": "เทอโบ (Turbo)",
@@ -250,7 +250,9 @@
       "status": "ready",
       "tools": 7,
       "resources": 5,
-      "auth": "3-tier"
+      "auth": "3-tier",
+      "note": "MCP server โหลดโค้ดครั้งเดียวตอน start — 'connected' ไม่ได้แปลว่า 'current'. ตรวจ runtime.restart_required ใน *_department_info(); ล้างรุ่นค้างด้วย scripts/restart-mcp.sh",
+      "departments_with_runtime_freshness": 4
     },
     "agent_worker": {
       "status": "zombie",
@@ -320,6 +322,46 @@
       "session": "2026-07-09",
       "lesson": "Command Handoff ต้องมี checkpoint + deadline ชัด — delegation ≠ abandonment",
       "impact": "ใช้ Command Handoff template ทุกครั้งที่ delegate P0/P1"
+    },
+    {
+      "session": "2026-11-02",
+      "lesson": "คำถามที่ Owner ตัดสินไม่ได้ = สัญญาณว่าคำถามพัง ไม่ใช่ Owner อ่อน — รัน 3 ข้อก่อนเสนอ: สร้างใหม่ได้ไหม / ย้อนกลับได้ไหม / เจ็บตอนนี้ไหม",
+      "impact": "แยก Wave A (ย้อนกลับได้, CEO ตัดสิน) ออกจาก Wave B (rewrite history, L5) — Owner อนุมัติในคำถามเดียว"
+    },
+    {
+      "session": "2026-11-02",
+      "lesson": "วัดก่อนเสนอ: '614 MB ใน git ทำยังไง' ง่ายขึ้นทันทีเมื่อรู้ว่า 97% เป็น build artifact อยู่โฟลเดอร์เดียว (local_media)",
+      "impact": "untrack render output — tracked 640.5 MB → 10.4 MB โดยไม่ต้อง rewrite history"
+    },
+    {
+      "session": "2026-11-02",
+      "lesson": "'connected' ≠ 'current' — MCP server โหลดโค้ดครั้งเดียวตอน start จึงตอบจากโค้ดที่ถูกลบไปแล้วได้อย่างมั่นใจ",
+      "impact": "solocorp_mcp/runtime_freshness.py + runtime block ใน *_department_info() ทุกแผนก + 11 tests"
+    },
+    {
+      "session": "2026-11-02",
+      "lesson": "ต้องตรวจ response shape ของ tool ที่ใช้อ้างหลักฐาน — ถ้าฟิลด์หาย/timestamp แปลก = หลักฐานไม่มีจริง (tool ที่ใช้ตรวจผู้อื่นต้องถูกตรวจด้วย)",
+      "impact": "ยกเลิก QA record ที่เป็นของปลอม บันทึกใหม่ผ่าน code path สด พร้อม sha256 + task_id"
+    },
+    {
+      "session": "2026-11-02",
+      "lesson": "copy-paste ระหว่างไฟล์ = จุดที่การแก้หลุด — guard ถูกเพิ่มที่ server.py แต่ department adapter ที่ใช้งานจริงไม่ได้ตาม",
+      "impact": "audit แก้คำกล่าวอ้าง 'scope guard ✅' เป็น 'แก้เฉพาะ Core MCP' ; งานซ่อม adapter เข้า P1"
+    },
+    {
+      "session": "2026-11-02",
+      "lesson": "build artifact ≠ ข้อมูลธุรกิจ — ก่อนถาม 'เก็บที่ไหน' ให้ถาม 'สร้างใหม่ได้ไหม' และอ่าน .gitignore ที่มีอยู่ก่อน (นโยบายอาจมีแล้วแต่ไม่ได้บังคับใช้)",
+      "impact": "local_media/ ถูก ignore แบบเดียวกับ voiceover-* ที่มีนโยบายมาก่อนแล้ว"
+    },
+    {
+      "session": "2026-11-02",
+      "lesson": "อ่าน provenance/license ก่อนเสนอ commit ของ third-party ไม่ใช่หลัง Owner อนุมัติ",
+      "impact": "ai_animation เป็น sparse checkout → ignore ไม่ใช่ commit (เกือบใส่ upstream 2.5 MB เข้า repo)"
+    },
+    {
+      "session": "2026-11-02",
+      "lesson": "หลักฐาน = ไฟล์จริงบนดิสก์ + sha256 + task_id — 'อยู่ใน git' ไม่ใช่คำตอบถ้าไฟล์เป็น artifact ที่สร้างใหม่ได้",
+      "impact": "SOP-06 เพิ่มตาราง git-of-record vs disk-of-record"
     }
   ],
   "pending_initiatives": [
@@ -678,6 +720,32 @@
         "🟡 F0.5: รวม .env 27 จุดเป็นแหล่งเดียว + ENV-INVENTORY (ยังไม่ทำ — รอ Owner เคาะ)",
         "🟡 อีก 19 แผนกยัง D0 — ใช้ content-creator เป็นแม่แบบ"
       ]
+    },
+    {
+      "date": "2026-11-02",
+      "duration": "~3h",
+      "summary": "ตรวจ repo ทั้งระบบ → พบ CI แดง 1 ตัว → ปิด Wave A/B/C (storage + evidence + freshness) และพบว่าตัวเองรายงานหลักฐานปลอมจาก MCP process ที่ค้างโค้ดเก่า",
+      "key_decisions": [
+        "แยก Wave A (ย้อนกลับได้) / B (L5 rewrite history, parked) / C (เก็บกวาด) — ไม่ยัดเป็นการตัดสินใจเดียว",
+        "render output (local_media, concat_renders) เป็น build artifact → ไม่ track ใน git แต่เก็บบนดิสก์",
+        "module registry แยก config (tracked) ออกจาก runtime state (git-ignored)",
+        "ทุกแผนกรายงาน runtime.restart_required เพื่อให้ 'connected' ไม่ถูกตีความว่า 'current'",
+        "CEO แก้ไฟล์เองใน session นี้ (ไม่มี MCP tool ที่ลงมือได้) และให้ MCP เป็น checker"
+      ],
+      "achievements": [
+        "9 commits: 014ddee → 23d8eda ; test 992 → 1011 passed (+19)",
+        "tracked under central_bus/content 640.5 MB → 10.4 MB (943 → 393 ไฟล์) โดยไม่ rewrite history",
+        "ModuleRegistry มี test ครั้งแรก (8) — เดิมไม่มีเลย",
+        "พบและแก้: contract test drift, runtime state ปนใน tracked config, 25 drafts ที่ manifest อ้างถึงแต่ git ไม่มี",
+        "scripts/restart-mcp.sh เผย 16 process / 6 รุ่น / อายุสูงสุด 15 ชม. — ล้างเหลือ 0 และยืนยันรุ่นใหม่ current"
+      ],
+      "pending_next": [
+        "P1: scope guard ที่ department adapter (task_get_status/list/update ใน content_mcp.py)",
+        "P2: sha256 ไม่ถูกเก็บลง evidence payload (list แสดง null)",
+        "P2: qa_record_test_result รับ recorded_at จาก caller (backdate ได้)",
+        "L5 parked: history 400 MB ใน .git (git filter-repo) — รอ Owner",
+        "push 9 commits ขึ้น origin/main"
+      ]
     }
   ],
   "current_assessment": {
@@ -706,8 +774,8 @@
       "✅ Agent Worker process: no longer zombie — can poll Central Bus queue"
     ]
   },
-  "saved_at": "2026-10-25T06:00:00Z",
-  "latest_commit": "0834528",
+  "saved_at": "2026-11-02T04:45:00Z",
+  "latest_commit": "23d8eda",
   "state_snapshot": {
     "date": "2026-10-10",
     "p0_fixes_today": {

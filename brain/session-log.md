@@ -1101,3 +1101,30 @@ State tracking files: 0
 - 🟡 อีก 19 แผนกยัง D0 — ใช้ content-creator เป็นแม่แบบ
 
 ---
+
+## Session Auto-Summary — 2026-11-02 04:42 UTC
+
+### Git
+```
+23d8eda ops(scripts): restart-mcp.sh to clear stale MCP generations
+b9dc19c feat(mcp): every department can report whether its process is current
+e52dea3 chore(qa): store real evidence files for qa-001/002/003 (Wave A+C)
+8b5c599 docs(audit): record round-3 storage split, correct scope-guard claim
+6f6ca24 chore(content): commit campaign drafts referenced by tracked manifests
+92d1003 docs(sop): record git-of-record vs disk-of-record for evidence
+43fef13 refactor(registry): split tracked config fro
+```
+Uncommitted: 2 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- P1: scope guard ที่ department adapter (task_get_status/list/update ใน content_mcp.py)
+- P2: sha256 ไม่ถูกเก็บลง evidence payload (list แสดง null)
+- P2: qa_record_test_result รับ recorded_at จาก caller (backdate ได้)
+- L5 parked: history 400 MB ใน .git (git filter-repo) — รอ Owner
+- push 9 commits ขึ้น origin/main
+
+---
