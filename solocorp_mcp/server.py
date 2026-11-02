@@ -747,6 +747,7 @@ Use this server when you need to:
         description: str = "",
     ) -> str:
         """Update one module's status in the registry."""
+        _check_scope("admin")
         try:
             return json.dumps(
                 _module_registry.update(module_id, status, description or None),

@@ -380,18 +380,6 @@ def module_registry_status() -> str:
         return _error(exc)
 
 
-@mcp.tool()
-def module_registry_update(
-    module_id: str,
-    status: str,
-    description: str = "",
-) -> str:
-    """Update one module's status in the registry."""
-    try:
-        return result_json(_module_registry.update(module_id, status, description or None))
-    except Exception as exc:
-        return _error(exc)
-
 
 @mcp.tool()
 def task_create(
