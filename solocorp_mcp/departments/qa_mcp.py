@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,9 @@ from ..task_tracking import TaskTracker
 ROOT = Path(__file__).resolve().parent.parent.parent
 _module_registry = ModuleRegistry()
 _task_tracker = TaskTracker()
+
+# suite_id ต้องเป็นรูปแบบปลอดภัย ป้องกัน path traversal ผ่านชื่อไฟล์
+_SUITE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 
 QA_RESULTS_ROOT = Path(
     os.environ.get("SOLOCORP_QA_RESULTS_ROOT", ROOT / "central_bus" / "content" / "qa_results")
@@ -85,34 +89,42 @@ def qa_department_info() -> str:
 
 @mcp.tool()
 def qa_list_test_suites(limit: int = 10) -> str:
-    """List recent QA test suites with status summary."""
+    """List recent QA test suites with status summary from stored evidence."""
     from ..bus_store import as_json
+
+    suites: dict[str, dict[str, Any]] = {}
+    if QA_RESULTS_ROOT.exists():
+        for path in QA_RESULTS_ROOT.glob("qa-*.json"):
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                continue
+            suite_id = payload.get("suite_id")
+            if not suite_id:
+                continue
+            recorded_at = payload.get("recorded_at", "")
+            existing = suites.get(suite_id)
+            if existing is None or recorded_at > existing.get("recorded_at", ""):
+                suites[suite_id] = {
+                    "suite_id": suite_id,
+                    "status": payload.get("result", "unknown"),
+                    "note": payload.get("note", ""),
+                    "recorded_at": recorded_at,
+                    "task_id": payload.get("task_id"),
+                    "evidence_file": path.name,
+                    "sha256": payload.get("sha256"),
+                }
+
+    test_suites = sorted(
+        suites.values(), key=lambda s: s.get("recorded_at", ""), reverse=True
+    )[:limit]
 
     return as_json(
         {
             "status": "ok",
             "department": "qa",
-            "test_suites": [
-                {
-                    "suite_id": "qa-001",
-                    "name": "Content MCP Tool Tests",
-                    "status": "passed",
-                    "owner": "qa-automation",
-                },
-                {
-                    "suite_id": "qa-002",
-                    "name": "Module Registry Tests",
-                    "status": "pending",
-                    "owner": "qa-automation",
-                },
-                {
-                    "suite_id": "qa-003",
-                    "name": "Task Tracking Workflow Tests",
-                    "status": "passed",
-                    "owner": "qa-evidence",
-                },
-            ][:limit],
-            "count": 3,
+            "test_suites": test_suites,
+            "count": len(test_suites),
         }
     )
 
@@ -130,6 +142,16 @@ def qa_record_test_result(suite_id: str, status: str, note: str = "") -> str:
                 "status": "error",
                 "error": "invalid_status",
                 "message": f"status must be one of: {', '.join(sorted(valid))}",
+            }
+        )
+
+    # suite_id ต้องเป็นรูปแบบปลอดภัย ป้องกัน path traversal ผ่านชื่อไฟล์
+    if not isinstance(suite_id, str) or not _SUITE_ID_RE.fullmatch(suite_id):
+        return as_json(
+            {
+                "status": "error",
+                "error": "invalid_suite_id",
+                "message": "suite_id must contain only letters, numbers, '_' or '-' and be 1-64 characters",
             }
         )
 

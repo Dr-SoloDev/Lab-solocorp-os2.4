@@ -601,6 +601,14 @@ Use this server when you need to:
                 "error": "no_command",
                 "message": f"Module '{module_id}' has no command configured",
             }, ensure_ascii=False)
+        # ตรวจสถานะ module ก่อนเริ่ม process — disabled/error ต้องไม่ถูกเรียก
+        module_status = entry.get("status", "enabled")
+        if module_status not in {"enabled", "connected"}:
+            return json.dumps({
+                "status": "error",
+                "error": "module_not_available",
+                "message": f"Module '{module_id}' status is '{module_status}', calls are blocked",
+            }, ensure_ascii=False)
 
         # Parse arguments
         try:
@@ -627,6 +635,17 @@ Use this server when you need to:
                 "arguments": args,
             }, timeout=60)
             elapsed_ms = round((time.perf_counter() - start) * 1000, 2)
+            # ตรวจว่า department tool คืน isError หรือไม่ ถ้าเป็น error ต้องตอบ status: error
+            if isinstance(result, dict) and result.get("isError") is True:
+                return json.dumps({
+                    "status": "error",
+                    "error": "department_tool_error",
+                    "message": "department tool reported an error",
+                    "module_id": module_id,
+                    "tool_name": tool_name,
+                    "response_time_ms": elapsed_ms,
+                    "result": result,
+                }, ensure_ascii=False)
             return json.dumps({
                 "status": "success",
                 "module_id": module_id,
@@ -681,6 +700,7 @@ Use this server when you need to:
 
     @mcp.tool()
     def task_list(dept: str = "", include_brief: bool = False) -> dict:
+        _check_scope("team")
         try:
             tasks = _task_tracker.list_tasks(dept or None, include_brief=include_brief)
             return {"count": len(tasks), "tasks": tasks}
