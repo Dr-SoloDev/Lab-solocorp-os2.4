@@ -72,6 +72,14 @@ tools/stealth-browser-mcp/
 tools/github-mcp/
 tools/vectorcraft/
 
+# Pinned upstream checkouts (clone/install locally, never vendored)
+# See docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md "Installed Engines"
+tools/pdoom-video/
+workers/skills/ai_animation/
+
+# Perch local tool config (personal, not part of SoloCorp OS)
+.perch/
+
 # ML model weights
 *.pt
 *.pth

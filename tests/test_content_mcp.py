@@ -322,26 +322,43 @@ def test_publish_gate_truncates_long_report_task_id(isolated_bus):
     assert result["report"]["filename"].endswith(".md")
 
 
+# Department-scoped tools owned by the Content Creator department.
+CONTENT_DEPARTMENT_TOOLS = {
+    "content_department_info",
+    "create_content_draft",
+    "create_video_script",
+    "design_visual_prompt",
+    "design_audio_experience",
+    "generate_voice_lipsync_prompt",
+    "generate_voiceover",
+    "review_publish_gate",
+    "record_human_approval",
+    "save_human_edited_artifact",
+    "build_ffmpeg_job_manifest",
+    "build_ff_tracking_manifest",
+    "record_ffmpeg_job_result",
+    "render_campaign_media_local",
+    "render_campaign_with_concat",
+    "ingest_client_generated_artifact",
+}
+
+# Platform tools mounted on every department MCP: task tracking + registry read.
+CONTENT_PLATFORM_TOOLS = {
+    "task_create",
+    "task_get_status",
+    "task_update_status",
+    "task_list",
+    "module_registry_status",
+}
+
+# Admin-only registry writes. A department scope must never expose these.
+ADMIN_ONLY_REGISTRY_TOOLS = {"module_registry_update"}
+
+
 def test_content_server_contract_and_resource():
     names = {tool.name for tool in mcp._tool_manager.list_tools()}
-    assert names == {
-        "content_department_info",
-        "create_content_draft",
-        "create_video_script",
-        "design_visual_prompt",
-        "design_audio_experience",
-        "generate_voice_lipsync_prompt",
-        "generate_voiceover",
-        "review_publish_gate",
-        "record_human_approval",
-        "save_human_edited_artifact",
-        "build_ffmpeg_job_manifest",
-        "build_ff_tracking_manifest",
-        "record_ffmpeg_job_result",
-        "render_campaign_media_local",
-        "render_campaign_with_concat",
-        "ingest_client_generated_artifact",
-    }
+    assert names == CONTENT_DEPARTMENT_TOOLS | CONTENT_PLATFORM_TOOLS
+    assert names & ADMIN_ONLY_REGISTRY_TOOLS == set()
     assert "Content Creator SOP" in content_sop()
     assert "เสก" in content_sop()
 
