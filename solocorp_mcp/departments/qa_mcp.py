@@ -7,13 +7,26 @@ details internal.
 
 from __future__ import annotations
 
+import hashlib
+import json
+import os
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 
 from ..module_registry import ModuleRegistry
+from ..task_tracking import TaskTracker
 
+ROOT = Path(__file__).resolve().parent.parent
 _module_registry = ModuleRegistry()
+_task_tracker = TaskTracker()
+
+QA_RESULTS_ROOT = Path(
+    os.environ.get("SOLOCORP_QA_RESULTS_ROOT", ROOT / "central_bus" / "content" / "qa_results")
+)
+QA_RESULTS_ROOT.mkdir(parents=True, exist_ok=True)
 
 mcp = FastMCP(
     "qa",
@@ -106,7 +119,8 @@ def qa_list_test_suites(limit: int = 10) -> str:
 
 @mcp.tool()
 def qa_record_test_result(suite_id: str, status: str, note: str = "") -> str:
-    """Record a test result for a QA suite."""
+    """Record a test result for a QA suite with real evidence stored to disk."""
+
     from ..bus_store import as_json
 
     valid = {"passed", "failed", "skipped", "error"}
@@ -119,14 +133,45 @@ def qa_record_test_result(suite_id: str, status: str, note: str = "") -> str:
             }
         )
 
+    # Create a linked task record for traceability
+    task_record = _task_tracker.create(
+        dept="qa",
+        module="qa",
+        brief=f"QA test result: suite={suite_id} status={status} note={note}",
+        task_type="qa_test",
+    )
+    task_id = task_record["task_id"]
+    recorded_at = task_record["created_at"]
+
+    # Persist evidence payload as JSON
+    evidence = {
+        "schema_version": 1,
+        "task_id": task_id,
+        "department": "qa",
+        "suite_id": suite_id,
+        "result": status,
+        "note": note,
+        "recorded_at": recorded_at,
+        "recorded_by": "qa MCP tool call",
+    }
+    payload = json.dumps(evidence, ensure_ascii=False, sort_keys=True, indent=2)
+    digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    filename = f"qa-{suite_id}-{task_id[5:]}.json"
+    result_path = QA_RESULTS_ROOT / filename
+    result_path.write_text(payload, encoding="utf-8")
+
     return as_json(
         {
             "status": "ok",
             "department": "qa",
+            "task_id": task_id,
             "suite_id": suite_id,
             "result": status,
             "note": note,
-            "recorded_at": "2026-11-02T00:00:00Z",
+            "recorded_at": recorded_at,
+            "result_path": str(result_path.relative_to(ROOT)),
+            "sha256": digest,
+            "evidence": "stored_to_disk",
         }
     )
 
