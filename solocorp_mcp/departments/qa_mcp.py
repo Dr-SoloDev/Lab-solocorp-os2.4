@@ -19,7 +19,7 @@ from mcp.server.fastmcp import FastMCP
 from ..module_registry import ModuleRegistry
 from ..task_tracking import TaskTracker
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent.parent
 _module_registry = ModuleRegistry()
 _task_tracker = TaskTracker()
 
