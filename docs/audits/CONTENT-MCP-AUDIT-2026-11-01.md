@@ -600,7 +600,7 @@ python -m pytest tests/test_content_mcp.py tests/test_media_services.py \
 |:--|:--|:--:|
 | P0 | Gate รั่ว D2 / `gate_passed` เป็น False ตลอดกาล | ยังคงเป็น finding (ต้องแก้ใน publish gate logic) |
 | P1 | Path traversal (task_id, suite_id) | ✅ แก้แล้ว |
-| P1 | ขาด scope guard (task_get_status, task_update_status, task_list) | ✅ แก้แล้ว |
+| P1 | ขาด scope guard (task_get_status, task_update_status, task_list) | ⚠️ แก้เฉพาะ Core MCP — **department adapter ยังไม่มี guard** (พบ 2026-11-02, §11.13) |
 | P1 | Brief รั่วใน task_list | ✅ แก้แล้ว (ค่าเริ่มต้นซ่อน + scope guard) |
 | P1 | Department tool error ซ่อนเป็น success | ✅ แก้แล้ว |
 | P1 | โมดูล disabled ยังถูกเรียกได้ | ✅ แก้แล้ว |
@@ -608,3 +608,39 @@ python -m pytest tests/test_content_mcp.py tests/test_media_services.py \
 | P2 | QA list แสดงสถานะตัวอย่าง | ✅ แก้แล้ว |
 
 เอกสารนี้จะอัปเดตต่อเมื่อมีการแก้ไข finding ที่เหลือ (โดยเฉพาะ P0 gate logic และ P1-1/P1-2/P1-3 ในตาราง 11.9 ที่เกี่ยวกับ central bus storage และ `_load_campaign` O(n))
+
+### 11.13 การแก้ไขหลัง audit (2026-11-02 รอบที่ 3) — แยก storage ออกจาก git
+
+**P1-1 เปลี่ยนสถานะเป็น 🟡 ปิดบางส่วน** — ปิดเฉพาะ "ประวัติใหม่" ส่วน "ประวัติเก่า" รอ Owner (L5)
+
+วัดก่อนแก้ (ทั้ง `central_bus/content/` ที่ track อยู่):
+
+| ชนิด | ไฟล์ | ขนาด | สัดส่วน | ลักษณะ |
+|:--|--:|--:|--:|:--|
+| `.wav` | 371 | 553 MB | 86.3% | voice ต่อ phrase ใน `local_media/` |
+| `.mp4` | 20 | 67.5 MB | 10.5% | ผล render |
+| `.png` | 100 | 14.4 MB | 2.2% | scene frames |
+| `.json` | 291 | 3.1 MB | 0.5% | manifest/job/result (sha256) |
+| `.md` | 113 | 0.4 MB | 0.1% | draft/script |
+
+621 MB จาก 640 MB (97%) อยู่ใต้ `local_media/` เดียว และเป็น output ของ
+`content_service.py:1563` ที่สร้างใหม่ได้ทุกครั้งที่ render
+
+| สิ่งที่ทำ | commit | ผล |
+|:--|:--|:--|
+| untrack `local_media/`, `concat_renders/` (ไม่ลบไฟล์) | `2ae1006` | tracked ใน `content/` 640.5 MB → **10.4 MB** (943 → 393 ไฟล์) |
+| แยก config/state ของ module registry | `43fef13` | heartbeat ไม่ทำให้ tracked file สกปรกอีก; config ย้ายออกจาก `central_bus/content/` |
+| commit draft 25 ไฟล์ที่ manifest อ้างถึง | `6f6ca24` | record ไม่ชี้ไปยังไฟล์ที่ git ไม่มี (สแกน PII/secrets แล้วสะอาด) |
+| บันทึกนโยบายหลักฐานใน SOP-06 | `92d1003` | แยก git-of-record กับ disk-of-record |
+
+**ยังคงเปิดอยู่:**
+
+| finding | สถานะ | ต้องมีอะไร |
+|:--|:--|:--|
+| P1-1 ประวัติเก่า 400 MB ใน `.git` | 🔴 PARKED (L5) | `git filter-repo` = เขียน history ใหม่, hash เปลี่ยน, clone ใหม่ — Owner ตัดสิน, ไม่เร่ง |
+| P1-2 `_load_campaign` O(n) | 🔴 ยังไม่แก้ | ต้องมี read model ก่อน |
+| P1-3 / P1-4 | 🔴 ยังไม่แก้ | — |
+| department adapter ไม่มี scope guard | 🔴 พบใหม่ 2026-11-02 | `content_mcp.py` มี `_check_scope` แค่ 1 จุด (`module_registry_status`) แต่ `task_get_status`/`task_list`/`task_update_status`/`task_create` ไม่มี ทั้งที่ `server.py` มี — ต้นเหตุคือ platform tool ถูก copy ซ้ำระหว่างสองไฟล์ |
+| `qa_record_test_result` รับ `recorded_at` จาก caller | 🟡 พบใหม่ | QA evidence backdate ได้ — ควรให้ server stamp เวลาเอง |
+| render output ไม่มี backup อีกต่อไป | 🟡 ยอมรับ | disk-of-record; สร้างใหม่ได้จาก manifest ที่ tracked |
+
