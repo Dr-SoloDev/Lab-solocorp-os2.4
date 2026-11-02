@@ -1,0 +1,13 @@
+{
+  "task_id": "task-89c5e24e5335",
+  "dept": "qa",
+  "module": "qa",
+  "task_type": "qa_test",
+  "status": "pending",
+  "brief": "QA test result: suite=qa-audit-final status=passed note=final audit evidence",
+  "created_at": "2026-11-02T02:20:38.699877+00:00",
+  "started_at": null,
+  "completed_at": null,
+  "result_ref": null,
+  "error_detail": null
+}

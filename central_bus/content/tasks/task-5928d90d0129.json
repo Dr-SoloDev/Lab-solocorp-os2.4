@@ -1,0 +1,13 @@
+{
+  "task_id": "task-5928d90d0129",
+  "dept": "content",
+  "module": "content-creator",
+  "task_type": "content",
+  "status": "pending",
+  "brief": "secret brief text",
+  "created_at": "2026-11-02T02:23:09.568646+00:00",
+  "started_at": null,
+  "completed_at": null,
+  "result_ref": null,
+  "error_detail": null
+}

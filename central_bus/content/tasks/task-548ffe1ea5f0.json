@@ -1,0 +1,13 @@
+{
+  "task_id": "task-548ffe1ea5f0",
+  "dept": "content",
+  "module": "content-creator",
+  "task_type": "content",
+  "status": "completed",
+  "brief": "audit test",
+  "created_at": "2026-11-02T01:57:09.728261+00:00",
+  "started_at": null,
+  "completed_at": "2026-11-02T01:57:09.729908+00:00",
+  "result_ref": "central_bus/content/x.json",
+  "error_detail": null
+}
