@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eff4ff"/><stop offset="1" stop-color="#dce6f7"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#78b9aa" stop-opacity=".42"/><stop offset="1" stop-color="#78b9aa" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+  <circle cx="920" cy="230" r="430" fill="url(#glow)"/>
+  <circle cx="90" cy="1480" r="480" fill="#78b9aa" opacity=".12"/>
+  <path d="M0 250 C250 330 380 185 620 255 S930 350 1080 250" fill="none" stroke="#ffffff" stroke-width="14" opacity=".65"/>
+  <rect x="60" y="86" width="960" height="92" rx="46" fill="#142c51" opacity=".95"/>
+  <circle cx="116" cy="132" r="18" fill="#6dd6bd"/>
+  <text x="158" y="148" font-family="Noto Sans Thai, sans-serif" font-size="32" font-weight="700" letter-spacing="1" fill="#ffffff">SOLOCORP · CONTENT</text>
+  <text x="956" y="148" text-anchor="end" font-family="Noto Sans Thai, sans-serif" font-size="30" font-weight="700" fill="#a9c3ee">05 / 06</text>
+  <rect x="86" y="395" width="585" height="760" rx="46" fill="#fff" stroke="#193a69" stroke-width="11"/><text x="145" y="492" class="label navy">R1 — R5</text><g fill="none" stroke="#7d91b2" stroke-width="10"><rect x="145" y="555" width="42" height="42" rx="9"/><rect x="145" y="665" width="42" height="42" rx="9"/><rect x="145" y="775" width="42" height="42" rx="9"/><rect x="145" y="885" width="42" height="42" rx="9"/><rect x="145" y="995" width="42" height="42" rx="9"/></g><g stroke="#a9b6cb" stroke-width="18" stroke-linecap="round"><path d="M225 576h340M225 686h300M225 796h335M225 906h275M225 1016h320"/></g><rect x="140" y="1240" width="500" height="120" rx="38" fill="#193a69"/><circle cx="196" cy="1300" r="24" fill="#69d3b4"/><text x="245" y="1317" class="small white">HUMAN REVIEW</text>
+  <path d="M70 1650h940" stroke="#ffffff" stroke-width="6" opacity=".8"/>
+</svg>

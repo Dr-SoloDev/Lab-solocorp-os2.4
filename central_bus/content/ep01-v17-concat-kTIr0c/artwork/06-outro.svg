@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <style>.label{font-family:'Noto Sans Thai',sans-serif;font-size:54px;font-weight:700}.small{font-family:'Noto Sans Thai',sans-serif;font-size:36px;font-weight:700}.blue{fill:#234c86}.navy{fill:#182b4b}.white{fill:#fff}.red{fill:#cc4251}</style>
+  </defs>
+  <rect width="1080" height="1920" fill="#eaf2ff"/>
+  <circle cx="920" cy="230" r="430" fill="#c7d9ff" opacity=".7"/>
+  <circle cx="90" cy="1480" r="480" fill="#f8a4c0" opacity=".22"/>
+  <path d="M0 250 C250 330 380 185 620 255 S930 350 1080 250" fill="none" stroke="#ffffff" stroke-width="14" opacity=".65"/>
+  <rect x="60" y="86" width="960" height="92" rx="46" fill="#142c51" opacity=".95"/>
+  <circle cx="116" cy="132" r="18" fill="#6dd6bd"/>
+  <text x="158" y="148" font-family="Noto Sans Thai, sans-serif" font-size="32" font-weight="700" letter-spacing="1" fill="#ffffff">SOLOCORP · CONTENT</text>
+  <text x="956" y="148" text-anchor="end" font-family="Noto Sans Thai, sans-serif" font-size="30" font-weight="700" fill="#a9c3ee">06 / 06</text>
+  <rect x="100" y="390" width="620" height="360" rx="54" fill="#fff" stroke="#f178a2" stroke-width="12"/><text x="180" y="535" class="label navy">NEXT CLIP</text><path d="M180 610h450M180 665h300" stroke="#93a8c8" stroke-width="20" stroke-linecap="round"/><circle cx="850" cy="410" r="54" fill="#ffcf54"/><circle cx="915" cy="1000" r="32" fill="#f178a2"/><circle cx="160" cy="1200" r="28" fill="#4e8de7"/>
+  <path d="M70 1835h940" stroke="#8092b6" stroke-width="5" opacity=".45"/>
+</svg>

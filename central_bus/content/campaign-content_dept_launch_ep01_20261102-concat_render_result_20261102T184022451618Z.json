@@ -1,0 +1,97 @@
+{
+  "approval_effect": "none",
+  "audio_cue_sheet_filename": "campaign-content_dept_launch_ep01_20261102-audio-cue-campaign-co_20261102T175838013743Z.md",
+  "campaign_id": "content_dept_launch_ep01_20261102",
+  "caption_count": 6,
+  "caption_source": "caller",
+  "concat_version": {
+    "apiVersion": "0.2",
+    "capabilities": [
+      "events",
+      "mcp"
+    ],
+    "concat": "0.2.8",
+    "dirs": {
+      "config": "/home/drsolodev/.opencode/concat/config/app.concat.editor",
+      "data": "/home/drsolodev/.opencode/concat/data/app.concat.editor"
+    },
+    "mcp": {
+      "mode": "headless",
+      "writesUnder": [
+        "/data/projects/Lab-solocorp-os2.4/central_bus/content"
+      ]
+    }
+  },
+  "execution_mode": "local_concat_mcp_headless",
+  "execution_status": "completed",
+  "inputs": [
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/piper-01-intro-hook.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 0.0
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/piper-02-brief.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 13.8
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/piper-03-team-handoff.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 27.9
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/piper-04-source-rights.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 43.56666666666667
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/piper-05-human-review.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 59.86666666666667
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/piper-06-outro.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 75.06666666666666
+    },
+    {
+      "kind": "audio",
+      "path": "content/ep01-v17-piper-internal-draft.wav",
+      "source_kind": "generated_audio",
+      "start_seconds": 0.0
+    }
+  ],
+  "job_id": "concat-a4da22fb1bb543bb863f75d6e947eddc",
+  "lifecycle_state": "client_generated",
+  "output": {
+    "bytes": 4224870,
+    "path": "content/concat_renders/content_dept_launch_ep01_20261102/concat-a4da22fb1bb543bb863f75d6e947eddc/content_dept_launch_ep01_2026110-e947eddc.mp4",
+    "probe": {
+      "duration_seconds": 90.1,
+      "video_streams": [
+        {
+          "avg_frame_rate": "30/1",
+          "codec_type": "video",
+          "height": 1920,
+          "width": 1080
+        }
+      ]
+    },
+    "sha256": "1bbce3864e0fe5a2bb094eeaaa716febeb1fed1ed5396cfe910f81545eb4367e"
+  },
+  "project_file": "content/concat_projects/content_dept_launch_ep01_20261102/concat-a4da22fb1bb543bb863f75d6e947eddc/content_dept_launch_ep01_2026110-e947eddc/concat.json",
+  "project_path": "content/concat_projects/content_dept_launch_ep01_20261102/concat-a4da22fb1bb543bb863f75d6e947eddc/content_dept_launch_ep01_2026110-e947eddc",
+  "provider": "concat-mcp",
+  "publication_status": "blocked_pending_human_approval_and_rights_review",
+  "runtime_gate": "generated_assets_only_pending_independent_concat_runtime_verification",
+  "schema_version": 1,
+  "script_filename": "campaign-content_dept_launch_ep01_20261102-human-edit-campaign-c_20261102T175837711552Z.md",
+  "sound_delivery_filename": null
+}

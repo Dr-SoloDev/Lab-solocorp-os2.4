@@ -1,0 +1,97 @@
+{
+  "approval_effect": "none",
+  "audio_cue_sheet_filename": "campaign-content_dept_launch_ep01_20261102-audio-cue-campaign-co_20261102T175838013743Z.md",
+  "campaign_id": "content_dept_launch_ep01_20261102",
+  "caption_count": 6,
+  "caption_source": "caller",
+  "concat_version": {
+    "apiVersion": "0.2",
+    "capabilities": [
+      "events",
+      "mcp"
+    ],
+    "concat": "0.2.8",
+    "dirs": {
+      "config": "/home/drsolodev/.opencode/concat/config/app.concat.editor",
+      "data": "/home/drsolodev/.opencode/concat/data/app.concat.editor"
+    },
+    "mcp": {
+      "mode": "headless",
+      "writesUnder": [
+        "/data/projects/Lab-solocorp-os2.4/central_bus/content"
+      ]
+    }
+  },
+  "execution_mode": "local_concat_mcp_headless",
+  "execution_status": "completed",
+  "inputs": [
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/elevenlabs-01-intro-hook.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 0.0
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/elevenlabs-02-brief.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 14.366666666666667
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/elevenlabs-03-team-handoff.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 29.066666666666666
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/elevenlabs-04-source-rights.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 45.43333333333333
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/elevenlabs-05-human-review.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 62.43333333333333
+    },
+    {
+      "kind": "video",
+      "path": "content/ep01-v17-concat-kTIr0c/scene-videos/elevenlabs-06-outro.mp4",
+      "source_kind": "generated_visual",
+      "start_seconds": 78.3
+    },
+    {
+      "kind": "audio",
+      "path": "content/campaign-content_dept_launch_ep01_20261102-voiceover-ep01-v17-el_20261102T175920081377Z.mp3",
+      "source_kind": "elevenlabs_voiceover",
+      "start_seconds": 0.0
+    }
+  ],
+  "job_id": "concat-9e1280821f0541dea02e3e7128d8d7dc",
+  "lifecycle_state": "client_generated",
+  "output": {
+    "bytes": 4447919,
+    "path": "content/concat_renders/content_dept_launch_ep01_20261102/concat-9e1280821f0541dea02e3e7128d8d7dc/content_dept_launch_ep01_2026110-28d8d7dc.mp4",
+    "probe": {
+      "duration_seconds": 94.0,
+      "video_streams": [
+        {
+          "avg_frame_rate": "30/1",
+          "codec_type": "video",
+          "height": 1920,
+          "width": 1080
+        }
+      ]
+    },
+    "sha256": "eae4c083af20c41bd44ebdafa7ec6c39c442121fb57acb1a5314e81b3ddeded2"
+  },
+  "project_file": "content/concat_projects/content_dept_launch_ep01_20261102/concat-9e1280821f0541dea02e3e7128d8d7dc/content_dept_launch_ep01_2026110-28d8d7dc/concat.json",
+  "project_path": "content/concat_projects/content_dept_launch_ep01_20261102/concat-9e1280821f0541dea02e3e7128d8d7dc/content_dept_launch_ep01_2026110-28d8d7dc",
+  "provider": "concat-mcp",
+  "publication_status": "blocked_pending_human_approval_and_rights_review",
+  "runtime_gate": "generated_assets_only_pending_independent_concat_runtime_verification",
+  "schema_version": 1,
+  "script_filename": "campaign-content_dept_launch_ep01_20261102-human-edit-campaign-c_20261102T175837711552Z.md",
+  "sound_delivery_filename": null
+}

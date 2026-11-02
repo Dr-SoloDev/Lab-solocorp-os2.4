@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9f5ff"/><stop offset="1" stop-color="#d7e8ff"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#ffd775" stop-opacity=".42"/><stop offset="1" stop-color="#ffd775" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+  <circle cx="920" cy="230" r="430" fill="url(#glow)"/>
+  <circle cx="90" cy="1480" r="480" fill="#ffd775" opacity=".12"/>
+  <path d="M0 250 C250 330 380 185 620 255 S930 350 1080 250" fill="none" stroke="#ffffff" stroke-width="14" opacity=".65"/>
+  <rect x="60" y="86" width="960" height="92" rx="46" fill="#142c51" opacity=".95"/>
+  <circle cx="116" cy="132" r="18" fill="#6dd6bd"/>
+  <text x="158" y="148" font-family="Noto Sans Thai, sans-serif" font-size="32" font-weight="700" letter-spacing="1" fill="#ffffff">SOLOCORP · CONTENT</text>
+  <text x="956" y="148" text-anchor="end" font-family="Noto Sans Thai, sans-serif" font-size="30" font-weight="700" fill="#a9c3ee">02 / 06</text>
+  <rect x="88" y="420" width="560" height="620" rx="48" fill="#ffffff" stroke="#284a86" stroke-width="10"/><text x="140" y="525" class="label navy">BRIEF</text><path d="M145 590h390M145 655h300M145 720h345" stroke="#a9b6cb" stroke-width="20" stroke-linecap="round"/><circle cx="205" cy="900" r="47" fill="#ffcf54"/><circle cx="366" cy="900" r="47" fill="#5d98ef"/><circle cx="527" cy="900" r="47" fill="#f178a2"/><path d="M254 900h62M415 900h62" stroke="#253f70" stroke-width="18" stroke-linecap="round"/><path d="M625 1170h315" stroke="#54c3a3" stroke-width="24" stroke-linecap="round"/>
+  <path d="M70 1650h940" stroke="#ffffff" stroke-width="6" opacity=".8"/>
+</svg>

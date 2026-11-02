@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <style>.label{font-family:'Noto Sans Thai',sans-serif;font-size:54px;font-weight:700}.small{font-family:'Noto Sans Thai',sans-serif;font-size:36px;font-weight:700}.blue{fill:#234c86}.navy{fill:#182b4b}.white{fill:#fff}.red{fill:#cc4251}</style>
+  </defs>
+  <rect width="1080" height="1920" fill="#fff4f3"/>
+  <circle cx="920" cy="230" r="430" fill="#ffe0e4" opacity=".7"/>
+  <circle cx="90" cy="1480" r="480" fill="#ff9ca5" opacity=".22"/>
+  <path d="M0 250 C250 330 380 185 620 255 S930 350 1080 250" fill="none" stroke="#ffffff" stroke-width="14" opacity=".65"/>
+  <rect x="60" y="86" width="960" height="92" rx="46" fill="#142c51" opacity=".95"/>
+  <circle cx="116" cy="132" r="18" fill="#6dd6bd"/>
+  <text x="158" y="148" font-family="Noto Sans Thai, sans-serif" font-size="32" font-weight="700" letter-spacing="1" fill="#ffffff">SOLOCORP · CONTENT</text>
+  <text x="956" y="148" text-anchor="end" font-family="Noto Sans Thai, sans-serif" font-size="30" font-weight="700" fill="#a9c3ee">04 / 06</text>
+  <rect x="90" y="430" width="520" height="215" rx="42" fill="#fff" stroke="#d34d58" stroke-width="12"/><rect x="90" y="710" width="520" height="215" rx="42" fill="#fff" stroke="#d34d58" stroke-width="12"/><circle cx="165" cy="538" r="36" fill="#e34f5f"/><circle cx="165" cy="818" r="36" fill="#e34f5f"/><text x="230" y="552" class="label red">SOURCE</text><text x="230" y="832" class="label red">RIGHTS</text><path d="M130 1080l470 270M600 1080l-470 270" stroke="#e34f5f" stroke-width="30" stroke-linecap="round"/><rect x="177" y="1395" width="430" height="92" rx="30" fill="#e34f5f"/><text x="275" y="1458" class="small white">REVIEW REQUIRED</text>
+  <path d="M70 1835h940" stroke="#8092b6" stroke-width="5" opacity=".45"/>
+</svg>

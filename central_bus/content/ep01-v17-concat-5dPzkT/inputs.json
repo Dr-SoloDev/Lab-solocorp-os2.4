@@ -1,0 +1,184 @@
+{
+  "campaign_id": "content_dept_launch_ep01_20261102",
+  "generated_visuals": true,
+  "source_kind": "generated_visual",
+  "source_note": "New local SVG compositions with existing project mascot stickers; no local-media render frames or audio were reused.",
+  "frame": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "narration_weights": [
+    175,
+    179,
+    199,
+    207,
+    193,
+    191
+  ],
+  "variants": {
+    "piper": {
+      "duration_seconds": 90.06666666666666,
+      "scenes": [
+        {
+          "scene": "01-intro-hook",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/piper-01-intro-hook.mp4",
+          "start_seconds": 0,
+          "end_seconds": 13.766666666666667,
+          "duration_seconds": 13.766666666666667,
+          "caption": "สวัสดีครับ Turbo จาก SoloCorp · ร่างเสร็จ ≠ พร้อมโพสต์",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "02-brief",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/piper-02-brief.mp4",
+          "start_seconds": 13.766666666666667,
+          "end_seconds": 27.866666666666667,
+          "duration_seconds": 14.1,
+          "caption": "เริ่มจาก BRIEF · แบ่งงาน · ตรวจข้อมูล",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "03-team-handoff",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/piper-03-team-handoff.mp4",
+          "start_seconds": 27.866666666666667,
+          "end_seconds": 43.53333333333333,
+          "duration_seconds": 15.666666666666666,
+          "caption": "เรื่อง → บท → ภาพ → เสียง → ตรวจ",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "04-source-rights",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/piper-04-source-rights.mp4",
+          "start_seconds": 43.53333333333333,
+          "end_seconds": 59.833333333333336,
+          "duration_seconds": 16.3,
+          "caption": "SOURCE + RIGHTS ยังไม่ครบ",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "05-human-review",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/piper-05-human-review.mp4",
+          "start_seconds": 59.833333333333336,
+          "end_seconds": 75.03333333333333,
+          "duration_seconds": 15.2,
+          "caption": "ยังไม่รู้ · คนตรวจไฟล์ · ตรวจซ้ำ",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "06-outro",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/piper-06-outro.mp4",
+          "start_seconds": 75.03333333333333,
+          "end_seconds": 90.06666666666666,
+          "duration_seconds": 15.033333333333333,
+          "caption": "คุณอยากให้ AI ช่วยตรงไหน? · ฝากติดตามคลิปหน้า",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        }
+      ]
+    },
+    "elevenlabs": {
+      "duration_seconds": 93.93333333333334,
+      "scenes": [
+        {
+          "scene": "01-intro-hook",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/elevenlabs-01-intro-hook.mp4",
+          "start_seconds": 0,
+          "end_seconds": 14.366666666666667,
+          "duration_seconds": 14.366666666666667,
+          "caption": "สวัสดีครับ Turbo จาก SoloCorp · ร่างเสร็จ ≠ พร้อมโพสต์",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "02-brief",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/elevenlabs-02-brief.mp4",
+          "start_seconds": 14.366666666666667,
+          "end_seconds": 29.066666666666666,
+          "duration_seconds": 14.7,
+          "caption": "เริ่มจาก BRIEF · แบ่งงาน · ตรวจข้อมูล",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "03-team-handoff",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/elevenlabs-03-team-handoff.mp4",
+          "start_seconds": 29.066666666666666,
+          "end_seconds": 45.4,
+          "duration_seconds": 16.333333333333332,
+          "caption": "เรื่อง → บท → ภาพ → เสียง → ตรวจ",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "04-source-rights",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/elevenlabs-04-source-rights.mp4",
+          "start_seconds": 45.4,
+          "end_seconds": 62.4,
+          "duration_seconds": 17,
+          "caption": "SOURCE + RIGHTS ยังไม่ครบ",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "05-human-review",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/elevenlabs-05-human-review.mp4",
+          "start_seconds": 62.4,
+          "end_seconds": 78.23333333333333,
+          "duration_seconds": 15.833333333333334,
+          "caption": "ยังไม่รู้ · คนตรวจไฟล์ · ตรวจซ้ำ",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        },
+        {
+          "scene": "06-outro",
+          "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/scene-videos/elevenlabs-06-outro.mp4",
+          "start_seconds": 78.23333333333333,
+          "end_seconds": 93.93333333333334,
+          "duration_seconds": 15.7,
+          "caption": "คุณอยากให้ AI ช่วยตรงไหน? · ฝากติดตามคลิปหน้า",
+          "kind": "video",
+          "source_kind": "generated_visual"
+        }
+      ]
+    }
+  },
+  "artwork": [
+    {
+      "scene": "01-intro-hook",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/artwork/01-intro-hook.png",
+      "sticker": "solocorp_sticker_hook_point.png"
+    },
+    {
+      "scene": "02-brief",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/artwork/02-brief.png",
+      "sticker": "solocorp_sticker_nervous.png"
+    },
+    {
+      "scene": "03-team-handoff",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/artwork/03-team-handoff.png",
+      "sticker": "solocorp_sticker_teaching.png"
+    },
+    {
+      "scene": "04-source-rights",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/artwork/04-source-rights.png",
+      "sticker": "solocorp_sticker_sad_defeated.png"
+    },
+    {
+      "scene": "05-human-review",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/artwork/05-human-review.png",
+      "sticker": "solocorp_sticker_shrug_idk.png"
+    },
+    {
+      "scene": "06-outro",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/artwork/06-outro.png",
+      "sticker": "solocorp_sticker_waving_bye.png"
+    }
+  ],
+  "manifest_path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/ep01-v17-concat-5dPzkT/inputs.json"
+}

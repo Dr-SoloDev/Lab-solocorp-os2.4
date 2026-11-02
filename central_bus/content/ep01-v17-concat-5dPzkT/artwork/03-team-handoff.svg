@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2fbf8"/><stop offset="1" stop-color="#d5e8ff"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#8de0c7" stop-opacity=".42"/><stop offset="1" stop-color="#8de0c7" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+  <circle cx="920" cy="230" r="430" fill="url(#glow)"/>
+  <circle cx="90" cy="1480" r="480" fill="#8de0c7" opacity=".12"/>
+  <path d="M0 250 C250 330 380 185 620 255 S930 350 1080 250" fill="none" stroke="#ffffff" stroke-width="14" opacity=".65"/>
+  <rect x="60" y="86" width="960" height="92" rx="46" fill="#142c51" opacity=".95"/>
+  <circle cx="116" cy="132" r="18" fill="#6dd6bd"/>
+  <text x="158" y="148" font-family="Noto Sans Thai, sans-serif" font-size="32" font-weight="700" letter-spacing="1" fill="#ffffff">SOLOCORP · CONTENT</text>
+  <text x="956" y="148" text-anchor="end" font-family="Noto Sans Thai, sans-serif" font-size="30" font-weight="700" fill="#a9c3ee">03 / 06</text>
+  <path d="M210 420v920" stroke="#aec2e5" stroke-width="20" stroke-linecap="round"/><g fill="#fff" stroke-width="10"><rect x="105" y="440" width="520" height="128" rx="38" stroke="#3471ce"/><rect x="105" y="605" width="520" height="128" rx="38" stroke="#ef6d99"/><rect x="105" y="770" width="520" height="128" rx="38" stroke="#30a98a"/><rect x="105" y="935" width="520" height="128" rx="38" stroke="#efad36"/><rect x="105" y="1100" width="520" height="128" rx="38" stroke="#6e65c9"/></g><g font-family="Noto Sans Thai, sans-serif" font-size="42" font-weight="700" fill="#182b4b"><text x="175" y="520">STORY</text><text x="175" y="685">SCRIPT</text><text x="175" y="850">VISUAL</text><text x="175" y="1015">AUDIO</text><text x="175" y="1180">CHECK</text></g><g fill="#3471ce"><circle cx="210" cy="504" r="18"/><circle cx="210" cy="669" r="18"/><circle cx="210" cy="834" r="18"/><circle cx="210" cy="999" r="18"/><circle cx="210" cy="1164" r="18"/></g>
+  <path d="M70 1650h940" stroke="#ffffff" stroke-width="6" opacity=".8"/>
+</svg>
