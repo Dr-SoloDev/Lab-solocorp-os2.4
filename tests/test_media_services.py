@@ -8,7 +8,7 @@ import pytest
 
 from solocorp_mcp import bus_store
 from solocorp_mcp.departments import content_service, media_service
-from solocorp_mcp.departments.sound_mcp import mcp as sound_mcp
+from solocorp_mcp.departments.content_mcp import mcp as content_mcp
 
 
 @pytest.fixture
@@ -108,7 +108,7 @@ class FakeEarshotClient:
         raise AssertionError(f"unexpected Earshot tool: {name}")
 
 
-def test_concat_render_records_project_mp4_and_human_gate(isolated_bus, monkeypatch):
+def _configure_concat(monkeypatch):
     FakeConcatClient.instances.clear()
     monkeypatch.setattr(media_service, "MCPStdioClient", FakeConcatClient)
     monkeypatch.setattr(media_service, "_concat_binary", lambda: "/verified/concat")
@@ -120,13 +120,14 @@ def test_concat_render_records_project_mp4_and_human_gate(isolated_bus, monkeypa
             "video_streams": [{"codec_type": "video", "width": 1080, "height": 1920}],
         },
     )
-    script = _campaign("concat-smoke")
-    source = isolated_bus / "content" / "visuals" / "scene.mp4"
-    source.parent.mkdir(parents=True)
-    source.write_bytes(b"synthetic video input")
 
-    result = media_service.render_campaign_with_concat(
-        "concat-smoke",
+
+def _render_concat(campaign_id, isolated_bus, sound_delivery_filename=""):
+    source = isolated_bus / "content" / "visuals" / f"{campaign_id}.mp4"
+    source.parent.mkdir(parents=True, exist_ok=True)
+    source.write_bytes(b"synthetic video input")
+    return media_service.render_campaign_with_concat(
+        campaign_id,
         [
             {
                 "path": str(source),
@@ -135,7 +136,14 @@ def test_concat_render_records_project_mp4_and_human_gate(isolated_bus, monkeypa
                 "source_kind": "generated_visual",
             }
         ],
+        sound_delivery_filename=sound_delivery_filename,
     )
+
+
+def test_concat_render_records_project_mp4_and_human_gate(isolated_bus, monkeypatch):
+    _configure_concat(monkeypatch)
+    _campaign("concat-smoke")
+    result = _render_concat("concat-smoke", isolated_bus)
 
     assert result["execution_status"] == "completed"
     assert result["approval_required"] is True
@@ -160,23 +168,10 @@ def test_concat_render_records_project_mp4_and_human_gate(isolated_bus, monkeypa
 
 
 def test_concat_consumes_earshot_delivery_as_audio_track(isolated_bus, monkeypatch):
-    FakeConcatClient.instances.clear()
+    _configure_concat(monkeypatch)
     FakeEarshotClient.instances.clear()
-    monkeypatch.setattr(media_service, "MCPStdioClient", FakeConcatClient)
     monkeypatch.setattr(media_service, "_earshot_client", FakeEarshotClient)
-    monkeypatch.setattr(media_service, "_concat_binary", lambda: "/verified/concat")
-    monkeypatch.setattr(
-        media_service,
-        "_probe_mp4",
-        lambda _path: {
-            "duration_seconds": 30.0,
-            "video_streams": [{"codec_type": "video", "width": 1080, "height": 1920}],
-        },
-    )
     _campaign("concat-earshot-handoff")
-    source = isolated_bus / "content" / "visuals" / "scene.mp4"
-    source.parent.mkdir(parents=True)
-    source.write_bytes(b"synthetic video input")
     sound = media_service.render_campaign_sfx(
         "concat-earshot-handoff",
         "whoosh_fast/crisp",
@@ -185,16 +180,9 @@ def test_concat_consumes_earshot_delivery_as_audio_track(isolated_bus, monkeypat
         apex_seconds=0.3,
     )
 
-    result = media_service.render_campaign_with_concat(
+    result = _render_concat(
         "concat-earshot-handoff",
-        [
-            {
-                "path": str(source),
-                "kind": "video",
-                "start_seconds": 0,
-                "source_kind": "generated_visual",
-            }
-        ],
+        isolated_bus,
         sound_delivery_filename=sound["sound_delivery_filename"],
     )
 
@@ -212,14 +200,16 @@ def test_concat_consumes_earshot_delivery_as_audio_track(isolated_bus, monkeypat
 
 
 def test_earshot_review_stores_measurements_and_timeline_in_bus(isolated_bus, monkeypatch):
+    _configure_concat(monkeypatch)
     FakeEarshotClient.instances.clear()
     monkeypatch.setattr(media_service, "_earshot_client", FakeEarshotClient)
     _campaign("sound-review-smoke")
-    audio = isolated_bus / "content" / "sound" / "test.wav"
-    audio.parent.mkdir(parents=True)
-    audio.write_bytes(b"synthetic test audio")
+    render = _render_concat("sound-review-smoke", isolated_bus)
+    output_path = isolated_bus / render["output"]["path"]
 
-    result = media_service.review_campaign_audio("sound-review-smoke", str(audio), cue_times=[1.0, 2.5])
+    result = media_service.review_campaign_audio(
+        "sound-review-smoke", str(output_path), cue_times=[1.0, 2.5]
+    )
     payload = json.loads(
         bus_store.fetch_from_bus("content", result["report_artifact"]["filename"])["content"]
     )
@@ -230,8 +220,60 @@ def test_earshot_review_stores_measurements_and_timeline_in_bus(isolated_bus, mo
     assert [name for name, _args in FakeEarshotClient.instances[0].calls] == ["measure", "timeline"]
     timeline_call = FakeEarshotClient.instances[0].calls[1][1]
     assert timeline_call["detail"] == "low"
-    assert "video" not in timeline_call
+    assert timeline_call["video"] == str(output_path)
     assert timeline_call["cues"] == [1.0, 2.5]
+    assert payload["report"]["render_result_filename"] == render["result_artifact"]["filename"]
+    assert payload["report"]["render_output_sha256"] == render["output"]["sha256"]
+
+
+def test_earshot_review_requires_a_concat_render(isolated_bus):
+    _campaign("sound-review-before-render")
+
+    with pytest.raises(content_service.ContentServiceError, match="complete render_campaign_with_concat"):
+        media_service.review_campaign_audio("sound-review-before-render", "not-used.mp4")
+
+
+def test_earshot_review_rejects_a_different_or_changed_render(isolated_bus, monkeypatch):
+    _configure_concat(monkeypatch)
+    FakeEarshotClient.instances.clear()
+    monkeypatch.setattr(media_service, "_earshot_client", FakeEarshotClient)
+    _campaign("sound-review-render-identity")
+    render = _render_concat("sound-review-render-identity", isolated_bus)
+    output_path = isolated_bus / render["output"]["path"]
+    copy_path = output_path.with_name("other-render.mp4")
+    copy_path.write_bytes(output_path.read_bytes())
+
+    with pytest.raises(content_service.ContentServiceError, match="output of the latest completed Concat render"):
+        media_service.review_campaign_audio("sound-review-render-identity", str(copy_path))
+
+    output_path.write_bytes(b"changed after Concat validation")
+    with pytest.raises(content_service.ContentServiceError, match="checksum changed"):
+        media_service.review_campaign_audio("sound-review-render-identity", str(output_path))
+
+
+def test_media_campaign_cannot_be_approved_until_latest_audio_review(isolated_bus, monkeypatch):
+    _configure_concat(monkeypatch)
+    FakeEarshotClient.instances.clear()
+    monkeypatch.setattr(media_service, "_earshot_client", FakeEarshotClient)
+    campaign_id = "sound-approval-order"
+    _campaign(campaign_id)
+    render = _render_concat(campaign_id, isolated_bus)
+    campaign = content_service._load_campaign(campaign_id)
+    assert campaign["review"]["media_workflow"]["ready_for_human_review"] is False
+
+    with pytest.raises(content_service.ContentServiceError, match="current Concat render and Earshot review"):
+        content_service.record_human_approval(campaign_id, campaign["version"], "review pending")
+
+    output_path = isolated_bus / render["output"]["path"]
+    media_service.review_campaign_audio(campaign_id, str(output_path))
+    latest_gate = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert latest_gate["media_workflow"]["ready_for_human_review"] is True
+
+    current = content_service._load_campaign(campaign_id)
+    approval = content_service.record_human_approval(
+        campaign_id, current["version"], "Reviewed the current render and audio QA report"
+    )
+    assert approval["status"] == "approved"
 
 
 def test_concat_rejects_media_outside_central_bus(tmp_path, isolated_bus):
@@ -297,13 +339,12 @@ def test_earshot_result_payload_parses_json_footer(footer):
     assert media_service._earshot_result_payload(f"summary\n{footer}") == {"status": "ok"}
 
 
-def test_sound_mcp_exposes_only_bus_safe_tools():
-    names = {tool.name for tool in sound_mcp._tool_manager.list_tools()}
-    assert names == {
-        # Metadata only: adapter scope + runtime staleness. No media, no provider.
-        "sound_department_info",
+def test_content_mcp_owns_sound_tools():
+    names = {tool.name for tool in content_mcp._tool_manager.list_tools()}
+    assert {
         "sound_review_campaign_audio",
         "sound_list_earshot_sfx",
         "sound_render_campaign_sfx",
-    }
+    } <= names
+    assert "sound_department_info" not in names
     assert "llm_critique" not in names

@@ -576,7 +576,7 @@ Use this server when you need to:
         without starting a new chat or client connection.
 
         Args:
-            module_id: Department module ID (e.g. 'content-creator', 'sound-studio',
+            module_id: Department module ID (e.g. 'content-creator',
                        'central-bus', 'solocorp').
             tool_name: Name of the tool to call on that department MCP.
             arguments: JSON string of tool arguments (default "{}").

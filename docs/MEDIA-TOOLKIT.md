@@ -1,5 +1,16 @@
 # 🛠️ เครื่องมือผลิตสื่อ — สถานะจริง ณ 2026-10-30
 
+## Update 2026-11-02 — Content-Owned Sound Tools
+
+Sound Designer (ซาวด์) remains a Content Creator specialist. Earshot lookup,
+SFX rendering, and audio review are now exposed through the `content-creator`
+MCP; `sound-studio` is no longer registered as a separate department server.
+The ordered process is script → audio cue sheet → optional SFX/voiceover →
+Concat render → Earshot review → Publish Gate → human approval. See
+`docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md` for inputs and failure handling.
+Concat runs an initial gate after rendering. Run the gate again after Earshot
+review, because storing QA creates a new campaign version before approval.
+
 ## MCP Content Local Render (2026-10-30)
 
 - ติดตั้ง Piper Thai model ที่ `tools/piper/models/` และ wrapper
@@ -30,9 +41,10 @@
   MCP `concat` ใน OpenCode/Codex แบบ headless. Content MCP เปิดเครื่องมือ
   `render_campaign_with_concat` เพื่อสร้างโปรเจกต์ `concat.json`, เพิ่มสื่อ/ซับ,
   เรนเดอร์ MP4 และบันทึกผลกับ checksum ลง Central Bus.
-- ติดตั้ง Earshot `0.4.0` ใน CPU-only venv และเปิด MCP `sound-studio` แบบ offline.
-  Sound MCP ตรวจ mix/timeline, สร้างและวัด SFX แล้วส่ง report/stem ให้ Content
-  ผ่าน Central Bus; Content MCP รับ sound delivery ไปใส่ใน Concat timeline.
+- ติดตั้ง Earshot `0.4.0` ใน CPU-only venv; ตอนบันทึก 2026-10-30 เครื่องมือ
+  เสียงแยกเป็น `sound-studio` MCP. ตั้งแต่ 2026-11-02 เครื่องมือดังกล่าวอยู่
+  ภายใน `content-creator` MCP โดยตรง; reports/stems ใช้ Central Bus เดิม และ
+  Content ใส่ `sound_delivery_filename` ลงใน Concat timeline.
 - ทดลองครบวงจรกับ `campaign_solocorp_content_creator_60s` เมื่อ 2026-10-30:
   MP4 H.264/AAC 1080×1920, 30 fps, 60.5667 วินาที; ใช้ซับไทยที่ฝังในภาพ
   ต้นฉบับและไม่เพิ่ม SRT ซ้ำ พร้อม SFX `whoosh_fast/tight`. Earshot วัด final

@@ -46,11 +46,11 @@ the 2 MiB text payload store.
   stores the result manifest/checksum in Central Bus. Project inputs are scoped
   to `central_bus/content/`.
 - Earshot 0.4.0: installed in the CPU-only venv at
-  `/home/drsolodev/.opencode/earshot/venv-cpu`; Sound MCP forces offline mode.
-  The `sound-studio` server exposes campaign audio review, SFX bank lookup, and
-  SFX rendering. Reports and WAV stems are registered through Content MCP's
-  shared Central Bus store. `sound_delivery_filename` attaches those stems to a
-  Concat timeline; neither server approves or publishes.
+  `/home/drsolodev/.opencode/earshot/venv-cpu`; the Content MCP sets offline
+  mode and exposes audio review, SFX lookup, and SFX rendering as internal
+  Sound Designer capabilities. Reports and WAV stems use the Content Central
+  Bus store. `sound_delivery_filename` attaches those stems to a Concat
+  timeline. The Content MCP never approves or publishes automatically.
 
 ## Run
 
@@ -87,20 +87,37 @@ captions. The synth bed is a local placeholder, not licensed music.
 - Post-Gate manifest: `campaign-campaign_solocorp_os_1pt5m_narrative-manifest_20261029T222335213328Z.json`, version `v14`.
 - Campaign Publish Gate: `review_required`, `gate_passed: false`; no human approval or publishing was recorded.
 
-## Concat and Earshot Integration
+## Ordered Content Audio Workflow
 
-Use `render_campaign_with_concat` for Content editing and final MP4 export. Pass
-`timeline_media` entries for generated video/audio, optional timed `captions`,
-and the Sound MCP's `sound_delivery_filename`. An existing Concat project can be
-resumed by passing its folder as `concat_project_path`; it must contain
-`concat.json`. Content MCP verifies paths remain under `central_bus/content/`,
-records the Concat project and render result, computes SHA-256, validates the MP4
-with ffprobe, and calls Publish Gate.
+Use this path for a campaign that needs a custom sound mix. All tools are owned
+by `content-creator`; Sound is an internal specialist, not a separate module.
 
-Use `sound_render_campaign_sfx` to create a local Earshot stem and Bus delivery.
-Use `sound_review_campaign_audio` to measure a final audio/video file and store
-its loudness/timeline report. Earshot runs with offline flags; final outputs stay
-`review_required` pending source, rights, redaction, and human approval checks.
+1. Finalize the campaign with `create_video_script`.
+2. Create a cue sheet for that exact script with `design_audio_experience`.
+   If the script changes, regenerate the cue sheet before continuing.
+3. For SFX, query `sound_list_earshot_sfx` as needed, then call
+   `sound_render_campaign_sfx`. Keep the returned `sound_delivery_filename`.
+   Voiceover is optional and separate; only call paid ElevenLabs generation
+   after explicit approval.
+4. Call `render_campaign_with_concat` with generated `timeline_media`,
+   optional timed captions, and the SFX delivery filename when present. An
+   existing Concat project can be resumed with `concat_project_path` and must
+   contain `concat.json`. Paths must remain under `central_bus/content/`.
+5. Call `sound_review_campaign_audio` on the final mix/video and inspect its
+   stored loudness and timeline report. If it needs changes, revise inputs and
+   render again; do not continue to approval with a failed or missing review.
+6. After audio review, run `review_publish_gate` for the final campaign version.
+   The Concat render runs an initial gate automatically; storing the Earshot
+   review creates a newer campaign version, so run the gate again after QA.
+   Resolve failed checks before requesting approval.
+7. After a person reviews the exact version, call `record_human_approval` with
+   that version. Any later asset change requires another gate review and
+   approval. This workflow records approval; it does not publish.
+
+If an audio stage fails, stop the dependent stages and report the returned
+error. Omit SFX only when the brief accepts a no-SFX mix; never silently fall
+back to a different sound path. The synthetic-only `render_campaign_media_local`
+path is separate and must not be mixed with the Concat workflow.
 
 ## Content Creator 60s Concat Evidence — 2026-10-30
 

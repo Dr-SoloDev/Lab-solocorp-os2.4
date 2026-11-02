@@ -2106,6 +2106,106 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
                 for asset in assets
             )
         )
+        latest_cue = next(
+            (
+                asset
+                for asset in reversed(assets)
+                if latest_script
+                and asset.get("type") == "audio_cue_sheet"
+                and latest_script["filename"] in asset.get("dependencies", [])
+            ),
+            None,
+        )
+        latest_render_asset = next(
+            (asset for asset in reversed(assets) if asset.get("type") == "concat_render_result"),
+            None,
+        )
+        media_workflow: dict[str, Any] = {
+            "mode": "concat",
+            "status": "not_started",
+            "render": "not_started",
+            "audio_review": "not_started",
+            "ready_for_human_review": None,
+        }
+        if latest_render_asset:
+            try:
+                render_record = json.loads(
+                    fetch_from_bus(DEPARTMENT, latest_render_asset["filename"])["content"]
+                )
+            except json.JSONDecodeError as exc:
+                raise ContentServiceError("latest Concat render record is not valid JSON") from exc
+            render_output = render_record.get("output")
+            render_dependencies = set(latest_render_asset.get("dependencies", []))
+            sound_delivery_filename = render_record.get("sound_delivery_filename")
+            sound_delivery_is_current = True
+            if sound_delivery_filename:
+                sound_delivery_asset = next(
+                    (
+                        asset
+                        for asset in assets
+                        if asset.get("filename") == sound_delivery_filename
+                        and asset.get("type") == "sound_delivery"
+                    ),
+                    None,
+                )
+                sound_delivery_is_current = bool(
+                    sound_delivery_asset
+                    and latest_script
+                    and latest_cue
+                    and latest_script["filename"] in sound_delivery_asset.get("dependencies", [])
+                    and latest_cue["filename"] in sound_delivery_asset.get("dependencies", [])
+                    and sound_delivery_filename in render_dependencies
+                )
+            render_is_current = bool(
+                render_record.get("execution_status") == "completed"
+                and isinstance(render_output, dict)
+                and isinstance(render_output.get("path"), str)
+                and isinstance(render_output.get("sha256"), str)
+                and latest_script
+                and latest_cue
+                and render_record.get("script_filename") == latest_script["filename"]
+                and render_record.get("audio_cue_sheet_filename") == latest_cue["filename"]
+                and latest_script["filename"] in render_dependencies
+                and latest_cue["filename"] in render_dependencies
+                and sound_delivery_is_current
+            )
+            latest_audio_review_asset = next(
+                (
+                    asset
+                    for asset in reversed(assets)
+                    if asset.get("type") == "sound_review_report"
+                    and latest_render_asset["filename"] in asset.get("dependencies", [])
+                ),
+                None,
+            )
+            audio_review_is_current = False
+            if latest_audio_review_asset and render_is_current:
+                try:
+                    audio_review_record = json.loads(
+                        fetch_from_bus(DEPARTMENT, latest_audio_review_asset["filename"])["content"]
+                    )
+                except json.JSONDecodeError as exc:
+                    raise ContentServiceError("latest Earshot review record is not valid JSON") from exc
+                audio_report = audio_review_record.get("report")
+                audio_review_is_current = bool(
+                    isinstance(audio_report, dict)
+                    and audio_report.get("render_result_filename") == latest_render_asset["filename"]
+                    and audio_report.get("render_output_path") == render_output.get("path")
+                    and audio_report.get("render_output_sha256") == render_output.get("sha256")
+                )
+            media_workflow = {
+                "mode": "concat",
+                "status": "ready_for_human_review"
+                if render_is_current and audio_review_is_current
+                else "blocked",
+                "render": "complete" if render_is_current else "blocked_or_stale",
+                "audio_review": "complete" if audio_review_is_current else "blocked_or_missing",
+                "render_result_filename": latest_render_asset["filename"],
+                "audio_review_filename": (
+                    latest_audio_review_asset["filename"] if audio_review_is_current else None
+                ),
+                "ready_for_human_review": render_is_current and audio_review_is_current,
+            }
         source_references = campaign.get("source_references", [])
         checks = [
             _campaign_check(
@@ -2146,6 +2246,25 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
                 "ไม่พบรายการค้างตรวจ" if redaction.ok else "พบข้อมูลที่ต้อง redact หรือให้มนุษย์ตรวจ",
             ),
         ]
+        if latest_render_asset:
+            checks.extend(
+                [
+                    _campaign_check(
+                        "media: latest Concat render is complete and current",
+                        media_workflow["render"] == "complete",
+                        "render, script, cue sheet, and sound delivery match"
+                        if media_workflow["render"] == "complete"
+                        else "run or rerun Concat after finalizing the latest script, cue sheet, and SFX delivery",
+                    ),
+                    _campaign_check(
+                        "media: Earshot review matches latest render",
+                        media_workflow["audio_review"] == "complete",
+                        "final audio QA is linked to the current render checksum"
+                        if media_workflow["audio_review"] == "complete"
+                        else "review the latest Concat output with sound_review_campaign_audio",
+                    ),
+                ]
+            )
         checks.extend(
             {
                 "check": item["rule"],
@@ -2193,6 +2312,7 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             "version": campaign["version"],
             "gate_passed": gate_passed,
             "checks": checks,
+            "media_workflow": media_workflow,
             "report": {
                 "filename": report_result["filename"],
                 "path": report_result["path"],
@@ -2209,6 +2329,7 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             "gate_passed": gate_passed,
             "approval_required": True,
             "checks": checks,
+            "media_workflow": media_workflow,
             "manifest": _campaign_manifest_summary(campaign),
             "campaign_manifest": manifest_file,
             "report": review["report"],
@@ -2360,6 +2481,16 @@ def record_human_approval(
         review = campaign.get("review") or {}
         if review.get("version") != normalized_version:
             raise ContentServiceError("run review_publish_gate for this exact campaign version first")
+        media_workflow_started = any(
+            asset.get("type") == "concat_render_result"
+            for asset in campaign.get("assets", [])
+        )
+        if media_workflow_started and not (
+            review.get("media_workflow", {}).get("ready_for_human_review") is True
+        ):
+            raise ContentServiceError(
+                "complete a current Concat render and Earshot review before human approval"
+            )
         failed_checks = [
             item.get("check", "unknown")
             for item in review.get("checks", [])
@@ -2415,6 +2546,15 @@ def sop_resource() -> str:
         "Lifecycle: scaffold → client_generated → llm_generated → human_edited → review_required → approved; state changes require evidence.\n",
         "Client/provider/model provenance is client-supplied and unverified; API keys must never be sent to MCP.\n",
         "Audio cue and voice/lip-sync tools only create files; they never call external providers.\n",
+        "\n## Ordered audio-to-video workflow\n",
+        "1. Finalize the campaign video script before creating downstream audio assets.\n",
+        "2. Run `design_audio_experience` against that exact script to create the cue sheet. If the script changes, regenerate the cue sheet.\n",
+        "3. For SFX, use `sound_list_earshot_sfx` when needed, then `sound_render_campaign_sfx`; retain its `sound_delivery_filename`. Voiceover is a separate optional step and requires explicit authorization for paid provider use (`approved=true`).\n",
+        "4. Run `render_campaign_with_concat` after inputs are ready, passing the sound delivery filename when SFX were rendered. If requested sound cannot be produced, stop and report the error; omit sound only when the brief explicitly accepts a silent/no-SFX result.\n",
+        "5. Run `sound_review_campaign_audio` on the final audio/video and inspect the stored report. If levels or cue timing need changes, correct the source mix and render again.\n",
+        "6. Run `review_publish_gate` on the final campaign version. Failed checks must be resolved; do not treat a report as approval.\n",
+        "7. After a person reviews the exact current version, record `record_human_approval`. Any later asset change requires a new review and approval. This MCP does not publish.\n",
+        "`render_campaign_media_local` is a separate synthetic-only path; do not mix its artifacts or steps with the Concat workflow.\n",
         "\n## Operating rules\n",
         "1. ทุกชิ้นต้องมีเป้าหมาย กลุ่มเป้าหมาย และแพลตฟอร์ม\n",
         "2. ทุก output เป็น draft จนกว่ามนุษย์จะผ่าน Publish Gate\n",

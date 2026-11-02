@@ -46,7 +46,12 @@ from .content_service import (
     save_human_edited_artifact as _save_human_edited_artifact,
     sop_resource,
 )
-from .media_service import render_campaign_with_concat as _render_campaign_with_concat
+from .media_service import (
+    list_earshot_sounds as _list_earshot_sounds,
+    render_campaign_sfx as _render_campaign_sfx,
+    render_campaign_with_concat as _render_campaign_with_concat,
+    review_campaign_audio as _review_campaign_audio,
+)
 from ..module_registry import ModuleRegistry
 from ..task_tracking import TaskTracker
 
@@ -62,6 +67,15 @@ mcp = FastMCP(
         "client-supplied, unauthenticated provenance; this route never calls an LLM. "
         "Audio cue and lip-sync tools never "
         "call providers. Paid ElevenLabs voiceover requires approved=true. "
+        "Sound Designer is an internal Content specialist; Earshot tools are exposed "
+        "through this Content MCP, not as a separate department. For the Concat audio "
+        "workflow follow this order: create/finalize the video script, create its audio "
+        "cue sheet, optionally list and render SFX (keep sound_delivery_filename), "
+        "render with Concat, review the final audio/video with Earshot, run the publish "
+        "gate, then record human approval for the exact current version. Stop on an "
+        "error; never silently skip a requested sound stage or publish automatically. "
+        "The synthetic-only local-media renderer is a separate path and must not be "
+        "mixed with the Concat workflow. "
         "FFmpeg job tools store a validated plan and the identified MCP call result. "
         "build_ff_tracking_manifest stores a validated visual plan only; the stock upstream renderer "
         "does not consume JSON manifests, and this tool never runs Rust or FFmpeg. "
@@ -198,6 +212,61 @@ def design_audio_experience(campaign_id: str, script_filename: str) -> str:
     try:
         return result_json(_design_audio_experience(campaign_id, script_filename))
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def sound_list_earshot_sfx(category: str = "", kind: str = "") -> str:
+    """List local Earshot sound-bank IDs for Content campaign sound design."""
+
+    try:
+        return result_json(_list_earshot_sounds(category, kind))
+    except (ContentServiceError, OSError, TypeError, ValueError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def sound_render_campaign_sfx(
+    campaign_id: str,
+    sound: str,
+    start_seconds: float = 0,
+    duration_seconds: float | None = None,
+    apex_seconds: float | None = None,
+    pitch: str = "",
+    peak_db: float = -1.0,
+    volume: float = 1.0,
+) -> str:
+    """Render and audit one local Earshot SFX stem for a Content campaign."""
+
+    try:
+        return result_json(
+            _render_campaign_sfx(
+                campaign_id,
+                sound,
+                start_seconds,
+                duration_seconds,
+                apex_seconds,
+                pitch,
+                peak_db,
+                volume,
+            )
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError, ValueError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def sound_review_campaign_audio(
+    campaign_id: str,
+    audio_path: str,
+    video_path: str = "",
+    cue_times: list[float] | None = None,
+) -> str:
+    """Measure final campaign audio and cue timing with local Earshot."""
+
+    try:
+        return result_json(_review_campaign_audio(campaign_id, audio_path, video_path, cue_times))
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError, ValueError) as exc:
         return _error(exc)
 
 

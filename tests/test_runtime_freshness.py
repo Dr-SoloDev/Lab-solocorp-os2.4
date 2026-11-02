@@ -110,7 +110,6 @@ def test_with_freshness_preserves_payload(fake_sources) -> None:
         ("qa_mcp", "qa_department_info"),
         ("engineering_mcp", "engineering_department_info"),
         ("content_mcp", "content_department_info"),
-        ("sound_mcp", "sound_department_info"),
     ],
 )
 def test_every_department_info_reports_runtime(module_name: str, info_name: str) -> None:

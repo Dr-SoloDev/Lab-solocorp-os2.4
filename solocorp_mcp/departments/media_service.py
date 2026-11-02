@@ -101,25 +101,28 @@ def _store_campaign_json(
     label: str,
     payload: dict[str, Any],
     dependencies: list[str],
+    *,
+    expected_campaign_version: str | None = None,
 ) -> dict[str, Any]:
+    asset = {
+        "task_id": _safe_task_id(campaign_id, artifact_type, label),
+        "content": json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2),
+        "extension": "json",
+        "type": artifact_type,
+        "lifecycle_state": "client_generated",
+        "dependencies": dependencies,
+        "media_rights_status": "human_confirmation_required",
+        "metadata": {
+            "provider": payload.get("provider"),
+            "job_id": payload.get("job_id"),
+            "execution_status": payload.get("execution_status"),
+        },
+    }
+    if expected_campaign_version is not None:
+        asset["expected_campaign_version"] = expected_campaign_version
     return content_service._store_assets(
         campaign_id,
-        [
-            {
-                "task_id": _safe_task_id(campaign_id, artifact_type, label),
-                "content": json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2),
-                "extension": "json",
-                "type": artifact_type,
-                "lifecycle_state": "client_generated",
-                "dependencies": dependencies,
-                "media_rights_status": "human_confirmation_required",
-                "metadata": {
-                    "provider": payload.get("provider"),
-                    "job_id": payload.get("job_id"),
-                    "execution_status": payload.get("execution_status"),
-                },
-            }
-        ],
+        [asset],
     )[0]
 
 
@@ -132,6 +135,23 @@ def _latest_script(campaign: dict[str, Any], campaign_id: str) -> tuple[dict[str
         raise content_service.ContentServiceError("campaign has no video script")
     fetched = bus_store.fetch_from_bus(content_service.DEPARTMENT, asset["filename"])
     return asset, fetched["content"]
+
+
+def _latest_audio_cue(campaign: dict[str, Any], script_asset: dict[str, Any]) -> dict[str, Any]:
+    cue = next(
+        (
+            asset
+            for asset in reversed(campaign.get("assets", []))
+            if asset.get("type") == "audio_cue_sheet"
+            and script_asset["filename"] in asset.get("dependencies", [])
+        ),
+        None,
+    )
+    if cue is None:
+        raise content_service.ContentServiceError(
+            "create an audio cue sheet for the latest video script before continuing"
+        )
+    return cue
 
 
 def _script_captions(script: str) -> list[dict[str, Any]]:
@@ -362,6 +382,8 @@ def render_campaign_with_concat(
     if campaign is None or campaign.get("campaign_id") != canonical_id:
         raise content_service.ContentServiceError(f"campaign not found: {canonical_id}")
     script_asset, script = _latest_script(campaign, canonical_id)
+    cue_asset = _latest_audio_cue(campaign, script_asset)
+    expected_campaign_version = campaign.get("version")
     if isinstance(width, bool) or not isinstance(width, int) or not 16 <= width <= 7680:
         raise content_service.ContentServiceError("width must be an integer between 16 and 7680")
     if isinstance(height, bool) or not isinstance(height, int) or not 16 <= height <= 7680:
@@ -373,6 +395,23 @@ def render_campaign_with_concat(
 
     sources = _validate_media_items(timeline_media, require_video=not bool(concat_project_path))
     sources, sound_dependency = _merge_sound_delivery(canonical_id, sound_delivery_filename, sources)
+    if sound_dependency:
+        delivery_asset = next(
+            (
+                asset
+                for asset in campaign.get("assets", [])
+                if asset.get("filename") == sound_dependency["filename"]
+                and asset.get("type") == "sound_delivery"
+            ),
+            None,
+        )
+        required_dependencies = {script_asset["filename"], cue_asset["filename"]}
+        if delivery_asset is None or not required_dependencies.issubset(
+            set(delivery_asset.get("dependencies", []))
+        ):
+            raise content_service.ContentServiceError(
+                "sound delivery must be generated from the current script and audio cue sheet"
+            )
     caption_source = "caller"
     caption_rows = _validate_captions(captions) if captions is not None else _script_captions(script)
     if captions is None:
@@ -402,18 +441,7 @@ def render_campaign_with_concat(
             raise content_service.ContentServiceError("Concat project source and destination cannot overlap")
         shutil.copytree(project_copy_source, project_path)
 
-    dependencies = [script_asset["filename"]]
-    latest_cue = next(
-        (
-            asset
-            for asset in reversed(campaign.get("assets", []))
-            if asset.get("type") == "audio_cue_sheet"
-            and script_asset["filename"] in asset.get("dependencies", [])
-        ),
-        None,
-    )
-    if latest_cue:
-        dependencies.append(latest_cue["filename"])
+    dependencies = [script_asset["filename"], cue_asset["filename"]]
     if sound_dependency:
         dependencies.append(sound_dependency["filename"])
 
@@ -572,6 +600,8 @@ def render_campaign_with_concat(
         "provider": "concat-mcp",
         "execution_mode": "local_concat_mcp_headless",
         "execution_status": execution_status,
+        "script_filename": script_asset["filename"],
+        "audio_cue_sheet_filename": cue_asset["filename"],
         "concat_version": concat_version,
         "project_path": project_path.relative_to(bus_store.BUS_ROOT.resolve()).as_posix(),
         "project_file": (
@@ -614,6 +644,7 @@ def render_campaign_with_concat(
         job_id,
         result_record,
         dependencies,
+        expected_campaign_version=expected_campaign_version,
     )
     publish_gate = content_service._review_campaign(canonical_id)
     return {
@@ -684,6 +715,7 @@ def _store_sound_delivery(
     *,
     stems: list[dict[str, Any]] | None = None,
     dependencies: list[str] | None = None,
+    expected_campaign_version: str | None = None,
 ) -> dict[str, Any]:
     campaign_key, canonical_id = content_service._campaign_identity(campaign_id)
     campaign = content_service._load_campaign(campaign_key)
@@ -716,6 +748,7 @@ def _store_sound_delivery(
         job_id,
         payload,
         dependencies or [],
+        expected_campaign_version=expected_campaign_version,
     )
 
 
@@ -729,14 +762,59 @@ def review_campaign_audio(
     campaign = content_service._load_campaign(campaign_key)
     if campaign is None or campaign.get("campaign_id") != canonical_id:
         raise content_service.ContentServiceError(f"campaign not found: {canonical_id}")
+    script_asset, _ = _latest_script(campaign, canonical_id)
+    cue_asset = _latest_audio_cue(campaign, script_asset)
+    expected_campaign_version = campaign.get("version")
+    render_asset = next(
+        (
+            asset
+            for asset in reversed(campaign.get("assets", []))
+            if asset.get("type") == "concat_render_result"
+        ),
+        None,
+    )
+    if render_asset is None:
+        raise content_service.ContentServiceError(
+            "complete render_campaign_with_concat before reviewing final campaign audio"
+        )
+    try:
+        render_record = json.loads(
+            bus_store.fetch_from_bus(content_service.DEPARTMENT, render_asset["filename"])["content"]
+        )
+    except json.JSONDecodeError as exc:
+        raise content_service.ContentServiceError("latest Concat render record is not valid JSON") from exc
+    render_output = render_record.get("output")
+    if (
+        render_record.get("execution_status") != "completed"
+        or not isinstance(render_output, dict)
+        or not isinstance(render_output.get("path"), str)
+        or not isinstance(render_output.get("sha256"), str)
+    ):
+        raise content_service.ContentServiceError(
+            "latest Concat render must complete with a validated output before audio review"
+        )
     audio = _resolve_content_path(audio_path, "audio_path")
     if not audio.is_file() or audio.stat().st_size == 0:
         raise content_service.ContentServiceError("audio_path must be a non-empty file")
+    expected_output_path = render_output["path"]
+    audio_relative_path = audio.relative_to(bus_store.BUS_ROOT.resolve()).as_posix()
+    if audio_relative_path != expected_output_path:
+        raise content_service.ContentServiceError(
+            "audio_path must be the output of the latest completed Concat render"
+        )
+    if _sha256_file(audio) != render_output["sha256"]:
+        raise content_service.ContentServiceError(
+            "rendered output checksum changed; render the current campaign again"
+        )
     video: Path | None = None
-    if video_path:
-        video = _resolve_content_path(video_path, "video_path")
-        if not video.is_file() or video.suffix.lower() not in _VIDEO_SUFFIXES:
-            raise content_service.ContentServiceError("video_path must be a local video file")
+    video = _resolve_content_path(video_path, "video_path") if video_path else audio
+    if not video.is_file() or video.suffix.lower() not in _VIDEO_SUFFIXES:
+        raise content_service.ContentServiceError("video_path must be a local video file")
+    video_relative_path = video.relative_to(bus_store.BUS_ROOT.resolve()).as_posix()
+    if video_relative_path != expected_output_path:
+        raise content_service.ContentServiceError(
+            "video_path must be the output of the latest completed Concat render"
+        )
     if cue_times is not None:
         if not isinstance(cue_times, list) or len(cue_times) > 1_000:
             raise content_service.ContentServiceError("cue_times must contain at most 1,000 cue seconds")
@@ -757,9 +835,12 @@ def review_campaign_audio(
             measured = _earshot_result_payload(
                 client.call_tool("measure", {"path": str(audio), "full": True}, timeout=180)
             )
-            timeline_args: dict[str, Any] = {"path": str(audio), "full": True, "detail": "low"}
-            if video:
-                timeline_args["video"] = str(video)
+            timeline_args: dict[str, Any] = {
+                "path": str(audio),
+                "full": True,
+                "detail": "low",
+                "video": str(video),
+            }
             if cue_times:
                 timeline_args["cues"] = [float(value) for value in cue_times]
             timeline = _earshot_result_payload(client.call_tool("timeline", timeline_args, timeout=600))
@@ -771,21 +852,26 @@ def review_campaign_audio(
         "campaign_id": canonical_id,
         "provider": "earshot",
         "audio_path": audio.relative_to(bus_store.BUS_ROOT.resolve()).as_posix(),
-        "video_path": video.relative_to(bus_store.BUS_ROOT.resolve()).as_posix() if video else None,
+        "video_path": video_relative_path,
+        "script_filename": script_asset["filename"],
+        "audio_cue_sheet_filename": cue_asset["filename"],
+        "render_result_filename": render_asset["filename"],
+        "render_output_path": expected_output_path,
+        "render_output_sha256": render_output["sha256"],
         "measure": measured,
         "timeline": timeline,
         "network_used": False,
     }
     report_path = job_dir / "earshot-audio-review.json"
     report_path.write_text(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2), encoding="utf-8")
-    script_asset, _ = _latest_script(campaign, canonical_id)
     stored = _store_sound_delivery(
         canonical_id,
         "sound_review_report",
         job_id,
         report,
         report_path,
-        dependencies=[script_asset["filename"]],
+        dependencies=[render_asset["filename"], *render_asset.get("dependencies", [])],
+        expected_campaign_version=expected_campaign_version,
     )
     return {
         "campaign_id": canonical_id,
@@ -794,6 +880,8 @@ def review_campaign_audio(
         "report_artifact": {"filename": stored["filename"], "path": stored["path"]},
         "report_path": report["audio_path"],
         "report_sha256": _sha256_file(report_path),
+        "render_result_filename": render_asset["filename"],
+        "render_output_sha256": render_output["sha256"],
         "summary": measured,
         "status": "review_required",
         "approval_effect": "none",
@@ -828,6 +916,9 @@ def render_campaign_sfx(
     campaign = content_service._load_campaign(campaign_key)
     if campaign is None or campaign.get("campaign_id") != canonical_id:
         raise content_service.ContentServiceError(f"campaign not found: {canonical_id}")
+    script_asset, _ = _latest_script(campaign, canonical_id)
+    cue_asset = _latest_audio_cue(campaign, script_asset)
+    expected_campaign_version = campaign.get("version")
     if not isinstance(sound, str) or not re.fullmatch(r"[A-Za-z0-9_./-]{1,100}", sound):
         raise content_service.ContentServiceError("sound must be a valid Earshot bank id")
     if (
@@ -895,6 +986,8 @@ def render_campaign_sfx(
         "schema_version": 1,
         "campaign_id": canonical_id,
         "provider": "earshot",
+        "script_filename": script_asset["filename"],
+        "audio_cue_sheet_filename": cue_asset["filename"],
         "sound": sound,
         "render": render_report,
         "measure": measurement,
@@ -902,7 +995,6 @@ def render_campaign_sfx(
     }
     report_path = job_dir / "earshot-sfx-report.json"
     report_path.write_text(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2), encoding="utf-8")
-    script_asset, _ = _latest_script(campaign, canonical_id)
     stored = _store_sound_delivery(
         canonical_id,
         "sound_delivery",
@@ -910,7 +1002,8 @@ def render_campaign_sfx(
         report,
         report_path,
         stems=[stem],
-        dependencies=[script_asset["filename"]],
+        dependencies=[script_asset["filename"], cue_asset["filename"]],
+        expected_campaign_version=expected_campaign_version,
     )
     return {
         "campaign_id": canonical_id,

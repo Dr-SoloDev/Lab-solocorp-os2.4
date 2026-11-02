@@ -34,6 +34,11 @@ def test_default_paths_keep_config_out_of_bus_content() -> None:
     assert module_registry.DEFAULT_STATE_PATH.name == "module-registry.state.json"
 
 
+def test_sound_capability_is_not_registered_as_a_separate_department() -> None:
+    assert "sound-studio" not in module_registry.DEFAULT_MODULES
+    assert "content-creator" in module_registry.DEFAULT_MODULES
+
+
 def test_initial_config_is_persistent_only(registry: ModuleRegistry) -> None:
     saved = json.loads(Path(registry.path).read_text(encoding="utf-8"))
     for module_id, entry in saved.items():

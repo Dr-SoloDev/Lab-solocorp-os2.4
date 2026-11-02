@@ -60,12 +60,6 @@ DEFAULT_MODULES: dict[str, dict[str, Any]] = {
         "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.content_mcp"],
         "description": "Content Creator Department",
     },
-    "sound-studio": {
-        "status": "enabled",
-        "transport": "stdio",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.sound_mcp"],
-        "description": "Sound Studio Department",
-    },
     "engineering": {
         "status": "enabled",
         "transport": "stdio",
