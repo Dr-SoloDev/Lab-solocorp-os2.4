@@ -679,15 +679,16 @@ Use this server when you need to:
             return _error(exc)
 
     @mcp.tool()
-    def task_list(dept: str = "") -> dict:
+    def task_list(dept: str = "", include_brief: bool = False) -> dict:
         try:
-            tasks = _task_tracker.list_tasks(dept or None)
+            tasks = _task_tracker.list_tasks(dept or None, include_brief=include_brief)
             return {"count": len(tasks), "tasks": tasks}
         except Exception as exc:
             return _error(exc)
 
     @mcp.tool()
     def task_update_status(task_id: str, status: str, result_ref: str = "", error_detail: str = "") -> dict:
+        _check_scope("team")
         try:
             record = _task_tracker.update_status(task_id, status, result_ref or None, error_detail or None)
             if record is None:
