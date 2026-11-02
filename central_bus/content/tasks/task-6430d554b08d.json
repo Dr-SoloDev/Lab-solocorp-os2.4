@@ -1,0 +1,13 @@
+{
+  "task_id": "task-6430d554b08d",
+  "dept": "qa",
+  "module": "qa",
+  "task_type": "qa_test",
+  "status": "pending",
+  "brief": "QA test result: suite=qa-probe-0001 status=passed note=probe: does current code persist evidence?",
+  "created_at": "2026-11-02T04:05:59.303657+00:00",
+  "started_at": null,
+  "completed_at": null,
+  "result_ref": null,
+  "error_detail": null
+}

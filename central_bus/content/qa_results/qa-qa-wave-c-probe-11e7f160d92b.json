@@ -1,0 +1,10 @@
+{
+  "department": "qa",
+  "note": "probe: current code path persists evidence to disk",
+  "recorded_at": "2026-11-02T04:06:04.442453+00:00",
+  "recorded_by": "qa MCP tool call",
+  "result": "passed",
+  "schema_version": 1,
+  "suite_id": "qa-wave-c-probe",
+  "task_id": "task-11e7f160d92b"
+}

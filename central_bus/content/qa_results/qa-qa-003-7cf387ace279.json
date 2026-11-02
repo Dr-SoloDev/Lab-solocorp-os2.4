@@ -1,0 +1,10 @@
+{
+  "department": "qa",
+  "note": "Wave A/C storage hygiene. 2ae1006 untracks render output (local_media, concat_renders): tracked under central_bus/content went 640.5 MB / 943 files -> 10.4 MB / 393 files, files kept on disk (603 MB). 6f6ca24 commits 25 drafts referenced by tracked manifests (PII/secret scan clean). 92d1003 records git-of-record vs disk-of-record in SOP-06. Stale-record caveat applies to earlier calls in this session.",
+  "recorded_at": "2026-11-02T04:06:15.883836+00:00",
+  "recorded_by": "qa MCP tool call",
+  "result": "passed",
+  "schema_version": 1,
+  "suite_id": "qa-003",
+  "task_id": "task-7cf387ace279"
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "task-2fd6207b7fb4",
+  "dept": "qa",
+  "module": "qa",
+  "task_type": "qa_test",
+  "status": "pending",
+  "brief": "QA test result: suite=qa-001 status=passed note=Wave A red-gate closure. Content MCP contract test pinned 16 department tools while 5 platform tools (task_create, task_get_status, task_update_status, task_list, module_registry_status) were mounted on 2026-11-02. Fix 014ddee splits the expected set into department|platform and asserts admin-only module_registry_update never appears in a department scope. Suite: 1000 passed, 0 failed. NOTE: an earlier record for this suite was sent to a stale qa MCP process and produced no on-disk evidence; this record is the real one.",
+  "created_at": "2026-11-02T04:06:15.882081+00:00",
+  "started_at": null,
+  "completed_at": null,
+  "result_ref": null,
+  "error_detail": null
+}

@@ -1,0 +1,10 @@
+{
+  "department": "qa",
+  "note": "Wave C config/state split (43fef13). config/module-registry.json tracked = intent only (enabled/disabled, transport, command, description). central_bus/module-registry.state.json git-ignored = runtime observation (connected/connecting/error, last_checked, response_time_ms, last_error). status() returns the merged view so module_registry_status is unchanged. update() routes intent to config, observation to state. ModuleRegistry had zero test coverage before; tests/test_module_registry.py adds 8 tests locking the invariant 'heartbeat never dirties tracked config'. Runtime: heartbeat(qa) -> connected 1338.36 ms, config still 'enabled'. Suite: 1000 passed.",
+  "recorded_at": "2026-11-02T04:06:15.882913+00:00",
+  "recorded_by": "qa MCP tool call",
+  "result": "passed",
+  "schema_version": 1,
+  "suite_id": "qa-002",
+  "task_id": "task-84a1c9648a6f"
+}

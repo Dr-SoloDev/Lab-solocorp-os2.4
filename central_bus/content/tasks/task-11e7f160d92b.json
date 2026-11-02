@@ -1,0 +1,13 @@
+{
+  "task_id": "task-11e7f160d92b",
+  "dept": "qa",
+  "module": "qa",
+  "task_type": "qa_test",
+  "status": "pending",
+  "brief": "QA test result: suite=qa-wave-c-probe status=passed note=probe: current code path persists evidence to disk",
+  "created_at": "2026-11-02T04:06:04.442453+00:00",
+  "started_at": null,
+  "completed_at": null,
+  "result_ref": null,
+  "error_detail": null
+}
