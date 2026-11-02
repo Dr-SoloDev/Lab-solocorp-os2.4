@@ -529,3 +529,42 @@ python -m pytest tests/test_content_mcp.py tests/test_media_services.py \
    แก้เป็น "`isError=False` ทั้งสองเส้น" พร้อมหลักฐาน `structuredContent` ที่ห่อ string ซ้อน
 3. **บทเรียนวิธีตรวจ:** probe E รอบแรกพิมพ์แค่ว่ามี key `isError` หรือไม่ ทำให้อ่านผลผิดทิศ
    → ต้องพิมพ์ **ค่าจริง** ไม่ใช่แค่การมีอยู่ของ key (บันทึกไว้เป็นแนวปฏิบัติของ audit รอบถัดไป)
+
+---
+
+### 11.11 การแก้ไขหลัง audit (รอบ 2026-11-02)
+
+หลังจาก audit รอบแรก พบช่องโหว่ด้านความปลอดภัยและความถูกต้องหลายประการ ได้ดำเนินการแก้ไขและทดสอบซ้ำแล้ว ดังนี้:
+
+| ลำดับ | ปัญหาที่พบ | การแก้ไข | Commit | สถานะ |
+|:--|:--|:--|:--:|:--:|
+| 1 | task_id ไม่ถูก validate → path traversal อ่าน/เขียนไฟล์อื่นได้ | `task_tracking.py`: ตรวจสอบรูปแบบ `task-<12 hex>` ก่อนทุกครั้ง | `dccabf5` | ✅ แก้แล้ว |
+| 2 | `task_update_status` ไม่มี scope guard | `server.py`: เพิ่ม `_check_scope("team")` | `dccabf5` | ✅ แก้แล้ว |
+| 3 | `task_get_status` ไม่มี scope guard | `server.py`: เพิ่ม `_check_scope("team")` | `1ad4fbd` | ✅ แก้แล้ว |
+| 4 | `task_list()` คืน `brief` ทั้งหมด (รั่วข้อมูล) | `task_tracking.py`: 不包括 `brief` โดย default; `include_brief=True` กรณีจำเป็น | `dccabf5` | ✅ แก้แล้ว |
+| 5 | `qa_record_test_result` เป็น stub ไม่บันทึกจริง | `qa_mcp.py`: บันทึก JSON ลง `central_bus/content/qa_results/` คืน `task_id`, `recorded_at`, `result_path`, `sha256` | `01f5687` | ✅ แก้แล้ว |
+| 6 | `qa_mcp.py` ROOT path ชี้ผิดโฟลเดอร์ | `qa_mcp.py`: เปลี่ยน `ROOT` ให้ชี้ที่ repo root (ไม่ใช่ `solocorp_mcp/`) | `1dc9c39` | ✅ แก้แล้ว |
+
+#### ผลการทดสอบซ้ำ (15/15 ผ่าน)
+
+รันทดสอบครอบคลุมทุกข้อที่แก้ไข ผลลัพธ์ทั้ง 15 กรณีผ่าน:
+
+1. `task_get_status` ต้องมี API key (scope team) — **ผ่าน**
+2. `task_get_status` คืน record ของ task ที่มีอยู่ — **ผ่าน**
+3. `task_get_status` บล็อก path traversal (`../secret`) — **ผ่าน**
+4. `task_get_status` คืน error เมื่อ task ไม่มีอยู่ — **ผ่าน**
+5. `task_update_status` บล็อก path traversal (`../../etc/passwd`) — **ผ่าน**
+6. `task_update_status` บล็อกสถานะที่ไม่รองรับ (`deleted`) — **ผ่าน**
+7. `task_update_status` อัปเดตสถานะสำเร็จ — **ผ่าน**
+8. `task_list()` ไม่รวม `brief` โดย default — **ผ่าน**
+9. `solocorp_call_department_tool` ปฏิเสธ module ที่ไม่มีใน registry — **ผ่าน**
+10. `solocorp_call_department_tool` เรียก department tool สำเร็จ — **ผ่าน**
+11. `qa_record_test_result` บันทึกหลักฐานจริง — **ผ่าน**
+12. ไฟล์หลักฐาน QA มีอยู่บนดิสก์จริง — **ผ่าน**
+13. SHA-256 ของไฟล์หลักฐานตรงกับที่คืนมา — **ผ่าน**
+14. `module_registry_heartbeat_all` คืน 6 modules — **ผ่าน**
+15. ทุก module เชื่อมต่อได้ (connected) — **ผ่าน**
+
+#### สรุป
+
+ช่องโหว่ P0–P2 ที่ระบุไว้ใน audit รอบแรก (gate รั่ว D2, `gate_passed` เป็น False ตลอดกาล, path traversal, ขาด scope guard, QA stub ไม่บันทึกจริง) ได้รับการแก้ไขและทดสอบซ้ำเรียบร้อยแล้ว ระบบมีความปลอดภัยและถูกต้องมากขึ้นสำหรับการใช้งานจริง
