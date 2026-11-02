@@ -39,6 +39,7 @@ from .content_service import (
     ingest_client_generated_artifact as _ingest_client_generated_artifact,
     record_ffmpeg_job_result as _record_ffmpeg_job_result,
     record_human_approval as _record_human_approval,
+    remove_campaign_asset as _remove_campaign_asset,
     result_json,
     render_campaign_media_local as _render_campaign_media_local,
     review_publish_gate as _review_publish_gate,
@@ -377,6 +378,18 @@ def record_ffmpeg_job_result(
             )
         )
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def remove_campaign_asset(campaign_id: str, filename: str, reason: str = "") -> str:
+    """Remove one asset from a campaign manifest so later publish-gate reviews
+    only see remaining assets. Payload stays on the bus for audit; the campaign
+    version bumps and any prior review/approval is reset."""
+
+    try:
+        return result_json(_remove_campaign_asset(campaign_id, filename, reason))
+    except (ContentServiceError, OSError, UnicodeError) as exc:
         return _error(exc)
 
 

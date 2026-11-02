@@ -340,6 +340,7 @@ CONTENT_DEPARTMENT_TOOLS = {
     "render_campaign_media_local",
     "render_campaign_with_concat",
     "ingest_client_generated_artifact",
+    "remove_campaign_asset",
 }
 
 # Platform tools mounted on every department MCP: task tracking + registry read.
@@ -672,3 +673,128 @@ def test_local_media_render_rejects_non_six_scene_storyboard(isolated_bus):
         match="supports six 15-second scenes or ten 10-second episodes",
     ):
         content_service.render_campaign_media_local(campaign_id)
+
+
+# --- A1: campaign asset removal -------------------------------------------------
+
+
+def _campaign_with_two_assets():
+    campaign_id = "a1-removal-test"
+    bad = content_service.create_content_draft(
+        "Draft มีคำต้องห้าม",
+        "สินค้านี้การันตีผลลัพธ์ 100%",
+        "ผู้ประกอบการขนาดเล็ก",
+        "social_post",
+        campaign_id,
+    )
+    good = content_service.create_video_script(
+        "สคริปต์สะอาด", "ใช้ระบบให้เป็น", 30, campaign_id
+    )
+    return campaign_id, bad, good
+
+
+def test_remove_campaign_asset_drops_manifest_entry_and_bumps_version(isolated_bus):
+    campaign_id, bad, good = _campaign_with_two_assets()
+    key, _ = content_service._campaign_identity(campaign_id)
+    before = content_service._load_campaign(key)
+    assert len(before["assets"]) == 2
+
+    result = content_service.remove_campaign_asset(
+        campaign_id, bad["filename"], "banned claim"
+    )
+
+    assert result["operation_status"] == "removed"
+    assert result["removed"]["filename"] == bad["filename"]
+    assert result["version"] == f"v{int(before['version_number']) + 1}"
+    assert result["remaining_asset_count"] == 1
+    assert result["file_retained_on_bus"] is True
+    assert result["review_reset"] is True
+    assert result["approval_reset"] is True
+
+    campaign = content_service._load_campaign(key)
+    assert [a["filename"] for a in campaign["assets"]] == [good["filename"]]
+    assert campaign["review"] is None
+    assert campaign["approved_version"] is None
+    assert campaign["removal_records"][-1]["filename"] == bad["filename"]
+    assert campaign["removal_records"][-1]["reason"] == "banned claim"
+    # payload bytes survive — removal is manifest-level, reversible, auditable
+    fetched = bus_store.fetch_from_bus("content", bad["filename"])
+    assert "# Draft มีคำต้องห้าม" in fetched["content"]
+
+
+def test_removed_asset_no_longer_drags_campaign_redaction(isolated_bus):
+    campaign_id, bad, good = _campaign_with_two_assets()
+
+    first = content_service.review_publish_gate(campaign_id=campaign_id)
+    redaction_check = next(c for c in first["checks"] if c["check"] == "redaction")
+    assert redaction_check["ok"] is False, "banned phrase must fail redaction while listed"
+
+    content_service.remove_campaign_asset(campaign_id, bad["filename"])
+
+    second = content_service.review_publish_gate(campaign_id=campaign_id)
+    redaction_check = next(c for c in second["checks"] if c["check"] == "redaction")
+    assert redaction_check["ok"] is True, "redaction must recompute over remaining assets only"
+    listed = [a["filename"] for a in second["manifest"]["assets"]]
+    assert bad["filename"] not in listed
+    assert good["filename"] in listed
+    assert bad["filename"] in second["manifest"]["removed_assets"]
+
+
+def test_remove_campaign_asset_rejects_unknown_targets(isolated_bus):
+    campaign_id, bad, good = _campaign_with_two_assets()
+    with pytest.raises(
+        content_service.ContentServiceError, match="asset not found in campaign"
+    ):
+        content_service.remove_campaign_asset(campaign_id, "nope.md")
+    with pytest.raises(content_service.ContentServiceError, match="filename is required"):
+        content_service.remove_campaign_asset(campaign_id, "   ")
+    with pytest.raises(content_service.ContentServiceError, match="campaign not found"):
+        content_service.remove_campaign_asset("missing-campaign", "nope.md")
+
+
+def test_remove_campaign_asset_reports_dependents(isolated_bus):
+    campaign_id = "a1-dependents-test"
+    script = content_service.create_video_script(
+        "สคริปต์ต้นทาง", "ข้อความหลัก", 30, campaign_id
+    )
+    cue = content_service.design_audio_experience(campaign_id, script["filename"])
+
+    result = content_service.remove_campaign_asset(campaign_id, script["filename"])
+
+    assert result["dependent_assets"] == [cue["filename"]]
+    assert result["remaining_asset_count"] == 1
+
+
+def test_remove_campaign_asset_invalidates_prior_approval(isolated_bus):
+    campaign_id, bad, good = _campaign_with_two_assets()
+    review = content_service.review_publish_gate(campaign_id=campaign_id)
+    content_service.record_human_approval(
+        campaign_id, review["version"], "อนุมัติรอบแรก"
+    )
+    key, _ = content_service._campaign_identity(campaign_id)
+    assert content_service._load_campaign(key)["approved_version"] == review["version"]
+
+    content_service.remove_campaign_asset(campaign_id, bad["filename"])
+
+    campaign = content_service._load_campaign(key)
+    assert campaign["approved_version"] is None
+    assert campaign["status"] != "approved"
+    # approval history is append-only; only the active approval is cleared
+    assert len(campaign["approval_records"]) == 1
+    assert campaign["removal_records"][-1]["reason"] is None
+
+
+def test_remove_campaign_asset_mcp_tool(isolated_bus):
+    campaign_id, bad, good = _campaign_with_two_assets()
+    raw = mcp._tool_manager.get_tool("remove_campaign_asset").fn(
+        campaign_id, bad["filename"], "ทดสอบผ่าน MCP"
+    )
+    payload = json.loads(raw)
+    assert payload["operation_status"] == "removed"
+
+    raw_error = mcp._tool_manager.get_tool("remove_campaign_asset").fn(
+        campaign_id, "missing.md", ""
+    )
+    payload_error = json.loads(raw_error)
+    assert payload_error["status"] == "error"
+    assert "asset not found" in payload_error["message"]

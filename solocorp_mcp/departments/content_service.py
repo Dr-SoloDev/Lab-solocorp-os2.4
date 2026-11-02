@@ -2055,6 +2055,10 @@ def _campaign_manifest_summary(campaign: dict[str, Any]) -> dict[str, Any]:
         ],
         "review": campaign.get("review"),
         "approved_version": campaign.get("approved_version"),
+        "removed_assets": [
+            record.get("filename")
+            for record in campaign.get("removal_records", [])
+        ],
     }
 
 
@@ -2250,6 +2254,85 @@ def review_publish_gate(
             "path": report_result["path"],
         },
         "publish_action": "blocked_until_human_approval",
+    }
+
+
+def remove_campaign_asset(
+    campaign_id: str,
+    filename: str,
+    reason: str = "",
+) -> dict[str, Any]:
+    """Remove one asset from a campaign manifest (A1 — asset removal).
+
+    The manifest is the review input: ``_review_campaign`` aggregates text
+    from listed assets only, so dropping the entry here is what stops one bad
+    asset from failing every future gate run. Payload bytes stay on the bus
+    (audit trail + reversible); the campaign version bumps and any review or
+    approval is cleared because approval covered the previous asset set.
+    """
+
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    target = str(filename or "").strip()
+    if not target:
+        raise ContentServiceError("filename is required")
+    note = str(reason or "").strip()
+    if len(note) > 500:
+        raise ContentServiceError("reason must be at most 500 characters")
+
+    with _campaign_lock(campaign_key):
+        campaign = _load_campaign(campaign_key)
+        if campaign is None or campaign.get("campaign_id") != canonical_id:
+            raise ContentServiceError(f"campaign not found: {canonical_id}")
+        assets = campaign.get("assets", [])
+        match = next((a for a in assets if a.get("filename") == target), None)
+        if match is None:
+            raise ContentServiceError(f"asset not found in campaign: {target}")
+
+        remaining = [a for a in assets if a.get("filename") != target]
+        dependents = [
+            str(a.get("filename"))
+            for a in remaining
+            if target in (a.get("dependencies") or [])
+        ]
+
+        version_number = int(campaign.get("version_number", 0)) + 1
+        campaign["version_number"] = version_number
+        campaign["version"] = f"v{version_number}"
+        campaign["assets"] = remaining
+        campaign["status"] = (
+            str(remaining[-1].get("status") or "scaffold")
+            if remaining
+            else "scaffold"
+        )
+        campaign["review"] = None
+        campaign["approved_version"] = None
+        tombstone = {
+            "filename": match.get("filename"),
+            "type": match.get("type"),
+            "removed_from_version": match.get("version"),
+            "removed_at": _now(),
+            "reason": note or None,
+            "file_retained_on_bus": True,
+        }
+        campaign.setdefault("removal_records", []).append(tombstone)
+        manifest_file = _save_campaign(campaign)
+
+    return {
+        "campaign_id": canonical_id,
+        "operation_status": "removed",
+        "removed": {
+            "filename": match.get("filename"),
+            "type": match.get("type"),
+            "version": match.get("version"),
+        },
+        "version": campaign["version"],
+        "remaining_asset_count": len(remaining),
+        "dependent_assets": dependents,
+        "review_reset": True,
+        "approval_reset": True,
+        "file_retained_on_bus": True,
+        "removal_record": tombstone,
+        "campaign_manifest": manifest_file,
     }
 
 
