@@ -45,6 +45,9 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # ── Auth guard helper ─────────────────────────────────────────────────
 from solocorp_mcp.auth import verify_scope
+from solocorp_mcp.module_registry import ModuleRegistry
+from solocorp_mcp.task_tracking import TaskTracker
+from solocorp_mcp.departments.mcp_stdio import MCPStdioClient, MCPStdioError
 
 def _check_scope(required: str):
     """Check auth scope inside a tool function.
@@ -57,6 +60,12 @@ def _check_scope(required: str):
             f"Requires scope '{required}' — set SOLOCORP_API_KEY with scope >= '{required}'\n"
             f"(current key: {'not set' if key is None else 'insufficient scope'})"
         )
+
+_module_registry = ModuleRegistry()
+_task_tracker = TaskTracker()
+
+def _error(exc: Exception) -> dict:
+    return {"status": "error", "error": type(exc).__name__, "message": str(exc)}
 PROFILES_DIR = ROOT / "profiles"
 INDEX_PATH = PROFILES_DIR / "INDEX.md"
 BUS_SYSTEM_DIR = ROOT / "bus" / "system"
@@ -553,6 +562,139 @@ Use this server when you need to:
             lines.append(r["snippet"])
             lines.append("")
         return "\n".join(lines)
+
+    @mcp.tool()
+    def solocorp_call_department_tool(
+        module_id: str,
+        tool_name: str,
+        arguments: str = "{}",
+    ) -> str:
+        """Call a tool directly on an enabled department MCP server.
+
+        This enables the CEO to invoke department capabilities within the same
+        session — for example calling `create_content_draft` on content-creator
+        without starting a new chat or client connection.
+
+        Args:
+            module_id: Department module ID (e.g. 'content-creator', 'sound-studio',
+                       'central-bus', 'solocorp').
+            tool_name: Name of the tool to call on that department MCP.
+            arguments: JSON string of tool arguments (default "{}").
+        """
+        _check_scope("team")
+
+        # Look up module command from registry
+        registry = _module_registry.status()
+        modules = registry.get("modules", {})
+        if module_id not in modules:
+            return json.dumps({
+                "status": "error",
+                "error": "module_not_found",
+                "message": f"Module '{module_id}' not found in registry",
+            }, ensure_ascii=False)
+
+        entry = modules[module_id]
+        command = entry.get("command")
+        if not command:
+            return json.dumps({
+                "status": "error",
+                "error": "no_command",
+                "message": f"Module '{module_id}' has no command configured",
+            }, ensure_ascii=False)
+
+        # Parse arguments
+        try:
+            args = json.loads(arguments) if arguments else {}
+        except json.JSONDecodeError as exc:
+            return json.dumps({
+                "status": "error",
+                "error": "invalid_arguments",
+                "message": f"Failed to parse arguments JSON: {exc}",
+            }, ensure_ascii=False)
+
+        # Connect and call
+        import time
+        start = time.perf_counter()
+        client = None
+        try:
+            client = MCPStdioClient(
+                command,
+                cwd=str(ROOT),
+                startup_timeout=30,
+            )
+            result = client.request("tools/call", {
+                "name": tool_name,
+                "arguments": args,
+            }, timeout=60)
+            elapsed_ms = round((time.perf_counter() - start) * 1000, 2)
+            return json.dumps({
+                "status": "success",
+                "module_id": module_id,
+                "tool_name": tool_name,
+                "response_time_ms": elapsed_ms,
+                "result": result,
+            }, ensure_ascii=False)
+        except MCPStdioError as exc:
+            elapsed_ms = round((time.perf_counter() - start) * 1000, 2)
+            return json.dumps({
+                "status": "error",
+                "error": "mcp_error",
+                "message": str(exc)[:500],
+                "module_id": module_id,
+                "tool_name": tool_name,
+                "response_time_ms": elapsed_ms,
+            }, ensure_ascii=False)
+        except Exception as exc:  # noqa: BLE001
+            elapsed_ms = round((time.perf_counter() - start) * 1000, 2)
+            return json.dumps({
+                "status": "error",
+                "error": type(exc).__name__,
+                "message": str(exc)[:500],
+                "module_id": module_id,
+                "tool_name": tool_name,
+                "response_time_ms": elapsed_ms,
+            }, ensure_ascii=False)
+        finally:
+            if client is not None:
+                try:
+                    client.close()
+                except Exception:  # noqa: BLE001
+                    pass
+
+    @mcp.tool()
+    def task_create(dept: str, module: str, brief: str, task_type: str = "content") -> dict:
+        try:
+            return _task_tracker.create(dept, module, brief, task_type)
+        except Exception as exc:
+            return _error(exc)
+
+    @mcp.tool()
+    def task_get_status(task_id: str) -> dict:
+        try:
+            record = _task_tracker.get(task_id)
+            if record is None:
+                return _error(Exception("task_not_found"))
+            return record
+        except Exception as exc:
+            return _error(exc)
+
+    @mcp.tool()
+    def task_list(dept: str = "") -> dict:
+        try:
+            tasks = _task_tracker.list_tasks(dept or None)
+            return {"count": len(tasks), "tasks": tasks}
+        except Exception as exc:
+            return _error(exc)
+
+    @mcp.tool()
+    def task_update_status(task_id: str, status: str, result_ref: str = "", error_detail: str = "") -> dict:
+        try:
+            record = _task_tracker.update_status(task_id, status, result_ref or None, error_detail or None)
+            if record is None:
+                return _error(Exception("task_not_found"))
+            return record
+        except Exception as exc:
+            return _error(exc)
 
     return mcp
 

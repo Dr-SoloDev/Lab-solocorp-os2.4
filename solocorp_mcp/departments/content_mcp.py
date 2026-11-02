@@ -32,6 +32,11 @@ from .content_service import (
     sop_resource,
 )
 from .media_service import render_campaign_with_concat as _render_campaign_with_concat
+from ..module_registry import ModuleRegistry
+from ..task_tracking import TaskTracker
+
+_module_registry = ModuleRegistry()
+_task_tracker = TaskTracker()
 
 mcp = FastMCP(
     "content-creator",
@@ -364,6 +369,108 @@ def content_sop() -> str:
     """Return the Content Creator SOP and brand voice guidance."""
 
     return sop_resource()
+
+
+@mcp.tool()
+def module_registry_status() -> str:
+    """Return module registry status for all SoloCorp department MCPs."""
+    try:
+        return result_json(_module_registry.status())
+    except Exception as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def module_registry_update(
+    module_id: str,
+    status: str,
+    description: str = "",
+) -> str:
+    """Update one module's status in the registry."""
+    try:
+        return result_json(_module_registry.update(module_id, status, description or None))
+    except Exception as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def task_create(
+    dept: str,
+    module: str,
+    brief: str,
+    task_type: str = "content",
+) -> str:
+    """Create a new task record and return its task_id."""
+    try:
+        return result_json(_task_tracker.create(dept, module, brief, task_type))
+    except Exception as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def task_get_status(task_id: str) -> str:
+    """Return the current status record for a task."""
+    try:
+        record = _task_tracker.get(task_id)
+        if record is None:
+            return result_json({"status": "error", "error": "task_not_found", "message": f"task {task_id} not found"})
+        return result_json(record)
+    except Exception as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def task_list(dept: str = "") -> str:
+    """List all tasks, optionally filtered by department."""
+    try:
+        records = _task_tracker.list_tasks(dept or None)
+        return result_json({"count": len(records), "tasks": records})
+    except Exception as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def task_update_status(
+    task_id: str,
+    status: str,
+    result_ref: str = "",
+    error_detail: str = "",
+) -> str:
+    """Update task status and optional result/error detail."""
+    try:
+        record = _task_tracker.update_status(
+            task_id,
+            status,
+            result_ref or None,
+            error_detail or None,
+        )
+        if record is None:
+            return result_json({"status": "error", "error": "task_not_found", "message": f"task {task_id} not found"})
+        return result_json(record)
+    except Exception as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def module_registry_heartbeat(module_id: str) -> str:
+    """Attempt a real stdio connection to one module and record result."""
+    try:
+        return result_json(_module_registry.heartbeat(module_id))
+    except Exception as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def module_registry_heartbeat_all() -> str:
+    """Attempt a real stdio connection to every registered module."""
+    try:
+        registry = _module_registry.status()
+        results: list[dict[str, Any]] = []
+        for module_id in registry["modules"]:
+            results.append(_module_registry.heartbeat(module_id))
+        return result_json({"count": len(results), "results": results})
+    except Exception as exc:
+        return _error(exc)
 
 
 if __name__ == "__main__":

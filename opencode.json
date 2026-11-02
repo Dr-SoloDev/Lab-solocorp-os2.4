@@ -189,6 +189,20 @@
         "TRANSFORMERS_OFFLINE": "1"
       }
     },
+    "engineering": {
+      "type": "local",
+      "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.engineering_mcp"],
+      "cwd": ".",
+      "enabled": true,
+      "timeout": 60000
+    },
+    "qa": {
+      "type": "local",
+      "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.qa_mcp"],
+      "cwd": ".",
+      "enabled": true,
+      "timeout": 60000
+    },
     "concat": {
       "type": "local",
       "command": ["/home/drsolodev/.opencode/concat/Concat-0.2.8-x86_64.AppImage", "--mcp", "headless"],
