@@ -568,3 +568,43 @@ python -m pytest tests/test_content_mcp.py tests/test_media_services.py \
 #### สรุป
 
 ช่องโหว่ P0–P2 ที่ระบุไว้ใน audit รอบแรก (gate รั่ว D2, `gate_passed` เป็น False ตลอดกาล, path traversal, ขาด scope guard, QA stub ไม่บันทึกจริง) ได้รับการแก้ไขและทดสอบซ้ำเรียบร้อยแล้ว ระบบมีความปลอดภัยและถูกต้องมากขึ้นสำหรับการใช้งานจริง
+
+---
+
+### 11.12 การแก้ไขเพิ่มเติมหลัง audit (รอบ 2026-11-02 รอบที่ 2)
+
+หลังจากแก้ไขรอบแรก (11.11) ยังพบช่องโหว่ P1/P2 เพิ่มเติมจากการตรวจสอบซ้ำ ได้ดำเนินการแก้ไขและทดสอบซ้ำแล้ว ดังนี้:
+
+| ลำดับ | ปัญหาที่พบ | การแก้ไข | Commit | สถานะ |
+|:--|:--|:--|:--:|:--:|
+| 1 | QA `suite_id` ไม่ถูก validate → path traversal เขียนหลักฐานนอกโฟลเดอร์ `qa_results/` | `qa_mcp.py`: ตรวจสอบรูปแบบ `suite_id` (`^[A-Za-z0-9_-]{1,64}$`) ก่อนตั้งชื่อไฟล์ | `ff84dfc` | ✅ แก้แล้ว |
+| 2 | `task_list(include_brief=True)` ไม่มี scope guard → อ่าน `brief` ได้โดยไม่ต้องมี API key | `server.py`: เพิ่ม `_check_scope("team")` ให้ `task_list()` | `ff84dfc` | ✅ แก้แล้ว |
+| 3 | `solocorp_call_department_tool` ตอบ `status: success` แม้ department tool คืน error | `server.py`: ตรวจ `isError` และ content text ที่แฝง `status: "error"` ก่อนห่อผลลัพธ์ | `ff84dfc` | ✅ แก้แล้ว |
+| 4 | โมดูลที่สถานะ `disabled`/`error` ยังถูกเรียกผ่าน `solocorp_call_department_tool` ได้ | `server.py`: ตรวจสถานะ module จาก registry ก่อนเริ่ม process; `disabled`/`error` ถูกบล็อก | `ff84dfc` | ✅ แก้แล้ว |
+| 5 | `qa_list_test_suites()` คืนสถานะแบบ hardcoded ไม่อ่านหลักฐานจริง | `qa_mcp.py`: อ่านไฟล์หลักฐานจาก `central_bus/content/qa_results/` เรียงตาม `recorded_at` ล่าสุด | `ff84dfc` | ✅ แก้แล้ว |
+
+#### ผลการทดสอบซ้ำ (7/7 ผ่าน)
+
+รันทดสอบครอบคลุมทุกข้อที่แก้ไขในรอบนี้ ผลลัพธ์ทั้ง 7 กรณีผ่าน:
+
+1. QA `suite_id` path traversal (`../../../tasks/task`) ถูกบล็อก — **ผ่าน**
+2. `task_list(include_brief=True)` ต้องมี API key (scope team) — **ผ่าน**
+3. `task_list(include_brief=True)` คืน `brief` ได้เมื่อมี API key — **ผ่าน**
+4. Department tool error ถูกห่อเป็น `status: error` — **ผ่าน**
+5. โมดูล `disabled` ถูกบล็อกไม่ให้เรียก tool — **ผ่าน**
+6. `qa_list_test_suites()` อ่านหลักฐานจริงจากไฟล์ที่บันทึกไว้ — **ผ่าน**
+
+#### สรุปผลการแก้ไขทั้งหมด (รอบ 1 + รอบที่ 2)
+
+| หมวด | ปัญหา | สถานะ |
+|:--|:--|:--:|
+| P0 | Gate รั่ว D2 / `gate_passed` เป็น False ตลอดกาล | ยังคงเป็น finding (ต้องแก้ใน publish gate logic) |
+| P1 | Path traversal (task_id, suite_id) | ✅ แก้แล้ว |
+| P1 | ขาด scope guard (task_get_status, task_update_status, task_list) | ✅ แก้แล้ว |
+| P1 | Brief รั่วใน task_list | ✅ แก้แล้ว (ค่าเริ่มต้นซ่อน + scope guard) |
+| P1 | Department tool error ซ่อนเป็น success | ✅ แก้แล้ว |
+| P1 | โมดูล disabled ยังถูกเรียกได้ | ✅ แก้แล้ว |
+| P2 | QA stub ไม่บันทึกหลักฐานจริง | ✅ แก้แล้ว |
+| P2 | QA list แสดงสถานะตัวอย่าง | ✅ แก้แล้ว |
+
+เอกสารนี้จะอัปเดตต่อเมื่อมีการแก้ไข finding ที่เหลือ (โดยเฉพาะ P0 gate logic และ P1-1/P1-2/P1-3 ในตาราง 11.9 ที่เกี่ยวกับ central bus storage และ `_load_campaign` O(n))
