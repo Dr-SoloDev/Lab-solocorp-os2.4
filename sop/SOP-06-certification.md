@@ -45,6 +45,19 @@
 | D3 | ตาราง ≥20 แถวตาม `sop/TEMPLATE-D3-evaluation-table.md` + ลิงก์หลักฐาน |
 | D4 | runbook + ผลรันโดยคน/agent คนละตัว |
 
+## ที่เก็บหลักฐาน — git-of-record vs disk-of-record
+
+| ประเภทหลักฐาน | เก็บที่ไหน | เหตุผล |
+|:--|:--|:--|
+| manifest / job / result `.json` (มี sha256) | **git** (tracked) | เป็นบันทึกที่อ้างอิงได้ ตรวจย้อนหลังได้ |
+| script / draft / `.md` (มนุษย์อ่าน) | **git** (tracked) | คือตัวงานที่ต้องรีวิว |
+| render output (`local_media/`, `concat_renders/`) | **ดิสก์เท่านั้น** (git-ignored) | สร้างใหม่ได้จาก manifest — ไม่ใช่ source |
+| runtime state (`*.state.json`) | **ดิสก์เท่านั้น** | เป็น observation ไม่ใช่การตัดสินใจ |
+
+> **กฎ:** evidence ที่อ้างอิงใน D-gate ต้องชี้ไปที่ไฟล์ที่ **อยู่บนดิสก์จริง** และมี sha256
+> ใน manifest ที่ tracked — ห้ามอ้างว่า "อยู่ใน git" ถ้าไฟล์นั้นเป็น build artifact
+> ดู `docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md`
+
 ## Checklist
 
 - [ ] ผู้ตรวจ ≠ ผู้ทำ?
