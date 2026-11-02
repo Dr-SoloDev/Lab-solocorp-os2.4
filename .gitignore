@@ -21,6 +21,10 @@ Thumbs.db
 central_bus/bus.db-shm
 central_bus/bus.db-wal
 
+# Module registry runtime state (config lives in config/module-registry.json)
+central_bus/module-registry.state.json
+central_bus/module-registry.state.json.tmp
+
 # Generated voiceovers are local runtime artifacts
 central_bus/content/voiceover-*
 
