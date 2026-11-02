@@ -24,6 +24,13 @@ central_bus/bus.db-wal
 # Generated voiceovers are local runtime artifacts
 central_bus/content/voiceover-*
 
+# Render output is a build artifact, regenerable by
+# render_campaign_media_local / render_campaign_with_concat.
+# Files stay on disk for review; they are not source and never go into git.
+# See docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md
+central_bus/content/local_media/
+central_bus/content/concat_renders/
+
 # Agency Agents (cloned agent personality library)
 /reference/agency-agents/
 
