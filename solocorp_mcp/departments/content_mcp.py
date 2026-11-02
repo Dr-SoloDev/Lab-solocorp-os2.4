@@ -83,7 +83,9 @@ def _error(exc: Exception) -> str:
 def content_department_info() -> str:
     """Return the head, internal specialists, scope, and data root."""
 
-    return result_json(department_info())
+    from ..runtime_freshness import with_freshness
+
+    return result_json(with_freshness(department_info()))
 
 
 @mcp.tool()
@@ -390,7 +392,9 @@ def module_registry_status() -> str:
     """Return module registry status for all SoloCorp department MCPs."""
     _check_scope("team")
     try:
-        return result_json(_module_registry.status())
+        from ..runtime_freshness import with_freshness
+
+        return result_json(with_freshness(_module_registry.status()))
     except Exception as exc:
         return _error(exc)
 

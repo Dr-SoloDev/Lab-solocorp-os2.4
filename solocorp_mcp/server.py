@@ -737,7 +737,9 @@ Use this server when you need to:
         """Return module registry status for all SoloCorp department MCPs."""
         _check_scope("team")
         try:
-            return json.dumps(_module_registry.status(), ensure_ascii=False)
+            from .runtime_freshness import with_freshness
+
+            return json.dumps(with_freshness(_module_registry.status()), ensure_ascii=False)
         except Exception as exc:
             return json.dumps(_error(exc), ensure_ascii=False)
 

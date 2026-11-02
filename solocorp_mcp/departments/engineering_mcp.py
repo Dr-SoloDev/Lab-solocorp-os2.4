@@ -11,6 +11,7 @@ from typing import Any
 from mcp.server.fastmcp import FastMCP
 
 from ..module_registry import ModuleRegistry
+from ..runtime_freshness import freshness
 
 _module_registry = ModuleRegistry()
 
@@ -40,6 +41,7 @@ def engineering_department_info() -> str:
         {
             "status": "ok",
             "department": "engineering",
+            "runtime": freshness(),
             "head": {
                 "id": "engineering-changful",
                 "name": "ช่างฟูล (Changful)",

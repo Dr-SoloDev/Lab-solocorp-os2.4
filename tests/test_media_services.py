@@ -300,6 +300,8 @@ def test_earshot_result_payload_parses_json_footer(footer):
 def test_sound_mcp_exposes_only_bus_safe_tools():
     names = {tool.name for tool in sound_mcp._tool_manager.list_tools()}
     assert names == {
+        # Metadata only: adapter scope + runtime staleness. No media, no provider.
+        "sound_department_info",
         "sound_review_campaign_audio",
         "sound_list_earshot_sfx",
         "sound_render_campaign_sfx",

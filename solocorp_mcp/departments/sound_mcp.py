@@ -84,5 +84,40 @@ def sound_render_campaign_sfx(
         return _error(exc)
 
 
+@mcp.tool()
+def sound_department_info() -> str:
+    """Report the Sound Studio adapter scope, its tools, and whether this process is current.
+
+    Sound Studio has no department head in ``profiles/INDEX.md`` — it is an
+    adapter over local Earshot tools that Content drives. This tool reports
+    that honestly instead of inventing an owner, and carries the same
+    ``runtime`` staleness block as the other department info tools.
+    """
+
+    from ..runtime_freshness import with_freshness
+
+    return result_json(
+        with_freshness(
+            {
+                "status": "ok",
+                "department": "sound-studio",
+                "head": None,
+                "owner_note": (
+                    "No department head registered; specialist audio-designer-sound (ซาวด์) "
+                    "sits under Content in profiles/INDEX.md."
+                ),
+                "scope": "Local Earshot measure/timeline and SFX rendering; no provider calls.",
+                "tools": [
+                    "sound_department_info",
+                    "sound_list_earshot_sfx",
+                    "sound_render_campaign_sfx",
+                    "sound_review_campaign_audio",
+                ],
+                "data_root": "central_bus/content",
+            }
+        )
+    )
+
+
 if __name__ == "__main__":
     mcp.run()

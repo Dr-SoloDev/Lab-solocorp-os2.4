@@ -18,6 +18,7 @@ from typing import Any
 from mcp.server.fastmcp import FastMCP
 
 from ..module_registry import ModuleRegistry
+from ..runtime_freshness import freshness
 from ..task_tracking import TaskTracker
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -58,6 +59,7 @@ def qa_department_info() -> str:
         {
             "status": "ok",
             "department": "qa",
+            "runtime": freshness(),
             "head": {
                 "id": "qa-tim",
                 "name": "QA-ทีม",
