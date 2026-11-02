@@ -1,0 +1,62 @@
+{
+  "solocorp": {
+    "status": "enabled",
+    "transport": "stdio",
+    "command": [
+      ".venv/bin/python3",
+      "-m",
+      "solocorp_mcp.server"
+    ],
+    "description": "Core MCP — Organization & Routing"
+  },
+  "central-bus": {
+    "status": "enabled",
+    "transport": "stdio",
+    "command": [
+      ".venv/bin/python3",
+      "-m",
+      "solocorp_mcp.bus_mcp"
+    ],
+    "description": "Central Bus — Storage & Queue"
+  },
+  "content-creator": {
+    "status": "enabled",
+    "transport": "stdio",
+    "command": [
+      ".venv/bin/python3",
+      "-m",
+      "solocorp_mcp.departments.content_mcp"
+    ],
+    "description": "Content Creator Department"
+  },
+  "sound-studio": {
+    "status": "enabled",
+    "transport": "stdio",
+    "command": [
+      ".venv/bin/python3",
+      "-m",
+      "solocorp_mcp.departments.sound_mcp"
+    ],
+    "description": "Sound Studio Department"
+  },
+  "engineering": {
+    "status": "enabled",
+    "transport": "stdio",
+    "command": [
+      ".venv/bin/python3",
+      "-m",
+      "solocorp_mcp.departments.engineering_mcp"
+    ],
+    "description": "Engineering Department"
+  },
+  "qa": {
+    "status": "enabled",
+    "transport": "stdio",
+    "command": [
+      ".venv/bin/python3",
+      "-m",
+      "solocorp_mcp.departments.qa_mcp"
+    ],
+    "description": "QA Department"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "task-5da695a43ff7",
+  "dept": "content",
+  "module": "content-creator",
+  "task_type": "content",
+  "status": "completed",
+  "brief": "สร้างเนื้อหาเกี่ยวกับ Module registry",
+  "created_at": "2026-11-02T00:24:38.197098+00:00",
+  "started_at": null,
+  "completed_at": "2026-11-02T00:24:39.425397+00:00",
+  "result_ref": "central_bus/content/module-registry.json",
+  "error_detail": null
+}
