@@ -670,6 +670,7 @@ Use this server when you need to:
 
     @mcp.tool()
     def task_get_status(task_id: str) -> dict:
+        _check_scope("team")
         try:
             record = _task_tracker.get(task_id)
             if record is None:
