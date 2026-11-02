@@ -1,5 +1,7 @@
 # SoloCorp OS 2.4 — Getting Started Guide
 
+> **Status note (2026-11-02):** This is a legacy orientation guide; its readiness labels are historical and do not describe the Local-First App MVP. Current product status is in [the current PRD](docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
+
 > A complete orientation for newcomers. Read this first to understand the
 > entire system, its structure, and how to start using it effectively.
 
@@ -29,8 +31,8 @@ Key metrics at a glance:
 | Pipeline Commands | 6 |
 | Platforms | Hermes, OpenCode, Codex CLI, Grok Build |
 | Runtime | Loop Runner (cron every 30 min) |
-| Central Bus | Production Ready (FastAPI v0.6, port 8099) |
-| Status | Production Deployed |
+| Central Bus | Legacy guide's readiness claim (FastAPI v0.6, port 8099) |
+| Status | Historical platform status; Local-First App MVP is in Phase 1 |
 
 ---
 
@@ -318,7 +320,7 @@ Lab-solocorp-os2.4/
 │   ├── export-codex-agents.py     Export Codex CLI sub-agents
 │   └── pipeline_until_score.py    Pipeline scoring utility
 │
-├── central_bus/                   Central Bus — Production Ready (v0.6)
+├── central_bus/                   Central Bus — legacy guide status; see current release audit
 │   ├── main.py                    FastAPI daemon (busd) — port 8099, 5 endpoints
 │   ├── queue.py                   Async queue (SQLite WAL + JSONL dual backend)
 │   ├── router.py                  Message routing (keyword + TF-IDF + SQLite rules)
@@ -404,7 +406,7 @@ is structured the way it is:
 | 18 Department Profiles | Active | All deployed — 18 SOUL.md files complete |
 | 55+ Specialist Agents | Active | SOUL.md files complete and deployed |
 | Loop Runner | Active | Cron runs every 30 minutes |
-| Central Bus (busd) | Production Ready | FastAPI v0.6, port 8099 — 5 endpoints, SQLite WAL, dual-queue backend (4,342 lines) |
+| Central Bus (busd) | Legacy guide status; see current release audit | FastAPI v0.6, port 8099 — 5 endpoints, SQLite WAL, dual-queue backend (4,342 lines) |
 | Central Bus — Monitor Watchdog | Partial | Functional but on JSONL backend; real-time mode + health probe pending |
 | Central Bus — Dashboard | Partial | Project-state reader only; full pipeline observability (TeamHero UI) → v0.5.0 |
 | Pipeline Dashboard | Planned | Q4 2026 target — TeamHero UI + Langfuse |

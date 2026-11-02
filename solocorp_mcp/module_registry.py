@@ -170,15 +170,6 @@ class ModuleRegistry:
             "description": entry.get("description", ""),
         }
 
-    @staticmethod
-    def _runtime_view(entry: dict[str, Any]) -> dict[str, Any]:
-        return {
-            "status": entry["status"],
-            "last_checked": entry.get("last_checked"),
-            "response_time_ms": entry.get("response_time_ms"),
-            "last_error": entry.get("last_error"),
-        }
-
     def _merged(self) -> dict[str, dict[str, Any]]:
         """Config entry + runtime observation, runtime wins for live fields."""
 
@@ -221,6 +212,12 @@ class ModuleRegistry:
             "last_updated": meta.get("last_updated", "never"),
         }
 
+    def module_config(self, module_id: str) -> dict[str, Any] | None:
+        """Return one module's configured intent, without runtime observations."""
+
+        entry = self._load_config().get(module_id)
+        return dict(entry) if isinstance(entry, dict) else None
+
     # --------------------------------------------------------------- write API
 
     def update(
@@ -256,12 +253,7 @@ class ModuleRegistry:
         else:
             if module_id not in modules:
                 raise ValueError(f"module {module_id} not found in registry")
-            state = self._load_state()
-            state[module_id] = {
-                **state.get(module_id, {}),
-                **self._runtime_view({"status": status}),
-            }
-            self._save_state(state)
+            self.record_runtime_state(module_id, status)
 
         return {
             "module_id": module_id,
@@ -269,6 +261,33 @@ class ModuleRegistry:
             "description": modules.get(module_id, previous).get("description", ""),
             "updated": True,
         }
+
+    def record_runtime_state(
+        self,
+        module_id: str,
+        status: str,
+        response_time_ms: float | None = None,
+        last_error: str | None = None,
+    ) -> None:
+        """Persist a runtime observation without changing configured intent."""
+
+        if status not in RUNTIME_STATUSES:
+            raise ValueError(
+                f"status must be one of: {', '.join(sorted(RUNTIME_STATUSES))}"
+            )
+        if module_id not in self._load_config():
+            raise ValueError(f"module {module_id} not found in registry")
+        self._record_state(module_id, status, response_time_ms, last_error)
+
+    def clear_runtime_state(self, module_id: str) -> None:
+        """Remove observations so status falls back to configured intent."""
+
+        if module_id not in self._load_config():
+            raise ValueError(f"module {module_id} not found in registry")
+        state = self._load_state()
+        if module_id in state:
+            del state[module_id]
+            self._save_state(state)
 
     def heartbeat(self, module_id: str, timeout: float = 5.0) -> dict[str, Any]:
         """Attempt a real stdio connection and record the result in state only."""

@@ -15,11 +15,20 @@ INDEX.md          ← คุณอยู่ตรงนี้ — behavior map
 | ต้องการทำอะไร | เปิดไฟล์นี้ |
 |:-------------|:-----------|
 | Owner ส่ง request มา → รับ-กรอง-ส่งต่อ | → `01-receive.md` |
+| **จะยกเรื่องให้ Owner ตัดสิน → Decision Gate 3 คำถาม** | → `01-receive.md` §2 |
 | ทำงานกับ Department Heads / ทีม | → `02-work.md` |
 | เริ่ม session ใหม่ / จำ context เก่า | → `03-session.md` |
 | Deploy / destructive ops / ระวัง secret | → `04-safety.md` |
 | เปิด busd / รัน test / หา path | → `05-env.md` |
 | ตรวจชิ้นงาน / ดูว่า agent ผ่านด่านไหน | → `06-certification.md` |
+
+## กฎเหล็กที่ห้ามลืม (auto-loaded ทุก session)
+
+1. **ก่อนเสนอ Owner → รัน 3 คำถาม:** สร้างใหม่ได้ไหม / ย้อนกลับได้ไหม / เจ็บตอนนี้ไหม
+   ตกข้อแรก = CEO ตัดสินเอง ไม่ใช่ Owner
+2. **ห้ามรายงาน "เสร็จ" โดยไม่มีหลักฐานที่ตรวจได้** — tool ที่ใช้ตรวจก็ต้องถูกตรวจด้วย
+3. **"connected" ≠ "current"** — โค้ดที่รันอยู่อาจเก่ากว่าดิสก์ (ดู `runtime.restart_required`)
+
 
 ## Auto-Pilot Commands (Phase 8)
 

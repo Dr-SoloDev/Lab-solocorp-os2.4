@@ -12,10 +12,12 @@ SoloCorp OS is an **organizational OS for AI agents and a modular MCP product**.
 
 - **Source of truth:** `docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`. Use it for product target, MVP scope, sequencing, and deferred work.
 - **Target:** Local-first SoloCorp App. Its host manages enabled department MCP connections; one CEO agent receives human briefs, routes work, and tracks task state through the registry and Central Bus queue.
+- **Runtime companion:** docs/plans/SOLOCORP-APP-LOCAL-RUNTIME-DESIGN-v0.1.md records reversible implementation defaults and the Phase 1 build order.
 - **Standalone requirement:** A department MCP remains usable by itself through an external compatible client. It must not require the CEO MCP or SoloCorp App for department-scoped capability.
 - **MVP:** Local single-user app, explicit model/provider configuration, module toggles and health state, and one Content Creator end-to-end task path. Hosted multi-user service, billing, all departments, and a full autonomous worker pool are later phases.
-- **Current implementation:** The Content Creator MCP pilot and Central Bus exist. The first-party SoloCorp App, local MCP host/registry UI, and product task workflow are **not implemented**. The pilot document is evidence, not proof that the app is complete.
+- **Current implementation:** The Content Creator MCP pilot, Central Bus, and headless ModuleHost lifecycle groundwork exist. The first-party SoloCorp App shell/API, registry UI, provider flow, and product task workflow are **not implemented**. The pilot document is evidence, not proof that the app is complete.
 - **Release assurance:** Production audit findings remain visible for pre-release work. They do not replace the MVP roadmap; never describe a known limitation as a passed production guarantee.
+- **Content Creator standalone strategy (2026-11-02):** ADR-030 accepts the open-core boundary (MCP adapter open / content engine closed); ADR-031 keeps Sound Designer as a Content Creator specialist and Earshot as an internal dependency. Release remains free-first behind a quality floor, with signal-triggered monetization and 3 weekly metrics reviewed after 90 days (first: 2027-02-02). Split executes at PRD Phase 3, not as parallel work. Full reference: [Content MCP strategy](docs/plans/CONTENT-MCP-STRATEGY-v1.0.md).
 - This repo has pre-existing untracked generated artifacts and work. Check `git status` and `git diff` before edits or commits; do not clean or overwrite unrelated files.
 
 Default agent is `ceo-turbo` (strategy + routing + final call). Owner (Dr.solodev) decides L5 only.

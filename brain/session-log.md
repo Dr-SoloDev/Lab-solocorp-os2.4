@@ -1128,3 +1128,29 @@ State tracking files: 0
 - push 9 commits ขึ้น origin/main
 
 ---
+
+## Session Auto-Summary — 2026-11-02 16:11 UTC
+
+### Git
+```
+87ef8c4 feat(content): integrate sound workflow
+56b01cf A1: add remove_campaign_asset function and MCP tool
+5db13da chore(brain): auto-commit 1 brain files
+e57c9dd brain: record 2026-11-02 lessons — framing, evidence integrity, staleness
+23d8eda ops(scripts): restart-mcp.sh to clear stale MCP generations
+b9dc19c feat(mcp): every department can report whether its process is current
+e52dea3 chore(qa): store real evidence files for qa-001/002/003 (Wave A+C)
+8b5c599 docs(audit): record round-3 stora
+```
+Uncommitted: 15 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- Phase 1 ต่อ: registry schema/validator, provider settings adapter, FastAPI app/API + Jinja UI และ module toggles; gate ยังเปิดจน Content module เปิด/ปิดได้จาก UI
+- L5 parked: history ประมาณ 400 MB ใน .git — ยังไม่ rewrite ด้วย git filter-repo
+- ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
+
+---

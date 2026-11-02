@@ -3,8 +3,8 @@
 | Field | Value |
 |:--|:--|
 | Product | SoloCorp OS App + Department MCP Platform |
-| Status | Owner-approved product direction; MVP scope defined; implementation not started |
-| Date | 2026-11-01 |
+| Status | Owner-approved product direction; MVP scope defined; Phase 1 in progress |
+| Date | 2026-11-02 |
 | Primary user | Solo operator / developer using AI agents |
 | Initial module | Content Creator MCP |
 | Delivery target | Local-first web app; hosted deployment follows Beta |
@@ -195,17 +195,19 @@ Known audit and production-readiness findings are recorded and handled in Phase 
 
 Targets are initial Beta thresholds, not public launch guarantees; revise them after the first cohort.
 
-## 13. Current State (2026-11-01)
+## 13. Current State (2026-11-02)
 
 - `solocorp_mcp.server` is the existing Core MCP for organization/profile/routing capabilities; it is not yet the SoloCorp App, a UI, or a host for other MCP servers.
 - `solocorp_mcp.departments.content_mcp` is the first department MCP pilot and the MVP's initial module candidate. Existing pilot verification is historical evidence, not certification of the new app.
 - `central_bus/` already provides FastAPI services and a SQLite-backed queue. Reuse is preferred after validating task semantics and local-app boundaries.
-- A first-party SoloCorp App/runtime and module registry are not implemented yet.
-- Product direction and documentation alignment are recorded; SoloCorp App/runtime implementation is **NOT STARTED**.
+- Reusable substrate exists: ModuleRegistry, TaskTracker, MCPStdioClient, artifact storage and Central Bus. ModuleHost now manages persistent stdio connections and health polling for enabled modules.
+- Phase 0 architecture and contracts are closed in the companion runtime design note. Phase 1 is in progress; the app API, provider settings, UI and Content end-to-end path are still **NOT IMPLEMENTED**.
+- Phase 1 gate remains open until the user can configure provider settings and enable/disable the Content module in the app UI.
 
 ## 14. Related Documents
 
 - [Agent Quickstart](../../AGENTS.md) — current session instructions and product-direction pointer.
+- [Local Runtime Design](../plans/SOLOCORP-APP-LOCAL-RUNTIME-DESIGN-v0.1.md) — Phase 0 decisions and Phase 1 build order.
 - [Content Creator MCP Pilot](../plans/MCP-DEPARTMENT-SERVERS-CONTENT-PILOT.md) — implementation and test history for the initial module.
 - [Core MCP README](../../solocorp_mcp/README.md) — current Core MCP capabilities and external-client setup.
 - [Multi-Platform Compatibility PRD](PRD-Multi-Platform-Compatibility-v1.0.md) — external-client compatibility context; it does not replace this app roadmap.

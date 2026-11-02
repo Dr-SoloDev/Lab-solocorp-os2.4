@@ -724,27 +724,30 @@
     {
       "date": "2026-11-02",
       "duration": "~3h",
-      "summary": "ตรวจ repo ทั้งระบบ → พบ CI แดง 1 ตัว → ปิด Wave A/B/C (storage + evidence + freshness) และพบว่าตัวเองรายงานหลักฐานปลอมจาก MCP process ที่ค้างโค้ดเก่า",
+      "summary": "ตรวจ repo และปิด Wave A/B/C; แก้ scope/evidence gaps, ปิด Phase 0 defaults และเริ่ม Phase 1 ModuleHost",
       "key_decisions": [
         "แยก Wave A (ย้อนกลับได้) / B (L5 rewrite history, parked) / C (เก็บกวาด) — ไม่ยัดเป็นการตัดสินใจเดียว",
         "render output (local_media, concat_renders) เป็น build artifact → ไม่ track ใน git แต่เก็บบนดิสก์",
         "module registry แยก config (tracked) ออกจาก runtime state (git-ignored)",
         "ทุกแผนกรายงาน runtime.restart_required เพื่อให้ 'connected' ไม่ถูกตีความว่า 'current'",
-        "CEO แก้ไฟล์เองใน session นี้ (ไม่มี MCP tool ที่ลงมือได้) และให้ MCP เป็น checker"
+        "CEO แก้ไฟล์เองใน session นี้ (ไม่มี MCP tool ที่ลงมือได้) และให้ MCP เป็น checker",
+        "ใช้ defaults ที่ย้อนกลับได้ตาม PRD: Jinja, loopback 127.0.0.1:8766, same-origin/CSRF, FR-08 ก่อน Phase 4 และ artifact_refs เป็น list"
       ],
       "achievements": [
         "9 commits: 014ddee → 23d8eda ; test 992 → 1011 passed (+19)",
         "tracked under central_bus/content 640.5 MB → 10.4 MB (943 → 393 ไฟล์) โดยไม่ rewrite history",
         "ModuleRegistry มี test ครั้งแรก (8) — เดิมไม่มีเลย",
         "พบและแก้: contract test drift, runtime state ปนใน tracked config, 25 drafts ที่ manifest อ้างถึงแต่ git ไม่มี",
-        "scripts/restart-mcp.sh เผย 16 process / 6 รุ่น / อายุสูงสุด 15 ชม. — ล้างเหลือ 0 และยืนยันรุ่นใหม่ current"
+        "scripts/restart-mcp.sh เผย 16 process / 6 รุ่น / อายุสูงสุด 15 ชม. — ล้างเหลือ 0 และยืนยันรุ่นใหม่ current",
+        "ปิด task scope leak ใน Content MCP และคำนวณ SHA-256 จาก evidence bytes จริง; ข้อกล่าวหา backdate ถูกตรวจแล้วเป็น false positive เพราะ tool ไม่รับ recorded_at",
+        "เพิ่ม ModuleHost สำหรับ persistent stdio lifecycle, health polling และ tool calls; live QA MCP smoke ผ่าน connect/tools-list/disconnect",
+        "PRD/runtime plan/AGENTS/PROJECT ตรงกัน: Phase 0 ปิด, Phase 1 ยังไม่ผ่าน gate; Sound Designer อยู่ภายใน Content ตาม ADR-031",
+        "Focused tests 52 passed; CI 1,027 passed / 123 warnings; auto-QA gate PASS ที่ 75.4% (threshold 9%)"
       ],
       "pending_next": [
-        "P1: scope guard ที่ department adapter (task_get_status/list/update ใน content_mcp.py)",
-        "P2: sha256 ไม่ถูกเก็บลง evidence payload (list แสดง null)",
-        "P2: qa_record_test_result รับ recorded_at จาก caller (backdate ได้)",
-        "L5 parked: history 400 MB ใน .git (git filter-repo) — รอ Owner",
-        "push 9 commits ขึ้น origin/main"
+        "Phase 1 ต่อ: registry schema/validator, provider settings adapter, FastAPI app/API + Jinja UI และ module toggles; gate ยังเปิดจน Content module เปิด/ปิดได้จาก UI",
+        "L5 parked: history ประมาณ 400 MB ใน .git — ยังไม่ rewrite ด้วย git filter-repo",
+        "ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030"
       ]
     }
   ],
