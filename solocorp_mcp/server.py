@@ -735,6 +735,7 @@ Use this server when you need to:
     @mcp.tool()
     def module_registry_status() -> str:
         """Return module registry status for all SoloCorp department MCPs."""
+        _check_scope("team")
         try:
             return json.dumps(_module_registry.status(), ensure_ascii=False)
         except Exception as exc:

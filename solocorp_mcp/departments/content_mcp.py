@@ -7,9 +7,23 @@ not exposed as separate client entry points.
 
 from __future__ import annotations
 
+import os
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
+
+from ..auth import verify_scope
+
+def _check_scope(required: str):
+    """Check auth scope inside a tool function.
+    Raises PermissionError if scope insufficient, which FastMCP converts to isError response.
+    """
+    key = os.environ.get("SOLOCORP_API_KEY")
+    if not verify_scope(required, key):
+        raise PermissionError(
+            f"Requires scope '{required}' — set SOLOCORP_API_KEY with scope >= '{required}'\n"
+            f"(current key: {'not set' if key is None else 'insufficient scope'})"
+        )
 
 from .content_service import (
     ContentServiceError,
@@ -374,6 +388,7 @@ def content_sop() -> str:
 @mcp.tool()
 def module_registry_status() -> str:
     """Return module registry status for all SoloCorp department MCPs."""
+    _check_scope("team")
     try:
         return result_json(_module_registry.status())
     except Exception as exc:
@@ -439,26 +454,7 @@ def task_update_status(
         return _error(exc)
 
 
-@mcp.tool()
-def module_registry_heartbeat(module_id: str) -> str:
-    """Attempt a real stdio connection to one module and record result."""
-    try:
-        return result_json(_module_registry.heartbeat(module_id))
-    except Exception as exc:
-        return _error(exc)
 
-
-@mcp.tool()
-def module_registry_heartbeat_all() -> str:
-    """Attempt a real stdio connection to every registered module."""
-    try:
-        registry = _module_registry.status()
-        results: list[dict[str, Any]] = []
-        for module_id in registry["modules"]:
-            results.append(_module_registry.heartbeat(module_id))
-        return result_json({"count": len(results), "results": results})
-    except Exception as exc:
-        return _error(exc)
 
 
 if __name__ == "__main__":
