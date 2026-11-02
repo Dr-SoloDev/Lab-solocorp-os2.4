@@ -1154,3 +1154,30 @@ State tracking files: 0
 - ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
 
 ---
+
+## Session Auto-Summary — 2026-11-02 16:17 UTC
+
+### Git
+```
+f1a9bff feat(app): add module host foundation
+79cfc53 fix(mcp): enforce task scope and evidence hashes
+87ef8c4 feat(content): integrate sound workflow
+56b01cf A1: add remove_campaign_asset function and MCP tool
+5db13da chore(brain): auto-commit 1 brain files
+e57c9dd brain: record 2026-11-02 lessons — framing, evidence integrity, staleness
+23d8eda ops(scripts): restart-mcp.sh to clear stale MCP generations
+b9dc19c feat(mcp): every department can report whether its process is current
+e52dea3 chore
+```
+Uncommitted: 1 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- Phase 1 ต่อ: registry schema/validator, provider settings adapter, FastAPI app/API + Jinja UI และ module toggles; gate ยังเปิดจน Content module เปิด/ปิดได้จาก UI
+- L5 parked: history ประมาณ 400 MB ใน .git — ยังไม่ rewrite ด้วย git filter-repo
+- ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
+
+---

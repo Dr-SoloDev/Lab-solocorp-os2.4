@@ -742,7 +742,8 @@
         "ปิด task scope leak ใน Content MCP และคำนวณ SHA-256 จาก evidence bytes จริง; ข้อกล่าวหา backdate ถูกตรวจแล้วเป็น false positive เพราะ tool ไม่รับ recorded_at",
         "เพิ่ม ModuleHost สำหรับ persistent stdio lifecycle, health polling และ tool calls; live QA MCP smoke ผ่าน connect/tools-list/disconnect",
         "PRD/runtime plan/AGENTS/PROJECT ตรงกัน: Phase 0 ปิด, Phase 1 ยังไม่ผ่าน gate; Sound Designer อยู่ภายใน Content ตาม ADR-031",
-        "Focused tests 52 passed; CI 1,027 passed / 123 warnings; auto-QA gate PASS ที่ 75.4% (threshold 9%)"
+        "Focused tests 52 passed; CI 1,027 passed / 123 warnings; auto-QA gate PASS ที่ 75.4% (threshold 9%)",
+        "Commit 79cfc53 และ f1a9bff push สำเร็จไป origin/main"
       ],
       "pending_next": [
         "Phase 1 ต่อ: registry schema/validator, provider settings adapter, FastAPI app/API + Jinja UI และ module toggles; gate ยังเปิดจน Content module เปิด/ปิดได้จาก UI",
@@ -778,7 +779,7 @@
     ]
   },
   "saved_at": "2026-11-02T04:45:00Z",
-  "latest_commit": "23d8eda",
+  "latest_commit": "f1a9bff",
   "state_snapshot": {
     "date": "2026-10-10",
     "p0_fixes_today": {
