@@ -635,8 +635,22 @@ Use this server when you need to:
                 "arguments": args,
             }, timeout=60)
             elapsed_ms = round((time.perf_counter() - start) * 1000, 2)
-            # ตรวจว่า department tool คืน isError หรือไม่ ถ้าเป็น error ต้องตอบ status: error
+            # ตรวจว่า department tool คืน isError หรือ content แฝง error
+            dept_error = False
             if isinstance(result, dict) and result.get("isError") is True:
+                dept_error = True
+            elif isinstance(result, dict):
+                content = result.get("content", [])
+                if isinstance(content, list) and len(content) > 0:
+                    first = content[0]
+                    if isinstance(first, dict) and isinstance(first.get("text"), str):
+                        try:
+                            inner = json.loads(first["text"])
+                            if isinstance(inner, dict) and inner.get("status") == "error":
+                                dept_error = True
+                        except (json.JSONDecodeError, TypeError):
+                            pass
+            if dept_error:
                 return json.dumps({
                     "status": "error",
                     "error": "department_tool_error",
@@ -717,6 +731,29 @@ Use this server when you need to:
             return record
         except Exception as exc:
             return _error(exc)
+
+    @mcp.tool()
+    def module_registry_status() -> str:
+        """Return module registry status for all SoloCorp department MCPs."""
+        try:
+            return json.dumps(_module_registry.status(), ensure_ascii=False)
+        except Exception as exc:
+            return json.dumps(_error(exc), ensure_ascii=False)
+
+    @mcp.tool()
+    def module_registry_update(
+        module_id: str,
+        status: str,
+        description: str = "",
+    ) -> str:
+        """Update one module's status in the registry."""
+        try:
+            return json.dumps(
+                _module_registry.update(module_id, status, description or None),
+                ensure_ascii=False,
+            )
+        except Exception as exc:
+            return json.dumps(_error(exc), ensure_ascii=False)
 
     return mcp
 
