@@ -1,0 +1,86 @@
+{
+  "command": {
+    "id": "CMD-006",
+    "type": "CEO_DISPATCH",
+    "timestamp": "2026-11-06T18:30:00+07:00",
+    "priority": "P1",
+    "from": "CEO เทอโบ (Turbo)",
+    "to": "@architect-songsak (พี่ทรงศักดิ์ — Head of Architect)",
+    "title": "CMD-006 — C2 Registry schema extension: เคาะ permissions enum + migration policy (ตัดสินใจก่อน ห้าม implement)",
+    "context": "C1 ปิดแล้ว (branch fix/registry-c1 @ ebde1d4 merge เข้า main แบบ fast-forward 2026-11-06) — validator config/state, register(), tolerant read, atomic write, config=error/state=warning ผ่าน QA อิสระ (1059 passed, sign-off แล้ว). สิ่งที่ C1 ยังไม่ทำคือส่วนที่ design doc D3 สัญญาไว้: field ที่ยังขาด 6 ตัว (name, version, capabilities, dependencies, permissions, entry_repo) และการขยาย transport เกิน stdio. QA ทิ้ง defect ที่ต้องตัดสินเชิงสถาปนาก่อนลงมือ C2 — ตัวที่บล็อกคือ 'permissions' เพราะต้องมี vocabulary ที่ตรงกับระบบ scope จริง ไม่ใช่ free-form string",
+    "current_state_summary": "main @ ebde1d4: solocorp_mcp/module_registry_schema.py (317 บรรทัด) บังคับ CONFIG_REQUIRED_FIELDS = status/transport/command และ VALID_TRANSPORTS = {stdio}; auth.py:13 มี SCOPE_LEVELS = {public:1, team:2, admin:3} พร้อม KEY_PATTERN sk-solocorp-{scope}-{id}; status() คืน 15 keys + valid/errors/warnings/stale_state/state_error; validate() คืน 5 keys ทุก path; _meta.schema_version = 1 (legacy ไม่มี version ก็ยังผ่าน). config/module-registry.json มี 5 module (solocorp, central-bus, content-creator, engineering, qa) ผ่าน validator ไม่ต้อง migrate",
+    "tasks": [
+      {
+        "id": "CMD-006-T1",
+        "priority": "P0",
+        "status": "pending",
+        "description": "เคาะรูปแบบของ field 'permissions' ใน module manifest — เป็นตัวบล็อกเดียวของ C2 (CEO decision D4 เลื่อนมาให้ Architect ตัดสิน)",
+        "deliverable": "Decision note: รูปแบบ JSON ที่แน่นอน + กฎ validator + เหตุผลที่ผูกกับ SCOPE_LEVELS (หรือไม่ผูก) + ตัวอย่าง 3 module จริง (solocorp / content-creator / qa)",
+        "acceptance_criteria": [
+          "เลือก 1 ทางและระบุ trade-off: (a) list ของ SCOPE_LEVELS ที่ validate เป็น enum (b) single scope level ต่อ module (c) free-form list + warning",
+          "ตอบให้ชัดว่า permissions ของ module คือ 'scope ที่ module ขอสำหรับ tool ของตัวเอง' หรือ 'scope ที่ต้องมีเพื่อเรียก module นี้' — ต้องไม่สับสนสองความหมายนี้",
+          "ยืนยันว่าไม่ทำให้ FR-07 เสีย: department MCP standalone ต้องใช้ได้โดยไม่ต้องมี SOLOCORP_API_KEY / Core MCP — permissions ต้องเป็น declarative metadata ไม่ใช่ enforcement ที่บังคับ key ของ core",
+          "ระบุว่าต้องแก้ auth.py หรือไม่ (ถ้าเพิ่ม scope ใหม่ ต้องแก้ SCOPE_LEVELS + KEY_PATTERN + tests หรือไม่)",
+          "ระบุ behavior เมื่อ module ขอ scope ที่ยังไม่มีในระบบ (error / warning / เก็บไว้เฉยๆ)"
+        ],
+        "deadline": "2026-11-10"
+      },
+      {
+        "id": "CMD-006-T2",
+        "priority": "P1",
+        "status": "pending",
+        "description": "นโยบาย schema migration + rollback (QA พบกับดัก: config เป็น git-tracked และ validator reject unknown field ⇒ merge C2 แล้ว rollback โค้ดแต่ไม่ revert config = registry ตายทั้งก้อน)",
+        "deliverable": "Migration policy 1 หน้า: กฎการอ่าน config รุ่นเก่า/ใหม่ + สิ่งที่ต้อง commit คู่กัน + recovery steps",
+        "acceptance_criteria": [
+          "กำหนดความหมายของ _meta.schema_version (ปัจจุบัน = 1, legacy ไม่มี version)",
+          "ตัดสินว่า code v2 อ่าน config v1 ได้ไหม / code v1 เจอ config v2 ต้องทำอะไร (fail-closed vs degrade) — ห้าม dead-end ที่ผู้ใช้ซ่อมจาก UI ไม่ได้",
+          "ระบุว่า schema_version ต้อง bump เมื่อไหร่ (เพิ่ม field optional = bump หรือไม่)",
+          "ระบุ recovery path เมื่อ config ใหม่กว่า code (เช่น ไฟล์ .bak, git revert คู่กัน, หรือ downgrade path)"
+        ],
+        "deadline": "2026-11-10"
+      },
+      {
+        "id": "CMD-006-T3",
+        "priority": "P2",
+        "status": "pending",
+        "description": "ตัดสินชนิดข้อมูลของ field ที่เหลือใน D3 เพื่อให้ Engineering implement ครั้งเดียวจบ",
+        "deliverable": "ตาราง field → type → validation rule → ตัวอย่างค่าจริง 5 module",
+        "acceptance_criteria": [
+          "version: รูปแบบ (semver? free string?) และใครเป็นเจ้าของค่า (module ประกาศเอง หรือ app อ่านจาก runtime)",
+          "capabilities: allow-list ('tools','resources','prompts') หรือ free list — ต้องตอบว่ามีไว้ให้ UI แสดงหรือให้ CEO route",
+          "dependencies: รูปแบบ ('busd' / module id / object) และ semantics เมื่อ dependency ไม่พร้อม",
+          "entry_repo: ค่า 'internal' | path | url — และผลต่อ ADR-030 split (เปลี่ยนแค่ field นี้แล้ว app ไม่แก้โค้ด)",
+          "transport: จะขยายเกิน stdio เมื่อไหร่ และต้องมี field entry point อะไรต่อ transport (command vs url)"
+        ],
+        "deadline": "2026-11-12"
+      }
+    ],
+    "constraints": [
+      "CMD-006 เป็นเฟสตัดสินใจ — ห้าม implement โค้ด / ห้ามแก้ module_registry*.py (implementation เป็นงาน Engineering C2 หลัง Architect เคาะ)",
+      "ห้ามเปิดประเด็น C1 ซ้ำ (config=error / state=warning / atomic write / register() / update() patch-only) — ปิดแล้วโดย QA sign-off",
+      "ทุกข้อสรุปต้องมีหลักฐานอ้างไฟล์+บรรทัด (auth.py, module_registry_schema.py, design doc D3, PRD Must Have #3)",
+      "ต้องตอบ T1 ให้เสร็จก่อน ไม่งั้น C2 เริ่มไม่ได้ (T2/T3 ตามได้)"
+    ],
+    "artifacts": [
+      "solocorp_mcp/module_registry_schema.py",
+      "solocorp_mcp/module_registry.py",
+      "solocorp_mcp/auth.py",
+      "config/module-registry.json",
+      "docs/plans/SOLOCORP-APP-LOCAL-RUNTIME-DESIGN-v0.1.md",
+      "docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md"
+    ],
+    "engineering_backlog_not_in_this_ticket": [
+      "D5 — disable แล้ว state เก่ายังโชว์ connected (กระทบ Must Have #8) → C2 ตัวแรกของ Engineering",
+      "D3 — update() ไม่เป็น upsert แล้ว → release note สำหรับ client ภายนอก",
+      "D6 — module_id ไม่มี pattern validation",
+      "D8 — validate_merged ไม่มี production consumer (ลบหรือใช้)",
+      "quarantine เงียบ — ควรมี logging.warning ก่อน C2",
+      "ModuleHost.connect โยน RegistrySchemaError ดิบ → ควรเป็น ModuleHostError"
+    ],
+    "references": {
+      "c1_commits": ["650205c", "e7b78ea", "c4cd046", "08060dd", "b430398", "ebde1d4"],
+      "qa_signoff": "PASSED — E1–E8 + 8 gates, 1059 passed, ไม่ weaken test, ไม่ scope creep",
+      "ceo_decisions_c1": ["D1 ขยาย tool register/update", "D2 unknown field fatal + blocklist + schema_version", "D3 corrupt state = quarantine", "D4 permissions enum → Architect (this ticket)"]
+    }
+  }
+}
