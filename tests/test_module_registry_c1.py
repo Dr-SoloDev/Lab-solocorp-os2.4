@@ -315,3 +315,117 @@ def test_module_registry_validate_reports_invalid(tmp_path: Path) -> None:
 
     assert result["valid"] is False
     assert any("status" in e for e in result["errors"])
+
+
+# ── A7: non-UTF-8 files, unreadable-config facts, stable validate shape ──
+
+NON_UTF8_CONFIG = b'{"qa": {"description": "caf\xe9"}}'
+NON_UTF8_STATE = (
+    b'{"qa": {"status": "connected", '
+    b'"last_checked": "2026-11-06T00:00:00+00:00", '
+    b'"last_error": "caf\xe9"}}'
+)
+
+
+def _write_bytes(path: Path, payload: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(payload)
+
+
+def test_config_not_utf8_is_fatal_and_never_raises(
+    registry: ModuleRegistry,
+) -> None:
+    _write_bytes(Path(registry.path), NON_UTF8_CONFIG)
+
+    status = registry.status()
+    assert status["valid"] is False
+    assert any("UTF-8" in error for error in status["errors"])
+    assert status["warnings"] == []
+    assert status["modules"] == {}
+
+    result = registry.validate()
+    assert result["valid"] is False
+    assert any("config corrupt" in error for error in result["errors"])
+    assert any("UTF-8" in error for error in result["errors"])
+    assert result["warnings"] == []
+
+    # The registry read path converts the codec error; no caller ever sees a
+    # raw UnicodeDecodeError from here (wrapping ModuleHost is C2).
+    with pytest.raises(RegistrySchemaError, match="UTF-8"):
+        registry.module_config("qa")
+
+
+def test_state_not_utf8_is_warning_and_status_keeps_full_view(
+    registry: ModuleRegistry,
+) -> None:
+    _write_bytes(Path(registry.state_path), NON_UTF8_STATE)
+
+    status = registry.status()
+    assert status["valid"] is True
+    assert status["errors"] == []
+    assert status["count"] == 5
+    assert set(status["modules"]) == {
+        "solocorp",
+        "central-bus",
+        "content-creator",
+        "engineering",
+        "qa",
+    }
+    assert status["modules"]["qa"]["status"] == "enabled"
+    assert status["state_error"] is not None
+    assert "UTF-8" in status["state_error"]
+    assert status["stale_state"] == []
+    assert any("UTF-8" in warning for warning in status["warnings"])
+
+    result = registry.validate()
+    assert result["valid"] is True
+    assert result["errors"] == []
+    assert result["state_error"] is not None
+    assert any("UTF-8" in warning for warning in result["warnings"])
+
+
+def test_unreadable_config_reports_no_stale_state(
+    registry: ModuleRegistry,
+) -> None:
+    _write_bytes(Path(registry.path), NON_UTF8_CONFIG)
+    _write_bytes(
+        Path(registry.state_path),
+        json.dumps(
+            {
+                module_id: _state_entry()
+                for module_id in ("central-bus", "qa", "solocorp")
+            }
+        ).encode("utf-8"),
+    )
+
+    # Without a readable config "stale" is undefined: reporting those three
+    # entries as orphans would be a lie, so the registry reports nothing.
+    status = registry.status()
+    assert status["valid"] is False
+    assert status["stale_state"] == []
+    assert status["state_error"] is None
+
+    result = registry.validate()
+    assert result["valid"] is False
+    assert result["stale_state"] == []
+    assert result["state_error"] is None
+
+
+def test_validate_returns_five_keys_on_every_path(
+    registry: ModuleRegistry,
+) -> None:
+    expected = {"valid", "errors", "warnings", "stale_state", "state_error"}
+
+    assert set(registry.validate()) == expected
+
+    _write_bytes(Path(registry.state_path), b"\xff")
+    assert set(registry.validate()) == expected
+
+    _write_bytes(Path(registry.path), NON_UTF8_CONFIG)
+    assert set(registry.validate()) == expected
+
+    Path(registry.path).unlink()
+    missing = registry.validate()
+    assert set(missing) == expected
+    assert missing["stale_state"] == []
+    assert missing["state_error"] is None

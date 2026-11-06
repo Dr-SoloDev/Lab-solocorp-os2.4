@@ -9,6 +9,7 @@ import pytest
 
 from solocorp_mcp.module_registry_schema import (
     RegistrySchemaError,
+    read_json_document,
     validate_config,
     validate_state,
     validate_merged,
@@ -130,3 +131,11 @@ def test_merged_cross_validation(tmp_path: Path) -> None:
     state = {"nonexistent": {"status": "connected", "last_checked": "now"}}
     errors = validate_merged(config, state)
     assert any("not declared in config" in e for e in errors)
+
+
+def test_read_json_document_rejects_non_utf8(tmp_path: Path) -> None:
+    path = tmp_path / "config.json"
+    path.write_bytes(b'{"qa": {"description": "caf\xe9"}}')
+
+    with pytest.raises(RegistrySchemaError, match="not valid UTF-8"):
+        read_json_document(path)

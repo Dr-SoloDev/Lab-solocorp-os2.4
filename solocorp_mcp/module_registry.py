@@ -313,8 +313,11 @@ class ModuleRegistry:
         false; derived-state problems appear in ``warnings`` (and as
         ``stale_state``/``state_error``). Config errors invalidate the
         registry; state problems are warnings because state is derived and
-        rewritten by the next heartbeat. The original fields keep their names
-        and shapes; the new keys are additive.
+        rewritten by the next heartbeat. When the config cannot be read the
+        state file cannot be interpreted either — "stale" is undefined without
+        a module list — so ``stale_state``/``state_error`` stay empty rather
+        than labelling every entry an orphan. The original fields keep their
+        names and shapes; the new keys are additive.
         """
 
         errors: list[str] = []
@@ -327,7 +330,13 @@ class ModuleRegistry:
             except RegistrySchemaError as exc:
                 errors.append(str(exc))
 
-        state = self._read_state(set(config))
+        if errors:
+            # No readable config means no trustworthy module set. Reading state
+            # against an empty set would report every entry as stale, which is
+            # a lie: we simply do not know.
+            state = _StateRead({}, [], None)
+        else:
+            state = self._read_state(set(config))
         modules = self._merged(config, state.entries)
         meta = self._config_meta()
         warnings = [] if errors else _state_warnings(state)
@@ -368,7 +377,10 @@ class ModuleRegistry:
         because state is derived and rewritten by the next heartbeat. Missing
         state is fine. ``warnings`` mirrors ``stale_state``/``state_error`` so
         this result and ``status()`` describe the same condition in the same
-        words. Never raises.
+        words. Returns the same five keys on every path: when the config
+        cannot be read, ``stale_state`` is ``[]`` and ``state_error`` is
+        ``None`` because neither can be derived without a module list. Never
+        raises.
         """
 
         if not self.path.exists():
@@ -376,16 +388,22 @@ class ModuleRegistry:
                 "valid": False,
                 "errors": [f"config file {self.path} does not exist"],
                 "warnings": [],
+                "stale_state": [],
+                "state_error": None,
             }
 
         try:
             config = load_and_validate_config(self.path)
         except RegistrySchemaError as exc:
-            kind = "corrupt" if "not valid JSON" in str(exc) else "invalid"
+            message = str(exc)
+            corrupt = "not valid JSON" in message or "not valid UTF-8" in message
+            kind = "corrupt" if corrupt else "invalid"
             return {
                 "valid": False,
-                "errors": [f"config {kind}: {exc}"],
+                "errors": [f"config {kind}: {message}"],
                 "warnings": [],
+                "stale_state": [],
+                "state_error": None,
             }
 
         state = self._read_state(

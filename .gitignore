@@ -27,9 +27,14 @@ central_bus/content/campaign-*-manifest_*.json
 central_bus/content/campaign-*-publish-gate-*.md
 central_bus/content/*-approval-*.json
 
-# Module registry runtime state (config lives in config/module-registry.json)
+# Module registry runtime state (config lives in config/module-registry.json).
+# Atomic writes go through tempfile.NamedTemporaryFile(prefix=".<name>.", suffix=".tmp"),
+# i.e. .module-registry.state.json.<random>.tmp — match that exact shape so a
+# SIGKILL mid-write cannot leave untracked temp files behind in config/ or
+# central_bus/.
 central_bus/module-registry.state.json
-central_bus/module-registry.state.json.tmp
+central_bus/.module-registry.state.json.*.tmp
+config/.module-registry.json.*.tmp
 
 # Generated voiceovers are local runtime artifacts
 central_bus/content/voiceover-*

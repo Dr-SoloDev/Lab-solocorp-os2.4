@@ -278,7 +278,10 @@ def read_json_document(path: Path) -> Any | None:
     """Read a JSON document.
 
     Returns ``None`` when the file does not exist (first run); raises
-    ``RegistrySchemaError`` when the file exists but is not valid JSON.
+    ``RegistrySchemaError`` when the file exists but is not valid JSON or is
+    not UTF-8. ``UnicodeDecodeError`` is a ``ValueError`` (not an
+    ``OSError``/``JSONDecodeError``), so it needs its own handler: callers of
+    this module only ever expect ``RegistrySchemaError`` from a bad read.
     """
 
     try:
@@ -286,6 +289,8 @@ def read_json_document(path: Path) -> Any | None:
             return json.load(handle)
     except FileNotFoundError:
         return None
+    except UnicodeDecodeError as exc:
+        raise RegistrySchemaError(f"{path} is not valid UTF-8: {exc}") from exc
     except json.JSONDecodeError as exc:
         raise RegistrySchemaError(f"{path} is not valid JSON: {exc}") from exc
     except OSError as exc:
