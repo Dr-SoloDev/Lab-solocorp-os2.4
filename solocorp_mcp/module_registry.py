@@ -13,6 +13,14 @@ Two files, two lifetimes:
 Keeping them apart means a health check never dirties a tracked file. The
 public read model (``status()``) still returns one merged view per module, so
 callers see ``enabled``/``disabled`` plus live connection detail as before.
+
+C1 review policy (CEO, 2026-11-06) — accepted, not deferred bugs:
+
+* **Logical quarantine** of a corrupt state file means the read path ignores it
+  in place; it never renames the file to ``.corrupt``. Reading must not write.
+* ``update()`` requires an explicit ``status`` on every call. This is an
+  accepted limitation until C2; the UI toggle already sends ``status``.
+* Physical quarantine, file locking and HTTP transport are C2+, not C1.
 """
 
 from __future__ import annotations
@@ -34,7 +42,6 @@ from .module_registry_schema import (
     read_json_document,
     validate_config,
     validate_config_module,
-    validate_merged,
     validate_state,
 )
 
@@ -98,6 +105,19 @@ class _StateRead:
     entries: dict[str, dict[str, Any]]
     stale: list[str]
     error: str | None
+
+
+def _state_warnings(state: _StateRead) -> list[str]:
+    """Render derived-state problems as warnings (they never invalidate config)."""
+
+    warnings: list[str] = []
+    if state.stale:
+        warnings.append(
+            "state orphan: " + ", ".join(state.stale) + " not declared in config"
+        )
+    if state.error is not None:
+        warnings.append(f"state invalid: {state.error}")
+    return warnings
 
 
 class ModuleRegistry:
@@ -289,11 +309,12 @@ class ModuleRegistry:
     def status(self) -> dict[str, Any]:
         """Return the merged view of every module with summary statistics.
 
-        Never raises: config errors are reported through ``errors``/``valid``,
-        while corrupt runtime state is quarantined and reported through
-        ``state_error``. The original fields keep their names and shapes;
-        ``valid``, ``errors``, ``stale_state`` and ``state_error`` are
-        additive.
+        Never raises: config problems appear in ``errors`` and make ``valid``
+        false; derived-state problems appear in ``warnings`` (and as
+        ``stale_state``/``state_error``). Config errors invalidate the
+        registry; state problems are warnings because state is derived and
+        rewritten by the next heartbeat. The original fields keep their names
+        and shapes; the new keys are additive.
         """
 
         errors: list[str] = []
@@ -309,6 +330,7 @@ class ModuleRegistry:
         state = self._read_state(set(config))
         modules = self._merged(config, state.entries)
         meta = self._config_meta()
+        warnings = [] if errors else _state_warnings(state)
 
         def count(status: str) -> int:
             return sum(
@@ -328,6 +350,7 @@ class ModuleRegistry:
             "last_updated": meta.get("last_updated", "never"),
             "valid": not errors,
             "errors": errors,
+            "warnings": warnings,
             "stale_state": state.stale,
             "state_error": state.error,
         }
@@ -339,45 +362,42 @@ class ModuleRegistry:
         return dict(entry) if isinstance(entry, dict) else None
 
     def validate(self) -> dict[str, Any]:
-        """Strictly validate the current config and state files.
+        """Validate config and state, separating fatal from derived problems.
 
-        Missing config is an error; missing state is fine (derived data that
-        may never have been written). The returned ``errors`` distinguish a
-        missing file, corrupt JSON and schema violations. Never raises.
+        Config errors invalidate the registry; state problems are warnings
+        because state is derived and rewritten by the next heartbeat. Missing
+        state is fine. ``warnings`` mirrors ``stale_state``/``state_error`` so
+        this result and ``status()`` describe the same condition in the same
+        words. Never raises.
         """
 
         if not self.path.exists():
             return {
                 "valid": False,
                 "errors": [f"config file {self.path} does not exist"],
+                "warnings": [],
             }
 
         try:
             config = load_and_validate_config(self.path)
         except RegistrySchemaError as exc:
             kind = "corrupt" if "not valid JSON" in str(exc) else "invalid"
-            return {"valid": False, "errors": [f"config {kind}: {exc}"]}
-
-        if not self.state_path.exists():
-            return {"valid": True, "errors": []}
-
-        try:
-            state = read_json_document(self.state_path)
-        except RegistrySchemaError as exc:
-            return {"valid": False, "errors": [f"state corrupt: {exc}"]}
-        if state is None:
             return {
                 "valid": False,
-                "errors": [f"state invalid: {self.state_path} root must be an object"],
+                "errors": [f"config {kind}: {exc}"],
+                "warnings": [],
             }
 
-        errors = validate_merged(config, state)
-        if errors:
-            return {
-                "valid": False,
-                "errors": [f"state invalid: {error}" for error in errors],
-            }
-        return {"valid": True, "errors": []}
+        state = self._read_state(
+            {module_id for module_id in config if module_id != "_meta"}
+        )
+        return {
+            "valid": True,
+            "errors": [],
+            "warnings": _state_warnings(state),
+            "stale_state": state.stale,
+            "state_error": state.error,
+        }
 
     # --------------------------------------------------------------- write API
 

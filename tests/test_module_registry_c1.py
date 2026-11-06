@@ -126,6 +126,7 @@ def test_status_tolerates_orphan_state_then_prunes_it(registry: ModuleRegistry) 
     assert status["valid"] is True
     assert status["state_error"] is None
     assert status["stale_state"] == ["ghost"]
+    assert any("ghost" in warning for warning in status["warnings"])
     assert "ghost" not in status["modules"]
     assert status["modules"]["qa"]["status"] == "connected"
 
@@ -148,6 +149,10 @@ def test_status_never_raises_on_corrupt_state(registry: ModuleRegistry) -> None:
     assert status["state_error"] is not None
     assert "not valid JSON" in status["state_error"]
     assert status["stale_state"] == []
+    # State is derived: a corrupt file is a warning, never an invalid registry.
+    assert status["valid"] is True
+    assert status["warnings"]
+    assert any("not valid JSON" in warning for warning in status["warnings"])
 
 
 def test_status_keeps_legacy_contract_fields(registry: ModuleRegistry) -> None:
@@ -172,8 +177,10 @@ def test_status_keeps_legacy_contract_fields(registry: ModuleRegistry) -> None:
     # New keys are additive only.
     assert isinstance(status["valid"], bool)
     assert isinstance(status["errors"], list)
+    assert isinstance(status["warnings"], list)
     assert isinstance(status["stale_state"], list)
     assert status["state_error"] is None
+    assert status["warnings"] == []
 
 
 # ── A5: validate is honest ───────────────────────────────────────────
@@ -183,26 +190,38 @@ def test_validate_missing_config_false_missing_state_true(
     registry: ModuleRegistry,
 ) -> None:
     Path(registry.state_path).unlink(missing_ok=True)
-    assert registry.validate() == {"valid": True, "errors": []}
+    valid = registry.validate()
+    assert valid["valid"] is True
+    assert valid["errors"] == []
+    assert valid["warnings"] == []
 
     Path(registry.path).unlink()
     result = registry.validate()
     assert result["valid"] is False
     assert any("does not exist" in error for error in result["errors"])
+    assert result["warnings"] == []
 
 
-def test_validate_distinguishes_corrupt_from_invalid(registry: ModuleRegistry) -> None:
+def test_validate_state_problems_are_warnings_not_errors(
+    registry: ModuleRegistry,
+) -> None:
     Path(registry.state_path).parent.mkdir(parents=True, exist_ok=True)
+
+    # Root is a list: unusable state is quarantined, not fatal.
     Path(registry.state_path).write_text("[1, 2, 3]", encoding="utf-8")
+    list_root = registry.validate()
+    assert list_root["valid"] is True
+    assert list_root["errors"] == []
+    assert any("root must be an object" in w for w in list_root["warnings"])
+
+    # Corrupt JSON is also a state problem: quarantined and self-healing.
+    Path(registry.state_path).write_text("{not json", encoding="utf-8")
     corrupt = registry.validate()
-    assert corrupt["valid"] is False
-    assert any("state" in error for error in corrupt["errors"])
+    assert corrupt["valid"] is True
+    assert corrupt["errors"] == []
+    assert any("not valid JSON" in w for w in corrupt["warnings"])
 
-    Path(registry.state_path).write_text("null", encoding="utf-8")
-    null_state = registry.validate()
-    assert null_state["valid"] is False
-    assert any("state" in error for error in null_state["errors"])
-
+    # A config violation is still fatal and stays in errors.
     Path(registry.state_path).write_text("{}", encoding="utf-8")
     Path(registry.path).write_text(
         json.dumps({"qa": {"status": "banana"}}), encoding="utf-8"
@@ -210,6 +229,22 @@ def test_validate_distinguishes_corrupt_from_invalid(registry: ModuleRegistry) -
     invalid = registry.validate()
     assert invalid["valid"] is False
     assert any("status" in error for error in invalid["errors"])
+    assert invalid["warnings"] == []
+
+
+def test_validate_treats_orphan_state_as_warning(registry: ModuleRegistry) -> None:
+    Path(registry.state_path).parent.mkdir(parents=True, exist_ok=True)
+    Path(registry.state_path).write_text(
+        json.dumps({"ghost": _state_entry(), "qa": _state_entry()}), encoding="utf-8"
+    )
+
+    result = registry.validate()
+
+    assert result["valid"] is True
+    assert result["errors"] == []
+    assert any("ghost" in warning for warning in result["warnings"])
+    assert result["stale_state"] == ["ghost"]
+    assert result["state_error"] is None
 
 
 # ── A6: atomic writes + blocklist + schema_version ───────────────────

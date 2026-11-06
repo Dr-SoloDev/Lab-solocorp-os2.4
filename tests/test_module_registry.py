@@ -71,7 +71,11 @@ def test_heartbeat_failure_writes_state_only(registry: ModuleRegistry) -> None:
 
     state = json.loads(Path(registry.state_path).read_text(encoding="utf-8"))
     assert state["ghost"]["status"] == "error"
-    assert state["ghost"]["last_error"] == "MCP server exited before responding"
+    # The exact wording inside MCPStdioClient is its own concern; the registry
+    # only guarantees that the failure is recorded. That exact string is pinned
+    # at the ModuleHost boundary (tests/test_module_host.py).
+    assert state["ghost"]["last_error"] is not None
+    assert state["ghost"]["last_error"] != ""
 
 
 def test_status_merges_config_and_state(registry: ModuleRegistry) -> None:
