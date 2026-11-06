@@ -1181,3 +1181,112 @@ State tracking files: 0
 - ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
 
 ---
+
+## Session Auto-Summary — 2026-11-02 16:40 UTC
+
+### Git
+```
+d091d94 chore(brain): refresh saved timestamp
+ce6158e docs(brain): record session state and pushed work
+f1a9bff feat(app): add module host foundation
+79cfc53 fix(mcp): enforce task scope and evidence hashes
+87ef8c4 feat(content): integrate sound workflow
+56b01cf A1: add remove_campaign_asset function and MCP tool
+5db13da chore(brain): auto-commit 1 brain files
+e57c9dd brain: record 2026-11-02 lessons — framing, evidence integrity, staleness
+23d8eda ops(scripts): restart-mcp.sh to clear stale MCP
+```
+Uncommitted: 17 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- Phase 1 ต่อ: registry schema/validator, provider settings adapter, FastAPI app/API + Jinja UI และ module toggles; gate ยังเปิดจน Content module เปิด/ปิดได้จาก UI
+- L5 parked: history ประมาณ 400 MB ใน .git — ยังไม่ rewrite ด้วย git filter-repo
+- ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
+
+---
+
+## Session Auto-Summary — 2026-11-02 16:58 UTC
+
+### Git
+```
+d091d94 chore(brain): refresh saved timestamp
+ce6158e docs(brain): record session state and pushed work
+f1a9bff feat(app): add module host foundation
+79cfc53 fix(mcp): enforce task scope and evidence hashes
+87ef8c4 feat(content): integrate sound workflow
+56b01cf A1: add remove_campaign_asset function and MCP tool
+5db13da chore(brain): auto-commit 1 brain files
+e57c9dd brain: record 2026-11-02 lessons — framing, evidence integrity, staleness
+23d8eda ops(scripts): restart-mcp.sh to clear stale MCP
+```
+Uncommitted: 35 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- Phase 1 ต่อ: registry schema/validator, provider settings adapter, FastAPI app/API + Jinja UI และ module toggles; gate ยังเปิดจน Content module เปิด/ปิดได้จาก UI
+- L5 parked: history ประมาณ 400 MB ใน .git — ยังไม่ rewrite ด้วย git filter-repo
+- ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
+
+---
+
+## Session Auto-Summary — 2026-11-02 17:23 UTC
+
+### Git
+```
+d091d94 chore(brain): refresh saved timestamp
+ce6158e docs(brain): record session state and pushed work
+f1a9bff feat(app): add module host foundation
+79cfc53 fix(mcp): enforce task scope and evidence hashes
+87ef8c4 feat(content): integrate sound workflow
+56b01cf A1: add remove_campaign_asset function and MCP tool
+5db13da chore(brain): auto-commit 1 brain files
+e57c9dd brain: record 2026-11-02 lessons — framing, evidence integrity, staleness
+23d8eda ops(scripts): restart-mcp.sh to clear stale MCP
+```
+Uncommitted: 40 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- Phase 1 ต่อ: registry schema/validator, provider settings adapter, FastAPI app/API + Jinja UI และ module toggles; gate ยังเปิดจน Content module เปิด/ปิดได้จาก UI
+- L5 parked: history ประมาณ 400 MB ใน .git — ยังไม่ rewrite ด้วย git filter-repo
+- ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
+
+---
+
+## Session Auto-Summary — 2026-11-02 19:19 UTC
+
+### Git
+```
+cc726b7 chore(brain): auto-commit 51 brain files
+3d7b100 chore(brain): auto-commit 36 brain files
+d091d94 chore(brain): refresh saved timestamp
+ce6158e docs(brain): record session state and pushed work
+f1a9bff feat(app): add module host foundation
+79cfc53 fix(mcp): enforce task scope and evidence hashes
+87ef8c4 feat(content): integrate sound workflow
+56b01cf A1: add remove_campaign_asset function and MCP tool
+5db13da chore(brain): auto-commit 1 brain files
+e57c9dd brain: record 2026-11-02 lesson
+```
+Uncommitted: 15 files
+
+### State
+Active dispatch files: 25
+State tracking files: 0
+
+### Pending
+- Phase 1 ต่อ: registry schema/validator, provider settings adapter, FastAPI app/API + Jinja UI และ module toggles; gate ยังเปิดจน Content module เปิด/ปิดได้จาก UI
+- L5 parked: history ประมาณ 400 MB ใน .git — ยังไม่ rewrite ด้วย git filter-repo
+- ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
+
+---

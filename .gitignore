@@ -21,6 +21,12 @@ Thumbs.db
 central_bus/bus.db-shm
 central_bus/bus.db-wal
 
+# Campaign artifacts are regenerable by the Concat workflow — not source code.
+# Per Decision Gate Q1: "สร้างใหม่ได้ไหม?" → yes → not tracked in git.
+central_bus/content/campaign-*-manifest_*.json
+central_bus/content/campaign-*-publish-gate-*.md
+central_bus/content/*-approval-*.json
+
 # Module registry runtime state (config lives in config/module-registry.json)
 central_bus/module-registry.state.json
 central_bus/module-registry.state.json.tmp

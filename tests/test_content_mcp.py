@@ -403,13 +403,27 @@ def test_generated_audio_storage_is_binary_safe(isolated_bus):
     )
 
 
-def test_voiceover_requires_per_request_approval(isolated_bus):
+def test_voiceover_tool_accepts_direct_request_without_approval_flag(monkeypatch):
+    calls = {}
+
+    def fake_generate_voiceover(*args):
+        calls["args"] = args
+        return {"filename": "requested-voiceover.mp3"}
+
+    monkeypatch.setattr(content_mcp, "_generate_voiceover", fake_generate_voiceover)
     raw = mcp._tool_manager.get_tool("generate_voiceover").fn(
-        "ทดสอบ", "ข้อความสั้น", "voice-id", False
+        "ทดสอบ", "ข้อความสั้น", "voice-id"
     )
     result = json.loads(raw)
-    assert result["status"] == "error"
-    assert "approved=true" in result["message"]
+    assert result["filename"] == "requested-voiceover.mp3"
+    assert calls["args"] == (
+        "ทดสอบ",
+        "ข้อความสั้น",
+        "voice-id",
+        "eleven_v4",
+        "th",
+        None,
+    )
 
 
 def test_mcp_tool_errors_are_json(isolated_bus):

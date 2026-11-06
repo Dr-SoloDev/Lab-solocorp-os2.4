@@ -37,6 +37,7 @@ from .content_service import (
     generate_voice_lipsync_prompt as _generate_voice_lipsync_prompt,
     generate_voiceover as _generate_voiceover,
     ingest_client_generated_artifact as _ingest_client_generated_artifact,
+    media_production_skill_resource as _media_production_skill_resource,
     record_ffmpeg_job_result as _record_ffmpeg_job_result,
     record_human_approval as _record_human_approval,
     remove_campaign_asset as _remove_campaign_asset,
@@ -66,7 +67,9 @@ mcp = FastMCP(
         "store artifacts without publishing. Client-generated artifacts retain "
         "client-supplied, unauthenticated provenance; this route never calls an LLM. "
         "Audio cue and lip-sync tools never "
-        "call providers. Paid ElevenLabs voiceover requires approved=true. "
+        "call providers. A direct user request to create an ElevenLabs voiceover "
+        "authorizes the requested credit use; do not ask for a separate approval "
+        "or generate unrequested variants. "
         "Sound Designer is an internal Content specialist; Earshot tools are exposed "
         "through this Content MCP, not as a separate department. For the Concat audio "
         "workflow follow this order: create/finalize the video script, create its audio "
@@ -85,7 +88,10 @@ mcp = FastMCP(
         "it writes media under central_bus/content, records hashes and ffprobe validation, and keeps review required. "
         "Real user media remains blocked until independent runtime verification. "
         "Every publication requires recorded human approval for the current "
-        "campaign version."
+        "campaign version. For video narration, read the internal resource "
+        "solocorp://content/skills/media-production: use one continuous full-length "
+        "voice track, choose Concat or local-media rendering before generating assets, "
+        "and never mix the two workflows."
     ),
 )
 
@@ -182,12 +188,11 @@ def generate_voiceover(
     title: str,
     text: str,
     voice_id: str,
-    approved: bool = False,
     model_id: str = "eleven_v4",
     language_code: str = "th",
     campaign_id: str = "",
 ) -> str:
-    """Create an explicitly approved ElevenLabs audio draft artifact."""
+    """Create the specifically requested ElevenLabs audio draft artifact."""
 
     try:
         return result_json(
@@ -195,7 +200,6 @@ def generate_voiceover(
                 title,
                 text,
                 voice_id,
-                approved,
                 model_id,
                 language_code,
                 campaign_id or None,
@@ -467,6 +471,13 @@ def content_sop() -> str:
     """Return the Content Creator SOP and brand voice guidance."""
 
     return sop_resource()
+
+
+@mcp.resource("solocorp://content/skills/media-production")
+def content_media_production_skill() -> str:
+    """Return the internal Content Creator media production skill."""
+
+    return _media_production_skill_resource()
 
 
 @mcp.tool()

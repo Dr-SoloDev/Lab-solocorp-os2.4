@@ -1910,17 +1910,12 @@ def generate_voiceover(
     title: str,
     text: str,
     voice_id: str,
-    approved: bool = False,
     model_id: str = "eleven_v4",
     language_code: str = "th",
     campaign_id: str | None = None,
 ) -> dict[str, Any]:
-    """Generate one explicitly approved ElevenLabs voiceover draft."""
+    """Generate one ElevenLabs voiceover explicitly requested by the caller."""
 
-    if not isinstance(approved, bool) or not approved:
-        raise ContentServiceError(
-            "paid voice generation requires approved=true for this request"
-        )
     title = _required(title, "title")
     text = _required(text, "text")
     voice_id = _required(voice_id, "voice_id")
@@ -2549,24 +2544,35 @@ def sop_resource() -> str:
         "\n## Ordered audio-to-video workflow\n",
         "1. Finalize the campaign video script before creating downstream audio assets.\n",
         "2. Run `design_audio_experience` against that exact script to create the cue sheet. If the script changes, regenerate the cue sheet.\n",
-        "3. For SFX, use `sound_list_earshot_sfx` when needed, then `sound_render_campaign_sfx`; retain its `sound_delivery_filename`. Voiceover is a separate optional step and requires explicit authorization for paid provider use (`approved=true`).\n",
+        "3. For SFX, use `sound_list_earshot_sfx` when needed, then `sound_render_campaign_sfx`; retain its `sound_delivery_filename`. A direct user request for an ElevenLabs voiceover authorizes the requested credit use; do not ask for separate approval or generate unrequested variants.\n",
         "4. Run `render_campaign_with_concat` after inputs are ready, passing the sound delivery filename when SFX were rendered. If requested sound cannot be produced, stop and report the error; omit sound only when the brief explicitly accepts a silent/no-SFX result.\n",
         "5. Run `sound_review_campaign_audio` on the final audio/video and inspect the stored report. If levels or cue timing need changes, correct the source mix and render again.\n",
         "6. Run `review_publish_gate` on the final campaign version. Failed checks must be resolved; do not treat a report as approval.\n",
         "7. After a person reviews the exact current version, record `record_human_approval`. Any later asset change requires a new review and approval. This MCP does not publish.\n",
         "`render_campaign_media_local` is a separate synthetic-only path; do not mix its artifacts or steps with the Concat workflow.\n",
+        "For the complete internal production skill, read `solocorp://content/skills/media-production`. Narration should use one continuous full-length voice track; choose the renderer before asset generation.\n",
         "\n## Operating rules\n",
         "1. ทุกชิ้นต้องมีเป้าหมาย กลุ่มเป้าหมาย และแพลตฟอร์ม\n",
         "2. ทุก output เป็น draft จนกว่ามนุษย์จะผ่าน Publish Gate\n",
         "3. ห้ามเผยแพร่ข้อมูลลับ ชื่อลูกค้า พาธภายใน คีย์ หรือ claim ที่ไม่มีหลักฐาน\n",
         "4. เก็บ payload จริงใน `central_bus/content/` และคืน path แบบย่อให้ client\n",
-        "5. ElevenLabs เป็นบริการคิดเครดิต; voiceover ทุกครั้งต้องส่ง `approved=true`\n",
+        "5. ElevenLabs เป็นบริการคิดเครดิต; เรียกสร้างเฉพาะ voiceover ที่ผู้ใช้ร้องขอโดยตรง ไม่ต้องขออนุมัติซ้ำ และห้ามสร้างตัวเลือก/เวอร์ชันเพิ่มเอง\n",
     ]
     for label, path in (("Brand voice", BRAND_GUIDELINES_PATH), ("Department profile", PROFILE_PATH)):
         if path.is_file():
             text = path.read_text(encoding="utf-8").strip()
             parts.extend([f"\n## {label}\n", text[:6_000]])
     return "\n".join(parts)[:14_000]
+
+
+def media_production_skill_resource() -> str:
+    """Load the internal Content video and audio production skill."""
+
+    path = Path(__file__).resolve().parent / "content_skills" / "media-production" / "SKILL.md"
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ContentServiceError("internal media production skill is unavailable") from exc
 
 
 def result_json(value: dict[str, Any]) -> str:
