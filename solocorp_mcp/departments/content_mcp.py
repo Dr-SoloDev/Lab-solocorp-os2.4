@@ -7,23 +7,9 @@ not exposed as separate client entry points.
 
 from __future__ import annotations
 
-import os
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
-
-from ..auth import verify_scope
-
-def _check_scope(required: str):
-    """Check auth scope inside a tool function.
-    Raises PermissionError if scope insufficient, which FastMCP converts to isError response.
-    """
-    key = os.environ.get("SOLOCORP_API_KEY")
-    if not verify_scope(required, key):
-        raise PermissionError(
-            f"Requires scope '{required}' — set SOLOCORP_API_KEY with scope >= '{required}'\n"
-            f"(current key: {'not set' if key is None else 'insufficient scope'})"
-        )
 
 from .content_service import (
     ContentServiceError,
@@ -56,8 +42,25 @@ from .media_service import (
 from ..module_registry import ModuleRegistry
 from ..task_tracking import TaskTracker
 
-_module_registry = ModuleRegistry()
+_module_registry: ModuleRegistry | None = None
 _task_tracker = TaskTracker()
+
+
+def _registry() -> ModuleRegistry:
+    """Create the registry on first use, seeded with this department only.
+
+    Importing this module must not touch the filesystem: a standalone
+    department MCP that a host merely lists must not create a registry file,
+    and when it does need one it declares only the module it owns
+    (PRD:155, FR-07; CMD-006 §4.1). The old module-scope construction wrote all
+    five modules on import.
+    """
+
+    global _module_registry
+    if _module_registry is None:
+        _module_registry = ModuleRegistry(seed_module_ids=("content-creator",))
+    return _module_registry
+
 
 mcp = FastMCP(
     "content-creator",
@@ -482,12 +485,16 @@ def content_media_production_skill() -> str:
 
 @mcp.tool()
 def module_registry_status() -> str:
-    """Return module registry status for all SoloCorp department MCPs."""
-    _check_scope("team")
+    """Return module registry status for the modules this config declares.
+
+    Public by design: read-only, local, and free of secrets, so a standalone
+    department MCP answers it without SOLOCORP_API_KEY (CMD-006 §4.2).
+    """
+
     try:
         from ..runtime_freshness import with_freshness
 
-        return result_json(with_freshness(_module_registry.status()))
+        return result_json(with_freshness(_registry().status()))
     except Exception as exc:
         return _error(exc)
 

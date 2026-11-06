@@ -792,8 +792,14 @@ Use this server when you need to:
     def module_registry_register(module_id: str, entry: dict[str, Any]) -> str:
         """Register a new module in the tracked registry config.
 
-        ``entry`` must be a complete config entry for its transport
-        (status, transport, command, plus optional description).
+        ``entry`` must be a complete config entry for its transport:
+        ``status``, ``transport``, and the transport's entry point (``command``
+        for ``stdio``). Optional: ``description``, ``updated_at``, ``name``
+        (1-64 chars), ``version`` (MAJOR.MINOR.PATCH), ``capabilities``
+        (``tools``/``resources``/``prompts``), ``dependencies`` (module ids in
+        this config or ``busd``), ``permissions`` (declared tool scopes:
+        ``public``/``team``/``admin``), and ``entry_repo`` (provenance, not
+        checked against the filesystem).
         """
         _check_scope("admin")
         try:

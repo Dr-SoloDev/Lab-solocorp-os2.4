@@ -36,6 +36,10 @@ central_bus/module-registry.state.json
 central_bus/.module-registry.state.json.*.tmp
 config/.module-registry.json.*.tmp
 
+# Registry rollback snapshot — written next to the tracked config before every
+# config write (see docs/runbooks/registry-schema-rollback.md). Never source.
+*.bak
+
 # Generated voiceovers are local runtime artifacts
 central_bus/content/voiceover-*
 

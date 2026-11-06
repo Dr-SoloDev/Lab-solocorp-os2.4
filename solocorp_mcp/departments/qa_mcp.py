@@ -17,12 +17,10 @@ from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 
-from ..module_registry import ModuleRegistry
 from ..runtime_freshness import freshness
 from ..task_tracking import TaskTracker
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-_module_registry = ModuleRegistry()
 _task_tracker = TaskTracker()
 
 # suite_id ต้องเป็นรูปแบบปลอดภัย ป้องกัน path traversal ผ่านชื่อไฟล์

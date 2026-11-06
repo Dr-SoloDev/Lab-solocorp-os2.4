@@ -21,13 +21,26 @@ C1 review policy (CEO, 2026-11-06) — accepted, not deferred bugs:
 * ``update()`` requires an explicit ``status`` on every call. This is an
   accepted limitation until C2; the UI toggle already sends ``status``.
 * Physical quarantine, file locking and HTTP transport are C2+, not C1.
+
+C2 (CMD-006):
+
+* Config is schema v2: manifest metadata is optional, ``permissions`` is a
+  declaration and never a gate, and a config newer than this build raises
+  ``RegistryDowngradeError`` instead of being overwritten.
+* ``status()`` and ``validate()`` name the failure in ``error_kind``
+  (``corrupt`` / ``downgrade`` / ``invalid``, ``None`` when valid).
+* Every config write snapshots the previous file to ``<name>.bak`` first;
+  ``seed_module_ids`` lets a standalone department MCP create a registry with
+  only its own module.
 """
 
 from __future__ import annotations
 
 import json
 import os
+import shutil
 import tempfile
+from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -37,7 +50,9 @@ from .module_registry_schema import (
     PERSISTENT_STATUSES,
     RUNTIME_STATUSES,
     SCHEMA_VERSION,
+    RegistryDowngradeError,
     RegistrySchemaError,
+    canonical_permissions,
     load_and_validate_config,
     read_json_document,
     validate_config,
@@ -69,30 +84,62 @@ DEFAULT_MODULES: dict[str, dict[str, Any]] = {
         "status": "enabled",
         "transport": "stdio",
         "command": [".venv/bin/python3", "-m", "solocorp_mcp.server"],
+        "name": "Core MCP — Organization & Routing",
+        "version": "0.1.0",
+        "capabilities": ["tools", "resources"],
+        "dependencies": [],
+        "permissions": ["public", "team", "admin"],
+        "entry_repo": "internal",
         "description": "Core MCP — Organization & Routing",
     },
     "central-bus": {
         "status": "enabled",
         "transport": "stdio",
         "command": [".venv/bin/python3", "-m", "solocorp_mcp.bus_mcp"],
+        "name": "Central Bus — Storage & Queue",
+        "version": "0.1.0",
+        "capabilities": ["tools"],
+        "dependencies": [],
+        "permissions": ["public"],
+        "entry_repo": "internal",
         "description": "Central Bus — Storage & Queue",
     },
     "content-creator": {
         "status": "enabled",
         "transport": "stdio",
         "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.content_mcp"],
+        "name": "Content Creator",
+        "version": "0.1.0",
+        "capabilities": ["tools", "resources"],
+        "dependencies": [],
+        # The department status tool is public (§4.2), so every tool this
+        # module declares is reachable without an API key.
+        "permissions": ["public"],
+        "entry_repo": "internal",
         "description": "Content Creator Department",
     },
     "engineering": {
         "status": "enabled",
         "transport": "stdio",
         "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.engineering_mcp"],
+        "name": "Engineering",
+        "version": "0.1.0",
+        "capabilities": ["tools"],
+        "dependencies": [],
+        "permissions": ["public"],
+        "entry_repo": "internal",
         "description": "Engineering Department",
     },
     "qa": {
         "status": "enabled",
         "transport": "stdio",
         "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.qa_mcp"],
+        "name": "QA",
+        "version": "0.1.0",
+        "capabilities": ["tools"],
+        "dependencies": [],
+        "permissions": ["public"],
+        "entry_repo": "internal",
         "description": "QA Department",
     },
 }
@@ -120,6 +167,18 @@ def _state_warnings(state: _StateRead) -> list[str]:
     return warnings
 
 
+def _schema_error_kind(message: str) -> str:
+    """Classify a config schema error: ``corrupt`` (unreadable) or ``invalid``.
+
+    One classifier for ``status()`` and ``validate()`` so both surfaces name
+    the same condition the same way.
+    """
+
+    if "not valid JSON" in message or "not valid UTF-8" in message:
+        return "corrupt"
+    return "invalid"
+
+
 class ModuleRegistry:
     """Read/write module config and connection state from two separate files."""
 
@@ -127,22 +186,48 @@ class ModuleRegistry:
         self,
         registry_path: Path | None = None,
         state_path: Path | None = None,
+        *,
+        seed_module_ids: Iterable[str] | None = None,
     ) -> None:
         self.path = Path(registry_path) if registry_path else DEFAULT_CONFIG_PATH
         self.state_path = Path(state_path) if state_path else DEFAULT_STATE_PATH
+        self.seed_module_ids = (
+            tuple(seed_module_ids) if seed_module_ids is not None else None
+        )
         self._ensure_initialized()
 
     # ------------------------------------------------------------------ setup
 
     def _ensure_initialized(self) -> None:
-        if not self.path.exists():
-            self.path.parent.mkdir(parents=True, exist_ok=True)
-            errors = validate_config(DEFAULT_MODULES)
-            if errors:
-                raise RegistrySchemaError(
-                    f"default modules violate schema: {'; '.join(errors)}"
-                )
-            self._save_config(DEFAULT_MODULES)
+        """Create the config on first run, seeding only what this caller owns.
+
+        ``seed_module_ids`` exists for department MCPs: a standalone Content
+        Creator must not create a five-module registry it does not own
+        (PRD:155, CMD-006 §4.1). The app/core leaves it unset and seeds every
+        default module.
+        """
+
+        if self.path.exists():
+            return
+
+        modules: dict[str, Any] = DEFAULT_MODULES
+        if self.seed_module_ids is not None:
+            unknown = sorted(set(self.seed_module_ids) - set(DEFAULT_MODULES))
+            if unknown:
+                raise ValueError(f"cannot seed unknown default modules: {unknown}")
+            if not self.seed_module_ids:
+                raise ValueError("cannot seed an empty module set")
+            modules = {
+                module_id: DEFAULT_MODULES[module_id]
+                for module_id in self.seed_module_ids
+            }
+
+        errors = validate_config(modules)
+        if errors:
+            raise RegistrySchemaError(
+                f"default modules violate schema: {'; '.join(errors)}"
+            )
+        self._save_config(modules)
 
     # ------------------------------------------------------------------- i/o
 
@@ -153,7 +238,7 @@ class ModuleRegistry:
                 f"config violates schema: {'; '.join(errors)}"
             )
         data = {
-            module_id: self._persistent_view(entry)
+            module_id: self._canonical_entry(self._persistent_view(entry))
             for module_id, entry in modules.items()
             if module_id != "_meta"
         }
@@ -162,7 +247,33 @@ class ModuleRegistry:
             "total_modules": len(data),
             "schema_version": SCHEMA_VERSION,
         }
+        self._snapshot_config()
         self._atomic_write_json(self.path, data)
+
+    @staticmethod
+    def _canonical_entry(entry: dict[str, Any]) -> dict[str, Any]:
+        """Write-side normalisation: permissions in ascending scope order."""
+
+        canonical = dict(entry)
+        if "permissions" in canonical:
+            canonical["permissions"] = canonical_permissions(canonical["permissions"])
+        return canonical
+
+    def _snapshot_config(self) -> None:
+        """Copy the current config to ``<name>.bak`` before replacing it.
+
+        The snapshot is a convenience for the rollback runbook (it is
+        git-ignored), never a reason to block a legitimate write — git history
+        stays the primary record.
+        """
+
+        if not self.path.exists():
+            return
+        backup = self.path.with_name(self.path.name + ".bak")
+        try:
+            shutil.copyfile(self.path, backup)
+        except OSError:
+            pass
 
     def _save_state(self, state: dict[str, Any]) -> None:
         config_ids = set(self._load_config().keys())
@@ -321,14 +432,21 @@ class ModuleRegistry:
         """
 
         errors: list[str] = []
+        error_kind: str | None = None
         config: dict[str, dict[str, Any]] = {}
         if not self.path.exists():
             errors.append(f"config file {self.path} does not exist")
+            error_kind = "invalid"
         else:
             try:
                 config = self._load_config()
-            except RegistrySchemaError as exc:
+            except RegistryDowngradeError as exc:
                 errors.append(str(exc))
+                error_kind = "downgrade"
+            except RegistrySchemaError as exc:
+                message = str(exc)
+                errors.append(message)
+                error_kind = _schema_error_kind(message)
 
         if errors:
             # No readable config means no trustworthy module set. Reading state
@@ -362,6 +480,7 @@ class ModuleRegistry:
             "warnings": warnings,
             "stale_state": state.stale,
             "state_error": state.error,
+            "error_kind": error_kind,
         }
 
     def module_config(self, module_id: str) -> dict[str, Any] | None:
@@ -377,10 +496,11 @@ class ModuleRegistry:
         because state is derived and rewritten by the next heartbeat. Missing
         state is fine. ``warnings`` mirrors ``stale_state``/``state_error`` so
         this result and ``status()`` describe the same condition in the same
-        words. Returns the same five keys on every path: when the config
-        cannot be read, ``stale_state`` is ``[]`` and ``state_error`` is
-        ``None`` because neither can be derived without a module list. Never
-        raises.
+        words. Returns the same keys on every path: when the config cannot be
+        read, ``stale_state`` is ``[]`` and ``state_error`` is ``None`` because
+        neither can be derived without a module list. ``error_kind`` names the
+        failure (``corrupt``, ``downgrade``, ``invalid``) or is ``None`` when
+        the registry is valid. Never raises.
         """
 
         if not self.path.exists():
@@ -390,20 +510,30 @@ class ModuleRegistry:
                 "warnings": [],
                 "stale_state": [],
                 "state_error": None,
+                "error_kind": "invalid",
             }
 
         try:
             config = load_and_validate_config(self.path)
+        except RegistryDowngradeError as exc:
+            return {
+                "valid": False,
+                "errors": [f"config downgrade: {exc}"],
+                "warnings": [],
+                "stale_state": [],
+                "state_error": None,
+                "error_kind": "downgrade",
+            }
         except RegistrySchemaError as exc:
             message = str(exc)
-            corrupt = "not valid JSON" in message or "not valid UTF-8" in message
-            kind = "corrupt" if corrupt else "invalid"
+            kind = _schema_error_kind(message)
             return {
                 "valid": False,
                 "errors": [f"config {kind}: {message}"],
                 "warnings": [],
                 "stale_state": [],
                 "state_error": None,
+                "error_kind": kind,
             }
 
         state = self._read_state(
@@ -415,6 +545,7 @@ class ModuleRegistry:
             "warnings": _state_warnings(state),
             "stale_state": state.stale,
             "state_error": state.error,
+            "error_kind": None,
         }
 
     # --------------------------------------------------------------- write API

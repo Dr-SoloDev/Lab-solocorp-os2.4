@@ -10,10 +10,7 @@ from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 
-from ..module_registry import ModuleRegistry
 from ..runtime_freshness import freshness
-
-_module_registry = ModuleRegistry()
 
 mcp = FastMCP(
     "engineering",

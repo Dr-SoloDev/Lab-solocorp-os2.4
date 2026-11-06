@@ -1,4 +1,8 @@
 {
+  "_meta": {
+    "schema_version": 2,
+    "total_modules": 5
+  },
   "solocorp": {
     "status": "enabled",
     "transport": "stdio",
@@ -7,6 +11,19 @@
       "-m",
       "solocorp_mcp.server"
     ],
+    "name": "Core MCP — Organization & Routing",
+    "version": "0.1.0",
+    "capabilities": [
+      "tools",
+      "resources"
+    ],
+    "dependencies": [],
+    "permissions": [
+      "public",
+      "team",
+      "admin"
+    ],
+    "entry_repo": "internal",
     "description": "Core MCP — Organization & Routing"
   },
   "central-bus": {
@@ -17,6 +34,16 @@
       "-m",
       "solocorp_mcp.bus_mcp"
     ],
+    "name": "Central Bus — Storage & Queue",
+    "version": "0.1.0",
+    "capabilities": [
+      "tools"
+    ],
+    "dependencies": [],
+    "permissions": [
+      "public"
+    ],
+    "entry_repo": "internal",
     "description": "Central Bus — Storage & Queue"
   },
   "content-creator": {
@@ -27,6 +54,17 @@
       "-m",
       "solocorp_mcp.departments.content_mcp"
     ],
+    "name": "Content Creator",
+    "version": "0.1.0",
+    "capabilities": [
+      "tools",
+      "resources"
+    ],
+    "dependencies": [],
+    "permissions": [
+      "public"
+    ],
+    "entry_repo": "internal",
     "description": "Content Creator Department"
   },
   "engineering": {
@@ -37,6 +75,16 @@
       "-m",
       "solocorp_mcp.departments.engineering_mcp"
     ],
+    "name": "Engineering",
+    "version": "0.1.0",
+    "capabilities": [
+      "tools"
+    ],
+    "dependencies": [],
+    "permissions": [
+      "public"
+    ],
+    "entry_repo": "internal",
     "description": "Engineering Department"
   },
   "qa": {
@@ -47,6 +95,16 @@
       "-m",
       "solocorp_mcp.departments.qa_mcp"
     ],
+    "name": "QA",
+    "version": "0.1.0",
+    "capabilities": [
+      "tools"
+    ],
+    "dependencies": [],
+    "permissions": [
+      "public"
+    ],
+    "entry_repo": "internal",
     "description": "QA Department"
   }
 }

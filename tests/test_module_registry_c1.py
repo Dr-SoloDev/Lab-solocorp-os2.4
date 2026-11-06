@@ -17,7 +17,7 @@ import pytest
 
 from solocorp_mcp import module_registry
 from solocorp_mcp.module_registry import ModuleRegistry
-from solocorp_mcp.module_registry_schema import RegistrySchemaError
+from solocorp_mcp.module_registry_schema import SCHEMA_VERSION, RegistrySchemaError
 
 
 @pytest.fixture()
@@ -298,7 +298,7 @@ def test_persistent_view_blocks_runtime_keys_and_meta_has_schema_version(
 
     registry.update("qa", "disabled")
     meta = _read(Path(registry.path))["_meta"]
-    assert meta["schema_version"] == 1
+    assert meta["schema_version"] == SCHEMA_VERSION
     assert meta["total_modules"] == 5
 
 
@@ -411,10 +411,19 @@ def test_unreadable_config_reports_no_stale_state(
     assert result["state_error"] is None
 
 
-def test_validate_returns_five_keys_on_every_path(
+def test_validate_returns_contract_keys_on_every_path(
     registry: ModuleRegistry,
 ) -> None:
-    expected = {"valid", "errors", "warnings", "stale_state", "state_error"}
+    # C1's five keys plus C2's ``error_kind``. The exact-set assertion stays
+    # exact so a future key cannot slip in (or a C1 key disappear) unnoticed.
+    expected = {
+        "valid",
+        "errors",
+        "warnings",
+        "stale_state",
+        "state_error",
+        "error_kind",
+    }
 
     assert set(registry.validate()) == expected
 
