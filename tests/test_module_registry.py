@@ -8,6 +8,7 @@ never dirty a tracked file. Config (what a human decided) lives in git; state
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -51,12 +52,12 @@ def test_initial_config_is_persistent_only(registry: ModuleRegistry) -> None:
 
 
 def test_heartbeat_failure_writes_state_only(registry: ModuleRegistry) -> None:
-    # A module with no command fails deterministically without opening a socket.
+    # A module whose command cannot connect fails deterministically.
     saved = json.loads(Path(registry.path).read_text(encoding="utf-8"))
     saved["ghost"] = {
         "status": "enabled",
         "transport": "stdio",
-        "command": None,
+        "command": [sys.executable, "-m", "nonexistent.module"],
         "description": "no command configured",
     }
     Path(registry.path).write_text(json.dumps(saved), encoding="utf-8")
@@ -70,7 +71,7 @@ def test_heartbeat_failure_writes_state_only(registry: ModuleRegistry) -> None:
 
     state = json.loads(Path(registry.state_path).read_text(encoding="utf-8"))
     assert state["ghost"]["status"] == "error"
-    assert state["ghost"]["last_error"] == "no command configured"
+    assert state["ghost"]["last_error"] == "MCP server exited before responding"
 
 
 def test_status_merges_config_and_state(registry: ModuleRegistry) -> None:
@@ -78,7 +79,7 @@ def test_status_merges_config_and_state(registry: ModuleRegistry) -> None:
     saved["ghost"] = {
         "status": "enabled",
         "transport": "stdio",
-        "command": None,
+        "command": [sys.executable, "-m", "nonexistent.module"],
         "description": "no command configured",
     }
     Path(registry.path).write_text(json.dumps(saved), encoding="utf-8")
