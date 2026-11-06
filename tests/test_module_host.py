@@ -101,3 +101,39 @@ def test_module_host_health_failure_closes_and_marks_connection(registry):
     assert result["connected"] is False
     assert client.closed is True
     assert registry.status()["modules"]["content-creator"]["status"] == "error"
+
+
+class _StubRegistry:
+    """Minimal registry stub: only the surface ModuleHost.connect touches."""
+
+    def __init__(self) -> None:
+        self.recorded = {}
+
+    def module_config(self, module_id: str) -> dict:
+        return {
+            "status": "enabled",
+            "transport": "stdio",
+            "command": None,
+            "description": "stub",
+        }
+
+    def record_runtime_state(self, module_id: str, status: str, **kwargs) -> None:
+        self.recorded = {"module_id": module_id, "status": status, **kwargs}
+
+    def clear_runtime_state(self, module_id: str) -> None:
+        return None
+
+
+def test_module_host_pins_no_command_configured():
+    stub = _StubRegistry()
+    host = ModuleHost(
+        stub,  # type: ignore[arg-type]
+        client_factory=lambda *args, **kwargs: pytest.fail("must not spawn"),
+    )
+
+    result = host.connect("ghost")
+
+    assert result["status"] == "error"
+    assert result["connected"] is False
+    assert result["error"] == "no command configured"
+    assert stub.recorded["last_error"] == "no command configured"
