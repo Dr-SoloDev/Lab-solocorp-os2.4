@@ -97,7 +97,7 @@ The CEO is the model-driven agent experience in the app. The Core MCP is a capab
 
 1. A single-user local web app with a simple CEO chat, module screen, task history, and provider settings.
 2. A local runtime that can register, enable, disable, connect, disconnect, and health-check MCP modules.
-3. A module registry that records stable module ID, name, version, transport/entry point, capabilities, declared dependencies, required permissions, and status.
+3. A module registry that records stable module ID, name, version, transport/entry point, capabilities, declared dependencies, declared permissions (the scopes the module's own tools expose — metadata, not a caller gate), and status.
 4. One explicitly configured model/provider adapter using a user-provided credential; no silent provider or model fallback.
 5. The Core MCP's organization and routing capabilities available to the CEO app without making them a dependency of standalone department MCPs.
 6. Content Creator as the first integrated department module, using the existing department MCP pilot as the starting point.
