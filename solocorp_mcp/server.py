@@ -583,8 +583,25 @@ Use this server when you need to:
         """
         _check_scope("team")
 
-        # Look up module command from registry
-        registry = _module_registry.status()
+        # Look up module command from registry. A corrupt config must surface
+        # as a registry error, not as a misleading "module not found".
+        try:
+            registry = _module_registry.status()
+        except Exception as exc:
+            return json.dumps({
+                "status": "error",
+                "error": "registry_unavailable",
+                "message": str(exc),
+            }, ensure_ascii=False)
+
+        if not registry.get("valid", True):
+            return json.dumps({
+                "status": "error",
+                "error": "registry_invalid",
+                "message": "Module registry config is invalid; refusing to dispatch",
+                "errors": registry.get("errors", []),
+            }, ensure_ascii=False)
+
         modules = registry.get("modules", {})
         if module_id not in modules:
             return json.dumps({
@@ -748,12 +765,40 @@ Use this server when you need to:
         module_id: str,
         status: str,
         description: str = "",
+        command: list[str] | None = None,
+        transport: str = "",
     ) -> str:
-        """Update one module's status in the registry."""
+        """Update one module's status in the registry.
+
+        Patch-only: the module must already exist. ``command`` and
+        ``transport`` are optional additions to the original parameters.
+        """
         _check_scope("admin")
         try:
             return json.dumps(
-                _module_registry.update(module_id, status, description or None),
+                _module_registry.update(
+                    module_id,
+                    status,
+                    description or None,
+                    command=command or None,
+                    transport=transport or None,
+                ),
+                ensure_ascii=False,
+            )
+        except Exception as exc:
+            return json.dumps(_error(exc), ensure_ascii=False)
+
+    @mcp.tool()
+    def module_registry_register(module_id: str, entry: dict[str, Any]) -> str:
+        """Register a new module in the tracked registry config.
+
+        ``entry`` must be a complete config entry for its transport
+        (status, transport, command, plus optional description).
+        """
+        _check_scope("admin")
+        try:
+            return json.dumps(
+                _module_registry.register(module_id, entry),
                 ensure_ascii=False,
             )
         except Exception as exc:
