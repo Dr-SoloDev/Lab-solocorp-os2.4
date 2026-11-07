@@ -20,8 +20,25 @@ campaign:
 
 | Need | Use | Rule |
 |:--|:--|:--|
-| Editable multi-track project, captions, voiceover continuity, or re-editing | `render_campaign_with_concat` | Default for launch and story videos. |
+| Editable multi-track project, captions, voiceover continuity, or re-editing | `render_campaign_with_concat` | Default for launch and story videos **on hosts where Concat renders** — on this host (ADR-032) the MCP handshake is verified but `render_campaign_with_concat` has never been run (no render proof), so use `render_campaign_media_local` here until a Concat render is proven. |
 | Fast synthetic storyboard preview with six 15-second scenes | `render_campaign_media_local` | Separate one-shot path. Do not feed its MP4, frames, or audio into Concat. |
+
+`render_campaign_media_local` renders **per-scene** local assets (six 15-second
+scenes or ten 10-second episodes, scene-level captions/voice segments). Concat
+(`render_campaign_with_concat`) uses **one continuous full-length narration**
+track — never mix the two. The local renderer picks the latest `video_script`
+by default; pass optional `script_filename` to render an exact script instead.
+**Checklist before rendering:** re-ingest the real 6-scene/10-scene script so
+it is latest, OR pass that ingested `script_filename` explicitly.
+`create_video_script` scaffolds a 4-scene draft that fails the renderer's
+layout validation and must not be assumed renderable.
+**Phase 3 local extras:** `tts_fallback="silence"` / `visual_fallback="static_card"`
+are opt-in (default `abort` = fail fast); any use marks `degraded: true` with
+the failing gate check `media: local render used fallback (degraded)` — never
+a clean pass. Local renders are serialized by a non-blocking exclusive lock
+(second caller fails immediately) and return per-step `steps` (5), per-scene
+`sync_report` (drift `0.0 ms` in Phase 3 evidence), and `output_audit`
+(bitrate) — see `docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md` Phase 3 Features.
 
 The local-media renderer invokes FFmpeg directly. That does not mean the Concat
 editor was used. The FFmpeg-skill bridge only stores/records a tool plan; it is

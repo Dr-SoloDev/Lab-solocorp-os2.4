@@ -18,6 +18,8 @@
 **Re-scope:** D2 ของ `content-creator-sek` **ไม่ใช้** `scripts/content_render.py` อีก (199 บรรทัด) — ตอนนี้ **Concat รองรับ Linux ครบครัน** (.deb, .rpm, .AppImage, Flatpak, Arch) → สามารถรันบน Linux ได้จริง เฉพาะวิธีติดตั้งให้ถูกต้อง (ดู FAMILY.md:16, CERTIFICATION-REGISTRY.md:10)
 → D2 ใช้ `content_agent.py` (112 บรรทัด, รันได้ทุก OS) เป็นฐาน
 
+> **Follow-up (2026-11-07, CEO-ordered FIX F1):** "ลง binary แล้วรันได้" ไม่จริงบน host นี้ — Concat 0.2.8 AppImage มีจริง แต่ FUSE mount ถูกปฏิเสธ (`fusermount3 Operation not permitted`, exit 127); แก้ด้วย `--appimage-extract` สำเร็จ (ADR-032 amended) + MCP handshake verified 2026-11-07 แต่ `render_campaign_with_concat` **ยังไม่เคยรันบน host นี้** (ไม่มี render proof) — local-media path ไม่ต้องการ Concat และ proven Phase 1–3 แล้ว
+
 ---
 
 ## 1. งานคืออะไร

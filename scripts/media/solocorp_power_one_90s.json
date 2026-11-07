@@ -5,7 +5,7 @@
   "scene_seconds": 15,
   "motion_template": "solocorp_narrative_motion.html",
   "demo_label": "ภาพจำลองประกอบเรื่องเล่า",
-  "claims_note": "18 departments is sourced from solocorp_mcp/README.md. Specialists are described without a count. FFmpeg local CLI is used; Concat is unavailable in this runtime. The MIT license applies to source code, not this rendered video or Piper voice.",
+  "claims_note": "18 departments is sourced from solocorp_mcp/README.md. Specialists are described without a count. FFmpeg local CLI is used; the Concat 0.2.8 AppImage binary exists on this host but cannot FUSE-mount (fusermount3 Operation not permitted, exit 127) — it runs via --appimage-extract with MCP handshake verified 2026-11-07, but render_campaign_with_concat has never been run on this host (no render proof); FFmpeg local CLI is the renderer used for this run. The MIT license applies to source code, not this rendered video or Piper voice.",
   "scenes": [
     {
       "kind": "overload",

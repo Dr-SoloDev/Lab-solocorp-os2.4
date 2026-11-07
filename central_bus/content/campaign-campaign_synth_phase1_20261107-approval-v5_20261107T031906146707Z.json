@@ -1,0 +1,22 @@
+{
+  "approver_note": "Owner reviewed exact v5 rendered MP4 (SHA-256 ef3b282fc3ed69a58064c336e780a75f79094c0d54c36ffdbe406c23837c28bb, 1080x1920 90s, -16 LUFS) on 2026-11-07 and confirmed human approval for this version only. Acknowledges gate_passed=false (visual prompt, audio cue sheet, source verification, media rights, R1/R3/R5 pending), Piper th_TH-tsync2-medium is CC BY-NC-SA noncommercial/internal only, redaction items flagged by QA. This records approval only; it does NOT publish.",
+  "campaign_id": "campaign_synth_phase1_20261107",
+  "gate_passed": false,
+  "overrides_failed_checks": [
+    "dependencies: visual prompt",
+    "dependencies: audio cue sheet",
+    "claims: source verification",
+    "media rights",
+    "R1 มีหลักฐานตรวจสอบได้อย่างน้อย 1 อัน",
+    "R3 มีบรรทัด 'ยังไม่ได้/ยังไม่รู้' (calibration)",
+    "R5 ปิดด้วยคำถามเปิด 1 ข้อ"
+  ],
+  "recorded_at": "2026-11-07T03:19:06.146422+00:00",
+  "recorded_by": "human MCP caller; identity is not independently authenticated",
+  "review_report": {
+    "filename": "campaign-campaign_synth_phase1_20261107-publish-gate-v5_20261107T031850567415Z.md",
+    "path": "central_bus/content/campaign-campaign_synth_phase1_20261107-publish-gate-v5_20261107T031850567415Z.md"
+  },
+  "status": "approved",
+  "version": "v5"
+}

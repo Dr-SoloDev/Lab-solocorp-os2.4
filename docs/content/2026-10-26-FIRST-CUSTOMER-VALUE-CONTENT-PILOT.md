@@ -50,6 +50,8 @@ The latest campaign review returned `review_required`, `gate_passed: false`, and
 - The Content Creator Head agent prepared the draft. The five specialist roles are in the official roster, but no separate specialist execution or review was recorded; the MCP exposes them only internally, not as individual client entry points.
 - The FFmpeg diagnostic at `bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json` reports FFmpeg 7.0.2-static, a missing `drawtext` filter, and an unresolved security-version warning. No media was processed; rendering remains blocked pending independent patch verification or a safe runtime update.
 
+> **Superseded (Phase 1–3, 2026-11-07):** synthetic-only render ทำงานได้จริง — locally rendered MP4s ที่ `central_bus/content/local_media/` ผ่าน ffprobe (Phase 1–3 frozen campaigns, SHA-verified); real user media ยัง blocked จน runtime ได้รับการ independent verification. ข้อความ "rendering remains blocked" ข้างบนเป็นประวัติ ณ 2026-10-26 (FIX F6, CEO-ordered 2026-11-07) — ดู `docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md`
+
 ## What This Run Establishes
 
 It establishes that the current Content campaign flow can store a versioned script, visual prompt, audio cue, and a human-gated review report. It does not establish that the content workflow is faster than a manual baseline, that solo builders want the product, or that the output is competitive with leading tools.
@@ -59,5 +61,7 @@ It establishes that the current Content campaign flow can store a versioned scri
 1. Resolve LLM availability and complete the documented D3 evaluation without infrastructure-blocked cases.
 2. Verify campaign claims, redaction, source handling, rights, and human Publish Gate behavior for internal readiness.
 3. Clear the FFmpeg runtime gate if rendering is in scope; otherwise, keep rendering explicitly out of scope and label outputs as drafts.
+
+> **Superseded (Phase 1–3, 2026-11-07):** synthetic-only render ทำงานได้จริง — locally rendered MP4s ที่ `central_bus/content/local_media/` ผ่าน ffprobe; real user media ยัง blocked จน runtime ได้รับการ independent verification (FIX F6, CEO-ordered 2026-11-07 — ประวัติ ณ 2026-10-26)
 4. Complete independent reproduction of the system-readiness result.
 5. Only after readiness is recorded, run target-audience reviews, a comparable manual baseline, and real-task tests for repeat use, referral, or payment. These are final-phase validation, not current prerequisites for engineering work.

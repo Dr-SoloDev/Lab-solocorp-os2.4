@@ -41,7 +41,7 @@ CEO ของเขาชื่อ **หนุมาน** · ไม่มีแ�
 
 | ความสามารถ | ทำไมถึงจำเป็นกับเรา |
 |:--|:--|
-| **Concat MCP (วิดีโอ)** | `scripts/content_render.py` ติดตั้งได้หลายรูปแบบบน Linux — `.deb`, `.rpm`, `.AppImage`, **Flatpak** (`app.concat.editor`) หรือรันจากソース — เห็นผล D2 ได้ครบ (แกนกลางรันได้บน Linux ตั้งแต่ลง binary แล้ว) |
+| **Concat MCP (วิดีโอ)** | Concat 0.2.8 AppImage binary มีจริงบน host นี้ (`Concat-0.2.8-x86_64.AppImage`, ELF) แต่ AppImage ต้องการ FUSE mount ซึ่ง host นี้นอก container ไม่อนุญาต (`fusermount3 Operation not permitted`, exit 127) — ตอนนี้รันผ่าน `--appimage-extract` (`squashfs-root/AppRun`, ADR-032 amended) และ MCP handshake ผ่านแล้ว 2026-11-07 แต่ `render_campaign_with_concat` ยังไม่เคยรันบน host นี้ (ยังไม่มี render proof); local-media path ไม่ต้องการ Concat และ proven ผ่าน Phase 1–3 แล้ว |
 | **OmniVoice บน GPU** | แกนกลางรัน CPU → **RTF 165** (คลิป 40 วิ = 1.8 ชม.) · เขา **RTF 0.36** (เร็วกว่า ~450 เท่า) |
 | **`real-sound` skill** | sound design ~4,000 บรรทัด (mix/master/QA/licence audit) — เขาผลิต เราบริโภค |
 | **`earshot` skill** | คู่กับ real-sound — คลังเสียงผลิตภาพ |
