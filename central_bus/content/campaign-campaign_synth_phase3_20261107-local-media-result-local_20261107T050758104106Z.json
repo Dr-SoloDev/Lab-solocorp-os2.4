@@ -1,0 +1,441 @@
+{
+  "approval_effect": "none",
+  "campaign_id": "campaign_synth_phase3_20261107",
+  "degraded": false,
+  "execution_mode": "local_ffmpeg_cli",
+  "execution_status": "completed",
+  "fallbacks": {
+    "tts": {
+      "requested": "abort",
+      "scenes": [],
+      "used": false
+    },
+    "visual": {
+      "requested": "abort",
+      "scenes": [],
+      "used": false
+    }
+  },
+  "job_id": "local-media-78141119480f4b918c065b17cdf05639",
+  "lifecycle_state": "scaffold",
+  "provider": "ffmpeg-cli",
+  "render": {
+    "audio": {
+      "channels": 2,
+      "codec": "aac",
+      "muxed_in_video": true,
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/campaign_synth_phase3_20261107_rendered.mp4",
+      "sample_rate": "48000",
+      "stream_index": 1
+    },
+    "audio_duration_seconds": 90.0,
+    "audio_engine": "Piper local Thai TTS",
+    "audio_measurement": {
+      "integrated_lufs": -16.0,
+      "true_peak_dbtp": -3.0
+    },
+    "audio_mix": {
+      "bytes": 17280078,
+      "channels": 2,
+      "codec": "pcm_s16le",
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/audio-mix.wav",
+      "sample_rate": "48000",
+      "sha256": "e54c650a7e04b2785809641bac08de3d0d77efa836138fa4af603270a4d5834e"
+    },
+    "audio_target": {
+      "lufs": -16.0,
+      "normalizer": "loudnorm two-pass",
+      "standard": "EBU_R128",
+      "true_peak_dbtp": -1.5
+    },
+    "caption_timing": "scene-level from supplied script; no word-level alignment",
+    "degraded": false,
+    "duration_seconds": 90.0,
+    "execution_mode": "local_ffmpeg_cli",
+    "fallbacks": {
+      "tts": {
+        "requested": "abort",
+        "scenes": [],
+        "used": false
+      },
+      "visual": {
+        "requested": "abort",
+        "scenes": [],
+        "used": false
+      }
+    },
+    "fps": 30,
+    "frames": [
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/frames/scene-01.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/frames/scene-02.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/frames/scene-03.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/frames/scene-04.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/frames/scene-05.png",
+      "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/frames/scene-06.png"
+    ],
+    "local_only": true,
+    "media_rights_status": "human_confirmation_required",
+    "network_used": false,
+    "scene_count": 6,
+    "scene_seconds": 15,
+    "silence_removal": {
+      "minimum_seconds": 0.4,
+      "threshold_db": -35
+    },
+    "status": "completed",
+    "steps": {
+      "ffmpeg_assembly": {
+        "error": null,
+        "fallback_scenes": [],
+        "fallback_used": false,
+        "finished_at": "2026-11-07T05:07:56.848943+00:00",
+        "message": "voice mix, loudness normalization, and video assembly completed",
+        "name": "ffmpeg_assembly",
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/campaign_synth_phase3_20261107_rendered.mp4",
+        "started_at": "2026-11-07T05:07:09.921963+00:00",
+        "status": "completed"
+      },
+      "input_validation": {
+        "error": null,
+        "fallback_scenes": [],
+        "fallback_used": false,
+        "finished_at": "2026-11-07T05:05:59.847768+00:00",
+        "message": "input validated; output directory created",
+        "name": "input_validation",
+        "output": "6 scenes, 90s",
+        "started_at": "2026-11-07T05:05:59.847001+00:00",
+        "status": "completed"
+      },
+      "output_audit": {
+        "error": null,
+        "fallback_scenes": [],
+        "fallback_used": false,
+        "finished_at": "2026-11-07T05:07:57.865015+00:00",
+        "message": "output audit passed: file, duration, resolution, bitrate, LUFS/TP",
+        "name": "output_audit",
+        "output": {
+          "bitrate_bps": 252607,
+          "duration_seconds": 90.0,
+          "file_exists": true,
+          "height": 1920,
+          "integrated_lufs": -16.0,
+          "size_bytes": 2841836,
+          "true_peak_dbtp": -3.0,
+          "width": 1080
+        },
+        "started_at": "2026-11-07T05:07:56.848971+00:00",
+        "status": "completed"
+      },
+      "piper_tts": {
+        "error": null,
+        "fallback_scenes": [],
+        "fallback_used": false,
+        "finished_at": "2026-11-07T05:07:06.192079+00:00",
+        "message": "Piper TTS completed for all scenes",
+        "name": "piper_tts",
+        "output": "6 voice segments",
+        "started_at": "2026-11-07T05:05:59.847784+00:00",
+        "status": "completed"
+      },
+      "synthetic_visuals": {
+        "error": null,
+        "fallback_scenes": [],
+        "fallback_used": false,
+        "finished_at": "2026-11-07T05:07:09.921935+00:00",
+        "message": "Three.js scene renderer completed for all scenes",
+        "name": "synthetic_visuals",
+        "output": "6 frame assets",
+        "started_at": "2026-11-07T05:07:06.192104+00:00",
+        "status": "completed"
+      }
+    },
+    "sync_report": [
+      {
+        "drift_ms": 0.0,
+        "end_sec": 15,
+        "padded_duration_sec": 15.0,
+        "scene_id": "scene-01",
+        "start_sec": 0,
+        "voice_duration_sec": 5.341
+      },
+      {
+        "drift_ms": 0.0,
+        "end_sec": 30,
+        "padded_duration_sec": 15.0,
+        "scene_id": "scene-02",
+        "start_sec": 15,
+        "voice_duration_sec": 5.143
+      },
+      {
+        "drift_ms": 0.0,
+        "end_sec": 45,
+        "padded_duration_sec": 15.0,
+        "scene_id": "scene-03",
+        "start_sec": 30,
+        "voice_duration_sec": 5.364
+      },
+      {
+        "drift_ms": 0.0,
+        "end_sec": 60,
+        "padded_duration_sec": 15.0,
+        "scene_id": "scene-04",
+        "start_sec": 45,
+        "voice_duration_sec": 5.596
+      },
+      {
+        "drift_ms": 0.0,
+        "end_sec": 75,
+        "padded_duration_sec": 15.0,
+        "scene_id": "scene-05",
+        "start_sec": 60,
+        "voice_duration_sec": 4.853
+      },
+      {
+        "drift_ms": 0.0,
+        "end_sec": 90,
+        "padded_duration_sec": 15.0,
+        "scene_id": "scene-06",
+        "start_sec": 75,
+        "voice_duration_sec": 4.923
+      }
+    ],
+    "synthetic_inputs_only": true,
+    "video": {
+      "bitrate_bps": 252607,
+      "bytes": 2841836,
+      "codec": "h264",
+      "file_exists": true,
+      "frame_rate": "30/1",
+      "height": 1920,
+      "path": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/campaign_synth_phase3_20261107_rendered.mp4",
+      "sha256": "192ba6c5e0b0c74dcd02f262df5f8771e399a8573b220e75e267531f48a7cc32",
+      "size_bytes": 2841836,
+      "width": 1080
+    },
+    "visual_engine": "Three.js via pdoom-video dependencies",
+    "voice_model_license": "CC-BY-NC-SA-3.0",
+    "voice_segments": [
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 5.341,
+          "frames": 117760,
+          "sample_rate": 22050
+        },
+        "bytes": 235564,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/voice/scene-01.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 5.143,
+          "frames": 113408,
+          "sample_rate": 22050
+        },
+        "bytes": 226860,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/voice/scene-02.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 5.364,
+          "frames": 118272,
+          "sample_rate": 22050
+        },
+        "bytes": 236588,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/voice/scene-03.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 5.596,
+          "frames": 123392,
+          "sample_rate": 22050
+        },
+        "bytes": 246828,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/voice/scene-04.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 4.853,
+          "frames": 107008,
+          "sample_rate": 22050
+        },
+        "bytes": 214060,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/voice/scene-05.wav",
+        "status": "completed"
+      },
+      {
+        "audio": {
+          "channels": 1,
+          "duration_seconds": 4.923,
+          "frames": 108544,
+          "sample_rate": 22050
+        },
+        "bytes": 217132,
+        "engine": "piper-local",
+        "model": "th_TH-tsync2-medium.onnx",
+        "model_license": "CC-BY-NC-SA-3.0",
+        "model_rights_status": "human_confirmation_required",
+        "model_sha256": "136669378ee72dd27012604994099ca3c833e625c7cfdff05ccdf468a1a2115f",
+        "network_used": false,
+        "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/voice/scene-06.wav",
+        "status": "completed"
+      }
+    ]
+  },
+  "schema_version": 1,
+  "steps": {
+    "ffmpeg_assembly": {
+      "error": null,
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": "2026-11-07T05:07:56.848943+00:00",
+      "message": "voice mix, loudness normalization, and video assembly completed",
+      "name": "ffmpeg_assembly",
+      "output": "/data/projects/Lab-solocorp-os2.4/central_bus/content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639/campaign_synth_phase3_20261107_rendered.mp4",
+      "started_at": "2026-11-07T05:07:09.921963+00:00",
+      "status": "completed"
+    },
+    "input_validation": {
+      "error": null,
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": "2026-11-07T05:05:59.847768+00:00",
+      "message": "input validated; output directory created",
+      "name": "input_validation",
+      "output": "6 scenes, 90s",
+      "started_at": "2026-11-07T05:05:59.847001+00:00",
+      "status": "completed"
+    },
+    "output_audit": {
+      "error": null,
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": "2026-11-07T05:07:57.865015+00:00",
+      "message": "output audit passed: file, duration, resolution, bitrate, LUFS/TP",
+      "name": "output_audit",
+      "output": {
+        "bitrate_bps": 252607,
+        "duration_seconds": 90.0,
+        "file_exists": true,
+        "height": 1920,
+        "integrated_lufs": -16.0,
+        "size_bytes": 2841836,
+        "true_peak_dbtp": -3.0,
+        "width": 1080
+      },
+      "started_at": "2026-11-07T05:07:56.848971+00:00",
+      "status": "completed"
+    },
+    "piper_tts": {
+      "error": null,
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": "2026-11-07T05:07:06.192079+00:00",
+      "message": "Piper TTS completed for all scenes",
+      "name": "piper_tts",
+      "output": "6 voice segments",
+      "started_at": "2026-11-07T05:05:59.847784+00:00",
+      "status": "completed"
+    },
+    "synthetic_visuals": {
+      "error": null,
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": "2026-11-07T05:07:09.921935+00:00",
+      "message": "Three.js scene renderer completed for all scenes",
+      "name": "synthetic_visuals",
+      "output": "6 frame assets",
+      "started_at": "2026-11-07T05:07:06.192104+00:00",
+      "status": "completed"
+    }
+  },
+  "sync_report": [
+    {
+      "drift_ms": 0.0,
+      "end_sec": 15,
+      "padded_duration_sec": 15.0,
+      "scene_id": "scene-01",
+      "start_sec": 0,
+      "voice_duration_sec": 5.341
+    },
+    {
+      "drift_ms": 0.0,
+      "end_sec": 30,
+      "padded_duration_sec": 15.0,
+      "scene_id": "scene-02",
+      "start_sec": 15,
+      "voice_duration_sec": 5.143
+    },
+    {
+      "drift_ms": 0.0,
+      "end_sec": 45,
+      "padded_duration_sec": 15.0,
+      "scene_id": "scene-03",
+      "start_sec": 30,
+      "voice_duration_sec": 5.364
+    },
+    {
+      "drift_ms": 0.0,
+      "end_sec": 60,
+      "padded_duration_sec": 15.0,
+      "scene_id": "scene-04",
+      "start_sec": 45,
+      "voice_duration_sec": 5.596
+    },
+    {
+      "drift_ms": 0.0,
+      "end_sec": 75,
+      "padded_duration_sec": 15.0,
+      "scene_id": "scene-05",
+      "start_sec": 60,
+      "voice_duration_sec": 4.853
+    },
+    {
+      "drift_ms": 0.0,
+      "end_sec": 90,
+      "padded_duration_sec": 15.0,
+      "scene_id": "scene-06",
+      "start_sec": 75,
+      "voice_duration_sec": 4.923
+    }
+  ],
+  "tts_fallback": "abort",
+  "visual_fallback": "abort"
+}

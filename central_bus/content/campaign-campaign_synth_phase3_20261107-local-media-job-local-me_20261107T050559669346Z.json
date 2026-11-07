@@ -1,0 +1,28 @@
+{
+  "campaign_id": "campaign_synth_phase3_20261107",
+  "duration_seconds": 90,
+  "execution": {
+    "automatic_execution": false,
+    "requested_by": "content-creator MCP tool call",
+    "runtime_gate": "synthetic_inputs_only_pending_independent_ffmpeg_verification",
+    "status": "in_progress"
+  },
+  "fallback_requested": false,
+  "job_id": "local-media-78141119480f4b918c065b17cdf05639",
+  "lifecycle_state": "scaffold",
+  "output_directory": "content/local_media/campaign_synth_phase3_20261107/local-media-78141119480f4b918c065b17cdf05639",
+  "provider": "ffmpeg-cli",
+  "publication_status": "blocked_pending_human_approval_and_rights_review",
+  "scene_count": 6,
+  "scene_seconds": 15,
+  "schema_version": 1,
+  "scope": "generated voice, original synthetic 3D scenes, scene-level captions, local FFmpeg CLI",
+  "script_filename": "campaign-campaign_synth_phase3_20261107-client-generated-video_s_20261107T045526358230Z.md",
+  "script_version": "v3",
+  "tts_fallback": "abort",
+  "tts_provider": "piper-local",
+  "visual_fallback": "abort",
+  "visual_provider": "three.js-pdoom-local",
+  "voice_model_license": "CC-BY-NC-SA-3.0",
+  "voice_model_rights_status": "noncommercial_only_human_confirmation_required"
+}
