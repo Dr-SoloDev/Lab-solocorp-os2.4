@@ -1,0 +1,455 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // ==========================================
+  // SoloCorp OS — OpenCode Desktop Configuration
+  // รุ่น: 2.4 | วันที่: 2026-11-08 | ผู้ดูแล: CEO เทอโบ
+  // หมายเหตุ: ใช้ .jsonc เพื่อรองรับคอมเมนต์อธิบายโครงสร้างแผนกและสิทธิ์
+  // ==========================================
+
+  // ------------------------------------------------------------
+  // 1. Default Agent — เซสชันแรกเริ่มต้นที่ CEO เสมอ
+  // ------------------------------------------------------------
+  "default_agent": "ceo-turbo",
+
+  // ------------------------------------------------------------
+  // 2. Agent Hierarchy — ตาม Department Architecture ของ SoloCorp OS
+  // Control Layer (ตัดสินใจ) vs Specialist (ลงมือทำผ่าน delegation)
+  // ------------------------------------------------------------
+  "agents": {
+
+    // ---------- Control Layer ----------
+    "ceo-turbo": {
+      "description": "CEO — Supreme AI Authority. รับ vision จาก Owner → ตัดสินใจ → delegate ไปยัง Department Heads",
+      "mode": "primary",
+      "level": 4,
+      "color": "#FFD700",
+      "permissions": [
+        { "action": "read", "resource": "*", "effect": "allow" }
+      ]
+    },
+    "coo-kit": {
+      "description": "COO (กิจ) — L3 gatekeeper: daily ops, L1–L3 control, filter ก่อนส่ง CEO",
+      "mode": "primary",
+      "level": 3,
+      "color": "#00BFFF",
+      "permissions": [
+        { "action": "read", "resource": "*", "effect": "allow" }
+      ]
+    },
+    "orchestrator-wut": {
+      "description": "Orchestrator (พี่วุฒิ) — Pipeline Coordination, handoff management",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#00BFFF",
+      "permissions": [
+        { "action": "read", "resource": "bus/**", "effect": "allow" },
+        { "action": "read", "resource": "central_bus/**", "effect": "allow" },
+        { "action": "read", "resource": "brain/*", "effect": "allow" }
+      ]
+    },
+    "architect-songsak": {
+      "description": "Architect (พี่ทรงศักดิ์) — Central Bus, System Routing, Monitoring, Exception Handling",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#6B8E23",
+      "permissions": [
+        { "action": "read", "resource": "*", "effect": "allow" }
+      ]
+    },
+
+    // ---------- Department Heads (L2) ----------
+    "cfo-meetoo": {
+      "description": "CFO (meetoo) — การเงิน, งบประมาณ, การลงทุน, FP&A",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#4169E1",
+      "permissions": [
+        { "action": "read", "resource": "finance/**", "effect": "allow" },
+        { "action": "edit", "resource": "finance/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" }
+      ]
+    },
+    "cmo-mark": {
+      "description": "CMO (มาร์ค) — การตลาด, Content Strategy, Brand, Social Media",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#FF69B4",
+      "permissions": [
+        { "action": "read", "resource": "media/**", "effect": "allow" },
+        { "action": "read", "resource": "campaigns/**", "effect": "allow" }
+      ]
+    },
+    "content-creator-sek": {
+      "description": "Content Creator (เสก) — Content Production, Caption, Image, Video, Campaign",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#FF69B4",
+      "permissions": [
+        { "action": "read", "resource": "media/**", "effect": "allow" },
+        { "action": "edit", "resource": "media/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" }
+      ]
+    },
+    "design-kreet": {
+      "description": "Design (ครีเอท) — UX Research, Visual Design System, Brand Visual",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#9932CC",
+      "permissions": [
+        { "action": "read", "resource": "design/**", "effect": "allow" },
+        { "action": "read", "resource": "components/**", "effect": "allow" },
+        { "action": "read", "resource": "mockups/**", "effect": "allow" },
+        { "action": "edit", "resource": "design/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" }
+      ]
+    },
+    "legal-tulya": {
+      "description": "Legal (ตุลย์) — Compliance, Contract Review, Governance, Risk Management",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#8B0000",
+      "permissions": [
+        { "action": "read", "resource": "legal_vault/**", "effect": "allow" },
+        { "action": "edit", "resource": "legal_vault/**", "effect": "allow" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" }
+      ]
+    },
+    "engineering-changful": {
+      "description": "Engineering (ช่างฟูล) — Backend, Frontend, Code, Technology",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#228B22",
+      "permissions": [
+        { "action": "read", "resource": "src/**", "effect": "allow" },
+        { "action": "read", "resource": "central_bus/**", "effect": "allow" },
+        { "action": "edit", "resource": "src/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" }
+      ]
+    },
+    "qa-team": {
+      "description": "QA Team — Testing, Quality Assurance, Evidence Collection, Bug Tracking",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#FF8C00",
+      "permissions": [
+        { "action": "read", "resource": "tests/**", "effect": "allow" },
+        { "action": "read", "resource": "bus/evidence/**", "effect": "allow" },
+        { "action": "edit", "resource": "tests/**", "effect": "allow" },
+        { "action": "edit", "resource": "bus/evidence/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" }
+      ]
+    },
+    "ui-designer": {
+      "description": "UI Designer — Interface Design, Component Library, Pixel-perfect UI",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#9932CC",
+      "permissions": [
+        { "action": "read", "resource": "design/**", "effect": "allow" },
+        { "action": "read", "resource": "components/**", "effect": "allow" },
+        { "action": "edit", "resource": "components/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" }
+      ]
+    },
+    "sales-team": {
+      "description": "Sales Team — B2B Deal Strategy, Pipeline Analytics, Outbound, Proposal",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#32CD32",
+      "permissions": [
+        { "action": "read", "resource": "sales/**", "effect": "allow" },
+        { "action": "read", "resource": "pipeline/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" }
+      ]
+    },
+    "support-team": {
+      "description": "Support Team — Customer Support, Analytics, Executive Summaries",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#20B2AA",
+      "permissions": [
+        { "action": "read", "resource": "support/**", "effect": "allow" },
+        { "action": "read", "resource": "bus/evidence/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" }
+      ]
+    },
+    "web3-aywa": {
+      "description": "Web3 & DeFi — Blockchain, Smart Contracts, Solana, Security Audit",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#1E90FF",
+      "permissions": [
+        { "action": "read", "resource": "web3/**", "effect": "allow" },
+        { "action": "read", "resource": "smart_contracts/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" }
+      ]
+    },
+
+    // ---------- Loop Runner / Specialists (L1 - Auto) ----------
+    "build": {
+      "description": "Coding agent — implement code, features, fixes (delegate from Engineering Head)",
+      "mode": "subagent",
+      "level": 1,
+      "color": "#228B22"
+    },
+    "plan": {
+      "description": "Planning agent — decompose tasks, architecture design (delegate from Product/Architect)",
+      "mode": "subagent",
+      "level": 1,
+      "color": "#6B8E23"
+    },
+    "explore": {
+      "description": "Codebase exploration agent — read-only (รอดด่าน free-tier ตาม ADR-017)",
+      "mode": "subagent",
+      "level": 1,
+      "color": "#708090"
+    }
+  },
+
+  // ------------------------------------------------------------
+  // 3. Permission Model — Global Policies (Last matching rule wins)
+  // Read scope ตามบทบาทแผนก ป้องกัน context pollution และข้อมูลรั่วไหล
+  // ------------------------------------------------------------
+  "permissions": [
+    // อ่านไฟล์สาธารณะทั่วไป
+    { "action": "read", "resource": "*", "effect": "allow" },
+    // ถามก่อนอ่านไฟล์ secrets
+    { "action": "read", "resource": "*.env*", "effect": "ask" },
+    { "action": "read", "resource": "**/.env*", "effect": "ask" },
+    // ป้องกันอ่านโฟลเดอร์ความลับเป็นค่าเริ่มต้น (ยกเว้นแผนกที่กำหนด allow แล้ว)
+    { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+    { "action": "read", "resource": "finance/**", "effect": "ask" },
+    { "action": "read", "resource": "bus/**", "effect": "ask" },
+    { "action": "read", "resource": "central_bus/**", "effect": "ask" },
+    { "action": "read", "resource": "brain/*", "effect": "ask" },
+
+    // เขียนไฟล์ทั่วไปอนุญาต แต่ไฟล์สำคัญต้องถาม
+    { "action": "edit", "resource": "*", "effect": "allow" },
+    { "action": "edit", "resource": "*.env*", "effect": "ask" },
+    { "action": "edit", "resource": "legal_vault/**", "effect": "ask" },
+    { "action": "edit", "resource": "opencode.jsonc", "effect": "ask" },
+    { "action": "edit", "resource": "opencode.json", "effect": "ask" },
+
+    // Shell commands — ถามก่อนรันส่วนใหญ่ อนุญาตเฉพาะคำสั่งปลอดภัย
+    { "action": "bash", "resource": "*", "effect": "ask" },
+    { "action": "bash", "resource": "git status *", "effect": "allow" },
+    { "action": "bash", "resource": "git diff *", "effect": "allow" },
+    { "action": "bash", "resource": "ls *", "effect": "allow" },
+    { "action": "bash", "resource": "pwd", "effect": "allow" },
+    { "action": "bash", "resource": "whoami", "effect": "allow" },
+    { "action": "bash", "resource": "echo *", "effect": "allow" },
+    { "action": "bash", "resource": "date *", "effect": "allow" },
+    { "action": "bash", "resource": "git push *", "effect": "deny" },
+    { "action": "bash", "resource": "git commit *", "effect": "ask" },
+    { "action": "bash", "resource": "git merge *", "effect": "ask" },
+    { "action": "bash", "resource": "git rebase *", "effect": "deny" },
+    { "action": "bash", "resource": "git reset *", "effect": "deny" },
+    { "action": "bash", "resource": "git branch -D *", "effect": "deny" },
+    { "action": "bash", "resource": "rm *", "effect": "ask" },
+    { "action": "bash", "resource": "rm -rf *", "effect": "deny" },
+    { "action": "bash", "resource": "sudo *", "effect": "deny" },
+    { "action": "bash", "resource": "chown *", "effect": "deny" },
+    { "action": "bash", "resource": "docker *", "effect": "ask" },
+    { "action": "bash", "resource": "npm *", "effect": "ask" },
+    { "action": "bash", "resource": "pip *", "effect": "ask" },
+    { "action": "bash", "resource": "python*", "effect": "ask" },
+    { "action": "bash", "resource": "node*", "effect": "ask" },
+    { "action": "bash", "resource": "curl *", "effect": "ask" },
+    { "action": "bash", "resource": "wget *", "effect": "ask" },
+    { "action": "bash", "resource": "gh *", "effect": "ask" },
+    { "action": "bash", "resource": "jj *", "effect": "ask" },
+
+    // Task / subagent — ต้องถามก่อนสร้าง cross-department task
+    { "action": "subagent", "resource": "*", "effect": "ask" },
+
+    // External directory — เฉพาะ path ที่กำหนดเท่านั้น
+    { "action": "external_directory", "resource": "~/.hermes/**", "effect": "allow" },
+    { "action": "external_directory", "resource": "~/.claude/**", "effect": "allow" },
+    { "action": "external_directory", "resource": "~/.opencode/**", "effect": "allow" },
+    { "action": "external_directory", "resource": "~/.config/opencode/**", "effect": "allow" },
+    { "action": "external_directory", "resource": "/tmp/**", "effect": "allow" },
+    { "action": "external_directory", "resource": "*", "effect": "ask" },
+
+    // อนุญาตทั่วไป
+    { "action": "glob", "resource": "*", "effect": "allow" },
+    { "action": "grep", "resource": "*", "effect": "allow" },
+    { "action": "list", "resource": "*", "effect": "allow" },
+    { "action": "todowrite", "resource": "*", "effect": "allow" },
+    { "action": "question", "resource": "*", "effect": "allow" },
+    { "action": "webfetch", "resource": "*", "effect": "allow" },
+    { "action": "websearch", "resource": "*", "effect": "allow" },
+    { "action": "skill", "resource": "*", "effect": "allow" }
+  ],
+
+  // ------------------------------------------------------------
+  // 4. MCP Servers — Data Layer (รวมตามข้อตกลงของ Owner)
+  // Central Bus: local stdio (MVP) — ชี้ไปที่ busd ที่ 127.0.0.1:8099
+  // Unified Technical MCP: รวม Architect + Engineering + QA หนึ่งตัวเดียว
+  // ------------------------------------------------------------
+  "mcp": {
+    "servers": {
+      "central-bus": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "solocorp_mcp.bus_mcp"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": 60000,
+        "description": "Central Bus Daemon — Control/Data interface ระหว่าง agent ทุกแผนก (local stdio สำหรับ MVP)"
+      },
+      "unified-technical": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "solocorp_mcp.unified_technical.server"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": 120000,
+        "description": "Unified Technical MCP Server — รวม Architect, Engineering (Backend/Frontend), QA เข้าเป็น process เดียว ตาม Two-Tier Architecture"
+      },
+      "content-creator": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.content_creator"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": 1800000,
+        "description": "Content Creator MCP — ผลิตคอนเทนต์, วิดีโอ, เสียง, campaign artifacts (รวม Concat + Earshot)"
+      }
+    }
+  },
+
+  // ------------------------------------------------------------
+  // 5. Pipeline Commands — คำสั่งลัดสำหรับ CEO และทีม
+  // ------------------------------------------------------------
+  "commands": {
+    "pipeline": {
+      "description": "รันวงจรการทำงาน SoloCorp OS เต็มรูปแบบ",
+      "template": "ดำเนินการพัฒนาและประมวลผลฟีเจอร์ $ARGUMENTS ผ่านกระบวนการ SoloCorp Full Cycle (Spec → Plan → Build → QA → Deliver)",
+      "agent": "ceo-turbo",
+      "subagent": true
+    },
+    "handoff": {
+      "description": "ส่งมอบงานข้ามแผนกอย่างเป็นระบบ",
+      "template": "Execute handoff from $1 to $2 for: $3\nContext pack: $4\nArtifacts: $5\nDeadline: $6 | Priority: $7\nReceiver confirmation: $8\n\nProtocol: 01-receive.md §4 Handoff — สร้าง dispatch record ใน bus/dispatch/ (Central Bus audit trail), Head = outcome owner, specialist = task doer",
+      "agent": "orchestrator-wut",
+      "subagent": true
+    },
+    "status": {
+      "description": "ตรวจสอบสถานะสุขภาพของระบบและ Pipeline",
+      "template": "ตรวจสอบสถานะการทำงานของทุกแผนกและสถานะของ Central Bus รวมถึง health check ของ Unified Technical MCP Server",
+      "agent": "ceo-turbo",
+      "subagent": true
+    },
+    "audit": {
+      "description": "ตรวจสอบความปลอดภัยและ Audit Trail",
+      "template": "ตรวจสอบประวัติการทำงานและ Audit Trail ในขอบเขต $ARGUMENTS — รวม compliance, evidence trail, certification status (D1-D4)",
+      "agent": "legal-tulya",
+      "subagent": true
+    },
+    "deploy": {
+      "description": "Deploy คอนฟิกและโปรไฟล์ของ SoloCorp OS",
+      "template": "1. python3 scripts/build-profiles.py (build profiles)\n2. python3 scripts/export-codex-agents.py (export agents)\n3. python3 scripts/validate-soul-profiles.py (validate SOUL profiles — Quality Gate)\n4. python3 workers/auto_qa_gate.py --threshold=9 --project-id=auto-qa-pipeline --test-path=\"tests central_bus/tests\" (QA gate — บังคับก่อน deploy)\n5. python3 scripts/export-codex-agents.py --validate-only (verify)\n6. Commit และรายงานผล",
+      "agent": "ceo-turbo",
+      "subagent": true
+    },
+    "brain": {
+      "description": "บันทึกความจำของเซสชันเข้าสู่ Brain Memory",
+      "template": "บันทึกบริบทและสรุปการทำงานเรื่อง: $ARGUMENTS เข้าสู่ความจำ Brain (brain/session-log.md, brain/ceo-memory.json)",
+      "agent": "ceo-turbo",
+      "subagent": true
+    },
+    "workspace": {
+      "description": "เปิด Workspace ประจำแผนกพร้อมบริบทเฉพาะ",
+      "template": "เปิดพื้นที่ทำงานสำหรับแผนก $1 ในภารกิจ $2 — ใช้ cross-dept/dept-workspace skill สำหรับแยกบริบทต่อแผนก",
+      "agent": "orchestrator-wut",
+      "subagent": true
+    },
+    "qa-record": {
+      "description": "บันทึกผลการทดสอบของ QA",
+      "template": "บันทึกผลการทดสอบสำหรับ test suite: $ARGUMENTS ลง bus/evidence/ พร้อมสถานะ PASS/FAIL และ trace_id",
+      "agent": "qa-team",
+      "subagent": true
+    },
+    "bootstrap": {
+      "description": "เริ่ม session — inject health, brain, queue, git state",
+      "template": "รัน python scripts/session-bootstrap.py เพื่อดึงสถานะระบบล่าสุด ก่อนเริ่มงานใหม่",
+      "agent": "ceo-turbo",
+      "subagent": true
+    },
+    "triage": {
+      "description": "Classify queue + auto-route L1-L2",
+      "template": "รัน python workers/agents/auto_triage_agent.py เพื่อจำแนกคิวงานและส่งต่อแผนกที่รับผิดชอบ",
+      "agent": "orchestrator-wut",
+      "subagent": true
+    },
+    "mirror": {
+      "description": "รัน mirror check (L3+ decisions)",
+      "template": "รัน central_bus.plugins.auto_mirror_hook.auto_mirror_check() เพื่อตรวจสอบความถูกต้องก่อน escalate",
+      "agent": "orchestrator-wut",
+      "subagent": true
+    },
+    "orchestrate": {
+      "description": "Scan + decompose new dispatches",
+      "template": "รัน central_bus.plugins.auto_orchestrator.AutoOrchestrator() เพื่อสแกนและแยกงานใหม่ออกเป็น task ย่อย",
+      "agent": "orchestrator-wut",
+      "subagent": true
+    },
+    "summary": {
+      "description": "สิ้น session — สรุป + save brain",
+      "template": "รัน python scripts/session-summary.py --save เพื่อบันทึกสรุปเซสชันลง brain/session-log.md (append-only, ห้ามเขียนทับประวัติ)",
+      "agent": "ceo-turbo",
+      "subagent": true
+    }
+  },
+
+  // ------------------------------------------------------------
+  // 6. Instructions — โหลดเอกสารคู่มือประจำองค์กรเข้าสู่ agent context
+  // ------------------------------------------------------------
+  "instructions": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "rules/INDEX.md",
+    "rules/01-receive.md",
+    "rules/02-work.md",
+    "rules/03-session.md",
+    "rules/04-safety.md",
+    "rules/05-env.md",
+    "rules/06-certification.md",
+    "docs/ARCHITECTURE.md"
+  ],
+
+  // ------------------------------------------------------------
+  // 7. Skills — ทักษะประจำแผนกของ SoloCorp OS
+  // ------------------------------------------------------------
+  "skills": {
+    "paths": [
+      ".opencode/skills",
+      "skills/@solocorp/cross-dept",
+      "skills/@solocorp/ceo",
+      "skills/@solocorp/coo",
+      "skills/@solocorp/engineering",
+      "skills/@solocorp/cfo",
+      "skills/@solocorp/qa",
+      "skills/@solocorp/governance",
+      "skills/@solocorp/content-creator",
+      "skills/@solocorp/design",
+      "skills/@solocorp/marketing"
+    ]
+  },
+
+  // ------------------------------------------------------------
+  // 8. Certification Ladder — บังคับในระดับคอนฟิก (D1 → D4)
+  // ------------------------------------------------------------
+  "certification": {
+    "required_before_complete": true,
+    "evidence_dir": "bus/evidence/",
+    "maker_needs_checker": true,
+    "default_status": "NOT_PASSED",
+    "description": "ห้ามรายงาน 'เสร็จ' โดยไม่มีหลักฐานที่ตรวจสอบได้ — ตาม rules/06-certification.md"
+  },
+
+  // ------------------------------------------------------------
+  // 9. Formatter
+  // ------------------------------------------------------------
+  "formatter": true
+}

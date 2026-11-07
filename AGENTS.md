@@ -18,7 +18,6 @@ SoloCorp OS is an **organizational OS for AI agents and a modular MCP product**.
 - **Current implementation:** The Content Creator MCP pilot, Central Bus, and headless ModuleHost lifecycle groundwork exist. The first-party SoloCorp App shell/API, registry UI, provider flow, and product task workflow are **not implemented**. The pilot document is evidence, not proof that the app is complete.
 - **Release assurance:** Production audit findings remain visible for pre-release work. They do not replace the MVP roadmap; never describe a known limitation as a passed production guarantee.
 - **Content Creator standalone strategy (2026-11-02):** ADR-030 accepts the open-core boundary (MCP adapter open / content engine closed); ADR-031 keeps Sound Designer as a Content Creator specialist and Earshot as an internal dependency. Release remains free-first behind a quality floor, with signal-triggered monetization and 3 weekly metrics reviewed after 90 days (first: 2027-02-02). Split executes at PRD Phase 3, not as parallel work. Full reference: [Content MCP strategy](docs/plans/CONTENT-MCP-STRATEGY-v1.0.md).
-- This repo has pre-existing untracked generated artifacts and work. Check `git status` and `git diff` before edits or commits; do not clean or overwrite unrelated files.
 
 Default agent is `ceo-turbo` (strategy + routing + final call). Owner (Dr.solodev) decides L5 only.
 
@@ -55,6 +54,14 @@ source .venv/bin/activate && export PYTHONPATH=.
 
 CI uses **Python 3.12**. Run repo MCP servers with the project `.venv` and their documented module command. `SOLOCORP_API_KEY` applies to scoped Core MCP / API operations that require it; do not make it a dependency of standalone department MCPs.
 
+## Repo & CI (what an agent gets wrong)
+
+- Default branch is **`main`**; CI triggers on push/PR to `main` (`.github/workflows/ci.yml`). Work lands on feature branches (e.g. `feat/registry-c2`).
+- Commit style observed in history, not enforced: conventional commits with Thai descriptions (`feat(registry): …`, `fix(content): …`).
+- Campaign artifacts are deliberately gitignored, not source: `campaign-*-manifest_*.json`, `*-publish-gate-*.md`, `*-approval-*.json`, `central_bus/content/local_media/`, `concat_renders/`. To commit an evidence file (precedent: approval records linked from README), `git add -f` with a reason.
+- The repo can be dirty from earlier sessions/automation (`brain/*` auto-commits churn) — always `git status` + `git diff` before edits or commits; never clean or overwrite unrelated files.
+- `.coverage.json` and `.coverage` are gitignored; every pytest run rewrites them.
+
 ## Services (only when bus-dependent work needs them)
 
 | Service | Command | Port |
@@ -65,7 +72,8 @@ CI uses **Python 3.12**. Run repo MCP servers with the project `.venv` and their
 
 **MCP servers load their code once at startup.** An edit afterwards is invisible
 to the running process — a tool can answer from code that no longer exists.
-Check `runtime.restart_required` in any `*_department_info()` response, or run
+Before asserting the state of a running MCP (e.g. doc-sync or "verify status" work),
+check `runtime.restart_required` in the `*_department_info()` response, or run
 `scripts/restart-mcp.sh` (dry run by default, `--yes` to kill stale generations)
 and the host respawns a fresh one on the next call.
 
@@ -77,6 +85,7 @@ python workers/auto_qa_gate.py --threshold=9 --project-id=auto-qa-pipeline --tes
 ```
 
 - ⚠️ **Never run bare `pytest`** from root — profile-embedded tests abort collection and it misses `central_bus/tests/`. (`pytest.ini` defaults to `tests/` only; CI overrides with both paths.)
+- `tests/test_web_reader.py::TestLiveRead*` hits the live network and fails without it — pre-existing, unrelated to local changes. Don't "fix" or revert them.
 - Coverage baseline is **9** (intentionally low, CI-ready) — do not "fix" by raising it without an ADR.
 - Evidence artifacts go to `bus/evidence/` (see SOP-06).
 
@@ -112,7 +121,7 @@ From `rules/06-certification.md` (incident: work reported complete with zero cod
 | Path | What |
 |:-----|:-----|
 | `rules/` | Behavior rules — read before acting |
-| `sop/` | Standard Operating Procedures (SOP-01–06) |
+| `sop/` | Standard Operating Procedures (SOP-01–07) |
 | `profiles/` | Department identities (`SOUL.md`); roster in `profiles/INDEX.md` |
 | `central_bus/` | FastAPI daemon (30+ modules): queue, routing, mirror |
 | `docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md` | Current product direction and MVP source of truth |
