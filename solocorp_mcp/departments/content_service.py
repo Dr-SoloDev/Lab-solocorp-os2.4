@@ -263,6 +263,50 @@ def _campaign_lock(campaign_key: str) -> Iterator[None]:
                 msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
 
 
+LOCAL_RENDER_LOCK_NAME = ".local_render.lock"
+
+
+@contextmanager
+def _local_render_lock() -> Iterator[None]:
+    """Non-blocking exclusive lock: at most one local render at a time.
+
+    Acquired before any job asset or output directory is created, held for
+    the whole render (including the subprocess), released after. A second
+    caller fails immediately with a clear error — no queue, no partial output.
+    """
+
+    directory = bus_store.BUS_ROOT / DEPARTMENT
+    directory.mkdir(parents=True, exist_ok=True)
+    lock_path = directory / LOCAL_RENDER_LOCK_NAME
+    with lock_path.open("a+b") as handle:
+        if fcntl is None:
+            raise ContentServiceError(
+                "local render locking is unsupported on this platform (fcntl unavailable)"
+            )
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            if exc.errno in {errno.EACCES, errno.EAGAIN, errno.EDEADLK}:
+                raise ContentServiceError(
+                    "another local render in progress; wait for it to finish and retry"
+                ) from exc
+            raise
+        try:
+            yield
+        finally:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+def _validated_fallback(value: str | None, *, allowed: set[str], label: str) -> str:
+    if value is None or value == "abort":
+        return "abort"
+    if value in allowed:
+        return value
+    raise ContentServiceError(
+        f"{label} must be one of: abort, {', '.join(sorted(allowed))}"
+    )
+
+
 def _load_campaign(campaign_key: str) -> dict[str, Any] | None:
     prefix = f"campaign-{campaign_key}-manifest_"
     snapshots: list[dict[str, Any]] = []
@@ -1515,7 +1559,18 @@ def _execute_local_media_pipeline(payload: dict[str, Any]) -> dict[str, Any]:
         raise ContentServiceError("local media render exceeded the 60-minute limit") from exc
     if completed.returncode != 0:
         detail = completed.stderr[-1600:].strip() or completed.stdout[-1600:].strip()
-        raise ContentServiceError(f"local media render failed: {detail or completed.returncode}")
+        error = ContentServiceError(f"local media render failed: {detail or completed.returncode}")
+        # The renderer CLI prints one JSON line (with per-step status) to
+        # stderr on failure; surface its steps on the exception so the
+        # failed result record can persist them.
+        try:
+            last_line = completed.stderr.strip().splitlines()[-1] if completed.stderr.strip() else ""
+            parsed = json.loads(last_line)
+            if isinstance(parsed, dict) and isinstance(parsed.get("steps"), dict):
+                error.steps = parsed["steps"]  # type: ignore[attr-defined]
+        except (json.JSONDecodeError, AttributeError, IndexError):
+            pass
+        raise error
     try:
         result = json.loads(completed.stdout)
     except json.JSONDecodeError as exc:
@@ -1525,19 +1580,101 @@ def _execute_local_media_pipeline(payload: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
-def render_campaign_media_local(campaign_id: str) -> dict[str, Any]:
-    """Render script-derived synthetic media locally and leave the campaign gated."""
+def render_campaign_media_local(
+    campaign_id: str,
+    script_filename: str | None = None,
+    tts_fallback: str | None = None,
+    visual_fallback: str | None = None,
+) -> dict[str, Any]:
+    """Render script-derived synthetic media locally and leave the campaign gated.
+
+    ``tts_fallback`` / ``visual_fallback`` are opt-in degraded-water
+    fallbacks (default ``None``/``abort`` = fail fast, unchanged behavior):
+    ``tts_fallback="silence"`` substitutes a silent buffer per failed Piper
+    scene; ``visual_fallback="static_card"`` substitutes a solid 1080x1920
+    card per failed Three.js scene. Any fallback use marks the render
+    degraded and visible in the gate; it is never presented as a clean pass.
+    Renders are serialized with a non-blocking exclusive file lock.
+    """
+
+    tts_mode = _validated_fallback(tts_fallback, allowed={"silence"}, label="tts_fallback")
+    visual_mode = _validated_fallback(
+        visual_fallback, allowed={"static_card"}, label="visual_fallback"
+    )
+    with _local_render_lock():
+        return _render_campaign_media_local_locked(
+            campaign_id, script_filename, tts_mode, visual_mode
+        )
+
+
+def _render_campaign_media_local_locked(
+    campaign_id: str,
+    script_filename: str | None,
+    tts_mode: str,
+    visual_mode: str,
+) -> dict[str, Any]:
+    """Render script-derived synthetic media locally and leave the campaign gated.
+
+    When ``script_filename`` is omitted (``None`` or empty), the latest
+    campaign ``video_script`` asset is selected (existing default behavior).
+    When provided, that exact asset is selected; it must exist in this
+    campaign, have type ``video_script``, and parse to a supported layout
+    (six 15-second scenes or ten 10-second episodes). Selection and layout
+    validation run before any job manifest is stored, so a bad filename
+    never starts the pipeline or leaves an MP4 behind.
+    """
 
     campaign_key, canonical_id = _campaign_identity(campaign_id)
     campaign = _load_campaign(campaign_key)
     if campaign is None or campaign.get("campaign_id") != canonical_id:
         raise ContentServiceError(f"campaign not found: {canonical_id}")
-    script_asset = next(
-        (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
-        None,
-    )
-    if script_asset is None:
-        raise ContentServiceError("campaign has no video script to render")
+    script_asset: dict[str, Any] | None = None
+    if script_filename is None:
+        script_asset = next(
+            (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
+            None,
+        )
+        if script_asset is None:
+            raise ContentServiceError("campaign has no video script to render")
+    else:
+        if not isinstance(script_filename, str):
+            raise ContentServiceError("script_filename must be text; omit it to render the latest script")
+        filename = script_filename.strip()
+        if not filename:
+            script_asset = next(
+                (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
+                None,
+            )
+            if script_asset is None:
+                raise ContentServiceError("campaign has no video script to render")
+        else:
+            match = next(
+                (asset for asset in reversed(campaign.get("assets", [])) if asset.get("filename") == filename),
+                None,
+            )
+            if match is not None:
+                if match.get("type") != "video_script":
+                    raise ContentServiceError(
+                        f"script_filename must identify a video_script in this campaign; {filename} is type {match.get('type')!r}"
+                    )
+                script_asset = match
+            else:
+                try:
+                    fetch_from_bus(DEPARTMENT, filename)
+                    exists_elsewhere = True
+                except FileNotFoundError:
+                    exists_elsewhere = False
+                except ValueError:
+                    # BusStoreError (unsafe name) means it cannot be a script
+                    # in this campaign; report it as not found, not a crash.
+                    exists_elsewhere = False
+                if exists_elsewhere:
+                    raise ContentServiceError(
+                        f"script_filename does not belong to campaign {canonical_id}: {filename}"
+                    )
+                raise ContentServiceError(
+                    f"script_filename not found in campaign {canonical_id}: {filename}"
+                )
     script = fetch_from_bus(DEPARTMENT, script_asset["filename"])["content"]
     scenes = _local_media_scenes(script)
     scene_seconds = scenes[0]["end_seconds"] - scenes[0]["start_seconds"]
@@ -1584,6 +1721,9 @@ def render_campaign_media_local(campaign_id: str) -> dict[str, Any]:
         "duration_seconds": duration_seconds,
         "voice_model_license": model_license,
         "voice_model_rights_status": voice_rights_status,
+        "tts_fallback": tts_mode,
+        "visual_fallback": visual_mode,
+        "fallback_requested": bool(tts_mode != "abort" or visual_mode != "abort"),
         "publication_status": "blocked_pending_human_approval_and_rights_review",
         "output_directory": output_dir.relative_to(bus_store.BUS_ROOT.resolve()).as_posix(),
         "lifecycle_state": "scaffold",
@@ -1616,6 +1756,8 @@ def render_campaign_media_local(campaign_id: str) -> dict[str, Any]:
         "scene_seconds": scene_seconds,
         "duration_seconds": duration_seconds,
         "scenes": scenes,
+        "tts_fallback": tts_mode,
+        "visual_fallback": visual_mode,
     }
     try:
         render = _execute_local_media_pipeline(payload)
@@ -1626,6 +1768,7 @@ def render_campaign_media_local(campaign_id: str) -> dict[str, Any]:
         if not isinstance(video.get("sha256"), str) or len(video["sha256"]) != 64:
             raise ContentServiceError("local renderer did not return a valid output SHA-256")
         execution_status = "completed"
+        degraded = bool(render.get("degraded"))
         result_record = {
             "schema_version": 1,
             "job_id": job_id,
@@ -1634,11 +1777,26 @@ def render_campaign_media_local(campaign_id: str) -> dict[str, Any]:
             "execution_status": execution_status,
             "execution_mode": render.get("execution_mode"),
             "render": render,
+            "steps": render.get("steps"),
+            "degraded": degraded,
+            "fallbacks": render.get("fallbacks"),
+            "sync_report": render.get("sync_report"),
+            "tts_fallback": tts_mode,
+            "visual_fallback": visual_mode,
             "lifecycle_state": "scaffold",
             "approval_effect": "none",
         }
     except (ContentServiceError, OSError, ValueError, TypeError, KeyError) as exc:
         execution_status = "failed"
+        degraded = False
+        # A failed job must not leave a viewable MP4 behind: drop any partial
+        # output inside this job's isolated directory (best effort).
+        try:
+            if output_dir.is_dir():
+                for mp4 in output_dir.glob("*.mp4"):
+                    mp4.unlink()
+        except OSError:
+            pass
         result_record = {
             "schema_version": 1,
             "job_id": job_id,
@@ -1647,6 +1805,12 @@ def render_campaign_media_local(campaign_id: str) -> dict[str, Any]:
             "execution_status": execution_status,
             "error": type(exc).__name__,
             "message": str(exc)[:1600],
+            "steps": getattr(exc, "steps", None) or {},
+            "degraded": False,
+            "fallbacks": None,
+            "sync_report": [],
+            "tts_fallback": tts_mode,
+            "visual_fallback": visual_mode,
             "lifecycle_state": "scaffold",
             "approval_effect": "none",
         }
@@ -1666,23 +1830,35 @@ def render_campaign_media_local(campaign_id: str) -> dict[str, Any]:
                     "provider": "ffmpeg-cli",
                     "execution_status": execution_status,
                     "media_rights_status": "human_confirmation_required",
+                    "degraded": degraded,
+                    "tts_fallback": tts_mode,
+                    "visual_fallback": visual_mode,
                 },
             }
         ],
     )[0]
     review = _review_campaign(canonical_id)
+    failed = execution_status == "failed"
     return {
         "campaign_id": canonical_id,
         "job_id": job_id,
+        "script_filename": script_asset["filename"],
+        "script_version": script_asset.get("version"),
         "execution_status": execution_status,
         "execution_mode": "local_ffmpeg_cli",
         "job_manifest": {"filename": job_asset["filename"], "path": job_asset["path"]},
         "result_record": {"filename": result_asset["filename"], "path": result_asset["path"]},
         "render": result_record.get("render"),
-        "error": result_record.get("message") if execution_status == "failed" else None,
+        "steps": result_record.get("steps"),
+        "degraded": degraded,
+        "fallbacks": result_record.get("fallbacks"),
+        "sync_report": result_record.get("sync_report"),
+        "tts_fallback": tts_mode,
+        "visual_fallback": visual_mode,
+        "error": result_record.get("message") if failed else None,
         "publish_gate": review,
-        "status": "review_required",
-        "approval_required": True,
+        "status": "failed" if failed else "review_required",
+        "approval_required": not failed,
         "published": False,
     }
 
@@ -2065,6 +2241,99 @@ def _campaign_check(
     return {"check": check, "ok": bool(ok), "detail": detail}
 
 
+def _latest_local_render_failed(assets: list[dict[str, Any]]) -> bool:
+    failed = False
+    for asset in assets:
+        if asset.get("type") != "local_media_render_result":
+            continue
+        status = asset.get("execution_status")
+        if status is None:
+            try:
+                record = json.loads(
+                    fetch_from_bus(DEPARTMENT, asset["filename"])["content"]
+                )
+            except (json.JSONDecodeError, KeyError) as exc:
+                raise ContentServiceError(
+                    "local media render record is not valid JSON"
+                ) from exc
+            status = record.get("execution_status")
+        if status == "failed":
+            failed = True
+        elif status == "completed":
+            failed = False
+    return failed
+
+
+def _latest_degraded_local_render(assets: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Return the record of the latest completed local render if it used a fallback.
+
+    A degraded (fallback) render is completed but must stay visible: the gate
+    adds a failing "degraded" check so it is never presented as a clean pass.
+    Human approval may still override it explicitly via the existing
+    overrides_failed_checks mechanism — degraded alone never blocks approval.
+    """
+
+    degraded_record: dict[str, Any] | None = None
+    for asset in assets:
+        if asset.get("type") != "local_media_render_result":
+            continue
+        status = asset.get("execution_status")
+        record: dict[str, Any] | None = None
+        if status is None:
+            try:
+                record = json.loads(
+                    fetch_from_bus(DEPARTMENT, asset["filename"])["content"]
+                )
+            except (json.JSONDecodeError, KeyError) as exc:
+                raise ContentServiceError(
+                    "local media render record is not valid JSON"
+                ) from exc
+            status = record.get("execution_status")
+        if status == "failed":
+            degraded_record = None
+        elif status == "completed":
+            if asset.get("degraded") is True:
+                degraded_record = record or {"degraded": True, "fallbacks": asset.get("fallbacks")}
+            else:
+                if record is None:
+                    try:
+                        record = json.loads(
+                            fetch_from_bus(DEPARTMENT, asset["filename"])["content"]
+                        )
+                    except (json.JSONDecodeError, KeyError) as exc:
+                        raise ContentServiceError(
+                            "local media render record is not valid JSON"
+                        ) from exc
+                degraded_record = record if record.get("degraded") else None
+    return degraded_record
+
+
+def _latest_manifest_file(campaign_key: str) -> dict[str, Any] | None:
+    prefix = f"campaign-{campaign_key}-manifest_"
+    best: dict[str, Any] | None = None
+    best_revision = -1
+    best_updated = ""
+    for item in list_department_bus(DEPARTMENT)["files"]:
+        filename = item["filename"]
+        if not filename.startswith(prefix) or not filename.endswith(".json"):
+            continue
+        try:
+            snapshot = json.loads(fetch_from_bus(DEPARTMENT, filename)["content"])
+        except json.JSONDecodeError as exc:
+            raise ContentServiceError("campaign manifest is not valid JSON") from exc
+        if snapshot.get("campaign_key") != campaign_key:
+            continue
+        revision = int(snapshot.get("revision", 0))
+        updated = snapshot.get("updated_at", "")
+        if revision > best_revision or (
+            revision == best_revision and updated > best_updated
+        ):
+            best_revision = revision
+            best_updated = updated
+            best = {"filename": filename, "path": item.get("path")}
+    return best
+
+
 def _review_campaign(campaign_id: str) -> dict[str, Any]:
     campaign_key, canonical_id = _campaign_identity(campaign_id)
     with _campaign_lock(campaign_key):
@@ -2241,6 +2510,19 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
                 "ไม่พบรายการค้างตรวจ" if redaction.ok else "พบข้อมูลที่ต้อง redact หรือให้มนุษย์ตรวจ",
             ),
         ]
+        degraded_render = _latest_degraded_local_render(assets)
+        local_render_degraded = degraded_render is not None
+        if local_render_degraded:
+            fallbacks = (degraded_render or {}).get("fallbacks")
+            checks.append(
+                _campaign_check(
+                    "media: local render used fallback (degraded)",
+                    False,
+                    "latest local render completed with fallback audio/visual "
+                    f"(fallbacks={json.dumps(fallbacks, ensure_ascii=False)}); "
+                    "human must explicitly acknowledge degraded media before approval",
+                )
+            )
         if latest_render_asset:
             checks.extend(
                 [
@@ -2270,12 +2552,33 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             if item["rule"].startswith("R")
         )
         gate_passed = all(item["ok"] for item in checks)
+        failed_checks = [item["check"] for item in checks if not item["ok"]]
+        approved_for_version = (
+            campaign.get("approved_version") is not None
+            and campaign.get("approved_version") == campaign["version"]
+        )
+        local_render_failed = _latest_local_render_failed(assets)
+        if local_render_failed:
+            approved_for_version = False
+            gate_passed = False
+        if local_render_failed:
+            decision = (
+                "review_required; latest local media render failed; "
+                "rerun the local render and review before human approval."
+            )
+        elif approved_for_version:
+            decision = (
+                f"approved; human approval for {campaign['version']} overrides "
+                f"{len(failed_checks)} failed check(s); not published."
+            )
+        else:
+            decision = "review_required; human approval is still required."
         report_lines = [
             "# Campaign Publish Gate",
             "",
             f"- **Campaign:** {canonical_id}",
             f"- **Version reviewed:** {campaign['version']}",
-            "- **Decision:** review_required; human approval is still required.",
+            f"- **Decision:** {decision}",
             "",
             "## Checks",
         ]
@@ -2303,9 +2606,13 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
         report_task = _asset_task_id(canonical_id, "publish-gate", campaign["version"])
         report_result = submit_to_bus(DEPARTMENT, report_task, "\n".join(report_lines), "md")
         review = {
-            "status": "review_required",
+            "status": "approved" if approved_for_version else "review_required",
             "version": campaign["version"],
             "gate_passed": gate_passed,
+            "degraded": local_render_degraded,
+            "approval_required": not approved_for_version,
+            "overrides_failed_checks": failed_checks if approved_for_version else [],
+            "published": False,
             "checks": checks,
             "media_workflow": media_workflow,
             "report": {
@@ -2314,21 +2621,32 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             },
             "reviewed_at": _now(),
         }
-        campaign["status"] = "review_required"
+        campaign["status"] = "approved" if approved_for_version else "review_required"
         campaign["review"] = review
         manifest_file = _save_campaign(campaign)
         return {
             "campaign_id": canonical_id,
             "version": campaign["version"],
-            "status": "review_required",
+            "status": review["status"],
             "gate_passed": gate_passed,
-            "approval_required": True,
+            "degraded": local_render_degraded,
+            "approval_required": review["approval_required"],
+            "overrides_failed_checks": review["overrides_failed_checks"],
+            "published": False,
             "checks": checks,
             "media_workflow": media_workflow,
             "manifest": _campaign_manifest_summary(campaign),
             "campaign_manifest": manifest_file,
             "report": review["report"],
-            "publish_action": "blocked_until_human_approval",
+            "publish_action": (
+                "blocked_render_failed"
+                if local_render_failed
+                else (
+                    "approved_pending_separate_publish_step"
+                    if approved_for_version
+                    else "blocked_until_human_approval"
+                )
+            ),
         }
 
 
@@ -2486,6 +2804,33 @@ def record_human_approval(
             raise ContentServiceError(
                 "complete a current Concat render and Earshot review before human approval"
             )
+        if _latest_local_render_failed(campaign.get("assets", [])):
+            raise ContentServiceError(
+                "latest local media render failed; rerun the local render and review before human approval"
+            )
+        if campaign.get("approved_version") == normalized_version:
+            existing_records = [
+                record
+                for record in campaign.get("approval_records", [])
+                if record.get("version") == normalized_version
+            ]
+            if existing_records:
+                existing = existing_records[-1]
+                manifest_file = _latest_manifest_file(campaign_key)
+                return {
+                    "campaign_id": canonical_id,
+                    "version": normalized_version,
+                    "status": "approved",
+                    "approval_required": False,
+                    "gate_passed": bool(existing.get("gate_passed")),
+                    "overrides_failed_checks": existing.get("overrides_failed_checks", []),
+                    "published": False,
+                    "approval_record": {
+                        "filename": existing["filename"],
+                        "path": existing["path"],
+                    },
+                    "campaign_manifest": manifest_file,
+                }
         failed_checks = [
             item.get("check", "unknown")
             for item in review.get("checks", [])
@@ -2525,6 +2870,7 @@ def record_human_approval(
             "approval_required": False,
             "gate_passed": bool(review.get("gate_passed")),
             "overrides_failed_checks": failed_checks,
+            "published": False,
             "approval_record": {
                 "filename": approval_result["filename"],
                 "path": approval_result["path"],

@@ -41,10 +41,16 @@ import os
 import shutil
 import tempfile
 from collections.abc import Iterable
+from contextlib import AbstractContextManager, nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+try:  # POSIX advisory locks; absent on Windows
+    import fcntl
+except ImportError:  # pragma: no cover - non-POSIX platforms
+    fcntl = None  # type: ignore[assignment]
 
 from .module_registry_schema import (
     PERSISTENT_STATUSES,
@@ -179,6 +185,27 @@ def _schema_error_kind(message: str) -> str:
     return "invalid"
 
 
+class _FlockContext:
+    """Hold an exclusive ``flock`` on ``fd`` for the duration of a ``with``.
+
+    The lock file itself is never removed: unlinking a lock another process is
+    waiting on would let a third process lock a different inode. It is
+    git-ignored and empty.
+    """
+
+    def __init__(self, fd: int) -> None:
+        self._fd = fd
+
+    def __enter__(self) -> None:
+        fcntl.flock(self._fd, fcntl.LOCK_EX)
+
+    def __exit__(self, *exc_info: object) -> None:
+        try:
+            fcntl.flock(self._fd, fcntl.LOCK_UN)
+        finally:
+            os.close(self._fd)
+
+
 class ModuleRegistry:
     """Read/write module config and connection state from two separate files."""
 
@@ -205,38 +232,144 @@ class ModuleRegistry:
         Creator must not create a five-module registry it does not own
         (PRD:155, CMD-006 §4.1). The app/core leaves it unset and seeds every
         default module.
+
+        Creation is an **atomic claim**: the payload is written to a temp file
+        and hard-linked into place, so the config is complete the instant it
+        becomes visible and two first-run callers cannot clobber each other.
+        The loser of that race, and any caller arriving just after a peer
+        created a file, merges its own modules in (absent only) under an
+        advisory file lock — seeding used to be last-write-wins, which lost
+        modules permanently on a fresh install (two MCPs starting together).
         """
 
-        if self.path.exists():
+        if self.path.exists() and self.seed_module_ids is None:
             return
 
-        modules: dict[str, Any] = DEFAULT_MODULES
-        if self.seed_module_ids is not None:
-            unknown = sorted(set(self.seed_module_ids) - set(DEFAULT_MODULES))
-            if unknown:
-                raise ValueError(f"cannot seed unknown default modules: {unknown}")
-            if not self.seed_module_ids:
-                raise ValueError("cannot seed an empty module set")
-            modules = {
-                module_id: DEFAULT_MODULES[module_id]
-                for module_id in self.seed_module_ids
-            }
+        with self._config_lock():
+            if self.path.exists():
+                if self.seed_module_ids is not None:
+                    self._merge_seed_modules()
+                return
 
-        errors = validate_config(modules)
-        if errors:
-            raise RegistrySchemaError(
-                f"default modules violate schema: {'; '.join(errors)}"
-            )
-        self._save_config(modules)
+            modules = self._seed_modules()
+            errors = validate_config(modules)
+            if errors:
+                raise RegistrySchemaError(
+                    f"default modules violate schema: {'; '.join(errors)}"
+                )
+            if not self._create_exclusive(self._config_document(modules)):
+                # A peer created the file between the check and the claim.
+                self._merge_seed_modules()
+
+    def _seed_modules(self) -> dict[str, Any]:
+        """The modules this caller is responsible for declaring."""
+
+        if self.seed_module_ids is None:
+            return DEFAULT_MODULES
+
+        unknown = sorted(set(self.seed_module_ids) - set(DEFAULT_MODULES))
+        if unknown:
+            raise ValueError(f"cannot seed unknown default modules: {unknown}")
+        if not self.seed_module_ids:
+            raise ValueError("cannot seed an empty module set")
+        return {
+            module_id: DEFAULT_MODULES[module_id] for module_id in self.seed_module_ids
+        }
+
+    def _config_lock(self) -> AbstractContextManager[None]:
+        """Serialise seeding across threads and processes (POSIX advisory lock).
+
+        Merging is read-modify-write, so without this two losing callers could
+        each save a config missing the other's module. If the lock file cannot
+        be created the directory is not writable either, so seeding is skipped
+        rather than failing a read-only install.
+        """
+
+        if fcntl is None:  # pragma: no cover - non-POSIX platforms
+            return nullcontext()
+
+        lock_path = self.path.with_name(f".{self.path.name}.lock")
+        try:
+            lock_path.parent.mkdir(parents=True, exist_ok=True)
+            fd = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o644)
+        except OSError:
+            return nullcontext()
+        return _FlockContext(fd)
+
+    def _create_exclusive(self, data: dict[str, Any]) -> bool:
+        """Create the config only if it does not exist; return True when we did.
+
+        ``os.link`` is the atomic claim: unlike ``O_CREAT|O_EXCL`` followed by a
+        write, the linked file is never visible empty or half-written, so a
+        concurrent reader cannot mistake a claim-in-progress for a corrupt
+        config.
+        """
+
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        handle = tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=str(self.path.parent),
+            prefix=f".{self.path.name}.",
+            suffix=".tmp",
+            delete=False,
+        )
+        temp_path = Path(handle.name)
+        try:
+            with handle:
+                json.dump(data, handle, ensure_ascii=False, indent=2)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.link(temp_path, self.path)
+            return True
+        except FileExistsError:
+            return False
+        finally:
+            try:
+                temp_path.unlink()
+            except OSError:
+                pass
+
+    def _merge_seed_modules(self) -> None:
+        """Add this caller's seeded modules to an existing config.
+
+        Existing entries are authoritative and never modified; a config that
+        cannot be read or validated is left exactly as it is for the read path
+        to report (C1), and the merge is best-effort because a department MCP
+        still works from a readable registry it could not extend.
+        """
+
+        try:
+            existing = load_and_validate_config(self.path)
+        except RegistrySchemaError:
+            return
+        except OSError:
+            return
+
+        modules = {
+            module_id: entry
+            for module_id, entry in existing.items()
+            if module_id != "_meta"
+        }
+        missing = {
+            module_id: entry
+            for module_id, entry in self._seed_modules().items()
+            if module_id not in modules
+        }
+        if not missing:
+            return
+
+        modules.update(missing)
+        try:
+            self._save_config(modules)
+        except (RegistrySchemaError, OSError):
+            return
 
     # ------------------------------------------------------------------- i/o
 
-    def _save_config(self, modules: dict[str, Any]) -> None:
-        errors = validate_config(modules)
-        if errors:
-            raise RegistrySchemaError(
-                f"config violates schema: {'; '.join(errors)}"
-            )
+    def _config_document(self, modules: dict[str, Any]) -> dict[str, Any]:
+        """Project entries to the on-disk shape and stamp ``_meta``."""
+
         data = {
             module_id: self._canonical_entry(self._persistent_view(entry))
             for module_id, entry in modules.items()
@@ -247,6 +380,15 @@ class ModuleRegistry:
             "total_modules": len(data),
             "schema_version": SCHEMA_VERSION,
         }
+        return data
+
+    def _save_config(self, modules: dict[str, Any]) -> None:
+        errors = validate_config(modules)
+        if errors:
+            raise RegistrySchemaError(
+                f"config violates schema: {'; '.join(errors)}"
+            )
+        data = self._config_document(modules)
         self._snapshot_config()
         self._atomic_write_json(self.path, data)
 

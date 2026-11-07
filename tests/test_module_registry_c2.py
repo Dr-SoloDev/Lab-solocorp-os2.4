@@ -25,6 +25,7 @@ import os
 import shutil
 import subprocess
 import sys
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -845,3 +846,107 @@ def test_registry_repair_strips_newer_fields_and_keeps_modules(
         "description": "QA Department",
     }
     assert saved["_meta"]["schema_version"] == 1
+
+
+# ── first-run seeding: concurrent callers must not lose a module ──────
+#
+# The app connects every department MCP at once on a fresh install. Seeding
+# used to be "check the file, write the whole registry": two callers that both
+# saw no file raced, the later write won, and the earlier module was gone for
+# good (the file then exists, so nothing ever seeds again).
+
+
+def _seeded_ids(config_path: Path) -> set[str]:
+    return set(_read(config_path)) - {"_meta"}
+
+
+def test_concurrent_first_run_seeding_keeps_every_module(tmp_path: Path) -> None:
+    config_path = tmp_path / "config" / "module-registry.json"
+    state_path = tmp_path / "state" / "module-registry.state.json"
+    module_ids = ["solocorp", "central-bus", "content-creator", "engineering", "qa"]
+    barrier = threading.Barrier(len(module_ids))
+    failures: list[BaseException] = []
+
+    def seed(module_id: str) -> None:
+        try:
+            barrier.wait(timeout=10)
+            ModuleRegistry(
+                registry_path=config_path,
+                state_path=state_path,
+                seed_module_ids=(module_id,),
+            )
+        except BaseException as exc:  # noqa: BLE001 - reported below
+            failures.append(exc)
+
+    threads = [
+        threading.Thread(target=seed, args=(module_id,), name=f"seed-{module_id}")
+        for module_id in module_ids
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=30)
+
+    assert not failures, failures
+    assert _seeded_ids(config_path) == set(module_ids)
+
+
+def test_seeding_does_not_overwrite_an_existing_valid_config(
+    tmp_path: Path,
+) -> None:
+    config_path = tmp_path / "config" / "module-registry.json"
+    _write(
+        config_path,
+        {
+            "ghost": _entry(description="kept as written"),
+            "_meta": {"schema_version": SCHEMA_VERSION},
+        },
+    )
+
+    ModuleRegistry(
+        registry_path=config_path,
+        state_path=tmp_path / "state" / "module-registry.state.json",
+        seed_module_ids=("qa",),
+    )
+
+    saved = _read(config_path)
+    assert saved["ghost"]["description"] == "kept as written"
+    assert _seeded_ids(config_path) == {"ghost", "qa"}
+
+
+def test_seeding_skips_when_existing_config_is_invalid(tmp_path: Path) -> None:
+    config_path = tmp_path / "config" / "module-registry.json"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    config_path.write_text("{not json", encoding="utf-8")
+
+    # Seeding must not raise and must not replace what it cannot understand;
+    # the read path reports the corruption (C1).
+    registry = ModuleRegistry(
+        registry_path=config_path,
+        state_path=tmp_path / "state" / "module-registry.state.json",
+        seed_module_ids=("qa",),
+    )
+
+    assert config_path.read_text(encoding="utf-8") == "{not json"
+    assert registry.status()["error_kind"] == "corrupt"
+
+
+def test_seeding_is_idempotent(tmp_path: Path) -> None:
+    config_path = tmp_path / "config" / "module-registry.json"
+    state_path = tmp_path / "state" / "module-registry.state.json"
+
+    ModuleRegistry(
+        registry_path=config_path,
+        state_path=state_path,
+        seed_module_ids=("qa",),
+    )
+    after_first = config_path.read_bytes()
+
+    ModuleRegistry(
+        registry_path=config_path,
+        state_path=state_path,
+        seed_module_ids=("qa",),
+    )
+
+    assert _seeded_ids(config_path) == {"qa"}
+    assert config_path.read_bytes() == after_first

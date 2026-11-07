@@ -396,11 +396,37 @@ def build_ff_tracking_manifest(
 
 
 @mcp.tool()
-def render_campaign_media_local(campaign_id: str) -> str:
-    """Render the latest 90-second synthetic storyboard locally; keep human approval required."""
+def render_campaign_media_local(
+    campaign_id: str,
+    script_filename: str = "",
+    tts_fallback: str = "",
+    visual_fallback: str = "",
+) -> str:
+    """Render the latest 90-second synthetic storyboard locally; keep human approval required.
+
+    Omit ``script_filename`` to render the latest campaign video script
+    (existing default). Pass it to render that exact ``video_script`` asset
+    instead — use this when a newer scaffold script would otherwise be
+    picked. The script must belong to this campaign and use six 15-second
+    scenes or ten 10-second episodes.
+
+    ``tts_fallback`` / ``visual_fallback`` are opt-in and default to abort
+    (fail fast): pass ``tts_fallback="silence"`` to substitute a silent
+    buffer per failed Piper scene, or ``visual_fallback="static_card"`` to
+    substitute a solid 1080x1920 card per failed Three.js scene. Fallback
+    renders complete as degraded and stay visibly flagged in the publish
+    gate — never as a clean pass.
+    """
 
     try:
-        return result_json(_render_campaign_media_local(campaign_id))
+        return result_json(
+            _render_campaign_media_local(
+                campaign_id,
+                script_filename or None,
+                tts_fallback or None,
+                visual_fallback or None,
+            )
+        )
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
         return _error(exc)
 
