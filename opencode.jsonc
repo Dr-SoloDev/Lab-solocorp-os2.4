@@ -285,7 +285,31 @@
   ],
 
   // ------------------------------------------------------------
-  // 4. MCP Servers — Data Layer (per Owner agreement)
+  // 4. Providers — OpenRouter / FLUX.3 Image Klein (image)
+  // Primary image generation path is NVIDIA NIM via the Content Creator
+  // `generate_image` tool (commit 001b59e); OpenRouter is kept as legacy fallback.
+  // ------------------------------------------------------------
+  "providers": {
+    "openrouter": {
+      "name": "OpenRouter",
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "https://openrouter.ai/api/v1",
+        "apiKey": "{env:OPENROUTER_API_KEY}"
+      },
+      "models": {
+        "flux-3-klein": {
+          "modelID": "black-forest-labs/flux-3-image-klein",
+          "name": "FLUX.3 Image Klein",
+          "capabilities": { "tools": false, "input": ["text","image"], "output": ["image"] },
+          "limit": { "context": 47000, "output": 4096 }
+        }
+      }
+    }
+  },
+
+  // ------------------------------------------------------------
+  // 5. MCP Servers — Data Layer (per Owner agreement)
   // Central Bus: local stdio (MVP) — points to busd at 127.0.0.1:8099
   // Unified Technical MCP: Architect + Engineering + QA in one process
   // ------------------------------------------------------------
@@ -343,7 +367,7 @@
   },
 
   // ------------------------------------------------------------
-  // 5. Pipeline Commands — Shortcut commands for CEO and team
+  // 6. Pipeline Commands — Shortcut commands for CEO and team
   // ------------------------------------------------------------
   "commands": {
     "pipeline": {
@@ -427,7 +451,7 @@
   },
 
   // ------------------------------------------------------------
-  // 6. Instructions — Load organization documents into agent context
+  // 7. Instructions — Load organization documents into agent context
   // ------------------------------------------------------------
   "instructions": [
     "AGENTS.md",
@@ -443,7 +467,7 @@
   ],
 
   // ------------------------------------------------------------
-  // 7. Skills — SoloCorp OS department skills
+  // 8. Skills — SoloCorp OS department skills
   // ------------------------------------------------------------
   "skills": {
     "paths": [
@@ -462,7 +486,7 @@
   },
 
   // ------------------------------------------------------------
-  // 8. Certification Ladder — Enforced at config level (D1 → D4)
+  // 9. Certification Ladder — Enforced at config level (D1 → D4)
   // ------------------------------------------------------------
   "certification": {
     "required_before_complete": true,
@@ -473,7 +497,7 @@
   },
 
   // ------------------------------------------------------------
-  // 9. Formatter
+  // 10. Formatter
   // ------------------------------------------------------------
   "formatter": true
 }
