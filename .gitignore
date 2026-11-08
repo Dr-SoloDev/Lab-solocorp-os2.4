@@ -48,6 +48,7 @@ central_bus/content/voiceover-*
 # Files stay on disk for review; they are not source and never go into git.
 # See docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md
 central_bus/content/local_media/
+central_bus/content/generated-image-*
 central_bus/content/concat_renders/
 
 # Agency Agents (cloned agent personality library)

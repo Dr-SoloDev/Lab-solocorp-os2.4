@@ -22,6 +22,7 @@ from .content_service import (
     design_visual_prompt as _design_visual_prompt,
     generate_voice_lipsync_prompt as _generate_voice_lipsync_prompt,
     generate_voiceover as _generate_voiceover,
+    generate_image as _generate_image,
     ingest_client_generated_artifact as _ingest_client_generated_artifact,
     media_production_skill_resource as _media_production_skill_resource,
     record_ffmpeg_job_result as _record_ffmpeg_job_result,
@@ -94,13 +95,18 @@ mcp = FastMCP(
         "campaign version. For video narration, read the internal resource "
         "solocorp://content/skills/media-production: use one continuous full-length "
         "voice track, choose Concat or local-media rendering before generating assets, "
-        "and never mix the two workflows."
+        "and never mix the two workflows. generate_image makes one paid image call "
+        "(NVIDIA NIM FLUX.3 Klein by default, legacy OpenRouter via provider=openrouter) "
+        "and stores the image under central_bus/content for human review; it never "
+        "publishes. NIM output is always JPEG (a requested png is saved as .jpg)."
     ),
 )
 
 
 def _error(exc: Exception) -> str:
-    return result_json({"status": "error", "error": type(exc).__name__, "message": str(exc)})
+    return result_json(
+        {"status": "error", "error": type(exc).__name__, "message": str(exc)}
+    )
 
 
 @mcp.tool()
@@ -258,7 +264,14 @@ def sound_render_campaign_sfx(
                 volume,
             )
         )
-    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError, ValueError) as exc:
+    except (
+        ContentServiceError,
+        FileNotFoundError,
+        OSError,
+        UnicodeError,
+        TypeError,
+        ValueError,
+    ) as exc:
         return _error(exc)
 
 
@@ -272,8 +285,64 @@ def sound_review_campaign_audio(
     """Measure final campaign audio and cue timing with local Earshot."""
 
     try:
-        return result_json(_review_campaign_audio(campaign_id, audio_path, video_path, cue_times))
-    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError, ValueError) as exc:
+        return result_json(
+            _review_campaign_audio(campaign_id, audio_path, video_path, cue_times)
+        )
+    except (
+        ContentServiceError,
+        FileNotFoundError,
+        OSError,
+        UnicodeError,
+        TypeError,
+        ValueError,
+    ) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def generate_image(
+    prompt: str,
+    aspect_ratio: str = "16:9",
+    resolution: str = "4K",
+    format: str = "jpeg",
+    reference_image_path: str | None = None,
+    output_filename: str | None = None,
+    provider: str = "nvidia",
+) -> str:
+    """Generate one image; store it, never publish.
+
+    provider="nvidia" (default) calls NVIDIA NIM FLUX.3 Image Klein
+    ({prompt, image[], width, height, steps}, 110s timeout, single attempt).
+    Output is always JPEG; a requested png is saved as .jpg with an
+    actual_format note. provider="openrouter" keeps the legacy
+    chat-completions flow (paid single request ~USD 0.008, 90s timeout).
+    Both providers: no retries so costs never double. Saves the image under
+    central_bus/content with a SHA-256 hash and a provenance manifest
+    (license_note records FLUX Kommunity v1.0 non-commercial terms for the
+    NIM path). The result stays gated (gate_passed false, human review
+    required); this MCP does not publish or approve.
+    """
+
+    try:
+        return result_json(
+            _generate_image(
+                prompt,
+                aspect_ratio,
+                resolution,
+                format,
+                reference_image_path or None,
+                output_filename or None,
+                provider,
+            )
+        )
+    except (
+        ContentServiceError,
+        FileNotFoundError,
+        OSError,
+        UnicodeError,
+        TypeError,
+        ValueError,
+    ) as exc:
         return _error(exc)
 
 
@@ -296,23 +365,17 @@ def review_publish_gate(campaign_id: str = "", filename: str = "") -> str:
     """Review a campaign or legacy single artifact without approving it."""
 
     try:
-        return result_json(
-            _review_publish_gate(filename or None, campaign_id or None)
-        )
+        return result_json(_review_publish_gate(filename or None, campaign_id or None))
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
         return _error(exc)
 
 
 @mcp.tool()
-def record_human_approval(
-    campaign_id: str, version: str, approver_note: str
-) -> str:
+def record_human_approval(campaign_id: str, version: str, approver_note: str) -> str:
     """Record human approval for the exact reviewed campaign version."""
 
     try:
-        return result_json(
-            _record_human_approval(campaign_id, version, approver_note)
-        )
+        return result_json(_record_human_approval(campaign_id, version, approver_note))
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
         return _error(exc)
 
@@ -375,7 +438,13 @@ def build_ffmpeg_job_manifest(
                 campaign_id, script_filename, audio_cue_filename, operations
             )
         )
-    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
+    except (
+        ContentServiceError,
+        FileNotFoundError,
+        OSError,
+        UnicodeError,
+        TypeError,
+    ) as exc:
         return _error(exc)
 
 
@@ -391,7 +460,13 @@ def build_ff_tracking_manifest(
         return result_json(
             _build_ff_tracking_manifest(campaign_id, scene_definitions, camera_params)
         )
-    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
+    except (
+        ContentServiceError,
+        FileNotFoundError,
+        OSError,
+        UnicodeError,
+        TypeError,
+    ) as exc:
         return _error(exc)
 
 
@@ -427,7 +502,13 @@ def render_campaign_media_local(
                 visual_fallback or None,
             )
         )
-    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
+    except (
+        ContentServiceError,
+        FileNotFoundError,
+        OSError,
+        UnicodeError,
+        TypeError,
+    ) as exc:
         return _error(exc)
 
 
@@ -459,7 +540,14 @@ def render_campaign_with_concat(
                 crf,
             )
         )
-    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError, ValueError) as exc:
+    except (
+        ContentServiceError,
+        FileNotFoundError,
+        OSError,
+        UnicodeError,
+        TypeError,
+        ValueError,
+    ) as exc:
         return _error(exc)
 
 
@@ -479,7 +567,13 @@ def record_ffmpeg_job_result(
                 campaign_id, job_id, job_version, operation_index, execution_result
             )
         )
-    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError, TypeError) as exc:
+    except (
+        ContentServiceError,
+        FileNotFoundError,
+        OSError,
+        UnicodeError,
+        TypeError,
+    ) as exc:
         return _error(exc)
 
 
@@ -523,7 +617,6 @@ def module_registry_status() -> str:
         return result_json(with_freshness(_registry().status()))
     except Exception as exc:
         return _error(exc)
-
 
 
 @mcp.tool()
@@ -614,13 +707,16 @@ def task_update_status(
             error_detail or None,
         )
         if record is None:
-            return result_json({"status": "error", "error": "task_not_found", "message": f"task {task_id} not found"})
+            return result_json(
+                {
+                    "status": "error",
+                    "error": "task_not_found",
+                    "message": f"task {task_id} not found",
+                }
+            )
         return result_json(record)
     except Exception as exc:
         return _error(exc)
-
-
-
 
 
 if __name__ == "__main__":

@@ -335,6 +335,7 @@ CONTENT_DEPARTMENT_TOOLS = {
     "sound_review_campaign_audio",
     "generate_voice_lipsync_prompt",
     "generate_voiceover",
+    "generate_image",
     "review_publish_gate",
     "record_human_approval",
     "save_human_edited_artifact",

@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
 import errno
 import os
+import tempfile
 import time
 import hashlib
 import json
@@ -11,6 +14,8 @@ import math
 import re
 import subprocess
 import unicodedata
+import urllib.error
+import urllib.request
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -124,52 +129,144 @@ LOCAL_SCENE_ROW = re.compile(
     re.MULTILINE,
 )
 
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENROUTER_MODEL = "black-forest-labs/flux-3-image-klein"
+OPENROUTER_COST_USD = 0.008
+OPENROUTER_TIMEOUT_SECONDS = 90
+OPENROUTER_DOWNLOAD_TIMEOUT_SECONDS = 60
+IMAGE_MAX_PROMPT_CHARS = 2_000
+IMAGE_MAX_RESPONSE_BYTES = 32 * 1024 * 1024
+IMAGE_FORMATS = {"jpeg", "png", "webp"}
+IMAGE_RESOLUTIONS = {"1K", "2K", "4K"}
+_IMAGE_EXT_BY_FORMAT = {"jpeg": "jpg", "png": "png", "webp": "webp"}
+_IMAGE_MIME_BY_FORMAT = {"jpeg": "image/jpeg", "png": "image/png", "webp": "image/webp"}
+
+# NVIDIA NIM (default provider for generate_image).
+# Live-verified by CEO dispatch (see task brief): HTTP 200, finishReason SUCCESS,
+# returned bytes are always JPEG (header ffd8ffe0) regardless of requested flag.
+NVIDIA_NIM_URL = (
+    "https://ai.api.nvidia.com/v1/genai/black-forest-labs/flux-3-image-klein"
+)
+NVIDIA_NIM_MODEL = "black-forest-labs/flux-3-image-klein"
+NVIDIA_NIM_TIMEOUT_SECONDS = 110  # single attempt, no retries (cost safety)
+NVIDIA_NIM_STEPS_DEFAULT = 16  # vendor parameter default
+NVIDIA_NIM_MAX_REFERENCE_IMAGES = 10
+NVIDIA_ASPECT_TO_WIDTH_HEIGHT = {
+    # aspect_ratio -> closest supported (width, height) on the NIM endpoint
+    "1:1": (1024, 1024),
+    "4:3": (1360, 1024),
+    "3:4": (1024, 1360),
+    "3:2": (1536, 1024),
+    "2:3": (1024, 1536),
+    "16:9": (1820, 1024),
+    "9:16": (1024, 1820),
+}
+NVIDIA_LICENSE_NOTE = (
+    "FLUX.3 Klein non-commercial default (FLUX Kommunity v1.0); "
+    "commercial use allowed for Qualifying Users under USD 5M annual revenue"
+)
+
 # Pinned subset of the installed ffmpeg-skill 2.17.1 tools/list schema.
 # Raw argv and arbitrary tool arguments are intentionally not accepted.
 _FFMPEG_ARGUMENTS: dict[str, dict[str, Any]] = {
     "probe": {
-        "inputs": "paths", "analyze": "boolean", "compact": "boolean",
-        "field": "string", "json_brief": "boolean",
+        "inputs": "paths",
+        "analyze": "boolean",
+        "compact": "boolean",
+        "field": "string",
+        "json_brief": "boolean",
     },
     "check": {
-        "input": "path", "aspect": "string", "content": "boolean",
-        "dry_run": "boolean", "fast": "boolean", "json_brief": "boolean",
-        "lufs": "number", "max_duration": "number", "max_mb": "number",
-        "no_loudness": "boolean", "platform": "platform", "tp": "number",
+        "input": "path",
+        "aspect": "string",
+        "content": "boolean",
+        "dry_run": "boolean",
+        "fast": "boolean",
+        "json_brief": "boolean",
+        "lufs": "number",
+        "max_duration": "number",
+        "max_mb": "number",
+        "no_loudness": "boolean",
+        "platform": "platform",
+        "tp": "number",
     },
     "cut": {
-        "input": "path", "output": "path", "start": "string", "end": "string",
-        "duration": "string", "accurate": "boolean", "dry_run": "boolean",
-        "fast": "boolean", "overwrite": "boolean", "codec": "codec",
-        "preset": "preset", "quality": "integer",
+        "input": "path",
+        "output": "path",
+        "start": "string",
+        "end": "string",
+        "duration": "string",
+        "accurate": "boolean",
+        "dry_run": "boolean",
+        "fast": "boolean",
+        "overwrite": "boolean",
+        "codec": "codec",
+        "preset": "preset",
+        "quality": "integer",
     },
     "silence": {
-        "input": "path", "output": "path", "threshold": "number",
-        "min_silence": "number", "min_keep": "number", "margin": "number",
-        "max_cuts": "integer", "dry_run": "boolean", "fast": "boolean",
-        "overwrite": "boolean", "quality": "integer",
+        "input": "path",
+        "output": "path",
+        "threshold": "number",
+        "min_silence": "number",
+        "min_keep": "number",
+        "margin": "number",
+        "max_cuts": "integer",
+        "dry_run": "boolean",
+        "fast": "boolean",
+        "overwrite": "boolean",
+        "quality": "integer",
     },
     "loudness": {
-        "input": "path", "output": "path", "lufs": "number", "tp": "number",
-        "lra": "number", "measure_only": "boolean", "dry_run": "boolean",
-        "fast": "boolean", "overwrite": "boolean",
+        "input": "path",
+        "output": "path",
+        "lufs": "number",
+        "tp": "number",
+        "lra": "number",
+        "measure_only": "boolean",
+        "dry_run": "boolean",
+        "fast": "boolean",
+        "overwrite": "boolean",
     },
     "fit": {
-        "input": "path", "output": "path", "aspect": "string", "fit": "fit",
-        "width": "integer", "height": "integer", "crop_x": "number",
-        "crop_y": "number", "dry_run": "boolean", "fast": "boolean",
-        "overwrite": "boolean", "codec": "codec", "quality": "integer",
+        "input": "path",
+        "output": "path",
+        "aspect": "string",
+        "fit": "fit",
+        "width": "integer",
+        "height": "integer",
+        "crop_x": "number",
+        "crop_y": "number",
+        "dry_run": "boolean",
+        "fast": "boolean",
+        "overwrite": "boolean",
+        "codec": "codec",
+        "quality": "integer",
     },
     "caption": {
-        "input": "path", "output": "path", "language": "string",
-        "platform": "platform", "mode": "caption_mode", "position": "position",
-        "size": "integer", "bold": "boolean", "box": "boolean",
-        "karaoke": "boolean", "dry_run": "boolean", "overwrite": "boolean",
+        "input": "path",
+        "output": "path",
+        "language": "string",
+        "platform": "platform",
+        "mode": "caption_mode",
+        "position": "position",
+        "size": "integer",
+        "bold": "boolean",
+        "box": "boolean",
+        "karaoke": "boolean",
+        "dry_run": "boolean",
+        "overwrite": "boolean",
     },
     "look": {
-        "input": "path", "output": "path", "tiles": "string",
-        "width": "integer", "at": "strings", "no_timecode": "boolean",
-        "ink": "boolean", "dry_run": "boolean", "overwrite": "boolean",
+        "input": "path",
+        "output": "path",
+        "tiles": "string",
+        "width": "integer",
+        "at": "strings",
+        "no_timecode": "boolean",
+        "ink": "boolean",
+        "dry_run": "boolean",
+        "overwrite": "boolean",
     },
 }
 _FFMPEG_REQUIRED_ARGUMENTS = {
@@ -184,11 +281,48 @@ _FFMPEG_REQUIRED_ARGUMENTS = {
 }
 _FFMPEG_ENUMS = {
     "codec": {"h264", "hevc", "av1", "prores"},
-    "preset": {"ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow", "placebo"},
+    "preset": {
+        "ultrafast",
+        "superfast",
+        "veryfast",
+        "faster",
+        "fast",
+        "medium",
+        "slow",
+        "slower",
+        "veryslow",
+        "placebo",
+    },
     "fit": {"pad", "crop", "blur"},
     "caption_mode": {"burn", "mux"},
-    "position": {"bottom", "bottom-left", "bottom-right", "center", "top", "top-left", "top-right"},
-    "platform": {"broadcast", "custom", "facebook", "fb", "ig", "instagram", "linkedin", "podcast", "reels", "shorts", "tiktok", "twitter", "x", "youtube", "youtube-shorts", "yt", "yt-shorts"},
+    "position": {
+        "bottom",
+        "bottom-left",
+        "bottom-right",
+        "center",
+        "top",
+        "top-left",
+        "top-right",
+    },
+    "platform": {
+        "broadcast",
+        "custom",
+        "facebook",
+        "fb",
+        "ig",
+        "instagram",
+        "linkedin",
+        "podcast",
+        "reels",
+        "shorts",
+        "tiktok",
+        "twitter",
+        "x",
+        "youtube",
+        "youtube-shorts",
+        "yt",
+        "yt-shorts",
+    },
 }
 
 
@@ -252,7 +386,9 @@ def _campaign_lock(campaign_key: str) -> Iterator[None]:
                         raise
                     time.sleep(0.05)
         else:
-            raise ContentServiceError("cross-process campaign locking is unsupported on this platform")
+            raise ContentServiceError(
+                "cross-process campaign locking is unsupported on this platform"
+            )
         try:
             yield
         finally:
@@ -348,7 +484,9 @@ def _validated_source_references(
     if source_references is None:
         return None
     if not isinstance(source_references, list) or len(source_references) > 30:
-        raise ContentServiceError("source_references must be a list of at most 30 strings")
+        raise ContentServiceError(
+            "source_references must be a list of at most 30 strings"
+        )
     references: list[str] = []
     for reference in source_references:
         if not isinstance(reference, str):
@@ -440,10 +578,12 @@ def _brand_guidelines_context() -> str:
     for title in ("Brand Foundation", "Voice & Tone"):
         heading = re.search(rf"(?m)^## \d+\. {re.escape(title)}\s*$", source)
         if heading is None:
-            raise ContentServiceError(f"brand guidelines are missing the {title} section")
-        following = re.search(r"(?m)^## \d+\. ", source[heading.end():])
+            raise ContentServiceError(
+                f"brand guidelines are missing the {title} section"
+            )
+        following = re.search(r"(?m)^## \d+\. ", source[heading.end() :])
         end = heading.end() + following.start() if following else len(source)
-        sections.append(source[heading.start():end].strip())
+        sections.append(source[heading.start() : end].strip())
     return "Source: docs/brand/BRAND-GUIDELINES-v1.md\n\n" + "\n\n".join(sections)
 
 
@@ -459,7 +599,9 @@ def _store_assets(
             if asset["lifecycle_state"] not in LIFECYCLE_STATES:
                 raise ContentServiceError("unsupported artifact lifecycle state")
             writer = submit_bytes_to_bus if asset.get("binary") else submit_to_bus
-            result = writer(DEPARTMENT, asset["task_id"], asset["content"], asset["extension"])
+            result = writer(
+                DEPARTMENT, asset["task_id"], asset["content"], asset["extension"]
+            )
             results.append(
                 {
                     **result,
@@ -494,7 +636,9 @@ def _store_assets(
                 "approval_records": [],
             }
         elif campaign.get("campaign_id") != canonical_id:
-            raise ContentServiceError("campaign_id conflicts with an existing campaign key")
+            raise ContentServiceError(
+                "campaign_id conflicts with an existing campaign key"
+            )
 
         expected_version = assets[0].get("expected_campaign_version")
         if expected_version is not None and campaign.get("version") != expected_version:
@@ -516,7 +660,9 @@ def _store_assets(
                 supplied if supplied is not None else [],
             )
             writer = submit_bytes_to_bus if asset.get("binary") else submit_to_bus
-            result = writer(DEPARTMENT, asset["task_id"], asset["content"], asset["extension"])
+            result = writer(
+                DEPARTMENT, asset["task_id"], asset["content"], asset["extension"]
+            )
             record = {
                 "filename": result["filename"],
                 "path": result["path"],
@@ -741,7 +887,9 @@ def design_visual_prompt(
     platform = _required(platform, "platform")
     references = _validated_source_references(source_references)
     if not re.fullmatch(r"\d{1,4}:\d{1,4}", str(aspect_ratio or "")):
-        raise ContentServiceError("aspect_ratio must use the form WIDTH:HEIGHT, e.g. 16:9")
+        raise ContentServiceError(
+            "aspect_ratio must use the form WIDTH:HEIGHT, e.g. 16:9"
+        )
 
     prompt = (
         f"# Visual Prompt — {slugify(theme)}\n\n"
@@ -782,7 +930,9 @@ def design_visual_prompt(
     }
 
 
-def _campaign_script(campaign_id: str, script_filename: str) -> tuple[dict[str, Any], str]:
+def _campaign_script(
+    campaign_id: str, script_filename: str
+) -> tuple[dict[str, Any], str]:
     campaign_key, canonical_id = _campaign_identity(campaign_id)
     campaign = _load_campaign(campaign_key)
     if campaign is None or campaign.get("campaign_id") != canonical_id:
@@ -792,8 +942,7 @@ def _campaign_script(campaign_id: str, script_filename: str) -> tuple[dict[str, 
         (
             asset
             for asset in reversed(campaign.get("assets", []))
-            if asset.get("filename") == filename
-            and asset.get("type") == "video_script"
+            if asset.get("filename") == filename and asset.get("type") == "video_script"
         ),
         None,
     )
@@ -817,11 +966,19 @@ def _campaign_ffmpeg_sources(
 
     script_asset, _ = _campaign_script(canonical_id, script_filename)
     latest_script = next(
-        (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
+        (
+            asset
+            for asset in reversed(campaign.get("assets", []))
+            if asset.get("type") == "video_script"
+        ),
         None,
     )
-    if latest_script is None or latest_script.get("filename") != script_asset.get("filename"):
-        raise ContentServiceError("script_filename must identify the latest campaign video script")
+    if latest_script is None or latest_script.get("filename") != script_asset.get(
+        "filename"
+    ):
+        raise ContentServiceError(
+            "script_filename must identify the latest campaign video script"
+        )
 
     cue_filename = str(audio_cue_filename or "").strip()
     cue_asset = next(
@@ -848,7 +1005,9 @@ def _campaign_ffmpeg_sources(
         None,
     )
     if latest_cue is None or latest_cue.get("filename") != cue_filename:
-        raise ContentServiceError("audio_cue_filename must identify the latest cue sheet for this script")
+        raise ContentServiceError(
+            "audio_cue_filename must identify the latest cue sheet for this script"
+        )
     return campaign, script_asset, cue_asset
 
 
@@ -863,7 +1022,9 @@ def _ffmpeg_bus_path(
         raise ContentServiceError(f"{label} must be an absolute local path")
     raw_path = Path(value)
     if not raw_path.is_absolute() or ".." in raw_path.parts:
-        raise ContentServiceError(f"{label} must be an absolute path inside central_bus/content")
+        raise ContentServiceError(
+            f"{label} must be an absolute path inside central_bus/content"
+        )
     if any(ord(ch) < 32 for ch in value):
         raise ContentServiceError(f"{label} contains a control character")
 
@@ -884,19 +1045,27 @@ def _ffmpeg_bus_path(
     exists = resolved.exists()
     if output:
         if exists:
-            raise ContentServiceError(f"{label} already exists; overwrite is not allowed")
+            raise ContentServiceError(
+                f"{label} already exists; overwrite is not allowed"
+            )
         if not resolved.parent.is_dir():
             raise ContentServiceError(f"{label} parent directory must already exist")
     elif exists:
         if not resolved.is_file():
             raise ContentServiceError(f"{label} must point to a regular file")
     elif normalized not in produced_paths:
-        raise ContentServiceError(f"{label} must exist or be produced by an earlier operation")
+        raise ContentServiceError(
+            f"{label} must exist or be produced by an earlier operation"
+        )
     return normalized
 
 
 def _validate_ffmpeg_operations(operations: Any) -> list[dict[str, Any]]:
-    if not isinstance(operations, list) or not operations or len(operations) > FFMPEG_MAX_OPERATIONS:
+    if (
+        not isinstance(operations, list)
+        or not operations
+        or len(operations) > FFMPEG_MAX_OPERATIONS
+    ):
         raise ContentServiceError(
             f"operations must be a list of 1-{FFMPEG_MAX_OPERATIONS} supported ffmpeg-skill calls"
         )
@@ -910,10 +1079,14 @@ def _validate_ffmpeg_operations(operations: Any) -> list[dict[str, Any]]:
             )
         tool = operation.get("tool")
         if not isinstance(tool, str) or tool not in _FFMPEG_ARGUMENTS:
-            raise ContentServiceError(f"operations[{index}] uses an unsupported ffmpeg-skill tool")
+            raise ContentServiceError(
+                f"operations[{index}] uses an unsupported ffmpeg-skill tool"
+            )
         arguments = operation.get("arguments")
         if not isinstance(arguments, dict):
-            raise ContentServiceError(f"operations[{index}].arguments must be an object")
+            raise ContentServiceError(
+                f"operations[{index}].arguments must be an object"
+            )
         allowed = _FFMPEG_ARGUMENTS[tool]
         unknown = set(arguments) - set(allowed)
         if unknown:
@@ -934,23 +1107,29 @@ def _validate_ffmpeg_operations(operations: Any) -> list[dict[str, Any]]:
             if kind == "path":
                 if name == "output":
                     path = _ffmpeg_bus_path(
-                        value, f"operations[{index}].arguments.{name}",
-                        produced_paths=produced_paths, output=True,
+                        value,
+                        f"operations[{index}].arguments.{name}",
+                        produced_paths=produced_paths,
+                        output=True,
                     )
                     output_paths.append(path)
                 else:
                     path = _ffmpeg_bus_path(
-                        value, f"operations[{index}].arguments.{name}",
+                        value,
+                        f"operations[{index}].arguments.{name}",
                         produced_paths=produced_paths,
                     )
                     input_paths.append(path)
                 clean_args[name] = path
             elif kind == "paths":
                 if not isinstance(value, list) or not value or len(value) > 8:
-                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be a list of 1-8 paths")
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.{name} must be a list of 1-8 paths"
+                    )
                 paths = [
                     _ffmpeg_bus_path(
-                        item, f"operations[{index}].arguments.{name}[{item_index}]",
+                        item,
+                        f"operations[{index}].arguments.{name}[{item_index}]",
                         produced_paths=produced_paths,
                     )
                     for item_index, item in enumerate(value)
@@ -958,54 +1137,98 @@ def _validate_ffmpeg_operations(operations: Any) -> list[dict[str, Any]]:
                 input_paths.extend(paths)
                 clean_args[name] = paths
             elif kind == "strings":
-                if not isinstance(value, list) or len(value) > 32 or any(
-                    not isinstance(item, str) or len(item) > 200 for item in value
+                if (
+                    not isinstance(value, list)
+                    or len(value) > 32
+                    or any(
+                        not isinstance(item, str) or len(item) > 200 for item in value
+                    )
                 ):
-                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be a list of short strings")
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.{name} must be a list of short strings"
+                    )
                 clean_args[name] = value
             elif kind in _FFMPEG_ENUMS:
                 if not isinstance(value, str) or value not in _FFMPEG_ENUMS[kind]:
-                    raise ContentServiceError(f"operations[{index}].arguments.{name} has an unsupported value")
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.{name} has an unsupported value"
+                    )
                 clean_args[name] = value
             elif kind == "boolean":
                 if not isinstance(value, bool):
-                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be boolean")
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.{name} must be boolean"
+                    )
                 if name == "overwrite" and value:
-                    raise ContentServiceError("FFmpeg job manifests cannot enable overwrite")
+                    raise ContentServiceError(
+                        "FFmpeg job manifests cannot enable overwrite"
+                    )
                 clean_args[name] = value
             elif kind == "integer":
                 if isinstance(value, bool) or not isinstance(value, int):
-                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be an integer")
-                if name in {"width", "height", "quality", "max_cuts", "size"} and value <= 0:
-                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be positive")
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.{name} must be an integer"
+                    )
+                if (
+                    name in {"width", "height", "quality", "max_cuts", "size"}
+                    and value <= 0
+                ):
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.{name} must be positive"
+                    )
                 clean_args[name] = value
             elif kind == "number":
-                if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
-                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be a finite number")
+                if (
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not math.isfinite(value)
+                ):
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.{name} must be a finite number"
+                    )
                 clean_args[name] = value
             elif kind == "string":
-                if not isinstance(value, str) or not value or len(value) > 1_000 or any(
-                    ord(ch) < 32 for ch in value
+                if (
+                    not isinstance(value, str)
+                    or not value
+                    or len(value) > 1_000
+                    or any(ord(ch) < 32 for ch in value)
                 ):
-                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be short text")
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.{name} must be short text"
+                    )
                 if name in {"start", "end", "duration"} and not re.fullmatch(
                     r"\d{1,3}(?::\d{1,2}){0,2}(?:\.\d{1,3})?", value
                 ):
-                    raise ContentServiceError(f"operations[{index}].arguments.{name} must be a numeric time")
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.{name} must be a numeric time"
+                    )
                 if name == "aspect" and not re.fullmatch(r"\d{1,5}:\d{1,5}", value):
-                    raise ContentServiceError(f"operations[{index}].arguments.aspect must use WIDTH:HEIGHT")
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.aspect must use WIDTH:HEIGHT"
+                    )
                 if name == "tiles" and not re.fullmatch(r"\d{1,2}x\d{1,2}", value):
-                    raise ContentServiceError(f"operations[{index}].arguments.tiles must use COLUMNSxROWS")
+                    raise ContentServiceError(
+                        f"operations[{index}].arguments.tiles must use COLUMNSxROWS"
+                    )
                 if name == "field" and not re.fullmatch(r"[\w.,:_+-]{1,100}", value):
-                    raise ContentServiceError("probe field contains unsupported characters")
+                    raise ContentServiceError(
+                        "probe field contains unsupported characters"
+                    )
                 clean_args[name] = value
             else:
                 raise ContentServiceError("unsupported ffmpeg-skill contract type")
 
         if tool != "probe" and not input_paths:
             raise ContentServiceError(f"operations[{index}] must include an input path")
-        if tool == "loudness" and not clean_args.get("measure_only") and "output" not in clean_args:
-            raise ContentServiceError("loudness requires output unless measure_only is true")
+        if (
+            tool == "loudness"
+            and not clean_args.get("measure_only")
+            and "output" not in clean_args
+        ):
+            raise ContentServiceError(
+                "loudness requires output unless measure_only is true"
+            )
         for path in output_paths:
             if path in produced_paths:
                 raise ContentServiceError(f"operations[{index}] repeats an output path")
@@ -1053,7 +1276,9 @@ def build_ffmpeg_job_manifest(
         [
             {
                 "task_id": _asset_task_id(canonical_id, "ffmpeg-job", job_id),
-                "content": json.dumps(job_manifest, ensure_ascii=False, sort_keys=True, indent=2),
+                "content": json.dumps(
+                    job_manifest, ensure_ascii=False, sort_keys=True, indent=2
+                ),
                 "extension": "json",
                 "type": "ffmpeg_job_manifest",
                 "lifecycle_state": "scaffold",
@@ -1082,7 +1307,9 @@ def build_ffmpeg_job_manifest(
     )
 
 
-def _ff_tracking_camera(value: Any, defaults: dict[str, float], label: str) -> dict[str, Any]:
+def _ff_tracking_camera(
+    value: Any, defaults: dict[str, float], label: str
+) -> dict[str, Any]:
     if value is None:
         overrides: dict[str, Any] = {}
     elif isinstance(value, dict):
@@ -1092,7 +1319,9 @@ def _ff_tracking_camera(value: Any, defaults: dict[str, float], label: str) -> d
 
     unknown = set(overrides) - set(defaults)
     if unknown:
-        raise ContentServiceError(f"{label} has unsupported camera keys: {', '.join(sorted(unknown))}")
+        raise ContentServiceError(
+            f"{label} has unsupported camera keys: {', '.join(sorted(unknown))}"
+        )
     clean = {**defaults, **overrides}
     bounds = {
         "tilt_x": (-1.2, 1.2),
@@ -1108,10 +1337,16 @@ def _ff_tracking_camera(value: Any, defaults: dict[str, float], label: str) -> d
     normalized: dict[str, float] = {}
     for key, (minimum, maximum) in bounds.items():
         number = clean[key]
-        if isinstance(number, bool) or not isinstance(number, (int, float)) or not math.isfinite(number):
+        if (
+            isinstance(number, bool)
+            or not isinstance(number, (int, float))
+            or not math.isfinite(number)
+        ):
             raise ContentServiceError(f"{label}.{key} must be a finite number")
         if not minimum <= number <= maximum:
-            raise ContentServiceError(f"{label}.{key} must be between {minimum} and {maximum}")
+            raise ContentServiceError(
+                f"{label}.{key} must be between {minimum} and {maximum}"
+            )
         normalized[key] = float(number)
     return {
         "tilt_x": normalized["tilt_x"],
@@ -1128,7 +1363,10 @@ def _validate_ff_tracking_scenes(
     scene_definitions: Any,
     camera_params: Any,
 ) -> list[dict[str, Any]]:
-    if not isinstance(scene_definitions, list) or not 1 <= len(scene_definitions) <= FF_TRACKING_MAX_SCENES:
+    if (
+        not isinstance(scene_definitions, list)
+        or not 1 <= len(scene_definitions) <= FF_TRACKING_MAX_SCENES
+    ):
         raise ContentServiceError(
             f"scene_definitions must be a list of 1-{FF_TRACKING_MAX_SCENES} scenes"
         )
@@ -1147,31 +1385,52 @@ def _validate_ff_tracking_scenes(
         "blur": base_camera["blur"],
         "shake": base_camera["shake"],
     }
-    allowed_keys = {"scene_id", "episode_id", "kind", "text", "palette", "camera", "hero", "size"}
+    allowed_keys = {
+        "scene_id",
+        "episode_id",
+        "kind",
+        "text",
+        "palette",
+        "camera",
+        "hero",
+        "size",
+    }
     scenes: list[dict[str, Any]] = []
     scene_ids: set[str] = set()
     for index, raw in enumerate(scene_definitions, start=1):
         if not isinstance(raw, dict):
-            raise ContentServiceError(f"scene_definitions[{index - 1}] must be an object")
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}] must be an object"
+            )
         unknown = set(raw) - allowed_keys
         if unknown:
             raise ContentServiceError(
                 f"scene_definitions[{index - 1}] has unsupported keys: {', '.join(sorted(unknown))}"
             )
         scene_id = raw.get("scene_id", f"scene-{index:02d}")
-        if not isinstance(scene_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", scene_id):
-            raise ContentServiceError(f"scene_definitions[{index - 1}].scene_id must be a short ASCII id")
+        if not isinstance(scene_id, str) or not re.fullmatch(
+            r"[A-Za-z0-9_-]{1,64}", scene_id
+        ):
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].scene_id must be a short ASCII id"
+            )
         if scene_id in scene_ids:
-            raise ContentServiceError(f"scene_definitions[{index - 1}].scene_id is duplicated")
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].scene_id is duplicated"
+            )
         scene_ids.add(scene_id)
         episode_id = raw.get("episode_id")
         if episode_id is not None and (
             not isinstance(episode_id, str) or not re.fullmatch(r"EP\d{2}", episode_id)
         ):
-            raise ContentServiceError(f"scene_definitions[{index - 1}].episode_id must use EPnn format")
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].episode_id must use EPnn format"
+            )
         kind = raw.get("kind", "Typing")
         if not isinstance(kind, str) or kind not in FF_TRACKING_KINDS:
-            raise ContentServiceError(f"scene_definitions[{index - 1}].kind is unsupported")
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].kind is unsupported"
+            )
         text = raw.get("text", "")
         if (
             not isinstance(text, str)
@@ -1183,13 +1442,17 @@ def _validate_ff_tracking_scenes(
                 f"scene_definitions[{index - 1}].text must be at most 80 printable ASCII characters"
             )
         if kind in {"Typing", "Cursor"} and not text.strip():
-            raise ContentServiceError(f"scene_definitions[{index - 1}].text is required for {kind}")
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].text is required for {kind}"
+            )
         redaction = redact(text)
         if not redaction.ok:
             labels = sorted(
                 {
                     finding["label"]
-                    for finding in redaction.blocked + redaction.flagged + redaction.banned
+                    for finding in redaction.blocked
+                    + redaction.flagged
+                    + redaction.banned
                 }
             )
             raise ContentServiceError(
@@ -1198,27 +1461,49 @@ def _validate_ff_tracking_scenes(
             )
         palette = raw.get("palette", "Thermal")
         if not isinstance(palette, str) or palette not in FF_TRACKING_PALETTES:
-            raise ContentServiceError(f"scene_definitions[{index - 1}].palette is unsupported")
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].palette is unsupported"
+            )
         scene_camera = _ff_tracking_camera(
             raw.get("camera"), base_values, f"scene_definitions[{index - 1}].camera"
         )
         hero = raw.get("hero", [300.0, 540.0])
         if not isinstance(hero, (list, tuple)) or len(hero) != 2:
-            raise ContentServiceError(f"scene_definitions[{index - 1}].hero must contain x and y")
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].hero must contain x and y"
+            )
         hero_values: list[float] = []
         for axis, value, maximum in (("x", hero[0], 1860.0), ("y", hero[1], 1040.0)):
-            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
-                raise ContentServiceError(f"scene_definitions[{index - 1}].hero.{axis} must be finite")
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(value)
+            ):
+                raise ContentServiceError(
+                    f"scene_definitions[{index - 1}].hero.{axis} must be finite"
+                )
             if not 60.0 <= value <= maximum:
-                raise ContentServiceError(f"scene_definitions[{index - 1}].hero.{axis} is outside the render canvas")
+                raise ContentServiceError(
+                    f"scene_definitions[{index - 1}].hero.{axis} is outside the render canvas"
+                )
             hero_values.append(float(value))
         size = raw.get("size", 72.0)
-        if isinstance(size, bool) or not isinstance(size, (int, float)) or not math.isfinite(size):
-            raise ContentServiceError(f"scene_definitions[{index - 1}].size must be finite")
+        if (
+            isinstance(size, bool)
+            or not isinstance(size, (int, float))
+            or not math.isfinite(size)
+        ):
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].size must be finite"
+            )
         if not 24.0 <= size <= 160.0:
-            raise ContentServiceError(f"scene_definitions[{index - 1}].size must be between 24 and 160")
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].size must be between 24 and 160"
+            )
         if hero_values[0] + len(text) * float(size) * 0.6 > 1860.0:
-            raise ContentServiceError(f"scene_definitions[{index - 1}].text does not fit the render canvas")
+            raise ContentServiceError(
+                f"scene_definitions[{index - 1}].text does not fit the render canvas"
+            )
         scenes.append(
             {
                 "scene_id": scene_id,
@@ -1241,12 +1526,18 @@ def build_ff_tracking_manifest(
 ) -> dict[str, Any]:
     """Store a validated ff-tracking scene plan without running its renderer."""
 
-    campaign_key, canonical_id = _campaign_identity(_required(campaign_id, "campaign_id"))
+    campaign_key, canonical_id = _campaign_identity(
+        _required(campaign_id, "campaign_id")
+    )
     campaign = _load_campaign(campaign_key)
     if campaign is None or campaign.get("campaign_id") != canonical_id:
         raise ContentServiceError(f"campaign not found: {canonical_id}")
     script_asset = next(
-        (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
+        (
+            asset
+            for asset in reversed(campaign.get("assets", []))
+            if asset.get("type") == "video_script"
+        ),
         None,
     )
     if script_asset is None:
@@ -1300,7 +1591,9 @@ def build_ff_tracking_manifest(
         [
             {
                 "task_id": _asset_task_id(canonical_id, "ff-tracking-job", job_id),
-                "content": json.dumps(job_manifest, ensure_ascii=False, sort_keys=True, indent=2),
+                "content": json.dumps(
+                    job_manifest, ensure_ascii=False, sort_keys=True, indent=2
+                ),
                 "extension": "json",
                 "type": "ff_tracking_job_manifest",
                 "lifecycle_state": "scaffold",
@@ -1330,17 +1623,23 @@ def build_ff_tracking_manifest(
     )
 
 
-def _validated_ffmpeg_result(response: Any) -> tuple[dict[str, Any], str, str | None, int | None]:
+def _validated_ffmpeg_result(
+    response: Any,
+) -> tuple[dict[str, Any], str, str | None, int | None]:
     if not isinstance(response, dict):
         raise ContentServiceError("execution_result must be an MCP result object")
     if set(response) - {"isError", "content", "structuredContent", "_meta"}:
-        raise ContentServiceError("execution_result contains unsupported MCP result fields")
+        raise ContentServiceError(
+            "execution_result contains unsupported MCP result fields"
+        )
     if "isError" in response and not isinstance(response["isError"], bool):
         raise ContentServiceError("execution_result.isError must be boolean")
 
     content = response.get("content", [])
     if not isinstance(content, list) or len(content) > 16:
-        raise ContentServiceError("execution_result.content must be a list of at most 16 text blocks")
+        raise ContentServiceError(
+            "execution_result.content must be a list of at most 16 text blocks"
+        )
     for index, block in enumerate(content):
         if (
             not isinstance(block, dict)
@@ -1354,16 +1653,22 @@ def _validated_ffmpeg_result(response: Any) -> tuple[dict[str, Any], str, str | 
 
     structured = response.get("structuredContent")
     if structured is not None and not isinstance(structured, dict):
-        raise ContentServiceError("execution_result.structuredContent must be an object")
+        raise ContentServiceError(
+            "execution_result.structuredContent must be an object"
+        )
     if not content and structured is None:
-        raise ContentServiceError("execution_result must include content or structuredContent")
+        raise ContentServiceError(
+            "execution_result must include content or structuredContent"
+        )
     if "_meta" in response and not isinstance(response["_meta"], dict):
         raise ContentServiceError("execution_result._meta must be an object")
 
     try:
         encoded = json.dumps(response, ensure_ascii=False, allow_nan=False)
     except (TypeError, ValueError) as exc:
-        raise ContentServiceError("execution_result must contain JSON-compatible values") from exc
+        raise ContentServiceError(
+            "execution_result must contain JSON-compatible values"
+        ) from exc
     if len(encoded.encode("utf-8")) > FFMPEG_MAX_RESULT_BYTES:
         raise ContentServiceError(
             f"execution_result exceeds the {FFMPEG_MAX_RESULT_BYTES}-byte result limit"
@@ -1371,12 +1676,22 @@ def _validated_ffmpeg_result(response: Any) -> tuple[dict[str, Any], str, str | 
 
     provider_status = structured.get("status") if structured else None
     if provider_status is not None and not isinstance(provider_status, str):
-        raise ContentServiceError("execution_result.structuredContent.status must be text")
+        raise ContentServiceError(
+            "execution_result.structuredContent.status must be text"
+        )
     exit_code = structured.get("exit_code") if structured else None
-    if exit_code is not None and (isinstance(exit_code, bool) or not isinstance(exit_code, int)):
-        raise ContentServiceError("execution_result.structuredContent.exit_code must be an integer")
+    if exit_code is not None and (
+        isinstance(exit_code, bool) or not isinstance(exit_code, int)
+    ):
+        raise ContentServiceError(
+            "execution_result.structuredContent.exit_code must be an integer"
+        )
 
-    if response.get("isError") is True or provider_status == "failed" or (exit_code is not None and exit_code != 0):
+    if (
+        response.get("isError") is True
+        or provider_status == "failed"
+        or (exit_code is not None and exit_code != 0)
+    ):
         execution_status = "reported_failure"
     elif provider_status == "completed" and exit_code == 0:
         execution_status = "reported_completed"
@@ -1410,7 +1725,9 @@ def record_ffmpeg_job_result(
         None,
     )
     if job_asset is None:
-        raise ContentServiceError("job_id must identify an FFmpeg job manifest in this campaign")
+        raise ContentServiceError(
+            "job_id must identify an FFmpeg job manifest in this campaign"
+        )
     if job_asset.get("version") != normalized_version:
         raise ContentServiceError(
             f"job version mismatch; the manifest is {job_asset.get('version')}"
@@ -1422,7 +1739,9 @@ def record_ffmpeg_job_result(
             fetch_from_bus(DEPARTMENT, job_asset["filename"])["content"]
         )
     except (json.JSONDecodeError, KeyError) as exc:
-        raise ContentServiceError("stored FFmpeg job manifest is not valid JSON") from exc
+        raise ContentServiceError(
+            "stored FFmpeg job manifest is not valid JSON"
+        ) from exc
     if (
         job_manifest.get("job_id") != normalized_job_id
         or job_manifest.get("campaign_id") != canonical_id
@@ -1430,7 +1749,9 @@ def record_ffmpeg_job_result(
         or job_manifest.get("provider_contract_version")
         != job_asset.get("provider_contract_version", FFMPEG_SCHEMA_VERSION)
     ):
-        raise ContentServiceError("job_id does not match the stored FFmpeg job manifest")
+        raise ContentServiceError(
+            "job_id does not match the stored FFmpeg job manifest"
+        )
     planned_operations = job_manifest.get("operations")
     if (
         not isinstance(planned_operations, list)
@@ -1438,7 +1759,9 @@ def record_ffmpeg_job_result(
         or operation_index >= len(planned_operations)
         or not isinstance(planned_operations[operation_index], dict)
     ):
-        raise ContentServiceError("operation_index must identify a call in the stored job manifest")
+        raise ContentServiceError(
+            "operation_index must identify a call in the stored job manifest"
+        )
     operation_tool = planned_operations[operation_index].get("tool")
 
     response, execution_status, provider_status, exit_code = _validated_ffmpeg_result(
@@ -1455,7 +1778,9 @@ def record_ffmpeg_job_result(
         "operation_tool": operation_tool,
         "campaign_id": canonical_id,
         "provider": "ffmpeg-skill",
-        "provider_contract_version": job_asset.get("provider_contract_version", FFMPEG_SCHEMA_VERSION),
+        "provider_contract_version": job_asset.get(
+            "provider_contract_version", FFMPEG_SCHEMA_VERSION
+        ),
         "execution_status": execution_status,
         "provider_status": provider_status,
         "provider_exit_code": exit_code,
@@ -1469,7 +1794,9 @@ def record_ffmpeg_job_result(
         [
             {
                 "task_id": _asset_task_id(canonical_id, "ffmpeg-result", result_id),
-                "content": json.dumps(record, ensure_ascii=False, sort_keys=True, indent=2),
+                "content": json.dumps(
+                    record, ensure_ascii=False, sort_keys=True, indent=2
+                ),
                 "extension": "json",
                 "type": "ffmpeg_execution_result",
                 "lifecycle_state": "scaffold",
@@ -1513,11 +1840,20 @@ def _local_media_scenes(script: str) -> list[dict[str, Any]]:
         scene_seconds = end - start
         expected_start = len(scenes) * scene_seconds
         if scene_seconds not in {10, 15} or start != expected_start:
-            raise ContentServiceError("local scenes must be contiguous 10- or 15-second segments")
-        if scenes and scene_seconds != scenes[0]["end_seconds"] - scenes[0]["start_seconds"]:
-            raise ContentServiceError("all local render scenes must use the same duration")
+            raise ContentServiceError(
+                "local scenes must be contiguous 10- or 15-second segments"
+            )
+        if (
+            scenes
+            and scene_seconds != scenes[0]["end_seconds"] - scenes[0]["start_seconds"]
+        ):
+            raise ContentServiceError(
+                "all local render scenes must use the same duration"
+            )
         if not description or not voiceover:
-            raise ContentServiceError("every render scene requires a visual and voiceover")
+            raise ContentServiceError(
+                "every render scene requires a visual and voiceover"
+            )
         title, separator, visual_description = description.partition(" — ")
         title = title.strip() or f"Scene {len(scenes) + 1:02d}"
         scenes.append(
@@ -1534,12 +1870,17 @@ def _local_media_scenes(script: str) -> list[dict[str, Any]]:
         raise ContentServiceError("local render found no timed scenes with VO text")
     scene_seconds = scenes[0]["end_seconds"] - scenes[0]["start_seconds"]
     if (len(scenes), scene_seconds) not in {(6, 15), (10, 10)}:
-        raise ContentServiceError("local render supports six 15-second scenes or ten 10-second episodes")
+        raise ContentServiceError(
+            "local render supports six 15-second scenes or ten 10-second episodes"
+        )
     return scenes
 
 
 def _execute_local_media_pipeline(payload: dict[str, Any]) -> dict[str, Any]:
-    command = [str(ROOT / ".venv" / "bin" / "python"), str(ROOT / "scripts" / "render_campaign_media_local.py")]
+    command = [
+        str(ROOT / ".venv" / "bin" / "python"),
+        str(ROOT / "scripts" / "render_campaign_media_local.py"),
+    ]
     if not Path(command[0]).is_file():
         command[0] = os.environ.get("PYTHON", "python3")
     environment = os.environ.copy()
@@ -1556,15 +1897,23 @@ def _execute_local_media_pipeline(payload: dict[str, Any]) -> dict[str, Any]:
             check=False,
         )
     except subprocess.TimeoutExpired as exc:
-        raise ContentServiceError("local media render exceeded the 60-minute limit") from exc
+        raise ContentServiceError(
+            "local media render exceeded the 60-minute limit"
+        ) from exc
     if completed.returncode != 0:
         detail = completed.stderr[-1600:].strip() or completed.stdout[-1600:].strip()
-        error = ContentServiceError(f"local media render failed: {detail or completed.returncode}")
+        error = ContentServiceError(
+            f"local media render failed: {detail or completed.returncode}"
+        )
         # The renderer CLI prints one JSON line (with per-step status) to
         # stderr on failure; surface its steps on the exception so the
         # failed result record can persist them.
         try:
-            last_line = completed.stderr.strip().splitlines()[-1] if completed.stderr.strip() else ""
+            last_line = (
+                completed.stderr.strip().splitlines()[-1]
+                if completed.stderr.strip()
+                else ""
+            )
             parsed = json.loads(last_line)
             if isinstance(parsed, dict) and isinstance(parsed.get("steps"), dict):
                 error.steps = parsed["steps"]  # type: ignore[attr-defined]
@@ -1576,7 +1925,9 @@ def _execute_local_media_pipeline(payload: dict[str, Any]) -> dict[str, Any]:
     except json.JSONDecodeError as exc:
         raise ContentServiceError("local media renderer returned invalid JSON") from exc
     if not isinstance(result, dict) or result.get("status") != "completed":
-        raise ContentServiceError("local media renderer did not report completed status")
+        raise ContentServiceError(
+            "local media renderer did not report completed status"
+        )
     return result
 
 
@@ -1597,7 +1948,9 @@ def render_campaign_media_local(
     Renders are serialized with a non-blocking exclusive file lock.
     """
 
-    tts_mode = _validated_fallback(tts_fallback, allowed={"silence"}, label="tts_fallback")
+    tts_mode = _validated_fallback(
+        tts_fallback, allowed={"silence"}, label="tts_fallback"
+    )
     visual_mode = _validated_fallback(
         visual_fallback, allowed={"static_card"}, label="visual_fallback"
     )
@@ -1631,25 +1984,39 @@ def _render_campaign_media_local_locked(
     script_asset: dict[str, Any] | None = None
     if script_filename is None:
         script_asset = next(
-            (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
+            (
+                asset
+                for asset in reversed(campaign.get("assets", []))
+                if asset.get("type") == "video_script"
+            ),
             None,
         )
         if script_asset is None:
             raise ContentServiceError("campaign has no video script to render")
     else:
         if not isinstance(script_filename, str):
-            raise ContentServiceError("script_filename must be text; omit it to render the latest script")
+            raise ContentServiceError(
+                "script_filename must be text; omit it to render the latest script"
+            )
         filename = script_filename.strip()
         if not filename:
             script_asset = next(
-                (asset for asset in reversed(campaign.get("assets", [])) if asset.get("type") == "video_script"),
+                (
+                    asset
+                    for asset in reversed(campaign.get("assets", []))
+                    if asset.get("type") == "video_script"
+                ),
                 None,
             )
             if script_asset is None:
                 raise ContentServiceError("campaign has no video script to render")
         else:
             match = next(
-                (asset for asset in reversed(campaign.get("assets", [])) if asset.get("filename") == filename),
+                (
+                    asset
+                    for asset in reversed(campaign.get("assets", []))
+                    if asset.get("filename") == filename
+                ),
                 None,
             )
             if match is not None:
@@ -1684,11 +2051,15 @@ def _render_campaign_media_local_locked(
     try:
         model_rights = json.loads(rights_file.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        raise ContentServiceError("local Piper model rights record is missing or invalid") from exc
+        raise ContentServiceError(
+            "local Piper model rights record is missing or invalid"
+        ) from exc
     model_license = _required(str(model_rights.get("license", "")), "model license")
     commercial_use = model_rights.get("commercial_use")
     if not isinstance(commercial_use, bool):
-        raise ContentServiceError("local Piper voice model must have an explicit commercial_use boolean")
+        raise ContentServiceError(
+            "local Piper voice model must have an explicit commercial_use boolean"
+        )
     voice_rights_status = (
         "commercial_permitted_pending_human_confirmation"
         if commercial_use
@@ -1725,7 +2096,9 @@ def _render_campaign_media_local_locked(
         "visual_fallback": visual_mode,
         "fallback_requested": bool(tts_mode != "abort" or visual_mode != "abort"),
         "publication_status": "blocked_pending_human_approval_and_rights_review",
-        "output_directory": output_dir.relative_to(bus_store.BUS_ROOT.resolve()).as_posix(),
+        "output_directory": output_dir.relative_to(
+            bus_store.BUS_ROOT.resolve()
+        ).as_posix(),
         "lifecycle_state": "scaffold",
     }
     job_asset = _store_assets(
@@ -1733,7 +2106,9 @@ def _render_campaign_media_local_locked(
         [
             {
                 "task_id": _asset_task_id(canonical_id, "local-media-job", job_id),
-                "content": json.dumps(job_manifest, ensure_ascii=False, sort_keys=True, indent=2),
+                "content": json.dumps(
+                    job_manifest, ensure_ascii=False, sort_keys=True, indent=2
+                ),
                 "extension": "json",
                 "type": "local_media_render_job",
                 "lifecycle_state": "scaffold",
@@ -1763,10 +2138,17 @@ def _render_campaign_media_local_locked(
         render = _execute_local_media_pipeline(payload)
         video = render.get("video", {})
         video_path = Path(str(video.get("path", ""))).resolve(strict=True)
-        if not video_path.is_relative_to(output_dir.resolve()) or not video_path.is_file():
-            raise ContentServiceError("local renderer output must be a file inside its isolated job directory")
+        if (
+            not video_path.is_relative_to(output_dir.resolve())
+            or not video_path.is_file()
+        ):
+            raise ContentServiceError(
+                "local renderer output must be a file inside its isolated job directory"
+            )
         if not isinstance(video.get("sha256"), str) or len(video["sha256"]) != 64:
-            raise ContentServiceError("local renderer did not return a valid output SHA-256")
+            raise ContentServiceError(
+                "local renderer did not return a valid output SHA-256"
+            )
         execution_status = "completed"
         degraded = bool(render.get("degraded"))
         result_record = {
@@ -1820,7 +2202,9 @@ def _render_campaign_media_local_locked(
         [
             {
                 "task_id": _asset_task_id(canonical_id, "local-media-result", job_id),
-                "content": json.dumps(result_record, ensure_ascii=False, sort_keys=True, indent=2),
+                "content": json.dumps(
+                    result_record, ensure_ascii=False, sort_keys=True, indent=2
+                ),
                 "extension": "json",
                 "type": "local_media_render_result",
                 "lifecycle_state": "scaffold",
@@ -1847,7 +2231,10 @@ def _render_campaign_media_local_locked(
         "execution_status": execution_status,
         "execution_mode": "local_ffmpeg_cli",
         "job_manifest": {"filename": job_asset["filename"], "path": job_asset["path"]},
-        "result_record": {"filename": result_asset["filename"], "path": result_asset["path"]},
+        "result_record": {
+            "filename": result_asset["filename"],
+            "path": result_asset["path"],
+        },
         "render": result_record.get("render"),
         "steps": result_record.get("steps"),
         "degraded": degraded,
@@ -1879,9 +2266,8 @@ def design_audio_experience(
         if not line.strip().startswith("|"):
             continue
         columns = [column.strip() for column in line.strip().strip("|").split("|")]
-        if (
-            len(columns) >= 3
-            and re.match(r"^\d+\s*(?:[–-]\s*\d+)?\s*s$", columns[0], re.I)
+        if len(columns) >= 3 and re.match(
+            r"^\d+\s*(?:[–-]\s*\d+)?\s*s$", columns[0], re.I
         ):
             scenes.append((columns[0], columns[1], columns[2]))
     if not scenes:
@@ -1907,9 +2293,7 @@ def design_audio_experience(
         "- **Voice emotion:** natural and clear; avoid overstating claims.\n"
         "- **SFX:** minimal transition accents only; no unlicensed samples.\n"
         "- **Pause / emphasis:** leave a short pause before each key message; tune to the final performance.\n\n"
-        "## Cues\n\n"
-        + "\n".join(cue_rows)
-        + "\n\n## Rights and Consent\n\n"
+        "## Cues\n\n" + "\n".join(cue_rows) + "\n\n## Rights and Consent\n\n"
         "Confirm BGM/SFX license and voice-clone consent before any provider use or publication.\n"
     )
     result = _store_assets(
@@ -1926,7 +2310,11 @@ def design_audio_experience(
             }
         ],
     )[0]
-    return {**result, "lifecycle_state": "scaffold", "duration_seconds": duration_seconds}
+    return {
+        **result,
+        "lifecycle_state": "scaffold",
+        "duration_seconds": duration_seconds,
+    }
 
 
 def generate_voice_lipsync_prompt(
@@ -1970,7 +2358,9 @@ def generate_voice_lipsync_prompt(
         [
             {
                 "task_id": _asset_task_id(campaign_id, "voice-config", script_filename),
-                "content": json.dumps(config, ensure_ascii=False, sort_keys=True, indent=2),
+                "content": json.dumps(
+                    config, ensure_ascii=False, sort_keys=True, indent=2
+                ),
                 "extension": "json",
                 "type": "voice_lipsync_config",
                 "lifecycle_state": "scaffold",
@@ -2010,13 +2400,21 @@ def save_human_edited_artifact(
     if campaign is None or campaign.get("campaign_id") != canonical_id:
         raise ContentServiceError(f"campaign not found: {canonical_id}")
     source_asset = next(
-        (asset for asset in reversed(campaign.get("assets", [])) if asset.get("filename") == filename),
+        (
+            asset
+            for asset in reversed(campaign.get("assets", []))
+            if asset.get("filename") == filename
+        ),
         None,
     )
     if source_asset is None:
-        raise ContentServiceError("source_filename must identify an artifact in this campaign")
+        raise ContentServiceError(
+            "source_filename must identify an artifact in this campaign"
+        )
     if source_asset.get("type") in {"voiceover_audio"}:
-        raise ContentServiceError("binary audio artifacts cannot be human-edited as text")
+        raise ContentServiceError(
+            "binary audio artifacts cannot be human-edited as text"
+        )
     _required(source_asset.get("type"), "source artifact type")
 
     result = _store_assets(
@@ -2096,7 +2494,9 @@ def generate_voiceover(
     text = _required(text, "text")
     voice_id = _required(voice_id, "voice_id")
     if len(voice_id) > 128 or any(ord(ch) < 33 for ch in voice_id):
-        raise ContentServiceError("voice_id must be a single ID of at most 128 characters")
+        raise ContentServiceError(
+            "voice_id must be a single ID of at most 128 characters"
+        )
     if len(text) > MAX_VOICEOVER_CHARACTERS:
         raise ContentServiceError(
             f"text exceeds the {MAX_VOICEOVER_CHARACTERS}-character voice-generation limit"
@@ -2108,7 +2508,9 @@ def generate_voiceover(
         )
     language = str(language_code or "").strip().lower()
     if not re.fullmatch(r"[a-z]{2,3}", language):
-        raise ContentServiceError("language_code must be a 2- or 3-letter language code")
+        raise ContentServiceError(
+            "language_code must be a 2- or 3-letter language code"
+        )
 
     load_dotenv(dotenv_path=ROOT / ".env", override=False)
     if not os.environ.get("ELEVENLABS_API_KEY"):
@@ -2227,8 +2629,7 @@ def _campaign_manifest_summary(campaign: dict[str, Any]) -> dict[str, Any]:
         "review": campaign.get("review"),
         "approved_version": campaign.get("approved_version"),
         "removed_assets": [
-            record.get("filename")
-            for record in campaign.get("removal_records", [])
+            record.get("filename") for record in campaign.get("removal_records", [])
         ],
     }
 
@@ -2264,7 +2665,9 @@ def _latest_local_render_failed(assets: list[dict[str, Any]]) -> bool:
     return failed
 
 
-def _latest_degraded_local_render(assets: list[dict[str, Any]]) -> dict[str, Any] | None:
+def _latest_degraded_local_render(
+    assets: list[dict[str, Any]],
+) -> dict[str, Any] | None:
     """Return the record of the latest completed local render if it used a fallback.
 
     A degraded (fallback) render is completed but must stay visible: the gate
@@ -2293,7 +2696,10 @@ def _latest_degraded_local_render(assets: list[dict[str, Any]]) -> dict[str, Any
             degraded_record = None
         elif status == "completed":
             if asset.get("degraded") is True:
-                degraded_record = record or {"degraded": True, "fallbacks": asset.get("fallbacks")}
+                degraded_record = record or {
+                    "degraded": True,
+                    "fallbacks": asset.get("fallbacks"),
+                }
             else:
                 if record is None:
                     try:
@@ -2346,7 +2752,9 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             extension = Path(asset["filename"]).suffix.lower()
             if extension not in {".md", ".txt", ".json"}:
                 continue
-            text_assets.append((asset, fetch_from_bus(DEPARTMENT, asset["filename"])["content"]))
+            text_assets.append(
+                (asset, fetch_from_bus(DEPARTMENT, asset["filename"])["content"])
+            )
 
         all_text = "\n\n".join(content for _, content in text_assets)
         primary_text = "\n\n".join(
@@ -2359,16 +2767,17 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
         assets = campaign.get("assets", [])
         types = {asset.get("type") for asset in assets}
         latest_script = next(
-            (asset for asset in reversed(assets) if asset.get("type") == "video_script"),
+            (
+                asset
+                for asset in reversed(assets)
+                if asset.get("type") == "video_script"
+            ),
             None,
         )
-        audio_cue_is_current = (
-            latest_script is None
-            or any(
-                asset.get("type") == "audio_cue_sheet"
-                and latest_script["filename"] in asset.get("dependencies", [])
-                for asset in assets
-            )
+        audio_cue_is_current = latest_script is None or any(
+            asset.get("type") == "audio_cue_sheet"
+            and latest_script["filename"] in asset.get("dependencies", [])
+            for asset in assets
         )
         latest_cue = next(
             (
@@ -2381,7 +2790,11 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             None,
         )
         latest_render_asset = next(
-            (asset for asset in reversed(assets) if asset.get("type") == "concat_render_result"),
+            (
+                asset
+                for asset in reversed(assets)
+                if asset.get("type") == "concat_render_result"
+            ),
             None,
         )
         media_workflow: dict[str, Any] = {
@@ -2394,10 +2807,14 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
         if latest_render_asset:
             try:
                 render_record = json.loads(
-                    fetch_from_bus(DEPARTMENT, latest_render_asset["filename"])["content"]
+                    fetch_from_bus(DEPARTMENT, latest_render_asset["filename"])[
+                        "content"
+                    ]
                 )
             except json.JSONDecodeError as exc:
-                raise ContentServiceError("latest Concat render record is not valid JSON") from exc
+                raise ContentServiceError(
+                    "latest Concat render record is not valid JSON"
+                ) from exc
             render_output = render_record.get("output")
             render_dependencies = set(latest_render_asset.get("dependencies", []))
             sound_delivery_filename = render_record.get("sound_delivery_filename")
@@ -2416,8 +2833,10 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
                     sound_delivery_asset
                     and latest_script
                     and latest_cue
-                    and latest_script["filename"] in sound_delivery_asset.get("dependencies", [])
-                    and latest_cue["filename"] in sound_delivery_asset.get("dependencies", [])
+                    and latest_script["filename"]
+                    in sound_delivery_asset.get("dependencies", [])
+                    and latest_cue["filename"]
+                    in sound_delivery_asset.get("dependencies", [])
                     and sound_delivery_filename in render_dependencies
                 )
             render_is_current = bool(
@@ -2428,7 +2847,8 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
                 and latest_script
                 and latest_cue
                 and render_record.get("script_filename") == latest_script["filename"]
-                and render_record.get("audio_cue_sheet_filename") == latest_cue["filename"]
+                and render_record.get("audio_cue_sheet_filename")
+                == latest_cue["filename"]
                 and latest_script["filename"] in render_dependencies
                 and latest_cue["filename"] in render_dependencies
                 and sound_delivery_is_current
@@ -2446,16 +2866,23 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             if latest_audio_review_asset and render_is_current:
                 try:
                     audio_review_record = json.loads(
-                        fetch_from_bus(DEPARTMENT, latest_audio_review_asset["filename"])["content"]
+                        fetch_from_bus(
+                            DEPARTMENT, latest_audio_review_asset["filename"]
+                        )["content"]
                     )
                 except json.JSONDecodeError as exc:
-                    raise ContentServiceError("latest Earshot review record is not valid JSON") from exc
+                    raise ContentServiceError(
+                        "latest Earshot review record is not valid JSON"
+                    ) from exc
                 audio_report = audio_review_record.get("report")
                 audio_review_is_current = bool(
                     isinstance(audio_report, dict)
-                    and audio_report.get("render_result_filename") == latest_render_asset["filename"]
-                    and audio_report.get("render_output_path") == render_output.get("path")
-                    and audio_report.get("render_output_sha256") == render_output.get("sha256")
+                    and audio_report.get("render_result_filename")
+                    == latest_render_asset["filename"]
+                    and audio_report.get("render_output_path")
+                    == render_output.get("path")
+                    and audio_report.get("render_output_sha256")
+                    == render_output.get("sha256")
                 )
             media_workflow = {
                 "mode": "concat",
@@ -2463,10 +2890,14 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
                 if render_is_current and audio_review_is_current
                 else "blocked",
                 "render": "complete" if render_is_current else "blocked_or_stale",
-                "audio_review": "complete" if audio_review_is_current else "blocked_or_missing",
+                "audio_review": "complete"
+                if audio_review_is_current
+                else "blocked_or_missing",
                 "render_result_filename": latest_render_asset["filename"],
                 "audio_review_filename": (
-                    latest_audio_review_asset["filename"] if audio_review_is_current else None
+                    latest_audio_review_asset["filename"]
+                    if audio_review_is_current
+                    else None
                 ),
                 "ready_for_human_review": render_is_current and audio_review_is_current,
             }
@@ -2475,22 +2906,30 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             _campaign_check(
                 "dependencies: primary content",
                 bool(types & PRIMARY_CONTENT_ARTIFACT_TYPES),
-                "พบ draft/script" if types & PRIMARY_CONTENT_ARTIFACT_TYPES else "ต้องมี draft หรือ video script",
+                "พบ draft/script"
+                if types & PRIMARY_CONTENT_ARTIFACT_TYPES
+                else "ต้องมี draft หรือ video script",
             ),
             _campaign_check(
                 "dependencies: visual prompt",
                 "visual_prompt" in types,
-                "พบ visual prompt" if "visual_prompt" in types else "ยังไม่มี visual prompt",
+                "พบ visual prompt"
+                if "visual_prompt" in types
+                else "ยังไม่มี visual prompt",
             ),
             _campaign_check(
                 "dependencies: audio cue sheet",
                 "video_script" not in types or audio_cue_is_current,
-                "audio cue อ้างถึงสคริปต์ล่าสุด" if audio_cue_is_current else "ต้องสร้าง audio cue sheet ใหม่จากสคริปต์ล่าสุด",
+                "audio cue อ้างถึงสคริปต์ล่าสุด"
+                if audio_cue_is_current
+                else "ต้องสร้าง audio cue sheet ใหม่จากสคริปต์ล่าสุด",
             ),
             _campaign_check(
                 "claims: source references supplied",
                 bool(source_references),
-                f"พบ {len(source_references)} รายการ" if source_references else "ยังไม่มีแหล่งอ้างอิง",
+                f"พบ {len(source_references)} รายการ"
+                if source_references
+                else "ยังไม่มีแหล่งอ้างอิง",
             ),
             _campaign_check(
                 "claims: source verification",
@@ -2499,7 +2938,8 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             ),
             _campaign_check(
                 "media rights",
-                bool(assets) and all(
+                bool(assets)
+                and all(
                     asset.get("media_rights_status") == "confirmed" for asset in assets
                 ),
                 "ต้องยืนยันลิขสิทธิ์ภาพ/เพลง/เสียงก่อนเผยแพร่",
@@ -2507,7 +2947,9 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             _campaign_check(
                 "redaction",
                 redaction.ok,
-                "ไม่พบรายการค้างตรวจ" if redaction.ok else "พบข้อมูลที่ต้อง redact หรือให้มนุษย์ตรวจ",
+                "ไม่พบรายการค้างตรวจ"
+                if redaction.ok
+                else "พบข้อมูลที่ต้อง redact หรือให้มนุษย์ตรวจ",
             ),
         ]
         degraded_render = _latest_degraded_local_render(assets)
@@ -2602,9 +3044,13 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
                 )
                 for asset in client_provenance
             )
-        report_lines.extend(["", "## Redaction and R1–R5 detail", gate_report_md(redaction, gate)])
+        report_lines.extend(
+            ["", "## Redaction and R1–R5 detail", gate_report_md(redaction, gate)]
+        )
         report_task = _asset_task_id(canonical_id, "publish-gate", campaign["version"])
-        report_result = submit_to_bus(DEPARTMENT, report_task, "\n".join(report_lines), "md")
+        report_result = submit_to_bus(
+            DEPARTMENT, report_task, "\n".join(report_lines), "md"
+        )
         review = {
             "status": "approved" if approved_for_version else "review_required",
             "version": campaign["version"],
@@ -2734,9 +3180,7 @@ def remove_campaign_asset(
         campaign["version"] = f"v{version_number}"
         campaign["assets"] = remaining
         campaign["status"] = (
-            str(remaining[-1].get("status") or "scaffold")
-            if remaining
-            else "scaffold"
+            str(remaining[-1].get("status") or "scaffold") if remaining else "scaffold"
         )
         campaign["review"] = None
         campaign["approved_version"] = None
@@ -2793,7 +3237,9 @@ def record_human_approval(
             )
         review = campaign.get("review") or {}
         if review.get("version") != normalized_version:
-            raise ContentServiceError("run review_publish_gate for this exact campaign version first")
+            raise ContentServiceError(
+                "run review_publish_gate for this exact campaign version first"
+            )
         media_workflow_started = any(
             asset.get("type") == "concat_render_result"
             for asset in campaign.get("assets", [])
@@ -2823,7 +3269,9 @@ def record_human_approval(
                     "status": "approved",
                     "approval_required": False,
                     "gate_passed": bool(existing.get("gate_passed")),
-                    "overrides_failed_checks": existing.get("overrides_failed_checks", []),
+                    "overrides_failed_checks": existing.get(
+                        "overrides_failed_checks", []
+                    ),
                     "published": False,
                     "approval_record": {
                         "filename": existing["filename"],
@@ -2879,6 +3327,764 @@ def record_human_approval(
         }
 
 
+def _image_error(error: str, message: str) -> dict[str, Any]:
+    return {"status": "error", "error": error, "message": message}
+
+
+def _content_write_root() -> Path:
+    return (bus_store.BUS_ROOT / DEPARTMENT).resolve()
+
+
+def _relative_image_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(bus_store.ROOT.resolve()).as_posix()
+    except ValueError:
+        return resolved.relative_to(bus_store.BUS_ROOT.resolve()).as_posix()
+
+
+def _generate_image_auto_name(image_format: str) -> str:
+    extension = _IMAGE_EXT_BY_FORMAT[image_format]
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    return f"generated-image-{stamp}-{time.time_ns()}.{extension}"
+
+
+def _resolve_image_path(
+    value: str | None,
+    *,
+    label: str,
+    image_format: str,
+    for_output: bool,
+) -> tuple[Path | None, dict[str, Any] | None]:
+    """Validate that an image input/output path stays inside central_bus/content.
+
+    Returns (path, None) on success or (None, error_dict) for write_out_of_bounds.
+    Existing style (ffmpeg / media_service) raises ContentServiceError for other
+    validation failures so the MCP adapter can format them with _error.
+    """
+    content_root = _content_write_root()
+    raw = "" if value is None else str(value).strip()
+    if for_output:
+        if not raw:
+            return content_root / _generate_image_auto_name(image_format), None
+    else:
+        if not raw:
+            return None, _image_error(
+                "write_out_of_bounds",
+                f"{label} is required and must be inside central_bus/content",
+            )
+    if len(raw) > 2_000:
+        return None, _image_error(
+            "write_out_of_bounds",
+            f"{label} must be a local Central Bus path inside central_bus/content",
+        )
+    if any(ord(char) < 32 for char in raw):
+        return None, _image_error(
+            "write_out_of_bounds", f"{label} contains a control character"
+        )
+    candidate = Path(raw)
+    if ".." in candidate.parts:
+        return None, _image_error(
+            "write_out_of_bounds", f"{label} cannot contain parent-directory segments"
+        )
+    if candidate.is_absolute():
+        resolved_candidate = candidate
+    elif raw == "central_bus" or raw.startswith("central_bus/"):
+        if raw.startswith("central_bus/content"):
+            resolved_candidate = bus_store.ROOT / raw
+        else:
+            return None, _image_error(
+                "write_out_of_bounds", f"{label} must be inside central_bus/content"
+            )
+    elif raw.startswith("content/"):
+        resolved_candidate = bus_store.BUS_ROOT / raw
+    elif candidate.parts[:1] and candidate.parts[0] in {
+        "profiles",
+        "brain",
+        "docs",
+        "decisions",
+        "rules",
+        "sop",
+        "tests",
+        "bus",
+        "solocorp_mcp",
+        "central_bus",
+    }:
+        return None, _image_error(
+            "write_out_of_bounds", f"{label} must be inside central_bus/content"
+        )
+    else:
+        resolved_candidate = content_root / raw
+    try:
+        resolved = resolved_candidate.resolve(strict=False)
+    except OSError:
+        return None, _image_error(
+            "write_out_of_bounds", f"{label} must be inside central_bus/content"
+        )
+    if resolved == content_root or not resolved.is_relative_to(content_root):
+        return None, _image_error(
+            "write_out_of_bounds", f"{label} must be inside central_bus/content"
+        )
+    # Symlink walk on ancestors (same rule as _ffmpeg_bus_path).
+    ancestor = resolved.parent
+    while ancestor != content_root and ancestor != ancestor.parent:
+        if ancestor.is_symlink():
+            return None, _image_error(
+                "write_out_of_bounds", f"{label} cannot use symlinks"
+            )
+        ancestor = ancestor.parent
+    if ancestor != content_root:
+        return None, _image_error(
+            "write_out_of_bounds", f"{label} must be inside central_bus/content"
+        )
+    if for_output:
+        expected_ext = _IMAGE_EXT_BY_FORMAT[image_format]
+        if resolved.suffix == "":
+            resolved = resolved.with_name(resolved.name + f".{expected_ext}")
+        elif resolved.suffix.lstrip(".").lower() != expected_ext:
+            raise ContentServiceError(
+                f"{label} extension must match format {image_format} (.{expected_ext})"
+            )
+        if resolved.exists():
+            raise ContentServiceError(
+                f"{label} already exists; overwrite is not allowed"
+            )
+        return resolved, None
+    if not resolved.exists():
+        raise ContentServiceError(f"{label} does not exist")
+    if not resolved.is_file():
+        raise ContentServiceError(f"{label} must point to a regular file")
+    return resolved, None
+
+
+def _image_mime_for_bytes(raw: bytes, suffix: str) -> str | None:
+    lowered = suffix.lower()
+    if lowered in {".jpg", ".jpeg"}:
+        return "image/jpeg"
+    if lowered == ".png":
+        return "image/png"
+    if lowered == ".webp":
+        return "image/webp"
+    if raw.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    if raw.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if raw[:4] == b"RIFF" and raw[8:12] == b"WEBP":
+        return "image/webp"
+    return None
+
+
+def _openrouter_request(payload: dict[str, Any], api_key: str) -> dict[str, Any]:
+    """Single POST /chat/completions attempt (no retries: every retry bills again)."""
+    body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    request = urllib.request.Request(
+        OPENROUTER_BASE_URL + "/chat/completions",
+        data=body,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(
+            request, timeout=OPENROUTER_TIMEOUT_SECONDS
+        ) as response:
+            raw = response.read()
+    except urllib.error.HTTPError as exc:
+        snippet = ""
+        try:
+            snippet = exc.read(2000).decode("utf-8", errors="replace")
+        except Exception:
+            snippet = ""
+        if api_key and snippet:
+            snippet = snippet.replace(api_key, "[redacted]")
+        if exc.code == 401:
+            raise ContentServiceError(
+                f"OpenRouter authorization failed (HTTP 401): {snippet[:400]}"
+            ) from exc
+        raise ContentServiceError(
+            f"OpenRouter request failed (HTTP {exc.code}): {snippet[:400]}"
+        ) from exc
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        raise ContentServiceError(
+            "OpenRouter request failed (network/timeout)"
+        ) from exc
+    if len(raw) > IMAGE_MAX_RESPONSE_BYTES:
+        raise ContentServiceError("OpenRouter response exceeded the image size limit")
+    try:
+        parsed = json.loads(raw.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise ContentServiceError("OpenRouter returned invalid JSON") from exc
+    if not isinstance(parsed, dict):
+        raise ContentServiceError("OpenRouter returned an invalid response")
+    return parsed
+
+
+def _extract_image_url(data: dict[str, Any]) -> str:
+    choices = data.get("choices")
+    if isinstance(choices, list) and choices and isinstance(choices[0], dict):
+        message = choices[0].get("message")
+        if isinstance(message, dict):
+            images = message.get("images")
+            if isinstance(images, list) and images and isinstance(images[0], dict):
+                first = images[0]
+                image_url = first.get("image_url")
+                if isinstance(image_url, dict) and isinstance(
+                    image_url.get("url"), str
+                ):
+                    return image_url["url"]
+                if isinstance(first.get("url"), str):
+                    return first["url"]
+                if isinstance(first.get("b64_json"), str):
+                    return f"data:image/png;base64,{first['b64_json']}"
+    for key in ("images", "data"):
+        items = data.get(key)
+        if isinstance(items, list) and items and isinstance(items[0], dict):
+            first = items[0]
+            image_url = first.get("image_url")
+            if isinstance(image_url, dict) and isinstance(image_url.get("url"), str):
+                return image_url["url"]
+            if isinstance(first.get("url"), str):
+                return first["url"]
+            if isinstance(first.get("b64_json"), str):
+                return f"data:image/png;base64,{first['b64_json']}"
+    raise ContentServiceError(
+        "OpenRouter response contained no image (missing choices[].message.images[].image_url.url)"
+    )
+
+
+def _decode_image_url(url: str) -> bytes:
+    value = str(url or "").strip()
+    if value.startswith("data:"):
+        header, separator, encoded = value.partition(",")
+        if not separator or ";base64" not in header:
+            raise ContentServiceError(
+                "OpenRouter returned an unsupported image data URL"
+            )
+        try:
+            return base64.b64decode(encoded.strip(), validate=True)
+        except (binascii.Error, ValueError) as exc:
+            raise ContentServiceError("OpenRouter returned invalid image data") from exc
+    if value.startswith(("http://", "https://")):
+        request = urllib.request.Request(value, headers={"Accept": "image/*"})
+        try:
+            with urllib.request.urlopen(
+                request, timeout=OPENROUTER_DOWNLOAD_TIMEOUT_SECONDS
+            ) as response:
+                raw = response.read(IMAGE_MAX_RESPONSE_BYTES + 1)
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            raise ContentServiceError(
+                "OpenRouter image download failed (network/timeout)"
+            ) from exc
+        if len(raw) > IMAGE_MAX_RESPONSE_BYTES:
+            raise ContentServiceError("generated image exceeds the size limit")
+        return raw
+    raise ContentServiceError("OpenRouter returned an unsupported image URL scheme")
+
+
+def _save_generated_image(image_bytes: bytes, target: Path) -> tuple[str, str, int]:
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if target.exists():
+        raise ContentServiceError(
+            "output file already exists; overwrite is not allowed"
+        )
+    temporary: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="wb", dir=target.parent, prefix=f".{target.name}.", delete=False
+        ) as handle:
+            temporary = Path(handle.name)
+            handle.write(image_bytes)
+            handle.flush()
+            os.fsync(handle.fileno())
+        temporary.replace(target)
+        temporary = None
+    finally:
+        if temporary is not None:
+            try:
+                temporary.unlink()
+            except OSError:
+                pass
+    sha256 = hashlib.sha256(image_bytes).hexdigest()
+    return sha256, _relative_image_path(target), len(image_bytes)
+
+
+def _generate_image_openrouter(
+    prompt: str,
+    aspect_ratio: str = "16:9",
+    resolution: str = "4K",
+    format: str = "jpeg",
+    reference_image_path: str | None = None,
+    output_filename: str | None = None,
+) -> dict[str, Any]:
+    """OpenRouter FLUX.3 Image Klein path (legacy; provider="openrouter").
+
+    Transport decision: direct HTTPS to OpenRouter ``POST /api/v1/chat/completions``
+    with ``modalities=["image"]`` and ``image_config`` (aspect_ratio / size /
+    output_format), because the catalog config in opencode.jsonc only registers the
+    model id for OpenCode recognition and cannot execute image generation itself.
+    Text-to-image and image-to-image (edit, via a base64 ``image_url`` part) both
+    go through this single endpoint.
+
+    Cost & retries: one paid request per call (~USD 0.008/image, 90s timeout).
+    The call is intentionally single-shot — automatic retries would bill twice —
+    so network/provider failures surface as a ContentServiceError instead.
+
+    The image is written atomically under ``central_bus/content/`` with a SHA-256
+    hash and a provenance manifest on the bus. Nothing is published or approved:
+    ``gate_passed`` stays False and human review is required, like every other
+    Content tool.
+    """
+
+    text = _required(prompt, "prompt")
+    aspect = str(aspect_ratio or "").strip()
+    if not re.fullmatch(r"\d{1,4}:\d{1,4}", aspect):
+        raise ContentServiceError(
+            "aspect_ratio must use the form WIDTH:HEIGHT, e.g. 16:9"
+        )
+    level = str(resolution or "").strip().upper()
+    if level not in IMAGE_RESOLUTIONS:
+        raise ContentServiceError("resolution must be one of: 1K, 2K, 4K")
+    image_format = str(format or "").strip().lower()
+    if image_format == "jpg":
+        image_format = "jpeg"
+    if image_format not in IMAGE_FORMATS:
+        raise ContentServiceError("format must be one of: jpeg, png, webp")
+    mime = _IMAGE_MIME_BY_FORMAT[image_format]
+
+    target, error = _resolve_image_path(
+        output_filename,
+        label="output_filename",
+        image_format=image_format,
+        for_output=True,
+    )
+    if error is not None:
+        return error
+    if target is None:
+        raise ContentServiceError("output_filename could not be resolved")
+
+    reference_rel: str | None = None
+    reference_data_url: str | None = None
+    reference_raw = (
+        "" if reference_image_path is None else str(reference_image_path).strip()
+    )
+    if reference_raw:
+        reference_path, error = _resolve_image_path(
+            reference_raw,
+            label="reference_image_path",
+            image_format=image_format,
+            for_output=False,
+        )
+        if error is not None:
+            return error
+        if reference_path is None:
+            raise ContentServiceError("reference_image_path could not be resolved")
+        try:
+            reference_bytes = reference_path.read_bytes()
+        except OSError as exc:
+            raise ContentServiceError("reference_image_path could not be read") from exc
+        if not reference_bytes:
+            raise ContentServiceError("reference_image_path is empty")
+        if len(reference_bytes) > MAX_PAYLOAD_BYTES:
+            raise ContentServiceError(
+                f"reference_image_path exceeds {MAX_PAYLOAD_BYTES} bytes"
+            )
+        reference_mime = _image_mime_for_bytes(reference_bytes, reference_path.suffix)
+        if reference_mime is None:
+            raise ContentServiceError(
+                "reference_image_path must be a JPEG, PNG, or WebP image"
+            )
+        reference_data_url = f"data:{reference_mime};base64,{base64.b64encode(reference_bytes).decode('ascii')}"
+        reference_rel = _relative_image_path(reference_path)
+
+    load_dotenv(dotenv_path=ROOT / ".env", override=False)
+    api_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    if not api_key or api_key == "your-openrouter-key-here":
+        return _image_error(
+            "missing_api_key",
+            "OPENROUTER_API_KEY is not available from the environment or project .env file",
+        )
+
+    if reference_data_url is not None:
+        content: Any = [
+            {"type": "text", "text": text},
+            {"type": "image_url", "image_url": {"url": reference_data_url}},
+        ]
+        messages: list[dict[str, Any]] = [{"role": "user", "content": content}]
+    else:
+        messages = [{"role": "user", "content": text}]
+    payload: dict[str, Any] = {
+        "model": OPENROUTER_MODEL,
+        "messages": messages,
+        "modalities": ["image"],
+        "image_config": {
+            "aspect_ratio": aspect,
+            "size": level,
+            "output_format": mime,
+        },
+    }
+    response = _openrouter_request(payload, api_key)
+    image_url = _extract_image_url(response)
+    image_bytes = _decode_image_url(image_url)
+    if not image_bytes:
+        raise ContentServiceError("OpenRouter returned an empty image")
+    if len(image_bytes) > IMAGE_MAX_RESPONSE_BYTES:
+        raise ContentServiceError("generated image exceeds the size limit")
+
+    prompt_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    sha256, image_rel_path, size_bytes = _save_generated_image(image_bytes, target)
+    timestamp = _now()
+    manifest = {
+        "schema_version": 1,
+        "image_path": image_rel_path,
+        "sha256": sha256,
+        "size_bytes": size_bytes,
+        "provider": "openrouter",
+        "model": OPENROUTER_MODEL,
+        "prompt_hash": prompt_hash,
+        "prompt_chars": len(text),
+        "aspect_ratio": aspect,
+        "resolution": level,
+        "output_format": mime,
+        "reference_image_path": reference_rel,
+        "cost_estimate_usd": OPENROUTER_COST_USD,
+        "timestamp": timestamp,
+        "lifecycle_state": "llm_generated",
+        "gate_passed": False,
+        "published": False,
+        "approval_required": True,
+        "media_rights_status": "human_confirmation_required",
+    }
+    manifest_result = submit_to_bus(
+        DEPARTMENT,
+        f"generated-image-{prompt_hash[:12]}",
+        json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2),
+        "json",
+    )
+    return {
+        "status": "ok",
+        "image_path": image_rel_path,
+        "sha256": sha256,
+        "size_bytes": size_bytes,
+        "model": OPENROUTER_MODEL,
+        "provider": "openrouter",
+        "prompt_hash": prompt_hash,
+        "prompt_chars": len(text),
+        "aspect_ratio": aspect,
+        "resolution": level,
+        "format": image_format,
+        "reference_image_path": reference_rel,
+        "cost_estimate_usd": OPENROUTER_COST_USD,
+        "timestamp": timestamp,
+        "image_manifest": {
+            "filename": manifest_result["filename"],
+            "path": manifest_result["path"],
+        },
+        "gate_passed": False,
+        "published": False,
+        "approval_required": True,
+        "human_review_required": True,
+        "lifecycle_state": "llm_generated",
+    }
+
+
+def generate_image(
+    prompt: str,
+    aspect_ratio: str = "16:9",
+    resolution: str = "4K",
+    format: str = "jpeg",
+    reference_image_path: str | None = None,
+    output_filename: str | None = None,
+    provider: str = "nvidia",
+) -> dict[str, Any]:
+    """Generate one image and store it on the Content bus. Never publishes.
+
+    provider="nvidia" (default): direct HTTPS to NVIDIA NIM
+    ``POST /v1/genai/black-forest-labs/flux-3-image-klein`` with
+    ``{"prompt", "image": [base64, ...], "width", "height", "steps"}``.
+    ``aspect_ratio`` maps through ``NVIDIA_ASPECT_TO_WIDTH_HEIGHT`` (unknown
+    mapping -> ``unsupported_aspect``). Output is always JPEG (live-proven
+    vendor behavior, header ffd8ffe0): a requested png is saved as ``.jpg``
+    and noted as ``requested_format``/``actual_format`` in the manifest.
+
+    provider="openrouter": legacy FLUX.3 Klein chat-completions flow,
+    preserved unchanged (see ``_generate_image_openrouter``).
+
+    Cost & retries: both providers bill/credit-meter per call, so the call is
+    single-shot with no automatic retries (OpenRouter 90s / NIM 110s timeout);
+    network/provider failures surface as a ContentServiceError. The image is
+    written atomically under ``central_bus/content`` with a SHA-256 hash and a
+    provenance manifest (the NIM manifest carries ``license_note`` because
+    FLUX.3 Klein defaults to FLUX Kommunity v1.0 non-commercial terms).
+    Nothing is published or approved: ``gate_passed`` stays False and human
+    review is required, like every other Content tool.
+    """
+    # Providers bill per call, so the prompt is length-checked before any
+    # HTTP is attempted (both nvidia and openrouter paths pass through here).
+    if len(str(prompt or "").strip()) > IMAGE_MAX_PROMPT_CHARS:
+        raise ContentServiceError(
+            f"prompt exceeds the {IMAGE_MAX_PROMPT_CHARS}-character image-generation limit"
+        )
+    text = _required(prompt, "prompt")
+    aspect = str(aspect_ratio or "").strip()
+    if not re.fullmatch(r"\d{1,4}:\d{1,4}", aspect):
+        raise ContentServiceError(
+            "aspect_ratio must use the form WIDTH:HEIGHT, e.g. 16:9"
+        )
+    normalized = str(provider or "").strip().lower()
+    if normalized not in {"nvidia", "openrouter"}:
+        raise ContentServiceError("provider must be one of: nvidia, openrouter")
+    if normalized == "openrouter":
+        return _generate_image_openrouter(
+            text, aspect, resolution, format, reference_image_path, output_filename
+        )
+    return _generate_image_nvidia(
+        text, aspect, format, reference_image_path, output_filename
+    )
+
+
+def _nvidia_request(payload: dict[str, Any], api_key: str) -> dict[str, Any]:
+    """Single POST to the NVIDIA NIM FLUX.3 Klein endpoint (no retries: they bill again)."""
+    body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    request = urllib.request.Request(
+        NVIDIA_NIM_URL,
+        data=body,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(
+            request, timeout=NVIDIA_NIM_TIMEOUT_SECONDS
+        ) as response:
+            raw = response.read()
+    except urllib.error.HTTPError as exc:
+        snippet = ""
+        try:
+            snippet = exc.read(2000).decode("utf-8", errors="replace")
+        except Exception:
+            snippet = ""
+        if api_key and snippet:
+            snippet = snippet.replace(api_key, "[redacted]")
+        if exc.code == 401:
+            raise ContentServiceError(
+                f"NVIDIA NIM authorization failed (HTTP 401): {snippet[:400]}"
+            ) from exc
+        raise ContentServiceError(
+            f"NVIDIA NIM request failed (HTTP {exc.code}): {snippet[:400]}"
+        ) from exc
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        raise ContentServiceError(
+            "NVIDIA NIM request failed (network/timeout)"
+        ) from exc
+    if len(raw) > IMAGE_MAX_RESPONSE_BYTES:
+        raise ContentServiceError("NVIDIA NIM response exceeded the image size limit")
+    try:
+        parsed = json.loads(raw.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise ContentServiceError("NVIDIA NIM returned invalid JSON") from exc
+    if not isinstance(parsed, dict):
+        raise ContentServiceError("NVIDIA NIM returned an invalid response")
+    return parsed
+
+
+def _extract_nvidia_image(data: dict[str, Any]) -> bytes:
+    artifacts = data.get("artifacts")
+    if not (
+        isinstance(artifacts, list) and artifacts and isinstance(artifacts[0], dict)
+    ):
+        raise ContentServiceError(
+            "NVIDIA NIM response contained no image (missing artifacts[0])"
+        )
+    encoded = artifacts[0].get("base64")
+    if not isinstance(encoded, str) or not encoded.strip():
+        raise ContentServiceError(
+            "NVIDIA NIM response contained no image (missing artifacts[0].base64)"
+        )
+    try:
+        image_bytes = base64.b64decode(encoded.strip(), validate=True)
+    except (binascii.Error, ValueError) as exc:
+        raise ContentServiceError("NVIDIA NIM returned invalid image data") from exc
+    if not image_bytes:
+        raise ContentServiceError("NVIDIA NIM returned an empty image")
+    if not image_bytes.startswith(b"\xff\xd8\xff"):
+        raise ContentServiceError("NVIDIA NIM returned image data that is not a JPEG")
+    return image_bytes
+
+
+def _generate_image_nvidia(
+    prompt: str,
+    aspect_ratio: str = "16:9",
+    format: str = "jpeg",
+    reference_image_path: str | None = None,
+    output_filename: str | None = None,
+) -> dict[str, Any]:
+    """NVIDIA NIM FLUX.3 Klein path (default; provider="nvidia"). Always JPEG output."""
+
+    requested_format = str(format or "").strip().lower()
+    if requested_format == "jpg":
+        requested_format = "jpeg"
+    if requested_format not in IMAGE_FORMATS:
+        raise ContentServiceError("format must be one of: jpeg, png, webp")
+    # Vendor behavior (live-proven): the endpoint always returns JPEG. A png
+    # request is honored as save-as-.jpg with an actual_format note in provenance.
+    image_format = "jpeg"
+    forced_jpeg_note = requested_format != "jpeg"
+
+    dimensions = NVIDIA_ASPECT_TO_WIDTH_HEIGHT.get(aspect_ratio)
+    if dimensions is None:
+        supported = ", ".join(sorted(NVIDIA_ASPECT_TO_WIDTH_HEIGHT))
+        return _image_error(
+            "unsupported_aspect",
+            f"aspect_ratio {aspect_ratio} has no NIM mapping; supported: {supported}",
+        )
+    width, height = dimensions
+
+    target, error = _resolve_image_path(
+        output_filename,
+        label="output_filename",
+        image_format=image_format,
+        for_output=True,
+    )
+    if error is not None:
+        return error
+    if target is None:
+        raise ContentServiceError("output_filename could not be resolved")
+
+    reference_rel: str | None = None
+    reference_images: list[str] = []
+    reference_raw = (
+        "" if reference_image_path is None else str(reference_image_path).strip()
+    )
+    if reference_raw:
+        reference_path, error = _resolve_image_path(
+            reference_raw,
+            label="reference_image_path",
+            image_format=image_format,
+            for_output=False,
+        )
+        if error is not None:
+            return error
+        if reference_path is None:
+            raise ContentServiceError("reference_image_path could not be resolved")
+        try:
+            reference_bytes = reference_path.read_bytes()
+        except OSError as exc:
+            raise ContentServiceError("reference_image_path could not be read") from exc
+        if not reference_bytes:
+            raise ContentServiceError("reference_image_path is empty")
+        if len(reference_bytes) > MAX_PAYLOAD_BYTES:
+            raise ContentServiceError(
+                f"reference_image_path exceeds {MAX_PAYLOAD_BYTES} bytes"
+            )
+        if len(reference_images) >= NVIDIA_NIM_MAX_REFERENCE_IMAGES:
+            raise ContentServiceError(
+                f"reference images exceed the NIM limit of "
+                f"{NVIDIA_NIM_MAX_REFERENCE_IMAGES}"
+            )
+        reference_mime = _image_mime_for_bytes(reference_bytes, reference_path.suffix)
+        if reference_mime is None:
+            raise ContentServiceError(
+                "reference_image_path must be a JPEG, PNG, or WebP image"
+            )
+        reference_images.append(base64.b64encode(reference_bytes).decode("ascii"))
+        reference_rel = _relative_image_path(reference_path)
+
+    load_dotenv(dotenv_path=ROOT / ".env", override=False)
+    api_key = os.environ.get("NVIDIA_API_KEY", "").strip()
+    if not api_key or api_key == "your-nvidia-key-here":
+        return _image_error(
+            "missing_api_key",
+            "NVIDIA_API_KEY is not available from the environment or project .env file",
+        )
+
+    payload: dict[str, Any] = {
+        "prompt": prompt,
+        "width": width,
+        "height": height,
+        "steps": NVIDIA_NIM_STEPS_DEFAULT,
+    }
+    if reference_images:
+        payload["image"] = reference_images
+    response = _nvidia_request(payload, api_key)
+    image_bytes = _extract_nvidia_image(response)
+    if len(image_bytes) > IMAGE_MAX_RESPONSE_BYTES:
+        raise ContentServiceError("generated image exceeds the size limit")
+
+    prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+    sha256, image_rel_path, size_bytes = _save_generated_image(image_bytes, target)
+    timestamp = _now()
+    manifest = {
+        "schema_version": 1,
+        "image_path": image_rel_path,
+        "sha256": sha256,
+        "size_bytes": size_bytes,
+        "provider": "nvidia-nim",
+        "model": NVIDIA_NIM_MODEL,
+        "prompt_hash": prompt_hash,
+        "prompt_chars": len(prompt),
+        "aspect_ratio": aspect_ratio,
+        "width": width,
+        "height": height,
+        "steps": NVIDIA_NIM_STEPS_DEFAULT,
+        "requested_format": requested_format,
+        "actual_format": "jpeg",
+        "license_note": NVIDIA_LICENSE_NOTE,
+        "reference_image_path": reference_rel,
+        "timestamp": timestamp,
+        "lifecycle_state": "llm_generated",
+        "gate_passed": False,
+        "published": False,
+        "approval_required": True,
+        "media_rights_status": "human_confirmation_required",
+    }
+    manifest_result = submit_to_bus(
+        DEPARTMENT,
+        f"generated-image-{prompt_hash[:12]}",
+        json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2),
+        "json",
+    )
+    result = {
+        "status": "ok",
+        "image_path": image_rel_path,
+        "sha256": sha256,
+        "size_bytes": size_bytes,
+        "model": NVIDIA_NIM_MODEL,
+        "provider": "nvidia-nim",
+        "prompt_hash": prompt_hash,
+        "prompt_chars": len(prompt),
+        "aspect_ratio": aspect_ratio,
+        "width": width,
+        "height": height,
+        "steps": NVIDIA_NIM_STEPS_DEFAULT,
+        "requested_format": requested_format,
+        "format": image_format,
+        "actual_format": "jpeg",
+        "reference_image_path": reference_rel,
+        "timestamp": timestamp,
+        "image_manifest": {
+            "filename": manifest_result["filename"],
+            "path": manifest_result["path"],
+        },
+        "gate_passed": False,
+        "published": False,
+        "approval_required": True,
+        "human_review_required": True,
+        "lifecycle_state": "llm_generated",
+    }
+    if forced_jpeg_note:
+        result["format_note"] = (
+            f"NVIDIA NIM always returns JPEG; requested {requested_format} "
+            "was saved as .jpg (actual_format jpeg)"
+        )
+    return result
+
+
 def sop_resource() -> str:
     parts = [
         "# Content Creator SOP\n",
@@ -2904,7 +4110,10 @@ def sop_resource() -> str:
         "4. เก็บ payload จริงใน `central_bus/content/` และคืน path แบบย่อให้ client\n",
         "5. ElevenLabs เป็นบริการคิดเครดิต; เรียกสร้างเฉพาะ voiceover ที่ผู้ใช้ร้องขอโดยตรง ไม่ต้องขออนุมัติซ้ำ และห้ามสร้างตัวเลือก/เวอร์ชันเพิ่มเอง\n",
     ]
-    for label, path in (("Brand voice", BRAND_GUIDELINES_PATH), ("Department profile", PROFILE_PATH)):
+    for label, path in (
+        ("Brand voice", BRAND_GUIDELINES_PATH),
+        ("Department profile", PROFILE_PATH),
+    ):
         if path.is_file():
             text = path.read_text(encoding="utf-8").strip()
             parts.extend([f"\n## {label}\n", text[:6_000]])
@@ -2914,11 +4123,18 @@ def sop_resource() -> str:
 def media_production_skill_resource() -> str:
     """Load the internal Content video and audio production skill."""
 
-    path = Path(__file__).resolve().parent / "content_skills" / "media-production" / "SKILL.md"
+    path = (
+        Path(__file__).resolve().parent
+        / "content_skills"
+        / "media-production"
+        / "SKILL.md"
+    )
     try:
         return path.read_text(encoding="utf-8")
     except OSError as exc:
-        raise ContentServiceError("internal media production skill is unavailable") from exc
+        raise ContentServiceError(
+            "internal media production skill is unavailable"
+        ) from exc
 
 
 def result_json(value: dict[str, Any]) -> str:

@@ -181,6 +181,7 @@ MCP config ทุกรูปแบบใช้ schema เดียวกัน:
 | `solocorp_get_routing_rules` | View keyword-based routing rules |
 | `solocorp_get_commands` | List available pipeline commands |
 | `solocorp_get_team_members` | List specialist agents under a department |
+| `generate_image` (content-creator) | Generate one image; stores under `central_bus/content/` with SHA-256 + provenance, review required. Default `provider: "nvidia"` = NVIDIA NIM FLUX.3 Klein (always JPEG output, ~110s single attempt, env `NVIDIA_API_KEY`); `provider: "openrouter"` = legacy FLUX.3 Klein chat path (paid: ~USD 0.008/call, env `OPENROUTER_API_KEY`) |
 
 ## Resources Available
 
