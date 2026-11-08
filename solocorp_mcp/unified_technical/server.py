@@ -5,8 +5,9 @@ Run with: python3 -m solocorp_mcp.unified_technical.server
 
 from __future__ import annotations
 
-import asyncio
 import sys
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
@@ -31,21 +32,6 @@ from solocorp_mcp.unified_technical.tools.unified_tools import (  # noqa: E402
     unified_pipeline_status,
 )
 
-mcp = FastMCP(
-    "unified-technical",
-    instructions="""\
-Unified Technical MCP Server — SoloCorp OS.
-Combines Architect, Engineering (backend/frontend), and QA into one process
-per Two-Tier Architecture (Control Layer = agents, Data Layer = this server).
-
-Tool namespaces:
-- architect_* -> routing, pipeline definition, bus topology
-- engineering_* -> backend/frontend implementation, code review
-- qa_* -> test execution, evidence recording
-- unified_* -> health check, pipeline status, tool discovery
-""",
-)
-
 _architect: ArchitectModule | None = None
 _engineering: EngineeringModule | None = None
 _qa: QAModule | None = None
@@ -62,6 +48,34 @@ async def _startup() -> None:
     await _architect.startup()
     await _engineering.startup()
     await _qa.startup()
+
+
+@asynccontextmanager
+async def lifespan(server: FastMCP) -> AsyncIterator[None]:
+    await _startup()
+    yield
+    # Graceful shutdown: stop cache cleanup task and close SQLite connection.
+    # LockManager is stateless (locks only) — no close needed.
+    # Modules have no shutdown hook (startup only in BaseModule).
+    await cache.stop()
+    await db_manager.close()
+
+
+mcp = FastMCP(
+    "unified-technical",
+    instructions="""\
+Unified Technical MCP Server — SoloCorp OS.
+Combines Architect, Engineering (backend/frontend), and QA into one process
+per Two-Tier Architecture (Control Layer = agents, Data Layer = this server).
+
+Tool namespaces:
+- architect_* -> routing, pipeline definition, bus topology
+- engineering_* -> backend/frontend implementation, code review
+- qa_* -> test execution, evidence recording
+- unified_* -> health check, pipeline status, tool discovery
+""",
+    lifespan=lifespan,
+)
 
 
 @mcp.tool()
@@ -139,7 +153,7 @@ async def unified_list_tools_tool(namespace: str | None = None) -> dict:
 
 
 def main() -> None:
-    mcp.run(startup=_startup)
+    mcp.run()
 
 
 if __name__ == "__main__":

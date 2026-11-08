@@ -291,12 +291,28 @@
   // ------------------------------------------------------------
   "mcp": {
     "servers": {
+      "stealth-browser": {
+        "type": "local",
+        "command": ["tools/stealth-browser-mcp/venv/bin/python3", "-m", "server"],
+        "cwd": "tools/stealth-browser-mcp/src",
+        "disabled": true,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        },
+        "description": "Browser Automation MCP (Chrome+CDP) — disabled 2026-11-08 per user decision (never worked, always failed NotFound/spawn). Re-enable by setting disabled:false. Code under tools/stealth-browser-mcp/ kept intact."
+      },
       "central-bus": {
         "type": "local",
         "command": [".venv/bin/python3", "-m", "solocorp_mcp.bus_mcp"],
         "cwd": ".",
         "disabled": false,
-        "timeout": 60000,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        },
         "description": "Central Bus Daemon — Control/Data interface between all departments (local stdio for MVP)"
       },
       "unified-technical": {
@@ -304,15 +320,23 @@
         "command": [".venv/bin/python3", "-m", "solocorp_mcp.unified_technical.server"],
         "cwd": ".",
         "disabled": false,
-        "timeout": 120000,
+        "timeout": {
+          "startup": 120000,
+          "catalog": 120000,
+          "execution": 120000
+        },
         "description": "Unified Technical MCP Server — Architect, Engineering (Backend/Frontend), QA combined into one process per Two-Tier Architecture"
       },
       "content-creator": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.content_creator"],
+        "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.content_mcp"],
         "cwd": ".",
         "disabled": false,
-        "timeout": 1800000,
+        "timeout": {
+          "startup": 1800000,
+          "catalog": 1800000,
+          "execution": 1800000
+        },
         "description": "Content Creator MCP — Content production, video, audio, campaign artifacts (includes Concat + Earshot)"
       }
     }
