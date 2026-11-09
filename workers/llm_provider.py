@@ -246,6 +246,15 @@ async def think(
     full_prompt = f"{system_prompt}\n\n{prompt}" if system_prompt else prompt
     last_error = ""
 
+    # Model/timeout override (Owner 2026-11-09, Go): SOLOCORP_LLM_MODEL / SOLOCORP_LLM_TIMEOUT
+    model = os.environ.get("SOLOCORP_LLM_MODEL") or model
+    _env_model = os.environ.get("SOLOCORP_LLM_MODEL")
+    if timeout is None and os.environ.get("SOLOCORP_LLM_TIMEOUT"):
+        try:
+            timeout = int(os.environ["SOLOCORP_LLM_TIMEOUT"])
+        except ValueError:
+            pass
+
     # ── Pre-flight 1: โควตาถูกล็อกอยู่ไหม (ประหยัดเวลา + ไม่ยิงเข้ากำแพง) ──
     quota = token_ledger.quota_status()
     if quota["locked"]:
@@ -273,7 +282,11 @@ async def think(
 
     # Build try-list: requested model first, then fallbacks (skip duplicates).
     # Dead models map straight to full chain.
-    if model in DEAD_MODELS or model == DEFAULT_MODEL or model in MODEL_FALLBACKS:
+    if _env_model:
+        # env เลือกโมเดลชัดเจน (เช่น Go) — ห้าม fallback ไป free chain
+        # เพราะ free tier จะล็อก quota ทั้งระบบค้างไว้ (incident D3 2026-11-09)
+        try_list = [model]
+    elif model in DEAD_MODELS or model == DEFAULT_MODEL or model in MODEL_FALLBACKS:
         try_list = list(MODEL_FALLBACKS)
         # ถ้า caller เจาะจงตัวใน chain ให้เริ่มจากตัวนั้นก่อน
         if model in MODEL_FALLBACKS:
