@@ -2,23 +2,32 @@
   "$schema": "https://opencode.ai/config.json",
 
   // ==========================================
-  // SoloCorp OS — OpenCode Desktop Configuration
-  // Version: 2.4 | Date: 2026-11-08 | Owner: CEO Turbo
+  // AXIS — OpenCode Desktop Configuration (Powered by SoloCorp OS Architecture)
+  // Version: 2.4 | Date: 2026-11-08 | Owner: AXIS CEO (Turbo)
   // Note: Uses .jsonc to support comments explaining department structure and permissions
   // ==========================================
 
   // ------------------------------------------------------------
-  // 1. Default Agent — First session always starts with CEO
+  // 1. Default Agent — First session always starts with AXIS CEO
   // ------------------------------------------------------------
-  "default_agent": "ceo-turbo",
+  "default_agent": "axis-ceo",
 
   // ------------------------------------------------------------
-  // 2. Agent Hierarchy — According to SoloCorp OS Department Architecture
+  // 2. Agent Hierarchy — According to AXIS Department Architecture
   // Control Layer (decision-making) vs Specialist (execution via delegation)
   // ------------------------------------------------------------
   "agents": {
 
     // ---------- Control Layer ----------
+    "axis-ceo": {
+      "description": "AXIS CEO — Supreme AI Authority & Primary Controller. Receives vision from Owner → makes decisions → delegates to Department Heads",
+      "mode": "primary",
+      "level": 4,
+      "color": "#FFD700",
+      "permissions": [
+        { "action": "read", "resource": "*", "effect": "allow" }
+      ]
+    },
     "ceo-turbo": {
       "description": "CEO — Supreme AI Authority. Receives vision from Owner → makes decisions → delegates to Department Heads",
       "mode": "primary",

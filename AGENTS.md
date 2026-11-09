@@ -1,4 +1,4 @@
-# SoloCorp OS 2.4 — Agent Quickstart
+# AXIS 2.4 — Agent Quickstart (Powered by SoloCorp OS Architecture)
 
 SoloCorp OS is an **organizational OS for AI agents and a modular MCP product**. The current repo contains docs-as-code (`profiles/*/SOUL.md`, `rules/`, `sop/`), the Central Bus service, the legacy Core MCP, and independent department MCP adapters. The approved product target is a local-first SoloCorp App with one CEO experience, a module registry, and a task queue. The target app is not implemented yet. Product direction and MVP scope live in [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md). Authoritative roster: `profiles/INDEX.md`. Auto-loaded behavior context: `opencode.json` → `instructions` (`CLAUDE.md` + `rules/INDEX.md`).
 

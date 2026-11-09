@@ -1,5 +1,5 @@
 <!--
-  SoloCorp OS — README
+  AXIS — README (Powered by SoloCorp OS Architecture)
   Funnel: Hook → Prerequisite → Try → Evidence
   Counts below are from the git tree (config-file rows) plus one runtime row
   verified 2026-11-08 with `opencode mcp list`. No number without a verify command.
@@ -7,7 +7,7 @@
 -->
 
 <details>
-<summary><strong>SoloCorp OS</strong> — ASCII banner (click to expand)</summary>
+<summary><strong>AXIS</strong> — ASCII banner (click to expand)</summary>
 
 ```text
 ================================================================================
@@ -30,9 +30,14 @@
 
 </details>
 
-# SoloCorp OS
+# ⚡ AXIS — OpenCode-Native Multi-Agent Framework
+
+> **One Axis, Multiple Identities.**
+> *The premier multi-agent department architecture framework built 100% for OpenCode (Desktop, CLI, Web, and Mobile). Powered by SoloCorp OS Architecture.*
 
 **An organizational OS for AI agents.** Turn a single AI into a workforce where every unit of work has a named owner, a specialist executor, and an explicit handoff — coordinated through a central bus, not a single overloaded prompt.
+
+> **Brand mapping (display → repo ID, runtime unchanged):** `axis-ceo` → `ceo-turbo` · `skills/@axis/` → `skills/@solocorp/` · `AXIS Central Bus` → `central_bus/` + `solocorp_mcp.bus_mcp`. Agent IDs and paths stay as-is until a rename runbook lands; display names above are brand-only.
 
 This repository is a **pre-release**. **v2.4.0 is the product-pack line** (CFO, Legal, Content Creator). It is not a claim that the operating system is finished.
 
