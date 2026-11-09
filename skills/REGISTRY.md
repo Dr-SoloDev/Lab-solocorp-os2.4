@@ -45,17 +45,17 @@ Think of them as "slash commands with memory."
 | `brain` | pipeline | `.grok/skills/brain/SKILL.md` | grok | Active |
 | `route` | pipeline | `.grok/skills/route/SKILL.md` | grok | Active |
 | `pipeline-full-cycle` | pipeline | _(alias of grok `pipeline`)_ | grok | Active |
-| **`pipeline-bridge`** 🆕 | **cross-dept** | **`@solocorp/cross-dept/pipeline-bridge/`** | **opencode + grok** | **🟢 Active** |
-| **`mirror-check`** 🆕 | **cross-dept** | **`@solocorp/cross-dept/mirror-check/`** | **opencode + grok + claude** | **🟢 Active** |
-| **`sprint-plan`** 🆕 | **ceo** | **`@solocorp/ceo/sprint-plan/`** | **opencode + grok + claude** | **🟢 Active** |
-| **`daily-ops`** 🆕 | **coo** | **`@solocorp/coo/daily-ops/`** | **opencode + grok** | **🟢 Active** |
-| **`deploy`** 🆕 | **engineering** | **`@solocorp/engineering/deploy/`** | **opencode + grok** | **🟢 Active** |
-| **`budget-check`** 🆕 | **cfo** | **`@solocorp/cfo/budget-check/`** | **opencode + grok** | **🟢 Active** |
-| **`smoke-test`** 🆕 | **qa** | **`@solocorp/qa/smoke-test/`** | **opencode + grok + claude** | **🟢 Active** |
-| **`rfc`** 🆕 | **governance** | **`@solocorp/governance/rfc/`** | **opencode + grok** | **🟢 Active** |
-| **`web-read`** 🆕 | **engineering** | **`@solocorp/engineering/web-read/`** | **opencode + grok** | **🟢 Active** |
-| **`news-feed`** 🆕 | **engineering** | **`@solocorp/engineering/news-feed/`** | **opencode + grok** | **🟢 Active** |
-| **`creator-kit`** 🆕 | **cross-dept** | **`@solocorp/cross-dept/creator-kit/`** | **opencode + grok** | **🟢 Active** |
+| **`pipeline-bridge`** 🆕 | **cross-dept** | **`@axis/cross-dept/pipeline-bridge/`** | **opencode + grok** | **🟢 Active** |
+| **`mirror-check`** 🆕 | **cross-dept** | **`@axis/cross-dept/mirror-check/`** | **opencode + grok + claude** | **🟢 Active** |
+| **`sprint-plan`** 🆕 | **ceo** | **`@axis/ceo/sprint-plan/`** | **opencode + grok + claude** | **🟢 Active** |
+| **`daily-ops`** 🆕 | **coo** | **`@axis/coo/daily-ops/`** | **opencode + grok** | **🟢 Active** |
+| **`deploy`** 🆕 | **engineering** | **`@axis/engineering/deploy/`** | **opencode + grok** | **🟢 Active** |
+| **`budget-check`** 🆕 | **cfo** | **`@axis/cfo/budget-check/`** | **opencode + grok** | **🟢 Active** |
+| **`smoke-test`** 🆕 | **qa** | **`@axis/qa/smoke-test/`** | **opencode + grok + claude** | **🟢 Active** |
+| **`rfc`** 🆕 | **governance** | **`@axis/governance/rfc/`** | **opencode + grok** | **🟢 Active** |
+| **`web-read`** 🆕 | **engineering** | **`@axis/engineering/web-read/`** | **opencode + grok** | **🟢 Active** |
+| **`news-feed`** 🆕 | **engineering** | **`@axis/engineering/news-feed/`** | **opencode + grok** | **🟢 Active** |
+| **`creator-kit`** 🆕 | **cross-dept** | **`@axis/cross-dept/creator-kit/`** | **opencode + grok** | **🟢 Active** |
 
 ---
 

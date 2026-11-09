@@ -15,9 +15,9 @@ from typing import Any
 
 import pytest
 
-from solocorp_mcp import module_registry
-from solocorp_mcp.module_registry import ModuleRegistry
-from solocorp_mcp.module_registry_schema import SCHEMA_VERSION, RegistrySchemaError
+from axis_mcp import module_registry
+from axis_mcp.module_registry import ModuleRegistry
+from axis_mcp.module_registry_schema import SCHEMA_VERSION, RegistrySchemaError
 
 
 @pytest.fixture()

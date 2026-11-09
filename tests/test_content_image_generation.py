@@ -13,10 +13,10 @@ import os
 
 import pytest
 
-from solocorp_mcp import bus_store
-from solocorp_mcp.departments import content_mcp as content_mcp_module
-from solocorp_mcp.departments import content_service
-from solocorp_mcp.departments.content_mcp import mcp as content_mcp
+from axis_mcp import bus_store
+from axis_mcp.departments import content_mcp as content_mcp_module
+from axis_mcp.departments import content_service
+from axis_mcp.departments.content_mcp import mcp as content_mcp
 
 FAKE_JPEG_BYTES = b"\xff\xd8\xff\xe0" + b"fake-jpeg-payload" * 64
 

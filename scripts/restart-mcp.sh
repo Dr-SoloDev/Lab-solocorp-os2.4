@@ -7,13 +7,13 @@
 # on 2026-11-02 six generations were alive at once (one from the previous
 # day) and which one answered depended on luck.
 #
-# This script finds every `python3 -m solocorp_mcp.*` process, shows its start
+# This script finds every `python3 -m axis_mcp.*` process, shows its start
 # time and whether it is older than the newest source file, and only kills
 # when asked. The host respawns a fresh generation on the next tool call.
 #
 # Usage:
 #   scripts/restart-mcp.sh              # report only (safe, default)
-#   scripts/restart-mcp.sh --yes        # kill every solocorp_mcp process
+#   scripts/restart-mcp.sh --yes        # kill every axis_mcp process
 #   scripts/restart-mcp.sh --yes --stale-only
 #
 # Never touches: busd (uvicorn central_bus.main:app), the shell, or this file.
@@ -43,11 +43,11 @@ done
 command -v ps >/dev/null || { echo "ps not available" >&2; exit 1; }
 
 HEAD_SHORT="$(git rev-parse --short HEAD 2>/dev/null || echo 'no-git')"
-NEWEST_SRC="$(find solocorp_mcp -name '*.py' -not -path '*/__pycache__/*' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1)"
+NEWEST_SRC="$(find axis_mcp -name '*.py' -not -path '*/__pycache__/*' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1)"
 NEWEST_SRC_EPOCH="${NEWEST_SRC%% *}"
 NEWEST_SRC_PATH="${NEWEST_SRC#* }"
 if [[ -z "${NEWEST_SRC_EPOCH:-}" ]]; then
-  echo "cannot read source mtimes under solocorp_mcp/" >&2
+  echo "cannot read source mtimes under axis_mcp/" >&2
   exit 1
 fi
 
@@ -58,10 +58,10 @@ echo "  repo HEAD        : $HEAD_SHORT"
 echo "  newest source    : $(fmt_epoch "$NEWEST_SRC_EPOCH")  ${NEWEST_SRC_PATH:-none}"
 echo
 
-# pid, args, start epoch for every solocorp_mcp server process
+# pid, args, start epoch for every axis_mcp server process
 mapfile -t ROWS < <(
   ps -eo pid=,args= \
-    | grep -E -- '-m solocorp_mcp\.' \
+    | grep -E -- '-m axis_mcp\.' \
     | grep -v -E 'grep|restart-mcp' \
     | while read -r pid rest; do
         [[ -d "/proc/$pid" ]] || continue
@@ -72,7 +72,7 @@ mapfile -t ROWS < <(
 )
 
 if [[ ${#ROWS[@]} -eq 0 ]]; then
-  echo "No solocorp_mcp process is running."
+  echo "No axis_mcp process is running."
   echo "The host will start one on the next tool call."
   exit 0
 fi
@@ -86,7 +86,7 @@ for row in "${ROWS[@]}"; do
   age_h=$(( age_s / 3600 ))
   age_m=$(( (age_s % 3600) / 60 ))
   age="${age_h}h${age_m}m"
-  # Same tolerance as solocorp_mcp/runtime_freshness.py
+  # Same tolerance as axis_mcp/runtime_freshness.py
   if awk -v s="$start" -v n="$NEWEST_SRC_EPOCH" 'BEGIN{exit !(n > s + 1)}'; then
     state="STALE"
     STALE=$((STALE + 1))

@@ -26,7 +26,7 @@ tools/carbonyl/web-read <url> [--wait N] [--cols N] [--rows N] [--network MODE] 
 | **Bus** | ทุกอย่าง | `POST /v1/web-read {"url":...}` หรือ `{"query":...}` |
 
 Core client อยู่ที่ `solocorp_skills/web.py` — ใช้ร่วมกันทั้ง 3 ทาง (ไม่มี logic ซ้ำ)
-ดูรายละเอียด: `skills/@solocorp/engineering/web-read/SKILL.md` · `decisions/ADR-019-web-capability-v1-integration.md`
+ดูรายละเอียด: `skills/@axis/engineering/web-read/SKILL.md` · `decisions/ADR-019-web-capability-v1-integration.md`
 
 ## Ladder — เลือกให้ถูกขั้น
 
@@ -81,5 +81,5 @@ Base = `fathyb/carbonyl:latest` (BSD-3-Clause) — build ไม่ต้อง�
 
 ## ดูเพิ่ม
 
-- Skill: `skills/@solocorp/engineering/web-read/SKILL.md`
+- Skill: `skills/@axis/engineering/web-read/SKILL.md`
 - ADR: `decisions/ADR-018-carbonyl-web-read-tool.md`

@@ -1,7 +1,7 @@
 # Content Creator MCP — Internal System Audit
 
 > **วันที่:** 2026-11-01 · **ผู้ตรวจ:** MCP Builder (🔌) · **สถานะ:** AUDIT ONLY — ยังไม่แก้โค้ด
-> **ขอบเขต:** `solocorp_mcp/departments/content_mcp.py`, `content_service.py`, `media_service.py`,
+> **ขอบเขต:** `axis_mcp/departments/content_mcp.py`, `content_service.py`, `media_service.py`,
 > `content_helpers.py`, `sound_mcp.py`, `bus_mcp.py`, `bus_store.py`, `mcp_stdio.py`
 > + ข้อมูลจริงใน `central_bus/content/` + `solocorp_skills/redact.py` (Publish Gate)
 > **สถานะสรุป:** ⚠️ **NOT PASSED** — gate หลัก (Publish Gate) มีช่องโหว่ D2 ที่ยืนยันด้วย probe แล้ว
@@ -32,7 +32,7 @@
 ```text
 OpenCode V2 / Codex / Perch Desktop
    │
-   ├── content-creator   solocorp_mcp/departments/content_mcp.py   (16 tools + 1 resource)
+   ├── content-creator   axis_mcp/departments/content_mcp.py   (16 tools + 1 resource)
    │        ├── content_service.py   2,350 บรรทัด  domain logic ทั้งหมด
    │        ├── media_service.py       925 บรรทัด  Concat MCP + Earshot MCP (stdio)
    │        └── content_helpers.py     319 บรรทัด  series 10 ตอน (ยังไม่มี tool)
@@ -55,14 +55,14 @@ OpenCode V2 / Codex / Perch Desktop
 | media exec | `render_campaign_media_local`, `render_campaign_with_concat` | blocking, ถึง 60 นาที |
 | governance | `ingest_client_generated_artifact`, `save_human_edited_artifact`, `record_human_approval` | approval ไม่ authenticate ตัวบุคคล |
 
-Resource: `solocorp://content/sop` (`sop_resource()`, ตัดที่ 14,000 ตัวอักษร)
+Resource: `axis://content/sop` (`sop_resource()`, ตัดที่ 14,000 ตัวอักษร)
 
 ### 2.2 ขนาดโค้ด / ภาระที่วัดได้
 
 | รายการ | ค่า |
 |:--|--:|
-| `content_service.py` | 2,350 บรรทัด (ไฟล์เดี่ยวใหญ่สุดใน `solocorp_mcp/`) |
-| รวม `solocorp_mcp/` | 5,336 บรรทัด |
+| `content_service.py` | 2,350 บรรทัด (ไฟล์เดี่ยวใหญ่สุดใน `axis_mcp/`) |
+| รวม `axis_mcp/` | 5,336 บรรทัด |
 | `central_bus/content/` ระดับ root | 363 ไฟล์ (ณ วันตรวจ), 898 ไฟล์ track ใน git |
 | ไฟล์ `.lock` ที่ถูก track | 12 |
 | ขนาด content | 613 MB (`local_media/` 595 MB) |
@@ -191,7 +191,7 @@ gate ทำงาน ทางเดียวที่ระบบยังป�
 
 **วัดจริง (probe B, §11):** campaign ที่เนื้อหาสะอาด (redaction PASS, R1–R5 ผ่านครบ) ยังได้
 `gate_passed=False` และ failed checks = `['claims: source verification', 'media rights']` เท่านั้น
-+ สแกนโค้ดทั้ง `solocorp_mcp/` และ `scripts/render_campaign_media_local.py` ไม่พบจุดใดที่เขียน
++ สแกนโค้ดทั้ง `axis_mcp/` และ `scripts/render_campaign_media_local.py` ไม่พบจุดใดที่เขียน
 `media_rights_status = "confirmed"` (0 จุด)
 
 **เกณฑ์ปิด finding:** ระบุให้ชัดว่าข้อใด "มนุษย์ต้องยืนยันเสมอ" (ไม่นับเป็น fail) และข้อใด
@@ -329,8 +329,8 @@ import shutil; from pathlib import Path
 root = Path("/tmp/opencode/bus-probe2")
 if root.exists(): shutil.rmtree(root)
 root.mkdir(parents=True)
-from solocorp_mcp.departments import content_service as cs
-from solocorp_mcp import bus_store
+from axis_mcp.departments import content_service as cs
+from axis_mcp import bus_store
 cid = "leak-probe"
 text = ("# บทความทดสอบ\n\n## Hook\n\nเราลองแล้วพัง 2 ชั่วโมง ต้นทุนคือเวลา\n\n"
         "## Body\n\nหลักฐาน: tests/test_content_mcp.py และ git 78d915f\n"
@@ -393,7 +393,7 @@ ls central_bus/content/campaign-*-manifest_*.json | wc -l         # 161
 | Platform | Linux 7.0.0-38-generic x86_64 |
 | git HEAD | `78d915f08589f1b1b6e1a612c261a5ce1e85c9dc` (branch `main`) |
 | เวลารัน | 2026-11-01T13:32:17Z |
-| Isolation | ทุก probe ใช้ `SOLOCORP_BUS_ROOT` ของตัวเองใต้ `/tmp/opencode/audit-verify/<probe>` + ล้าง `sys.modules` ของ `solocorp_mcp` ก่อน import ใหม่ |
+| Isolation | ทุก probe ใช้ `SOLOCORP_BUS_ROOT` ของตัวเองใต้ `/tmp/opencode/audit-verify/<probe>` + ล้าง `sys.modules` ของ `axis_mcp` ก่อน import ใหม่ |
 | ผลกระทบต่อข้อมูลจริง | **ไม่มี** — ไม่มีการเขียนลง `central_bus/content` ของ repo |
 | Script | `/tmp/opencode/audit_verify.py` (probe A–F) + `/tmp/opencode/audit_verify_out.txt` (output ดิบ) |
 
@@ -543,7 +543,7 @@ python -m pytest tests/test_content_mcp.py tests/test_media_services.py \
 | 3 | `task_get_status` ไม่มี scope guard | `server.py`: เพิ่ม `_check_scope("team")` | `1ad4fbd` | ✅ แก้แล้ว |
 | 4 | `task_list()` คืน `brief` ทั้งหมด (รั่วข้อมูล) | `task_tracking.py`: 不包括 `brief` โดย default; `include_brief=True` กรณีจำเป็น | `dccabf5` | ✅ แก้แล้ว |
 | 5 | `qa_record_test_result` เป็น stub ไม่บันทึกจริง | `qa_mcp.py`: บันทึก JSON ลง `central_bus/content/qa_results/` คืน `task_id`, `recorded_at`, `result_path`, `sha256` | `01f5687` | ✅ แก้แล้ว |
-| 6 | `qa_mcp.py` ROOT path ชี้ผิดโฟลเดอร์ | `qa_mcp.py`: เปลี่ยน `ROOT` ให้ชี้ที่ repo root (ไม่ใช่ `solocorp_mcp/`) | `1dc9c39` | ✅ แก้แล้ว |
+| 6 | `qa_mcp.py` ROOT path ชี้ผิดโฟลเดอร์ | `qa_mcp.py`: เปลี่ยน `ROOT` ให้ชี้ที่ repo root (ไม่ใช่ `axis_mcp/`) | `1dc9c39` | ✅ แก้แล้ว |
 
 #### ผลการทดสอบซ้ำ (15/15 ผ่าน)
 

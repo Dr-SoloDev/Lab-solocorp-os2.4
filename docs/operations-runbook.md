@@ -26,7 +26,7 @@ capabilities to external coding agents via the Model Context Protocol.
                   └──────┬───────────────┘
                          │ MCP
                   ┌──────▼───────────────┐
-                  │  solocorp_mcp.server │
+                  │  axis_mcp.server │
                   └──────┬───────────────┘
                          │
                   ┌──────▼───────────────┐
@@ -150,7 +150,7 @@ crontab -l 2>/dev/null; echo "*/30 * * * * cd $(pwd) && python3 -m loop_runner.m
 ### 5. (Optional) Start MCP Server
 
 ```bash
-python3 -m solocorp_mcp.server
+python3 -m axis_mcp.server
 ```
 
 The MCP server is also auto-configured in `opencode.json` and
@@ -190,7 +190,7 @@ print('✅ Imported', len(rules), 'routing rules')
 curl http://127.0.0.1:8099/health
 
 # Check running processes
-ps aux | grep -E 'central_bus|agent_worker|loop_runner|solocorp_mcp'
+ps aux | grep -E 'central_bus|agent_worker|loop_runner|axis_mcp'
 
 # View logs
 tail -f /tmp/central_bus.log
@@ -276,7 +276,7 @@ coding agents via Model Context Protocol.
 ### Start
 
 ```bash
-python3 -m solocorp_mcp.server
+python3 -m axis_mcp.server
 ```
 
 ### Configured by
@@ -315,7 +315,7 @@ for dl in list_dead_letters():
 ### Process Health
 
 ```bash
-ps aux | grep -E 'central_bus|agent_worker|loop_runner|solocorp_mcp'
+ps aux | grep -E 'central_bus|agent_worker|loop_runner|axis_mcp'
 ```
 
 ### Logs
@@ -350,7 +350,7 @@ pkill -f central_bus.main
 pkill -f loop_runner.main
 
 # Stop MCP Server (if running)
-pkill -f solocorp_mcp.server
+pkill -f axis_mcp.server
 ```
 
 ### 2. Start all services
@@ -366,7 +366,7 @@ bash scripts/start-services.sh
 curl http://127.0.0.1:8099/health
 
 # Check running processes
-ps aux | grep -E 'central_bus|agent_worker|loop_runner|solocorp_mcp'
+ps aux | grep -E 'central_bus|agent_worker|loop_runner|axis_mcp'
 ```
 
 ---
@@ -420,7 +420,7 @@ Confirm:  python3 -c "import loop_runner; print('OK')"
 
 ```
 Symptom:  Connection refused from coding agent
-Fix 1:    Ensure server is running: python3 -m solocorp_mcp.server
+Fix 1:    Ensure server is running: python3 -m axis_mcp.server
 Fix 2:    Check opencode.json or .claude/settings.json for correct path
 Fix 3:    Re-run bootstrap:  bash scripts/bootstrap-ceo.sh
 ```
@@ -492,7 +492,7 @@ init_project('<project_id>', name='Recovered Project')
 │   ├── agent_worker_service.py  # Central Bus queue consumer
 │   ├── llm_provider.py          # LLM inference provider
 │   └── agents/                  # Agent implementations
-├── solocorp_mcp/
+├── axis_mcp/
 │   └── server.py             # MCP protocol server
 ├── scripts/
 │   ├── bootstrap-ceo.sh      # First-time setup

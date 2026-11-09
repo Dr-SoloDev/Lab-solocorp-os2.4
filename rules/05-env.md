@@ -16,7 +16,7 @@ source .venv/bin/activate && export PYTHONPATH=.
 | govctl API | `python -m govctl_cli api start` | 8765 |
 | govctl CLI | `python -m govctl_cli <cmd>` | gov/ artifacts |
 | Loop Runner | `python -m loop_runner.main` | cron 30m |
-| MCP Server | `python -m solocorp_mcp.server` | — |
+| MCP Server | `python -m axis_mcp.server` | — |
 
 ## 3. Tests
 

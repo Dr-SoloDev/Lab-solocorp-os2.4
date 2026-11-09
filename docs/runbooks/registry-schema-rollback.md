@@ -12,7 +12,7 @@ has no `RegistryDowngradeError`, so the message is plain text — see
 ## Symptom
 
 ```
-python -c "from solocorp_mcp.module_registry import ModuleRegistry as R; print(R().validate())"
+python -c "from axis_mcp.module_registry import ModuleRegistry as R; print(R().validate())"
 # {'valid': False, 'errors': ['config downgrade: .../config/module-registry.json was
 #  written by a newer config schema (schema_version 2; this build supports 1)...'],
 #  'warnings': [], 'stale_state': [], 'state_error': None, 'error_kind': 'downgrade'}
@@ -32,7 +32,7 @@ old schema.
 
 ```bash
 scripts/restart-mcp.sh          # report only, safe
-scripts/restart-mcp.sh --yes    # kill every solocorp_mcp process; host respawns
+scripts/restart-mcp.sh --yes    # kill every axis_mcp process; host respawns
 ```
 
 Do this **before** step 1 and again after step 3.
@@ -49,7 +49,7 @@ scripts/restart-mcp.sh --yes
 
 ```bash
 source .venv/bin/activate && export PYTHONPATH=.
-python -c "from solocorp_mcp.module_registry import ModuleRegistry as R; print(R().validate())"
+python -c "from axis_mcp.module_registry import ModuleRegistry as R; print(R().validate())"
 ```
 
 Read `error_kind`:
@@ -96,7 +96,7 @@ cp config/module-registry.json.bak config/module-registry.json
 ### 3. Verify
 
 ```bash
-python -c "from solocorp_mcp.module_registry import ModuleRegistry as R; print(R().validate())"
+python -c "from axis_mcp.module_registry import ModuleRegistry as R; print(R().validate())"
 scripts/restart-mcp.sh          # confirm no process is stale
 ```
 

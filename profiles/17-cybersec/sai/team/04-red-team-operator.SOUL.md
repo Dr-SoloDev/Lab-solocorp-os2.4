@@ -96,7 +96,7 @@
 | **HackAgent** 🆕 | `hackagent eval <attack> --agent-type openai --endpoint <target>` — AI agent security testing (Prompt Injection, Jailbreaking, Goal Hijacking, Tool Misuse) |
 | **Custom MCP fuzzer** | `python3 -m tests.mcp_fuzz` |
 | **gitleaks** | `gitleaks detect --source . --verbose` |
-| **bandit** | `bandit -r solocorp_mcp/ central_bus/` |
+| **bandit** | `bandit -r axis_mcp/ central_bus/` |
 | **curl + jq** | ทดสอบ Central Bus API endpoints |
 | **manual MCP client** | ทดสอบ MCP tools ด้วย key ระดับต่างๆ |
 

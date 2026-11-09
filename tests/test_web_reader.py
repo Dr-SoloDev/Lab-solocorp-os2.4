@@ -3,7 +3,7 @@
 Covers the three integration points built in W1+W2:
   * solocorp_skills.web  — shared client (URL guard, untrusted wrapping, SERP parsing)
   * workers/agents/base_agent.py  — BaseAgent.web_read() / .web_search()
-  * solocorp_mcp/server.py         — solocorp_web_read / solocorp_web_search tools
+  * axis_mcp/server.py         — solocorp_web_read / solocorp_web_search tools
   * central_bus/main.py            — POST /v1/web-read endpoint
 
 Live network tests are skipped when docker is unavailable so CI stays offline-safe.
@@ -181,7 +181,7 @@ class TestMcpTools:
     """MCP server ต้องมี tool web_read / web_search"""
 
     def test_tools_registered(self):
-        from solocorp_mcp.server import create_server
+        from axis_mcp.server import create_server
         server = create_server()
         names = set()
         try:
@@ -189,7 +189,7 @@ class TestMcpTools:
             names = {t.name for t in tools}
         except Exception:
             # fallback: ไล่ดูฟังก์ชันในโมดูล
-            import solocorp_mcp.server as m
+            import axis_mcp.server as m
             names = {n for n in dir(m) if "web" in n}
         assert any("web_read" in n for n in names), names
         assert any("web_search" in n for n in names), names

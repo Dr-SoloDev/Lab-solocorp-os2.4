@@ -1,7 +1,7 @@
 # C2 — Registry config schema v2
 
-**Date:** 2026-11-06 · **Scope:** `solocorp_mcp/module_registry_schema.py`,
-`solocorp_mcp/module_registry.py`, `config/module-registry.json`, department
+**Date:** 2026-11-06 · **Scope:** `axis_mcp/module_registry_schema.py`,
+`axis_mcp/module_registry.py`, `config/module-registry.json`, department
 MCPs, `scripts/registry-repair.py`
 **Ticket:** CMD-006 · **Decision:** `bus/evidence/2026-11-06/CMD-006-decision.md`
 
@@ -66,7 +66,7 @@ migration; the next write stamps `_meta.schema_version: 2`.
    config.
 3. Verify:
    ```bash
-   python -c "from solocorp_mcp.module_registry import ModuleRegistry as R; print(R().validate()['error_kind'])"
+   python -c "from axis_mcp.module_registry import ModuleRegistry as R; print(R().validate()['error_kind'])"
    # None
    ```
 

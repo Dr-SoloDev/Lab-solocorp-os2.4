@@ -9,7 +9,7 @@
     "command": [
       ".venv/bin/python3",
       "-m",
-      "solocorp_mcp.server"
+      "axis_mcp.server"
     ],
     "name": "Core MCP — Organization & Routing",
     "version": "0.1.0",
@@ -32,7 +32,7 @@
     "command": [
       ".venv/bin/python3",
       "-m",
-      "solocorp_mcp.bus_mcp"
+      "axis_mcp.bus_mcp"
     ],
     "name": "Central Bus — Storage & Queue",
     "version": "0.1.0",
@@ -52,7 +52,7 @@
     "command": [
       ".venv/bin/python3",
       "-m",
-      "solocorp_mcp.departments.content_mcp"
+      "axis_mcp.departments.content_mcp"
     ],
     "name": "Content Creator",
     "version": "0.1.0",
@@ -73,7 +73,7 @@
     "command": [
       ".venv/bin/python3",
       "-m",
-      "solocorp_mcp.departments.engineering_mcp"
+      "axis_mcp.departments.engineering_mcp"
     ],
     "name": "Engineering",
     "version": "0.1.0",
@@ -93,7 +93,7 @@
     "command": [
       ".venv/bin/python3",
       "-m",
-      "solocorp_mcp.departments.qa_mcp"
+      "axis_mcp.departments.qa_mcp"
     ],
     "name": "QA",
     "version": "0.1.0",

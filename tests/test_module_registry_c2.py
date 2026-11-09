@@ -31,11 +31,11 @@ from typing import Any
 
 import pytest
 
-from solocorp_mcp import module_registry
-from solocorp_mcp.auth import SCOPE_LEVELS
-from solocorp_mcp.module_host import ModuleHost
-from solocorp_mcp.module_registry import ModuleRegistry
-from solocorp_mcp.module_registry_schema import (
+from axis_mcp import module_registry
+from axis_mcp.auth import SCOPE_LEVELS
+from axis_mcp.module_host import ModuleHost
+from axis_mcp.module_registry import ModuleRegistry
+from axis_mcp.module_registry_schema import (
     INFRA_DEPENDENCIES,
     SCHEMA_VERSION,
     TRANSPORT_ENTRY_FIELDS,
@@ -620,8 +620,8 @@ def _sandbox(tmp_path: Path) -> tuple[Path, dict[str, str]]:
     sandbox = tmp_path / "sandbox"
     sandbox.mkdir()
     shutil.copytree(
-        ROOT / "solocorp_mcp",
-        sandbox / "solocorp_mcp",
+        ROOT / "axis_mcp",
+        sandbox / "axis_mcp",
         ignore=shutil.ignore_patterns("__pycache__"),
     )
     env = {
@@ -650,9 +650,9 @@ def test_department_import_creates_no_registry_config(tmp_path: Path) -> None:
     sandbox, env = _sandbox(tmp_path)
 
     result = _run_python(
-        "import solocorp_mcp.departments.content_mcp\n"
-        "import solocorp_mcp.departments.engineering_mcp\n"
-        "import solocorp_mcp.departments.qa_mcp\n",
+        "import axis_mcp.departments.content_mcp\n"
+        "import axis_mcp.departments.engineering_mcp\n"
+        "import axis_mcp.departments.qa_mcp\n",
         sandbox,
         env,
     )
@@ -665,7 +665,7 @@ def test_department_tool_seeds_only_its_own_module(tmp_path: Path) -> None:
     sandbox, env = _sandbox(tmp_path)
     code = (
         "import json\n"
-        "from solocorp_mcp.departments import content_mcp\n"
+        "from axis_mcp.departments import content_mcp\n"
         "raw = content_mcp.mcp._tool_manager.get_tool('module_registry_status').fn()\n"
         "payload = json.loads(raw)\n"
         "print(json.dumps({'valid': payload['valid'], 'modules': sorted(payload['modules'])}))\n"
@@ -727,7 +727,7 @@ def test_department_status_tool_works_without_api_key(
     registry: ModuleRegistry, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.delenv("SOLOCORP_API_KEY", raising=False)
-    from solocorp_mcp.departments import content_mcp
+    from axis_mcp.departments import content_mcp
 
     monkeypatch.setattr(content_mcp, "_module_registry", registry)
 

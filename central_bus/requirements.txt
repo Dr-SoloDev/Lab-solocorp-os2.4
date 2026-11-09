@@ -16,7 +16,7 @@ numpy>=1.26.0                   # central_bus/semantic.py, central_bus/behavior_
 tomli-w>=1.0.0                  # govctl_cli/api/routes/governance.py (เขียน ADR เป็น TOML)
 typer>=0.12.0                   # govctl_cli/adr.py, govctl_cli/ao_cmd.py (CLI)
 rich>=13.0.0                    # govctl_cli/dashboard/dashboard.py
-mcp>=1.28.1,<2.0.0             # solocorp_mcp/server.py, legal_vault/mcp_server/server.py
+mcp>=1.28.1,<2.0.0             # axis_mcp/server.py, legal_vault/mcp_server/server.py
                              # ⚠️ ห้ามปล่อย 2.x — API ของ _tool_manager เปลี่ยน → test_web_reader fail
                              #   และ MCP server ค้างไม่ปิด process → CI hang ตอนจบ run
 PyYAML>=6.0                     # routing.yaml / config.yaml loading

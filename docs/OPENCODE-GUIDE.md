@@ -50,7 +50,7 @@ opencode "@ceo-turbo สวัสดี"
 /workspace [แผนก] [งาน]     เช่น /workspace ช่างฟูล แก้บั๊กตาชั่ง
 ```
 
-skill `skills/@solocorp/cross-dept/dept-workspace/SKILL.md` จะประกอบ
+skill `skills/@axis/cross-dept/dept-workspace/SKILL.md` จะประกอบ
 context bundle (ตัวตน+งาน+บริบท+กติกาส่งกลับ) ให้ — ก็อปไปวางในแชทใหม่ได้เลย
 
 ## 🌱 Fork ไปปรับใช้ (หนึ่งแกน หลายตัวตน)

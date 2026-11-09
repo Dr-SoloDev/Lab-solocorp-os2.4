@@ -338,7 +338,7 @@
       },
       "central-bus": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.bus_mcp"],
+        "command": [".venv/bin/python3", "-m", "axis_mcp.bus_mcp"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -350,7 +350,7 @@
       },
       "unified-technical": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.unified_technical.server"],
+        "command": [".venv/bin/python3", "-m", "axis_mcp.unified_technical.server"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -362,7 +362,7 @@
       },
       "content-creator": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.content_mcp"],
+        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.content_mcp"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -481,16 +481,16 @@
   "skills": {
     "paths": [
       ".opencode/skills",
-      "skills/@solocorp/cross-dept",
-      "skills/@solocorp/ceo",
-      "skills/@solocorp/coo",
-      "skills/@solocorp/engineering",
-      "skills/@solocorp/cfo",
-      "skills/@solocorp/qa",
-      "skills/@solocorp/governance",
-      "skills/@solocorp/content-creator",
-      "skills/@solocorp/design",
-      "skills/@solocorp/marketing"
+      "skills/@axis/cross-dept",
+      "skills/@axis/ceo",
+      "skills/@axis/coo",
+      "skills/@axis/engineering",
+      "skills/@axis/cfo",
+      "skills/@axis/qa",
+      "skills/@axis/governance",
+      "skills/@axis/content-creator",
+      "skills/@axis/design",
+      "skills/@axis/marketing"
     ]
   },
 

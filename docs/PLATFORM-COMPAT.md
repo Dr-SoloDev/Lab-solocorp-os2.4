@@ -23,7 +23,7 @@
 |:--------|:------:|:------|
 | CEO default agent | ✅ | `default_agent: ceo-turbo` |
 | 18 slash commands | ✅ | pipeline, handoff, status, audit, deploy, brain, pipeline-bridge, mirror-check, bootstrap, triage, mirror, orchestrate, summary, sprint-plan, daily-ops, eng-deploy, budget-check, smoke-test, rfc-new |
-| Skills paths | ✅ | 7 paths in `skills.paths` incl. `@solocorp/` |
+| Skills paths | ✅ | 7 paths in `skills.paths` incl. `@axis/` |
 | MCP servers | ✅ | solocorp, github, stealth-browser |
 | Profile references | ✅ | 9 reference paths (profiles, docs, decisions, etc.) |
 | Auto-bootstrap | ✅ | `/bootstrap` on session start |
@@ -49,7 +49,7 @@
 |:--------|:------:|:------|
 | Pipeline skills | ✅ partial | 7 skills today; **19** target in Plan 1 (match `opencode.json`) |
 | Department agents | ✅ partial | 6 spawnable Heads; **≥21 + coo-kit** in Plan 1 |
-| Department skills | 🟡 | SkillHub `@solocorp/*` via bus; port as Grok skills in Plan 1–2 |
+| Department skills | 🟡 | SkillHub `@axis/*` via bus; port as Grok skills in Plan 1–2 |
 | MCP | ✅ | `solocorp` + `stealth_browser`; runtime tools (health/queue) in Plan 2 |
 | Runtime | ✅ | `bash scripts/start-services.sh` → bus :8099 + govctl :8765 + agent worker |
 | OpenCode gold badge | 🟡 | 🟢 only after Plan 3 acceptance (smoke + CI + demo) |
@@ -117,7 +117,7 @@ Quick start: `source .venv/bin/activate && export PYTHONPATH=. && bash scripts/s
 |:----|:--------:|:-----------|
 | **Grok ↔ OpenCode parity** | **P1** | [`GROK-PARITY-PLAN.md`](GROK-PARITY-PLAN.md) — Plan 1 agents+skills, Plan 2 MCP, Plan 3 🟢 |
 | Claude Code agent model | P3 | Create `.claude/CLAUDERC.md` for auto-agent |
-| Grok dept skills | P1 | Covered by parity Plan 1–2 (port `@solocorp/*` + missing slash cmds) |
+| Grok dept skills | P1 | Covered by parity Plan 1–2 (port `@axis/*` + missing slash cmds) |
 | Codex CLI commands | P3 | Add commands to `.codex/config.toml` |
 | Hermes deployment | P3 | Add Hermes deploy step to `/deploy` pipeline |
 | Cross-platform test suite | P2 | Create smoke test for each platform (Grok smoke = Plan 3) |

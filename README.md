@@ -37,7 +37,7 @@
 
 **An organizational OS for AI agents.** Turn a single AI into a workforce where every unit of work has a named owner, a specialist executor, and an explicit handoff — coordinated through a central bus, not a single overloaded prompt.
 
-> **Brand mapping (display → repo ID, runtime unchanged):** `axis-ceo` → `ceo-turbo` · `skills/@axis/` → `skills/@solocorp/` · `AXIS Central Bus` → `central_bus/` + `solocorp_mcp.bus_mcp`. Agent IDs and paths stay as-is until a rename runbook lands; display names above are brand-only.
+> **Brand mapping (display → repo ID, runtime unchanged):** `axis-ceo` → `ceo-turbo` · `skills/@axis/` → `skills/@axis/` · `AXIS Central Bus` → `central_bus/` + `axis_mcp.bus_mcp`. Agent IDs and paths stay as-is until a rename runbook lands; display names above are brand-only.
 
 This repository is a **pre-release**. **v2.4.0 is the product-pack line** (CFO, Legal, Content Creator). It is not a claim that the operating system is finished.
 
@@ -64,7 +64,7 @@ This repository is a **pre-release**. **v2.4.0 is the product-pack line** (CFO, 
   ```bash
   source .venv/bin/activate && export PYTHONPATH=.
   ```
-- **Git** for cloning. The generic MCP servers themselves speak standard stdio MCP and can be attached to any compatible client (see `solocorp_mcp/server.py` + `solocorp_mcp/MCP_CLIENT_CONFIGS.md` for the generic contract) — but the bundled skills, agents, and commands in this repo are wired for OpenCode.
+- **Git** for cloning. The generic MCP servers themselves speak standard stdio MCP and can be attached to any compatible client (see `axis_mcp/server.py` + `axis_mcp/MCP_CLIENT_CONFIGS.md` for the generic contract) — but the bundled skills, agents, and commands in this repo are wired for OpenCode.
 
 > **Multi-client archives (2026-11-08):** bundles for Hermes, Codex, Grok, Claude Code, and Copilot were retired from the active path by the L5 Owner direction. They are preserved in tag `archive/multi-client-2026-11-08` — do not treat any `.grok/`, `dist/codex/`, or Copilot path in the working tree as an active target; check that tag if you need the old multi-client material. Legacy helpers `scripts/build-profiles.py` and `scripts/export-codex-agents.py` remain in the tree and are slated for archiving at Phase 3.
 
@@ -126,7 +126,7 @@ Counts verified 2026-11-08 (`feat/registry-c2`, commit `267241c`):
 | Item | Count | Source of truth | Verify |
 |:-----|:-----:|:----------------|:-------|
 | Profile directories | **20** | `profiles/` (`01-ceo` … `19-rd-lab`, incl. `02-coo`) | `ls -d profiles/*/ \| wc -l` → 20 |
-| Canonical skills | **12** | `skills/@solocorp/` (`SKILL.md` files) | `find skills/@solocorp -name 'SKILL.md' \| wc -l` → 12 |
+| Canonical skills | **12** | `skills/@axis/` (`SKILL.md` files) | `find skills/@axis -name 'SKILL.md' \| wc -l` → 12 |
 | OpenCode agent files | **21** | `.opencode/agents/*.md` | `ls .opencode/agents/*.md \| wc -l` → 21 |
 | Primary agents | **4** | `opencode.json` → `agent` (`ceo-turbo`, `build`, `plan`, `explore`) | `python3 -c "import json; print(list(json.load(open('opencode.json'))['agent']))"` |
 | MCP servers — runtime (primary truth) | **10 total: 9 connected + 1 disabled** (`stealth-browser` disabled) | OpenCode runtime: 9 connected — `central-bus`, `codegraph`, `concat`, `content-creator`, `engineering`, `github`, `qa`, `solocorp`, `unified-technical`; 1 disabled — `stealth-browser` | `opencode mcp list` → 9 `✓ connected` + 1 `○ disabled` (verified 2026-11-08, exit 0) |
@@ -145,7 +145,7 @@ Counts verified 2026-11-08 (`feat/registry-c2`, commit `267241c`):
 - **Two-Tier architecture** — control (status, goals, approvals) flows Head-to-Head; data (code, designs, reports) flows through the Central Bus. Heads never pass files directly.
 - **Central Bus (busd)** — FastAPI daemon with SQLite + JSONL compatibility on port 8099, `X-API-Key` auth (legacy `Authorization: Bearer` compat until 2026-10-04).
 - **Loop Runner** — cron-based auto-pilot (`loop_runner/`) that executes due loops without human intervention; single-flight lock + `--dry-run`.
-- **Unified Technical** — Architect + Engineering + QA combined in one MCP process (`solocorp_mcp/unified_technical/`), with graceful lifespan shutdown (cache cleanup task stopped, SQLite connection closed on exit — `solocorp_mcp/unified_technical/server.py`).
+- **Unified Technical** — Architect + Engineering + QA combined in one MCP process (`axis_mcp/unified_technical/`), with graceful lifespan shutdown (cache cleanup task stopped, SQLite connection closed on exit — `axis_mcp/unified_technical/server.py`).
 - **Content Creator Pack** — local video pipeline (BYOM + local-first MCP + publish gate) with frozen Phase 1–3 evidence (see below).
 - **Behavior rules** — one file per behavior (`rules/INDEX.md`): receive (01), work (02), session (03), safety (04), env (05), certification (06).
 - **MCP-standalone depth** — generic stdio servers work from any compatible client without the CEO/App (PRD FR-07).
@@ -185,7 +185,7 @@ Full design: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Behavior map: [`rul
 
 - **Command:** `uvicorn central_bus.main:app --host 127.0.0.1 --port 8099`
 - **Auth:** `X-API-Key` header; legacy `Authorization: Bearer` compat until 2026-10-04.
-- **Code:** `central_bus/` (30+ modules). MCP adapter: `solocorp_mcp/bus_mcp.py` (module `solocorp_mcp.bus_mcp`).
+- **Code:** `central_bus/` (30+ modules). MCP adapter: `axis_mcp/bus_mcp.py` (module `axis_mcp.bus_mcp`).
 
 ### Loop Runner (cron auto-pilot)
 
@@ -204,7 +204,7 @@ Source: `loop_runner/` (`runner.py`, `main.py`, `loops/`).
 
 ### Unified Technical (one process)
 
-`solocorp_mcp/unified_technical/server.py` — Architect, Engineering, and QA modules in one process, sharing a SQLite store and cache. Run with `python3 -m solocorp_mcp.unified_technical.server`. Lifespan fix (commit `267241c`): graceful shutdown stops the cache cleanup task and closes the SQLite connection; the `LockManager` is stateless (locks only) with no close hook.
+`axis_mcp/unified_technical/server.py` — Architect, Engineering, and QA modules in one process, sharing a SQLite store and cache. Run with `python3 -m axis_mcp.unified_technical.server`. Lifespan fix (commit `267241c`): graceful shutdown stops the cache cleanup task and closes the SQLite connection; the `LockManager` is stateless (locks only) with no close hook.
 
 > Registration note: `unified-technical` **is registered in `opencode.jsonc`** (tracked config) and shows **connected** in `opencode mcp list` (verified 2026-11-08); `opencode.json` itself still does not carry the entry (see resolved note above). Any future registration change must update the table in [What is actually in the tree](#what-is-actually-in-the-tree) in the same commit.
 

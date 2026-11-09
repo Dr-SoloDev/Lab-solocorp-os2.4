@@ -8,7 +8,7 @@ Source kickoff: `central_bus/content/ceo-phase2-kickoff-20261107_20261107T043215
 
 ## 0. Verified reality incorporated
 
-- Skill id is `content-media-production`, not `content-video`. File: `solocorp_mcp/departments/content_skills/media-production/SKILL.md` (`id: content-media-production`, v1.0.0). Served as MCP resource `solocorp://content/skills/media-production` via `solocorp_mcp/departments/content_mcp.py:479` (`content_media_production_skill`) → `content_service.py:2688` `media_production_skill_resource()`. SOP resource at `content_service.py:2656` `sop_resource()` (`solocorp://content/sop`).
+- Skill id is `content-media-production`, not `content-video`. File: `axis_mcp/departments/content_skills/media-production/SKILL.md` (`id: content-media-production`, v1.0.0). Served as MCP resource `axis://content/skills/media-production` via `axis_mcp/departments/content_mcp.py:479` (`content_media_production_skill`) → `content_service.py:2688` `media_production_skill_resource()`. SOP resource at `content_service.py:2656` `sop_resource()` (`axis://content/sop`).
 - The skill's "Workflow" section describes the **Concat continuous-narration** workflow (one full-length voice track, `render_campaign_with_concat` as the default for launch/story videos). The **local path** (`render_campaign_media_local`) is a **separate synthetic one-shot** workflow that renders **per-scene Piper segments by design** (`scripts/render_campaign_media_local.py` + `content_service.py:1528+`). Both statements are true; they describe different paths. Agents must not conflate them.
 - Governed chain proven in Phase 1 (OpenCode): `ingest_client_generated_artifact` → `create_video_script` → `render_campaign_media_local` → `review_publish_gate` → `record_human_approval` (human only).
 - Central Bus is the **data plane** (`central_bus/content/` — payload storage, campaign manifests, render outputs). The Content MCP is the **control plane** (tool contracts, validation, subprocess orchestration, publish gate, approval records). Agents must call governed MCP tools only; the Bus never renders, approves, or publishes.
@@ -89,7 +89,7 @@ These mirror the existing MCP instructions (`content_mcp.py:65-99`) and SOP ("`r
 
 ### Role split
 
-- **Skill = guidance/checklist for the agent.** `SKILL.md` (`content-media-production`) tells the agent *what order to work in, which route to pick, what to check, when to stop*. It produces no artifacts and calls no tools. The agent **reads** it (`solocorp://content/skills/media-production`) before production work; the agent does not "run" it.
+- **Skill = guidance/checklist for the agent.** `SKILL.md` (`content-media-production`) tells the agent *what order to work in, which route to pick, what to check, when to stop*. It produces no artifacts and calls no tools. The agent **reads** it (`axis://content/skills/media-production`) before production work; the agent does not "run" it.
 - **Engine = `content_service` + CLI script.** `content_service.py` owns validation, campaign manifests, the subprocess call, publish-gate logic, and approval records. `scripts/render_campaign_media_local.py` owns media rendering (Piper → pdoom frames → FFmpeg mix/captions/verify). The skill never renders; the engine never interprets narrative intent.
 
 Consequence: if the skill and the code disagree, the **code's validated behavior wins for this campaign** and the discrepancy is a documentation defect to file (Phase 4 cleanup), not a reason for the agent to improvise an engine change.
@@ -97,8 +97,8 @@ Consequence: if the skill and the code disagree, the **code's validated behavior
 ### Correct naming (use everywhere)
 
 - Id: **`content-media-production`** (never `content-video`).
-- Resource: **`solocorp://content/skills/media-production`** — served by `content_media_production_skill` (`content_mcp.py:479`).
-- SOP resource: `solocorp://content/sop` (`content_service.py:2656`). Both use the same name in docs, runbooks, and code comments.
+- Resource: **`axis://content/skills/media-production`** — served by `content_media_production_skill` (`content_mcp.py:479`).
+- SOP resource: `axis://content/sop` (`content_service.py:2656`). Both use the same name in docs, runbooks, and code comments.
 
 ### Per-scene (local) vs continuous (Concat) — do not "fix" either
 
@@ -196,6 +196,6 @@ Phase 2 E2E outcome: campaign ends at **`review_required`** (Step 6). Step 7 is 
 3. Skill id spelled `content-media-production` everywhere; resource path correct; per-scene vs continuous stated explicitly.
 4. §3 picks option (a), gives the exact param contract plus 7 test cases, and argues Codex backward compat.
 5. §4 provenance table includes `client_supplied_unverified`, `provider/model: null`-unless-real, and Piper `human_confirmation_required`.
-6. §5 exclusions present; document states **D0 / NOT PASSED**; **no code changed** (verify `git status` clean for `solocorp_mcp/`, `scripts/`, `central_bus/`); v5 `campaign_synth_phase1_20261107` untouched (no bus writes for that campaign id since 2026-11-07 kickoff except reads).
+6. §5 exclusions present; document states **D0 / NOT PASSED**; **no code changed** (verify `git status` clean for `axis_mcp/`, `scripts/`, `central_bus/`); v5 `campaign_synth_phase1_20261107` untouched (no bus writes for that campaign id since 2026-11-07 kickoff except reads).
 
 D1 verdict: **NOT PASSED** until @qa confirms items 1–6. D2 (the `@changful` fix) and D3 (Sek E2E) require this D1 to be accepted first.

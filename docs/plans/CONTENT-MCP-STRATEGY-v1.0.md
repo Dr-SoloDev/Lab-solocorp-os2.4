@@ -26,7 +26,7 @@
 
 ### Legal status (verified 2026-11-02)
 
-- All code under `solocorp_mcp/departments/` was authored by **Dr.SoloDev alone**
+- All code under `axis_mcp/departments/` was authored by **Dr.SoloDev alone**
   (verified via `git log` — no external contributors touched this tree).
   The copyright holder may relicense their own work freely.
 - Directory first appeared in git **2026-10-26** (content pilot), current
@@ -34,7 +34,7 @@
 - Old public forks hold only the **pre-architecture, pre-MCP-rewrite version**
   — MIT applies irrevocably to those old snapshots only. They contain no
   MCP department architecture and no product value being protected today.
-- **Open check (Owner to confirm):** was any `solocorp_mcp/departments/`
+- **Open check (Owner to confirm):** was any `axis_mcp/departments/`
   commit ever pushed while the repo was still public? If yes, those specific
   snapshots are MIT-pinned (harmless if early/immature). If no — clean.
 

@@ -20,7 +20,7 @@ the 2 MiB text payload store.
 
 - **Check `runtime.restart_required` first.** MCP servers load code once at
   startup; "connected" ≠ "current". Confirm the running `content-creator`
-  generation is newer than `solocorp_mcp/departments/content_service.py` /
+  generation is newer than `axis_mcp/departments/content_service.py` /
   `content_mcp.py` via `*_department_info()` (`runtime.status == "current"`,
   `restart_required == false`). A stale generation renders from old code and
   cannot be trusted as Phase 3 evidence.
@@ -100,7 +100,7 @@ From the repository root:
 ```bash
 source .venv/bin/activate && export PYTHONPATH=.
 python - <<'PY'
-from solocorp_mcp.departments.content_service import render_campaign_media_local
+from axis_mcp.departments.content_service import render_campaign_media_local
 import json
 print(json.dumps(render_campaign_media_local("campaign_solocorp_os_1pt5m_narrative"), ensure_ascii=False, indent=2))
 PY

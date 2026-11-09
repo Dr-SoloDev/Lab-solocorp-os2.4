@@ -20,13 +20,13 @@ PRD ระบุว่า *"first-party SoloCorp App/runtime and module registry
 
 | ชิ้นส่วน | สถานะจริง | หลักฐาน |
 |:--|:--|:--|
-| Module registry (config/state split) | ✅ มี ใช้การได้ | `solocorp_mcp/module_registry.py` — config อยู่ `config/module-registry.json` (git), state อยู่ `central_bus/module-registry.state.json` (ไม่ track) — แยก lifetime ถูกต้องแล้ว |
-| Task tracker (task envelope) | ✅ มี ครบ lifecycle | `solocorp_mcp/task_tracking.py` — `pending → running → completed/failed/cancelled`, guard path traversal, ซ่อน `brief` จาก list |
-| Stdio MCP client | ✅ มี | `solocorp_mcp/departments/mcp_stdio.py` — JSON-RPC newline, initialize handshake, 182 บรรทัด |
-| Artifact store | ✅ มี | `solocorp_mcp/bus_store.py` — submit/fetch/list ต่อ department |
+| Module registry (config/state split) | ✅ มี ใช้การได้ | `axis_mcp/module_registry.py` — config อยู่ `config/module-registry.json` (git), state อยู่ `central_bus/module-registry.state.json` (ไม่ track) — แยก lifetime ถูกต้องแล้ว |
+| Task tracker (task envelope) | ✅ มี ครบ lifecycle | `axis_mcp/task_tracking.py` — `pending → running → completed/failed/cancelled`, guard path traversal, ซ่อน `brief` จาก list |
+| Stdio MCP client | ✅ มี | `axis_mcp/departments/mcp_stdio.py` — JSON-RPC newline, initialize handshake, 182 บรรทัด |
+| Artifact store | ✅ มี | `axis_mcp/bus_store.py` — submit/fetch/list ต่อ department |
 | Central Bus daemon | ✅ มี (pre-release) | `central_bus/` — FastAPI :8099, queue SQLite+JSONL |
 | **Web UI / app shell** | ❌ ไม่มี | — |
-| **MCP host (connection manager หลายตัวพร้อมกัน)** | ✅ มี lifecycle/health polling ขั้นต้น | solocorp_mcp/module_host.py — persistent stdio process, connect/disconnect/health/call |
+| **MCP host (connection manager หลายตัวพร้อมกัน)** | ✅ มี lifecycle/health polling ขั้นต้น | axis_mcp/module_host.py — persistent stdio process, connect/disconnect/health/call |
 | **Model/provider adapter ของ app** | ❌ ไม่มี | provider call กระจายใน content_service ไม่ใช่ adapter ของ app |
 | **CEO chat loop ใน app** | ❌ ไม่มี | — |
 
@@ -165,7 +165,7 @@ user brief → CEO (model adapter) ตัดสินใจ route (tool call เ
   "content-creator": {
     "status": "enabled",              // enabled | disabled (config)
     "transport": "stdio",
-    "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.content_mcp"],
+    "command": [".venv/bin/python3", "-m", "axis_mcp.departments.content_mcp"],
     "entry_repo": "internal",         // internal | <path> | <url> — ADR-030 split ready
     "version": "0.3.0",               // ➕
     "capabilities": ["tools", "resources"],   // ➕ declared
@@ -260,5 +260,5 @@ user brief → CEO (model adapter) ตัดสินใจ route (tool call เ
 ## References
 
 - PRD §5 (target architecture) · §6 (usage modes) · §7 (MVP scope) · §9 (NFR) · §11 (phases)
-- Code facts: `solocorp_mcp/module_registry.py` · `task_tracking.py` · `departments/mcp_stdio.py` · `bus_store.py` · `config/module-registry.json`
+- Code facts: `axis_mcp/module_registry.py` · `task_tracking.py` · `departments/mcp_stdio.py` · `bus_store.py` · `config/module-registry.json`
 - ADR-030 (accepted open-core boundary — entry_repo รองรับการ split ที่ Phase 3) · ADR-029 (rank: ADR ใหม่ > SOP > rules)

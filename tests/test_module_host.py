@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from solocorp_mcp.module_host import ModuleHost, ModuleHostError
-from solocorp_mcp.module_registry import ModuleRegistry
+from axis_mcp.module_host import ModuleHost, ModuleHostError
+from axis_mcp.module_registry import ModuleRegistry
 
 
 class FakeClient:

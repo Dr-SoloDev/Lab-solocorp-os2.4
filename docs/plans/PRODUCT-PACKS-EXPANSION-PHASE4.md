@@ -22,18 +22,18 @@ The reusable pattern = 6 components. Each is graded **REUSE** (copy mechanism, r
 
 ### 1.1 Standalone department MCP adapter — REUSE
 
-- **Mechanism:** `solocorp_mcp/departments/content_mcp.py:49-62` — `_registry()` seeds **only** `("content-creator",)` on first use and the docstring states importing the module must not touch the filesystem, so a standalone MCP that a host merely *lists* creates no registry file and declares only the module it owns (citing PRD §155 / FR-07). This is the standalone-usability guarantee in code.
+- **Mechanism:** `axis_mcp/departments/content_mcp.py:49-62` — `_registry()` seeds **only** `("content-creator",)` on first use and the docstring states importing the module must not touch the filesystem, so a standalone MCP that a host merely *lists* creates no registry file and declares only the module it owns (citing PRD §155 / FR-07). This is the standalone-usability guarantee in code.
 - `content_mcp.py:512-526` — `module_registry_status()` is public, read-only, and answers without `SOLOCORP_API_KEY` (CMD-006 §4.2). A department MCP must be inspectable standalone.
 - `content_mcp.py:65-99` — FastMCP instructions declare the boundary in plain language: head = client-facing boundary, five specialists internal, drafts store-without-publishing, every publication requires recorded human approval for the current version. CFO/Legal adapters need the same one-screen boundary declaration.
-- **Generalization evidence:** the pattern is not Content-only. `solocorp_mcp/departments/engineering_mcp.py:1-22` and `qa_mcp.py:1-41` follow the same shape (head as boundary, specialists internal, small tool surface). They are *thinner* (info + routing/status) than Content — proof the shell generalizes, and proof Content is the only department that has so far implemented the full gate + render stack.
+- **Generalization evidence:** the pattern is not Content-only. `axis_mcp/departments/engineering_mcp.py:1-22` and `qa_mcp.py:1-41` follow the same shape (head as boundary, specialists internal, small tool surface). They are *thinner* (info + routing/status) than Content — proof the shell generalizes, and proof Content is the only department that has so far implemented the full gate + render stack.
 - **PRD anchor:** `docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md:41` (department independence), `:73-79` (§6.1 standalone mode — full capability without Core/CEO/Busd), `:145` (FR-07 standalone compatibility).
 
 ### 1.2 Bus data plane (protocol-neutral storage) — REUSE
 
-- **Mechanism:** `solocorp_mcp/bus_store.py:1-6` — "Shared, protocol-neutral storage… MCP servers use this module instead of calling one another… connect to a single department server and still get a working data layer." Domain logic never calls another MCP server directly.
-- `solocorp_mcp/departments/content_service.py:45` — `DEPARTMENT = "content"`; `:31-38` imports `fetch_from_bus / submit_to_bus / submit_bytes_to_bus` from `bus_store`. Every artifact write/read goes through the bus (e.g. `:336`, `:2607`, `:2667`, `:2672`, `:2851`). Department directory isolation is enforced by `bus_store.py:45-51` (`_department_dir` rejects path escape).
-- **Registry split:** `solocorp_mcp/module_registry.py:3-15` — config (tracked, human-decided) vs state (ignored, runtime-observed) in two files. CFO/Legal must reuse this, not invent a third registry.
-- **Task envelope:** `solocorp_mcp/task_tracking.py:1-14, 30, 55-80` — `pending → running → completed/failed/cancelled`, strict `task-<12hex>` validation, `brief` hidden from list by default. Content reuses it with a scope guard: `content_mcp.py:529-620` (`task_create/get/list/update` reject `dept != "content"`). CFO/Legal adapters need the same scoped TaskTracker with `dept="cfo"/"legal"`, `module="cfo"/"legal"`.
+- **Mechanism:** `axis_mcp/bus_store.py:1-6` — "Shared, protocol-neutral storage… MCP servers use this module instead of calling one another… connect to a single department server and still get a working data layer." Domain logic never calls another MCP server directly.
+- `axis_mcp/departments/content_service.py:45` — `DEPARTMENT = "content"`; `:31-38` imports `fetch_from_bus / submit_to_bus / submit_bytes_to_bus` from `bus_store`. Every artifact write/read goes through the bus (e.g. `:336`, `:2607`, `:2667`, `:2672`, `:2851`). Department directory isolation is enforced by `bus_store.py:45-51` (`_department_dir` rejects path escape).
+- **Registry split:** `axis_mcp/module_registry.py:3-15` — config (tracked, human-decided) vs state (ignored, runtime-observed) in two files. CFO/Legal must reuse this, not invent a third registry.
+- **Task envelope:** `axis_mcp/task_tracking.py:1-14, 30, 55-80` — `pending → running → completed/failed/cancelled`, strict `task-<12hex>` validation, `brief` hidden from list by default. Content reuses it with a scope guard: `content_mcp.py:529-620` (`task_create/get/list/update` reject `dept != "content"`). CFO/Legal adapters need the same scoped TaskTracker with `dept="cfo"/"legal"`, `module="cfo"/"legal"`.
 - **PRD anchor:** `PRD:153` (NFR — reuse Central Bus where data model fits), `PRD:78` (department data path must be declared; missing dependency must disable the feature explicitly).
 - **Reuse rule for CFO/Legal:** one `DEPARTMENT` constant, one scoped TaskTracker, bus-only persistence. **No** cross-department direct calls, no shared department directory.
 
@@ -278,28 +278,28 @@ Content D3+D4 complete (P0) → Legal D1 → CFO D1 → Legal D2/D3 → CFO D2/D
 |:------|:----------|
 | Pack line v2.4.0 = CFO/Legal/Content | `README.md:36`, `:255-269` |
 | Kickoff scope (decision first, frozen) | `central_bus/content/ceo-phase4-kickoff-20261107_20261107T051623810915Z.md:1-20` |
-| Standalone registry seeding | `solocorp_mcp/departments/content_mcp.py:49-62` |
+| Standalone registry seeding | `axis_mcp/departments/content_mcp.py:49-62` |
 | Registry status without API key | `content_mcp.py:512-526` |
 | Head boundary instructions | `content_mcp.py:65-99` |
-| Bus data plane contract | `solocorp_mcp/bus_store.py:1-6, 45-51` |
-| Department constant + bus I/O | `solocorp_mcp/departments/content_service.py:45, 31-38` |
+| Bus data plane contract | `axis_mcp/bus_store.py:1-6, 45-51` |
+| Department constant + bus I/O | `axis_mcp/departments/content_service.py:45, 31-38` |
 | Gate → blocked until human approval | `content_service.py:2653-2691`, `:2690` |
 | Exact-version approval enforcement | `content_service.py:2773-2879`, `:2790-2796` |
 | Approval identity honesty | `content_service.py:2845` |
 | Provenance unverified | `content_service.py:2050-2082`, `:2078`; `content_mcp.py:70-71, 347` |
 | Lifecycle states | `content_service.py:2887`; scaffold default `:2736-2740` |
 | R1–R5 + D0/D1/D2 redaction | `solocorp_skills/redact.py:9-19, 43-60, 221-276` |
-| Task envelope + statuses | `solocorp_mcp/task_tracking.py:1-14, 30, 55-80` |
+| Task envelope + statuses | `axis_mcp/task_tracking.py:1-14, 30, 55-80` |
 | Scoped task tools | `content_mcp.py:529-620` |
-| Registry config/state split | `solocorp_mcp/module_registry.py:3-35` |
-| Thinner shell generalization | `solocorp_mcp/departments/engineering_mcp.py:1-22`, `qa_mcp.py:1-41` |
+| Registry config/state split | `axis_mcp/module_registry.py:3-35` |
+| Thinner shell generalization | `axis_mcp/departments/engineering_mcp.py:1-22`, `qa_mcp.py:1-41` |
 | D-cert ladder | `rules/06-certification.md:14-19, 23-25, 30-36` |
 | Registry status (Content D1+D2, others D0) | `profiles/CERTIFICATION-REGISTRY.md:11-13, 28` |
 | PRD expansion policy | `docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md:117, 183, 201` |
 | PRD standalone + independence | `PRD:41, 73-79, 145` |
 | CFO templates/tiers/boundaries | `profiles/02-cfo/SOUL.md:131-148, 154-218, 224-228, 263-281` |
 | Legal triage boundary + template | `profiles/13-legal/SOUL.md:41-58, 62-99, 111-118`; `tulya/team/02-legal-document-review.SOUL.md:17-24, 42-44` |
-| No CFO/Legal MCP yet | `solocorp_mcp/departments/*.py` (directory listing, 2026-11-07) |
+| No CFO/Legal MCP yet | `axis_mcp/departments/*.py` (directory listing, 2026-11-07) |
 
 ---
 

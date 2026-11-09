@@ -12,13 +12,13 @@
   "skills": {
     "paths": [
       ".opencode/skills",
-      "skills/@solocorp/cross-dept",
-      "skills/@solocorp/ceo",
-      "skills/@solocorp/coo",
-      "skills/@solocorp/engineering",
-      "skills/@solocorp/cfo",
-      "skills/@solocorp/qa",
-      "skills/@solocorp/governance"
+      "skills/@axis/cross-dept",
+      "skills/@axis/ceo",
+      "skills/@axis/coo",
+      "skills/@axis/engineering",
+      "skills/@axis/cfo",
+      "skills/@axis/qa",
+      "skills/@axis/governance"
     ]
   },
 
@@ -156,7 +156,7 @@
       },
       "solocorp": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.server"],
+        "command": [".venv/bin/python3", "-m", "axis_mcp.server"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -170,7 +170,7 @@
       },
       "central-bus": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.bus_mcp"],
+        "command": [".venv/bin/python3", "-m", "axis_mcp.bus_mcp"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -181,7 +181,7 @@
       },
       "content-creator": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.content_mcp"],
+        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.content_mcp"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -204,7 +204,7 @@
       },
       "engineering": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.engineering_mcp"],
+        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.engineering_mcp"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -215,7 +215,7 @@
       },
       "qa": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.qa_mcp"],
+        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.qa_mcp"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -274,27 +274,27 @@
   "command": {
     "sprint-plan": {
       "description": "📋 Sprint Plan — ขอ template sprint plan หรือรายงานความคืบหน้า",
-      "template": "Run @solocorp/ceo/sprint-plan skill for: department=$1, sprint=$2, action=$3\n\nPOST /v1/skills/ceo/sprint-plan ด้วย payload action=plan|report|status"
+      "template": "Run @axis/ceo/sprint-plan skill for: department=$1, sprint=$2, action=$3\n\nPOST /v1/skills/ceo/sprint-plan ด้วย payload action=plan|report|status"
     },
     "daily-ops": {
       "description": "👷 Daily Ops — ดูรายงาน daily operations หรือ route request",
-      "template": "Run @solocorp/coo/daily-ops skill: action=$1\n\nPOST /v1/skills/coo/daily-ops ด้วย payload action=status|route|sop"
+      "template": "Run @axis/coo/daily-ops skill: action=$1\n\nPOST /v1/skills/coo/daily-ops ด้วย payload action=status|route|sop"
     },
     "eng-deploy": {
       "description": "🚀 Deploy — trigger deploy, check status, rollback service",
-      "template": "Run @solocorp/engineering/deploy skill for: service=$1, env=$2, action=$3\n\nPOST /v1/skills/engineering/deploy ด้วย payload action=deploy|status|rollback"
+      "template": "Run @axis/engineering/deploy skill for: service=$1, env=$2, action=$3\n\nPOST /v1/skills/engineering/deploy ด้วย payload action=deploy|status|rollback"
     },
     "budget-check": {
       "description": "💰 Budget Check — ตรวจสอบงบประมาณ department, cost analysis",
-      "template": "Run @solocorp/cfo/budget-check skill for: department=$1, period=$2, action=$3\n\nPOST /v1/skills/cfo/budget-check ด้วย payload action=check|analyze|project"
+      "template": "Run @axis/cfo/budget-check skill for: department=$1, period=$2, action=$3\n\nPOST /v1/skills/cfo/budget-check ด้วย payload action=check|analyze|project"
     },
     "smoke-test": {
       "description": "🧪 Smoke Test — รัน smoke test suite สำหรับ service",
-      "template": "Run @solocorp/qa/smoke-test skill for: service=$1, env=$2\n\nPOST /v1/skills/qa/smoke-test ด้วย payload scope=quick|full"
+      "template": "Run @axis/qa/smoke-test skill for: service=$1, env=$2\n\nPOST /v1/skills/qa/smoke-test ด้วย payload scope=quick|full"
     },
     "rfc-new": {
       "description": "📜 RFC — สร้างหรือ review RFC สำหรับ governance decision",
-      "template": "Run @solocorp/governance/rfc skill: title=$1, summary=$2\n\nPOST /v1/skills/governance/rfc ด้วย payload action=create|review|approve|reject"
+      "template": "Run @axis/governance/rfc skill: title=$1, summary=$2\n\nPOST /v1/skills/governance/rfc ด้วย payload action=create|review|approve|reject"
     },
     "pipeline": {
       "description": "รัน SoloCorp pipeline workflow: spec → plan → build → qa → deliver",
@@ -350,7 +350,7 @@
     },
     "workspace": {
       "description": "🏢 เปิดห้องทำงานแผนก — แชทแยกพร้อมตัวตน+บริบท (แทน subagent)",
-      "template": "Run @solocorp/cross-dept/dept-workspace skill for: department=$1, task=$2\n\nเปิดแชทใหม่ ตั้งชื่อแท็บ [แผนก]+งาน วาง context bundle แล้วทำในห้องนั้น ส่งรายงานกลับแชท CEO"
+      "template": "Run @axis/cross-dept/dept-workspace skill for: department=$1, task=$2\n\nเปิดแชทใหม่ ตั้งชื่อแท็บ [แผนก]+งาน วาง context bundle แล้วทำในห้องนั้น ส่งรายงานกลับแชท CEO"
     }
   }
 }

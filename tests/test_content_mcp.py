@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from solocorp_mcp import bus_store
-from solocorp_mcp.departments import content_helpers, content_mcp, content_service
-from solocorp_mcp.departments.content_mcp import content_sop, mcp
-from solocorp_mcp.task_tracking import TaskTracker
+from axis_mcp import bus_store
+from axis_mcp.departments import content_helpers, content_mcp, content_service
+from axis_mcp.departments.content_mcp import content_sop, mcp
+from axis_mcp.task_tracking import TaskTracker
 
 
 @pytest.fixture

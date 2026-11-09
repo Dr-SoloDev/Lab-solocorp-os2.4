@@ -14,10 +14,10 @@
 | ของ | มีจริงไหม | หลักฐาน |
 |:--|:--|:--|
 | `profiles/06-product/SOUL.md` | ✅ มี | โปรดัค (Product Manager) — 9 ปีประสบการณ์, PRD/roadmap/user research |
-| `solocorp_mcp/departments/product_mcp.py` | ❌ ยังไม่มี | `ls solocorp_mcp/departments/` = content / engineering / qa เท่านั้น |
+| `axis_mcp/departments/product_mcp.py` | ❌ ยังไม่มี | `ls axis_mcp/departments/` = content / engineering / qa เท่านั้น |
 | `opencode.json` → `mcp.servers` | ❌ ไม่มี product | 8 ตัว: stealth, solocorp, central-bus, content-creator, engineering, qa, concat, github |
 | `opencode.jsonc` → `mcp.servers` | ❌ ไม่มี product | 4 ตัว: stealth, central-bus, unified-technical, content-creator |
-| Core MCP (solocorp_mcp/server.py) | ⚠️ มี routing/org data | ไม่ใช่ product spec tool — เป็น org/routing ให้ CEO |
+| Core MCP (axis_mcp/server.py) | ⚠️ มี routing/org data | ไม่ใช่ product spec tool — เป็น org/routing ให้ CEO |
 | **Product MCP วันนี้** | **ยังไม่ implement** — D1 นี้เป็นร่างแผนเท่านั้น |
 
 **ตอนนี้ใช้ `solocorp_get_commands` / `solocorp_get_department` ผ่าน Core MCP ได้** (org data + routing) — แต่ไม่มี spec/PRD/roadmap tool เป็นของแผนกตัวเอง
@@ -115,7 +115,7 @@
 
 ### A. Standalone `product_mcp.py` (แนะนำ)
 
-**ทำ:** `solocorp_mcp/departments/product_mcp.py` แบบเดียว engineering/qa (FastMCP `"product"`, department_info + tools)
+**ทำ:** `axis_mcp/departments/product_mcp.py` แบบเดียว engineering/qa (FastMCP `"product"`, department_info + tools)
 
 **ข้อดี:**
 - FR-07 100%: standalone ได้ ไม่ต้อง CEO
@@ -130,7 +130,7 @@
 
 ### B. รวมเข้า `unified-technical` เป็น module ที่ 4
 
-**ทำ:** `solocorp_mcp/unified_technical/modules/product.py` ติดกับ Architect/Eng/QA ใน process เดียวกัน
+**ทำ:** `axis_mcp/unified_technical/modules/product.py` ติดกับ Architect/Eng/QA ใน process เดียวกัน
 
 **ข้อดี:**
 - ไม่เพิ่ม process — count เท่าเดิม

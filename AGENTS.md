@@ -42,7 +42,7 @@ Owner — L5: vision / org / core product ONLY
 
 ## Cross-department workspaces (current manual client workflow)
 
-- `/workspace [dept] [task]` (skill: `skills/@solocorp/cross-dept/dept-workspace/`) remains the manual OpenCode workflow for work that needs a separate agent session.
+- `/workspace [dept] [task]` (skill: `skills/@axis/cross-dept/dept-workspace/`) remains the manual OpenCode workflow for work that needs a separate agent session.
 - In the planned SoloCorp App, the CEO can call tools from already-connected department MCPs in the same user conversation. That app behavior is a target, not an implemented feature yet.
 - Human + visiting-agent manual: `docs/OPENCODE-GUIDE.md` (one file, both audiences).
 
@@ -125,7 +125,7 @@ From `rules/06-certification.md` (incident: work reported complete with zero cod
 | `profiles/` | Department identities (`SOUL.md`); roster in `profiles/INDEX.md` |
 | `central_bus/` | FastAPI daemon (30+ modules): queue, routing, mirror |
 | `docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md` | Current product direction and MVP source of truth |
-| `solocorp_mcp/` | Core MCP and independent department MCP adapters |
+| `axis_mcp/` | Core MCP and independent department MCP adapters |
 | `workers/agents/` | Agent workers (`BaseAgent.think()` in `base_agent.py`) |
 | `decisions/` | ADRs — check before changing architecture |
 | `bus/` | Queue, dispatch records, evidence, proposals |

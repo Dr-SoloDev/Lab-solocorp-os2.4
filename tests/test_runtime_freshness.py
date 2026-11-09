@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from solocorp_mcp import runtime_freshness
+from axis_mcp import runtime_freshness
 
 
 @pytest.fixture()
@@ -63,7 +63,7 @@ def test_stale_when_source_changed_after_start(fake_sources) -> None:
     assert result["status"] == "stale"
     assert result["restart_required"] is True
     assert result["newer_source_count"] == 1
-    assert result["newer_sources"][0].startswith("solocorp_mcp/")
+    assert result["newer_sources"][0].startswith("axis_mcp/")
     assert result["process_started_at"] and result["newest_source_at"]
 
 
@@ -115,7 +115,7 @@ def test_with_freshness_preserves_payload(fake_sources) -> None:
 def test_every_department_info_reports_runtime(module_name: str, info_name: str) -> None:
     """Every department must be able to answer 'are you current?'."""
 
-    module = __import__(f"solocorp_mcp.departments.{module_name}", fromlist=[info_name])
+    module = __import__(f"axis_mcp.departments.{module_name}", fromlist=[info_name])
     payload = json.loads(getattr(module, info_name)())
 
     assert "runtime" in payload

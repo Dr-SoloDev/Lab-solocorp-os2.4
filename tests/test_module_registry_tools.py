@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from solocorp_mcp.module_registry import ModuleRegistry
+from axis_mcp.module_registry import ModuleRegistry
 
 ADMIN_KEY = "sk-solocorp-admin-local-dev-001"
 
@@ -31,7 +31,7 @@ def _complete_entry() -> dict:
 
 def _server(monkeypatch: pytest.MonkeyPatch, registry: ModuleRegistry):
     monkeypatch.setenv("SOLOCORP_API_KEY", ADMIN_KEY)
-    import solocorp_mcp.server as server_module
+    import axis_mcp.server as server_module
 
     monkeypatch.setattr(server_module, "_module_registry", registry)
     return server_module.create_server()
