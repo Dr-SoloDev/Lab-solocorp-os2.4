@@ -15,6 +15,7 @@
 | **รอบที่ 1b (Go temp free)** | 17:07 | `opencode/glm-5.3-flash-free` | 9 (เฉพาะค้าง) | 0 | 9 | 0 | **free-limit lock** 17:07–18:07 |
 | **รอบที่ 2 (เช้า)** | 09:30 | `opencode/deepseek-v4.1-flash-free` | 20 | 7 | 11 | 2 | free-limit 09:30–10:30 |
 | **รอบที่ 3 (บ่าย)** | 15:33 | free tier chain | 20 | 7 | 11 | 2 | free-limit 15:33–16:33 |
+| **รอบ QA อิสระ (22:35)** | 22:35 | free tier chain | 3 (`--only 1,11,17`) | **1** | 2 | 0 | free-limit 22:35–23:35 (เคส 1 ทริกเกอร์ล็อก) |
 
 **รวมหลักฐาน:** `bus/evidence/2026-11-09/d3/` (attempt3 Go final) + `bus/evidence/2026-11-09/d3-free/` (9 เคส free) + `d3-attempt{1,2,3}-*` (ก่อนหน้า)
 
@@ -57,7 +58,7 @@
 | 2 | มี root cause ทุกแถวที่ ≠ คาด | ✅ **ผ่าน** — ทุก FAIL = `infra_llm` ที่ชี้จุดโค้ด/พฤติกรรม |
 | 3 | เคส 9–13 ผ่านครบ | ✅ **ผ่าน** — นิ่ง 3 รอบ (`brief_unreadable`/`missing_input`/`write_out_of_bounds` ถูกต้อง) |
 | 4 | `table.md` + `results.json` + sha โค้ด | ✅ **ผ่าน** — `harness-sha256.txt` ผูก `content_agent.py 07b7…` |
-| 5 | ผู้ตรวจรันเอง 3 เคสแบบอิสระ | ❌ **ยังรอ** — pipeline-auditor ต้องรัน `--only 1,11,17` (หลัง Extra Usage / quota 17:10) |
+| 5 | ผู้ตรวจรันเอง 3 เคสแบบอิสระ | ⚠️ **บางส่วน** — QA 22:35 รัน `--only 1,11,17` → **11 PASS** (guard นิ่ง), 1/17 FAIL `infra_llm` (โดน lock 22:35–23:35) — หลักฐาน `bus/evidence/2026-11-09/d3-qa-independent/` |
 
 ---
 
