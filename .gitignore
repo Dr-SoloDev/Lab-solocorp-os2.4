@@ -91,6 +91,7 @@ build/
 .opencode/*
 !.opencode/agents/
 !.opencode/skills/
+!.opencode/commands/
 .hermes/
 
 # Local MCP runtimes
