@@ -346,7 +346,7 @@
           "catalog": 60000,
           "execution": 60000
         },
-        "description": "Central Bus Daemon — Control/Data interface between all departments (local stdio for MVP)"
+        "description": "AXIS Central Bus Daemon — Control/Data interface between all departments (local stdio for MVP)"
       },
       "unified-technical": {
         "type": "local",
@@ -358,7 +358,7 @@
           "catalog": 120000,
           "execution": 120000
         },
-        "description": "Unified Technical MCP Server — Architect, Engineering (Backend/Frontend), QA combined into one process per Two-Tier Architecture"
+        "description": "AXIS Unified Technical MCP Server — Architect, Engineering (Backend/Frontend), QA combined into one process per Two-Tier Architecture"
       },
       "content-creator": {
         "type": "local",
@@ -370,7 +370,7 @@
           "catalog": 1800000,
           "execution": 1800000
         },
-        "description": "Content Creator MCP — Content production, video, audio, campaign artifacts (includes Concat + Earshot)"
+        "description": "AXIS Content Creator MCP — Content production, video, audio, campaign artifacts (includes Concat + Earshot)"
       }
     }
   },
