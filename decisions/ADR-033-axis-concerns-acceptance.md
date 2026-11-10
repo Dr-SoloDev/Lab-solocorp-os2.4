@@ -20,12 +20,12 @@ Preliminary web search (2026-11-10, NOT a legal opinion) found the name crowded 
 - **Implication:** full clearance requires formal Legal review (TH + US/EU search, class analysis). Until then: use "AXIS" as working brand only; keep "SoloCorp OS" in legal/copyright notices; do NOT file, publish launch materials, or claim ™.
 - Options if clearance fails: (a) keep SoloCorp OS as legal name + AXIS as internal codename, (b) pick a more distinctive name.
 
-## C3 — D3 product-produck sign-off (Owner: checker) — STILL PENDING explicit ✔
+## C3 — D3 product-produck sign-off (Owner: checker) — ✅ SIGNED 2026-11-10 ("ผ่าน")
 - Harness `scripts/d3_product_eval.py` (20 cases, deterministic, no LLM): **20/20 PASS, exit 0** (2026-11-09, sha-pinned in `bus/evidence/2026-11-09/d3-product/`).
 - Known limitation recorded: Thai-only titles → `invalid_title` (ASCII-only slug; future D2 iteration, not a silent bug).
-- This ADR records acceptance of the *backlog*, not D3 sign-off. D3 PASS requires Owner's explicit ✔ (one word).
+- Owner signed explicitly 2026-11-10. Registry already shows product-produck D1+D2+D3 ✅.
 
 ## Accepted backlog (tracked, not closed)
-- [ ] C1: E2E regression + migration map + MCP 10/10 post-restart verify
-- [ ] C2: Formal Legal trademark review (TH/US/EU) before any launch claim
-- [ ] C3: Explicit D3 product sign-off
+- [x] C1: E2E regression (`docs/certification/E2E-10-MCP-2026-11-10.md`, 9/9) + MCP 10/10 post-restart verify ✅ — เหลือ migration map แยก
+- [ ] C2: Formal Legal trademark review (TH/US/EU) before any launch claim (memo เบื้องต้นบันทึกแล้ว: เสี่ยงสูง)
+- [x] C3: Explicit D3 product sign-off ✅ (Owner "ผ่าน" 2026-11-10)
