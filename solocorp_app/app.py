@@ -23,6 +23,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.responses import Response
 
 from . import APP_VERSION
+from .ceo_loop import redact_brief_for_api
 from .live import live_status
 from .provider import ProviderError
 from .runtime import AppRuntime, UnknownModuleError
@@ -317,7 +318,7 @@ def _register_routes(app: FastAPI, runtime: AppRuntime) -> None:
                         "result": None,
                         "error": err,
                     },
-                    "brief": trimmed,
+                    "brief": redact_brief_for_api(trimmed),
                     "chat_error": "brief must be 1-2000 characters",
                 },
             )
@@ -346,7 +347,7 @@ def _register_routes(app: FastAPI, runtime: AppRuntime) -> None:
                         "result": None,
                         "error": err,
                     },
-                    "brief": trimmed,
+                    "brief": redact_brief_for_api(trimmed),
                     "chat_error": "brief must be 1-2000 characters",
                 },
             )
@@ -366,12 +367,19 @@ def _register_routes(app: FastAPI, runtime: AppRuntime) -> None:
                     "counts": runtime.counts(),
                     "provider": runtime.provider.status(),
                     "turn": None,
-                    "brief": trimmed,
+                    "brief": redact_brief_for_api(trimmed),
                     "chat_error": "cannot write task record",
                 },
             )
         if wants_json:
-            return JSONResponse(turn.get("task") or {}, status_code=200)
+            # P2-08: single-task echo must never carry the full brief.
+            # Runtime already redacts, but re-apply here so a future
+            # runtime change cannot re-open the leak. Raw stays on disk.
+            task = turn.get("task") or {}
+            if isinstance(task, dict) and "brief" in task:
+                task = dict(task)
+                task["brief"] = redact_brief_for_api(task.get("brief"))
+            return JSONResponse(task, status_code=200)
         return _render(
             request,
             "chat.html",
@@ -381,7 +389,7 @@ def _register_routes(app: FastAPI, runtime: AppRuntime) -> None:
                 "counts": runtime.counts(),
                 "provider": runtime.provider.status(),
                 "turn": turn,
-                "brief": trimmed,
+                "brief": redact_brief_for_api(trimmed),
                 "chat_error": None,
             },
         )

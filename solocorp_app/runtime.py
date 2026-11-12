@@ -30,6 +30,7 @@ from .ceo_loop import (
     CEO_TURN_BUDGET_S,
     artifact_refs_from_result,
     map_error,
+    redact_brief_for_api,
     route_brief,
     timeout_for_tool,
     validate_brief,
@@ -251,8 +252,10 @@ class AppRuntime:
             if not artifacts:
                 artifacts = [f"{module_id}/{tool_name}"]
             final = tracker.update_status(task_id, "completed", artifact_refs=artifacts)
+            # P2-08: raw stays on disk for debug; API echo gets redacted brief.
+            # Envelope v2 untouched (route_reason/artifact_refs/app_version/error).
             return {
-                "task": final,
+                "task": _redacted_task_for_api(final),
                 "route_reason": route_reason,
                 "result": result,
                 "error": None,
@@ -272,7 +275,7 @@ class AppRuntime:
             err = map_error(exc, module_id, observation)
             final = tracker.update_status(task_id, "failed", error_detail=err)
             return {
-                "task": final,
+                "task": _redacted_task_for_api(final),
                 "route_reason": route_reason,
                 "result": None,
                 "error": err,
@@ -394,6 +397,24 @@ class AppRuntime:
             self.host.close_all()
         finally:
             self._connect_pool.shutdown(wait=False, cancel_futures=True)
+
+
+def _redacted_task_for_api(task: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Copy a task record with the brief redacted for API echo.
+
+    P2-08: TaskTracker JSON on disk keeps the raw brief for debug; the
+    single-task JSON (``POST /chat`` response) must never echo it fully.
+    Only ``brief`` is touched — envelope v2 (route_reason/artifact_refs/
+    app_version/error/result_ref/error_detail) passes through unchanged.
+    """
+
+    if not isinstance(task, dict):
+        return task
+    if "brief" not in task:
+        return task
+    safe = dict(task)
+    safe["brief"] = redact_brief_for_api(safe.get("brief"))
+    return safe
 
 
 def _status_text(enabled: bool, observation: str | None) -> str:

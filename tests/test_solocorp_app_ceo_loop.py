@@ -338,3 +338,100 @@ def test_chat_page_has_form_and_no_inline_script(shell):
     # CSP: no inline script in the Phase 2 template (base shell script is src-only)
     assert "<script>" not in html
     assert "onclick" not in html.lower()
+
+
+# 8. P2-08 strict: secret brief never leaks in list/single-task -----------
+
+
+def test_p2_08_secret_brief_never_leaks_in_list_or_single_task(shell):
+    """P2-08 strict: brief with ``sk-`` must not appear in any API echo.
+
+    Raw stays in TaskTracker JSON on disk for debug; list (``runtime.tasks``)
+    and single-task JSON (``POST /chat`` response) must both be clean.
+    Envelope v2 (route_reason/artifact_refs/app_version/error) stays intact.
+    """
+
+    secret = "sk-abc123SECRET456xyz"
+    brief = f"ทำสคริปต์ tiktok ทดสอบ {secret}"
+    token = csrf(shell)
+    response = shell.client.post(
+        "/chat",
+        json={"brief": brief},
+        headers={"X-CSRF-Token": token},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    # envelope v2 intact
+    assert payload["status"] == "completed"
+    assert isinstance(payload["route_reason"], str) and payload["route_reason"]
+    assert len(payload["route_reason"]) <= 500
+    assert payload["artifact_refs"]
+    assert payload["result_ref"] == payload["artifact_refs"][0]
+    assert payload["app_version"] == APP_VERSION
+    # strict: no secret in single-task echo
+    dumped = json.dumps(payload, ensure_ascii=False)
+    assert secret not in dumped
+    assert "sk-abc123" not in dumped
+    assert brief not in dumped
+    # redacted marker present, raw secret gone
+    assert payload.get("brief") != brief
+    assert "[redacted]" in (payload.get("brief") or "")
+
+    # strict: no secret in list/tasks
+    tasks = shell.runtime.tasks()
+    list_dumped = json.dumps(tasks, ensure_ascii=False)
+    assert secret not in list_dumped
+    assert "sk-abc123" not in list_dumped
+
+    # strict: no secret in HTML echoes (tasks page + chat re-render)
+    html_tasks = shell.client.get("/tasks").text
+    assert secret not in html_tasks
+    assert "sk-abc123" not in html_tasks
+
+    form_resp = shell.client.post(
+        "/chat",
+        data={"csrf_token": csrf(shell), "brief": brief},
+        follow_redirects=False,
+    )
+    assert form_resp.status_code == 200
+    assert secret not in form_resp.text
+    assert "sk-abc123" not in form_resp.text.lower()
+
+    # raw stays on disk for debug (design: redact echo, not storage)
+    task_id = payload["task_id"]
+    raw = json.loads(
+        (shell.tracker.root / f"{task_id}.json").read_text(encoding="utf-8")
+    )
+    assert raw["brief"] == brief
+
+
+def test_p2_08_long_brief_preview_and_secret_hint():
+    """Preview budget (120 + marker) + secret hint live next to validate."""
+
+    from solocorp_app.ceo_loop import (
+        BRIEF_PREVIEW_CHARS,
+        BRIEF_SECRET_HINT,
+        contains_possible_secret,
+        redact_brief_for_api,
+    )
+
+    assert BRIEF_PREVIEW_CHARS == 120
+    assert "sk-" in BRIEF_SECRET_HINT or "secret" in BRIEF_SECRET_HINT.lower()
+    assert contains_possible_secret("key sk-abc123xyz here") is True
+    assert contains_possible_secret("hello world brief") is False
+
+    long_brief = "ก" * 200
+    redacted = redact_brief_for_api(long_brief)
+    assert long_brief not in redacted
+    assert redacted.endswith(" [redacted]")
+    assert len(redacted) <= BRIEF_PREVIEW_CHARS + len(" [redacted]")
+
+    # redacted marker present, raw secret gone
+    assert redact_brief_for_api("hello brief") == "hello brief"
+    masked = redact_brief_for_api("token sk-abc123SECRET456")
+    assert "sk-abc123" not in masked
+    assert "[redacted]" in masked
+
+    # validate_brief behavior unchanged (length only)
+    assert validate_brief("  hello  ") == "hello"
