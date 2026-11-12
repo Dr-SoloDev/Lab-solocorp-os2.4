@@ -320,7 +320,7 @@
   // ------------------------------------------------------------
   // 5. MCP Servers — Data Layer (per Owner agreement)
   // Central Bus: local stdio (MVP) — points to busd at 127.0.0.1:8099
-  // Unified Technical MCP: Architect + Engineering + QA in one process
+  // CTO MCP (Phase 1): Architect + Engineering + QA in one process (C-Level, reports CEO)
   // ------------------------------------------------------------
   "mcp": {
     "servers": {
@@ -348,9 +348,9 @@
         },
         "description": "AXIS Central Bus Daemon — Control/Data interface between all departments (local stdio for MVP)"
       },
-      "unified-technical": {
+      "cto": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "axis_mcp.unified_technical.server"],
+        "command": [".venv/bin/python3", "-m", "axis_mcp.cto.server"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -358,7 +358,7 @@
           "catalog": 120000,
           "execution": 120000
         },
-        "description": "AXIS Unified Technical MCP Server — Architect, Engineering (Backend/Frontend), QA combined into one process per Two-Tier Architecture"
+        "description": "AXIS CTO MCP Server (Phase 1) — Architect, Engineering (Backend/Frontend), QA combined into one process per Two-Tier Architecture; tool namespaces architect_*/engineering_*/qa_*/unified_* unchanged"
       },
       "content-creator": {
         "type": "local",
@@ -393,7 +393,7 @@
     },
     "status": {
       "description": "Check system and Pipeline health status",
-      "template": "ตรวจสอบสถานะการทำงานของทุกแผนกและสถานะของ Central Bus รวมถึง health check ของ Unified Technical MCP Server",
+      "template": "ตรวจสอบสถานะการทำงานของทุกแผนกและสถานะของ Central Bus รวมถึง health check ของ CTO MCP Server (tool: unified_technical_health)",
       "agent": "ceo-turbo",
       "subagent": true
     },

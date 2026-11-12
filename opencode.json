@@ -179,6 +179,17 @@
           "execution": 60000
         }
       },
+      "cto": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "axis_mcp.cto.server"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": {
+          "startup": 120000,
+          "catalog": 120000,
+          "execution": 120000
+        }
+      },
       "content-creator": {
         "type": "local",
         "command": [".venv/bin/python3", "-m", "axis_mcp.departments.content_mcp"],

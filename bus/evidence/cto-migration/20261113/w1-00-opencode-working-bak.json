@@ -1,0 +1,368 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "default_agent": "axis-ceo",
+  "username": "Dr.solodev",
+
+  "shell": "/bin/bash",
+  "logLevel": "INFO",
+
+  "instructions": ["CLAUDE.md", "rules/INDEX.md"],
+
+  "skills": {
+    "paths": [
+      ".opencode/skills",
+      "skills/@axis/cross-dept",
+      "skills/@axis/ceo",
+      "skills/@axis/coo",
+      "skills/@axis/engineering",
+      "skills/@axis/cfo",
+      "skills/@axis/qa",
+      "skills/@axis/governance",
+      "skills/@axis/cto"
+    ]
+  },
+
+  "references": {
+    "profiles": {
+      "path": "profiles",
+      "description": "Use for department profiles, SOUL.md, routing.yaml — ข้อมูลบุคลากรและโครงสร้างแผนกของ SoloCorp OS"
+    },
+    "docs": {
+      "path": "docs",
+      "description": "Use for runbooks, architecture, pipeline docs, and operational guides"
+    },
+    "decisions": {
+      "path": "decisions",
+      "description": "Use for Architecture Decision Records (ADRs) — เหตุผลการตัดสินใจทางเทคนิค和历史"
+    },
+    "bus": {
+      "path": "bus",
+      "description": "Use for Central Bus system design, queue management, project governance docs"
+    },
+    "reference": {
+      "path": "reference",
+      "description": "Use for external reference documentation, research notes, and knowledge base"
+    },
+    "scripts": {
+      "path": "scripts",
+      "description": "Use for build/export/pipeline utility scripts"
+    },
+    "tests": {
+      "path": "tests",
+      "description": "Use for test suites across all phases"
+    },
+    "rules": {
+      "path": "rules",
+      "description": "Use for behavior-centric rules — INDEX.md for 30-sec scan"
+    },
+    "sop": {
+      "path": "sop",
+      "description": "Use for Standard Operating Procedures — SOP-01 through SOP-05"
+    }
+  },
+
+  "agent": {
+    "ceo-turbo": {
+      "description": "CEO of SoloCorp OS — Supreme AI Authority. รับ vision จาก Owner → ตัดสินใจ → delegate ไปยัง Department Heads",
+      "mode": "primary",
+      "color": "#FFD700"
+    },
+    "axis-ceo": {
+      "description": "AXIS CEO — Supreme AI Authority & Primary Controller. รับ vision จาก Owner → ตัดสินใจ → delegate ไปยัง Department Heads",
+      "mode": "primary",
+      "color": "#FFD700"
+    },
+    "build": {
+      "disable": false,
+      "mode": "primary",
+      "description": "Coding agent — ใช้สำหรับ implement code, features, fixes"
+    },
+    "plan": {
+      "disable": false,
+      "mode": "primary",
+      "description": "Planning agent — ใช้สำหรับวางแผน, decompose tasks, architecture design"
+    },
+    "explore": {
+      "disable": false,
+      "description": "Codebase exploration agent — ใช้สำรวจ codebase ทำความเข้าใจ structure"
+    }
+  },
+
+  "permission": {
+    "read": "allow",
+    "edit": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "bash": {
+      "npm *": "allow",
+      "pip *": "allow",
+      "python*": "allow",
+      "node*": "allow",
+      "git *": "allow",
+      "gh *": "allow",
+      "jj *": "allow",
+      "ls": "allow",
+      "ls *": "allow",
+      "pwd": "allow",
+      "echo *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "wc *": "allow",
+      "find *": "allow",
+      "du *": "allow",
+      "date *": "allow",
+      "whoami": "allow",
+      "cat *": "allow",
+      "docker *": "ask",
+      "docker-compose *": "ask",
+      "rm *": "ask",
+      "rm -rf *": "deny",
+      "sudo *": "deny",
+      "chmod *": "ask",
+      "chown *": "deny",
+      "curl *": "allow",
+      "wget *": "allow",
+      "*": "ask"
+    },
+    "task": "allow",
+    "external_directory": {
+      "~/.hermes/**": "allow",
+      "~/.claude/**": "allow",
+      "~/.opencode/**": "allow",
+      "~/.config/opencode/**": "allow",
+      "/tmp/**": "allow",
+      "*": "ask"
+    },
+    "todowrite": "allow",
+    "question": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "skill": "allow"
+  },
+
+  "mcp": {
+    "servers": {
+      "stealth-browser": {
+        "type": "local",
+        "command": ["tools/stealth-browser-mcp/venv/bin/python3", "-m", "server"],
+        "cwd": "tools/stealth-browser-mcp/src",
+        "disabled": true,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        }
+      },
+      "solocorp": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "axis_mcp.server"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        },
+        "environment": {
+          "SOLOCORP_API_KEY": "{env:SOLOCORP_API_KEY}"
+        }
+      },
+      "central-bus": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "axis_mcp.bus_mcp"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        }
+      },
+      "content-creator": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.content_mcp"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": {
+          "startup": 1800000,
+          "catalog": 1800000,
+          "execution": 1800000
+        },
+        "environment": {
+          "CONCAT_BIN": "/home/drsolodev/.opencode/concat/squashfs-root/AppRun",
+          "CONCAT_MCP_ROOTS": "/data/projects/Lab-solocorp-os2.4/central_bus/content",
+          "EARSHOT_BIN": "/home/drsolodev/.opencode/earshot/venv-cpu/bin/earshot",
+          "EARSHOT_HOME": "/home/drsolodev/.opencode/earshot/cache",
+          "EARSHOT_THREADS": "4",
+          "EARSHOT_OFFLINE": "1",
+          "HF_HUB_OFFLINE": "1",
+          "TRANSFORMERS_OFFLINE": "1",
+          "XDG_CONFIG_HOME": "/home/drsolodev/.opencode/concat/config",
+          "XDG_DATA_HOME": "/home/drsolodev/.opencode/concat/data"
+        }
+      },
+      "engineering": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.engineering_mcp"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        }
+      },
+      "qa": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.qa_mcp"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        }
+      },
+      "cto": {
+        "type": "local",
+        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.cto_mcp"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        }
+      },
+      "concat": {
+        "type": "local",
+        "command": ["/home/drsolodev/.opencode/concat/squashfs-root/AppRun", "--mcp", "headless"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": {
+          "startup": 1800000,
+          "catalog": 1800000,
+          "execution": 1800000
+        },
+        "environment": {
+          "CONCAT_MCP_ROOTS": "/data/projects/Lab-solocorp-os2.4/central_bus/content",
+          "XDG_CONFIG_HOME": "/home/drsolodev/.opencode/concat/config",
+          "XDG_DATA_HOME": "/home/drsolodev/.opencode/concat/data"
+        }
+      },
+      "github": {
+        "type": "local",
+        "command": ["gh", "mcp"],
+        "disabled": false,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        }
+      }
+    }
+  },
+
+  "formatter": false,
+  "lsp": false,
+
+  "experimental": {
+    "primary_tools": ["edit", "bash", "task"],
+    "mcp_timeout": 60000
+  },
+
+  "compaction": {
+    "auto": true,
+    "tail_turns": 10
+  },
+
+  "tool_output": {
+    "max_lines": 500,
+    "max_bytes": 128000
+  },
+
+  "command": {
+    "sprint-plan": {
+      "description": "📋 Sprint Plan — ขอ template sprint plan หรือรายงานความคืบหน้า",
+      "template": "Run @axis/ceo/sprint-plan skill for: department=$1, sprint=$2, action=$3\n\nPOST /v1/skills/ceo/sprint-plan ด้วย payload action=plan|report|status"
+    },
+    "daily-ops": {
+      "description": "👷 Daily Ops — ดูรายงาน daily operations หรือ route request",
+      "template": "Run @axis/coo/daily-ops skill: action=$1\n\nPOST /v1/skills/coo/daily-ops ด้วย payload action=status|route|sop"
+    },
+    "eng-deploy": {
+      "description": "🚀 Deploy — trigger deploy, check status, rollback service",
+      "template": "Run @axis/engineering/deploy skill for: service=$1, env=$2, action=$3\n\nPOST /v1/skills/engineering/deploy ด้วย payload action=deploy|status|rollback"
+    },
+    "budget-check": {
+      "description": "💰 Budget Check — ตรวจสอบงบประมาณ department, cost analysis",
+      "template": "Run @axis/cfo/budget-check skill for: department=$1, period=$2, action=$3\n\nPOST /v1/skills/cfo/budget-check ด้วย payload action=check|analyze|project"
+    },
+    "smoke-test": {
+      "description": "🧪 Smoke Test — รัน smoke test suite สำหรับ service",
+      "template": "Run @axis/qa/smoke-test skill for: service=$1, env=$2\n\nPOST /v1/skills/qa/smoke-test ด้วย payload scope=quick|full"
+    },
+    "rfc-new": {
+      "description": "📜 RFC — สร้างหรือ review RFC สำหรับ governance decision",
+      "template": "Run @axis/governance/rfc skill: title=$1, summary=$2\n\nPOST /v1/skills/governance/rfc ด้วย payload action=create|review|approve|reject"
+    },
+    "pipeline": {
+      "description": "รัน SoloCorp pipeline workflow: spec → plan → build → qa → deliver",
+      "template": "Run the SoloCorp pipeline for: $ARGUMENTS\n\nใช้ @architect-songsak สำหรับ architecture review ก่อน build"
+    },
+    "handoff": {
+      "description": "ทำ handoff ระหว่าง departments พร้อม context pack",
+      "template": "Execute handoff from $1 to $2 for: $3\n\nProtocol in 01-receive.md (handoff section). สร้าง handoff brief ตาม templates ใน .opencode/skills/solocorp/handoff-templates/"
+    },
+    "status": {
+      "description": "ดูสถานะภาพรวมของ SoloCorp OS pipeline",
+      "template": "Give me a full status report of SoloCorp OS.\n\nRead from: loop_runner/state.py, bus/projects/, docs/ARCHITECTURE.md, bus/dispatch/"
+    },
+    "audit": {
+      "description": "ตรวจสอบ pipeline audit trail และ compliance",
+      "template": "Run a pipeline audit for: $ARGUMENTS\n\nCheck handoff integrity, QA evidence, decision trail, compliance."
+    },
+    "deploy": {
+      "description": "Deploy ระบบ SoloCorp OS (profiles, skills, config)",
+      "template": "Deploy SoloCorp OS changes: $ARGUMENTS\n\nSteps:\n1. Build profiles — python3 scripts/build-profiles.py\n2. Export agents — python3 scripts/export-codex-agents.py\n3. Verify — python3 scripts/export-codex-agents.py --validate-only\n4. Commit\n5. Report"
+    },
+    "brain": {
+      "description": "บันทึก context/session ลง brain memory",
+      "template": "Document current session context for brain memory. Format in loop_runner/loops/brain_auto_commit.py"
+    },
+    "pipeline-bridge": {
+      "description": "Cross-department pipeline bridge — ส่ง task ข้ามแผนก structured handoff + audit trail",
+      "template": "Pipeline Bridge: ส่ง task from $1 to $2 for: $3\n\nMirror Check ก่อนส่ง — ถ้า L3+ ต้องผ่าน filter ใน 01-receive.md"
+    },
+    "mirror-check": {
+      "description": "Mirror Check Protocol — ตรวจสอบ decision สะท้อน Dr.solodev Owner",
+      "template": "/mirror-check\n\nDecision: $ARGUMENTS\n\nProtocol in 01-receive.md (Escalation Filter L1-L5)\n1. 3 Mirror Check Questions\n2. alignment score\n3. Audit Trail\n4. PASS / FAIL / ESCALATE"
+    },
+    "bootstrap": {
+      "description": "Auto-Session Bootstrap — inject context auto ตอนเริ่ม session",
+      "template": "python scripts/session-bootstrap.py\n\nAuto-inject current system state, brain context, active dispatches, and pending items. อ่าน output และบอก CEO ว่าต้อง focus ที่ตรงไหน"
+    },
+    "triage": {
+      "description": "Auto-Triage — classify + route queue entries, L1-L2 auto-execute",
+      "template": "python workers/agents/auto_triage_agent.py\n\nClassify pending queue entries by priority + department. L1-L2 auto-dispatch, L3+ propose to CEO."
+    },
+    "mirror": {
+      "description": "Auto-Mirror Check — รัน mirror check (L3+ decisions)",
+      "template": "Run auto mirror check for: department=$1, decision=$2, priority=$3\n\nUses central_bus.plugins.auto_mirror_hook.auto_mirror_check(). L1-L2 auto-pass, L3+ LLM evaluation."
+    },
+    "orchestrate": {
+      "description": "Auto-Orchestrator — scan + decompose new dispatches",
+      "template": "python3 -c 'from central_bus.plugins.auto_orchestrator import AutoOrchestrator; import json; r=AutoOrchestrator().scan_new_dispatches(); print(json.dumps(r,indent=2))'\n\nScan bus/dispatch/ for new items, decompose into sub-tasks, track status."
+    },
+    "summary": {
+      "description": "Auto-Brain Summary — สรุป session auto สิ้น session",
+      "template": "python scripts/session-summary.py --save\n\nGenerate structured session summary + append to session-log.md"
+    },
+    "workspace": {
+      "description": "🏢 เปิดห้องทำงานแผนก — แชทแยกพร้อมตัวตน+บริบท (แทน subagent)",
+      "template": "Run @axis/cross-dept/dept-workspace skill for: department=$1, task=$2\n\nเปิดแชทใหม่ ตั้งชื่อแท็บ [แผนก]+งาน วาง context bundle แล้วทำในห้องนั้น ส่งรายงานกลับแชท CEO"
+    }
+  }
+}
