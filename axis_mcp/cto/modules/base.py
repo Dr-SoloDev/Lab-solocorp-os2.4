@@ -5,9 +5,9 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
 
-from axis_mcp.unified_technical.shared.db import db_manager
-from axis_mcp.unified_technical.shared.cache import cache
-from axis_mcp.unified_technical.shared.lock import lock_manager
+from axis_mcp.cto.shared.db import db_manager
+from axis_mcp.cto.shared.cache import cache
+from axis_mcp.cto.shared.lock import lock_manager
 
 
 class BaseModule(ABC):

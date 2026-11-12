@@ -1,6 +1,6 @@
-"""Unified Technical MCP Server entry point.
+"""CTO MCP Server entry point (Phase 1: Architect + Engineering + QA).
 
-Run with: python3 -m axis_mcp.unified_technical.server
+Run with: python3 -m axis_mcp.cto.server
 """
 
 from __future__ import annotations
@@ -16,20 +16,20 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 
 sys.path.insert(0, str(ROOT))
 
-from axis_mcp.unified_technical.modules.architect_module import (  # noqa: E402
+from axis_mcp.cto.modules.architect_module import (  # noqa: E402
     ArchitectModule,
 )
-from axis_mcp.unified_technical.modules.engineering_module import (  # noqa: E402
+from axis_mcp.cto.modules.engineering_module import (  # noqa: E402
     EngineeringModule,
 )
-from axis_mcp.unified_technical.modules.qa_module import QAModule  # noqa: E402
-from axis_mcp.unified_technical.shared.cache import cache  # noqa: E402
-from axis_mcp.unified_technical.shared.db import db_manager  # noqa: E402
-from axis_mcp.unified_technical.shared.lock import lock_manager  # noqa: E402
-from axis_mcp.unified_technical.tools.unified_tools import (  # noqa: E402
+from axis_mcp.cto.modules.qa_module import QAModule  # noqa: E402
+from axis_mcp.cto.shared.cache import cache  # noqa: E402
+from axis_mcp.cto.shared.db import db_manager  # noqa: E402
+from axis_mcp.cto.shared.lock import lock_manager  # noqa: E402
+from axis_mcp.cto.tools.unified_tools import (  # noqa: E402
     unified_health_check,
     unified_list_tools,
-    unified_pipeline_status,
+    unified_pipeline_status as _pipeline_status_impl,
 )
 
 _architect: ArchitectModule | None = None
@@ -62,13 +62,14 @@ async def lifespan(server: FastMCP) -> AsyncIterator[None]:
 
 
 mcp = FastMCP(
-    "unified-technical",
+    "cto",
     instructions="""\
-Unified Technical MCP Server — SoloCorp OS.
-Combines Architect, Engineering (backend/frontend), and QA into one process
-per Two-Tier Architecture (Control Layer = agents, Data Layer = this server).
+CTO MCP Server — SoloCorp OS (Phase 1: Architect + Engineering + QA).
+CTO is C-Level, reports to CEO directly. Combines Architect, Engineering
+(backend/frontend), and QA into one process per Two-Tier Architecture
+(Control Layer = agents, Data Layer = this server).
 
-Tool namespaces:
+Tool namespaces (unchanged from unified-technical):
 - architect_* -> routing, pipeline definition, bus topology
 - engineering_* -> backend/frontend implementation, code review
 - qa_* -> test execution, evidence recording
@@ -143,7 +144,7 @@ async def qa_record_evidence(
 @mcp.tool()
 async def unified_pipeline_status(project_id: str) -> dict:
     """Get combined pipeline status."""
-    return await unified_pipeline_status(project_id)
+    return await _pipeline_status_impl(project_id)
 
 
 @mcp.tool()

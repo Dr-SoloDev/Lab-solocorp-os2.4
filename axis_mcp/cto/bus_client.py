@@ -1,4 +1,4 @@
-"""Central Bus client for Unified Technical MCP Server."""
+"""Central Bus client for CTO MCP Server."""
 
 from __future__ import annotations
 

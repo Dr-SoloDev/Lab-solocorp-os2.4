@@ -1,4 +1,4 @@
-"""Intra-process event bus for Unified Technical MCP Server."""
+"""Intra-process event bus for CTO MCP Server."""
 
 from __future__ import annotations
 
