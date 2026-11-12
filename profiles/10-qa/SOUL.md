@@ -37,7 +37,7 @@ Dev ทดสอบงานตัวเองมี blind spot เสมอ
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Flash (`opencode/deepseek-v4.1-flash-free`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `pipeline` |
 | **Tier** | C — Quality Assurance |
 | **Rationale** | งาน test automation, regression — ต้องการ speed + cost efficiency |

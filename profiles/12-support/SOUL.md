@@ -37,7 +37,7 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | GLM-5.2 (`opencode/deepseek-v4.1-flash-free`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `support` |
 | **Tier** | D — Customer Support (Free Pool) |
 | **Rationale** | งาน support ticket, FAQ, escalation — cost optimization สูงสุด |

@@ -553,8 +553,8 @@ All agent workers use `workers/llm_provider.py` for LLM inference.
 |:----------|:------|
 | CLI | `opencode run --agent <agent> --model <model>` — **ห้ามใส่ flag ที่ `opencode run --help` ไม่มี** (เช่น `--pure` ที่ถูกถอดใน v2.1.4 → ล้มทั้ง chain) |
 | Agent | `OPENCODE_AGENT` หรือ `plan` (read-only) — subprocess ไม่มีใครกด allow ถ้าใช้ agent ที่มี shell/write โมเดลจะขอ permission แล้วค้าง |
-| Default model | `opencode/deepseek-v4.1-flash-free` (2026-10-25, วัดจริง — หลักฐาน `bus/evidence/2026-10-25/model-health/`) |
-| Fallback chain | deepseek-v4.1-flash → nemotron-3.5-lightning → nemotron-3-ultra → big-pickle → mimo-v2.6-flash (`MODEL_FALLBACKS`; dead names in `DEAD_MODELS` map straight to chain; `Model not found` **และ** `Model unavailable` (v2.1.4) ข้ามทันที) |
+| Default model | `opencode-go/muse-spark-1.3-contributor` (2026-11-12, subscription Opencode Go, 1M context — 200K → 1M) |
+| Fallback chain | muse-spark-1.3 (subscription) → deepseek-v4.1-flash → nemotron-3.5-lightning → nemotron-3-ultra → big-pickle → mimo-v2.6-flash (`MODEL_FALLBACKS`; dead names in `DEAD_MODELS` map straight to chain; `Model not found` **และ** `Model unavailable` (v2.1.4) ข้ามทันที) |
 | Max concurrent | 3 (asyncio.Semaphore) |
 | Timeout | 60s per call |
 | Max retries | 3 per model (exponential backoff) |

@@ -37,7 +37,7 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | Qwen 3.7 Max (`opencode/deepseek-v4.1-flash-free`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `content-model` |
 | **Tier** | S/B — Creative & Content Strategy |
 | **Rationale** | สร้างสรรค์ content + reasoning ในการวางแนวแคมเปญ |

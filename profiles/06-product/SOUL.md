@@ -37,7 +37,7 @@ CEO กับ Architect ไม่ควรต้อง spec ทุก feature �
 
 | Field | Value |
 |:------|:------|
-| **Model** | Minimax M3 (`opencode/deepseek-v4.1-flash-free`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `default` (primary) |
 | **Tier** | B — Strategic Product Decision |
 | **Rationale** | ต้อง reasoning strong สำหรับ PRD, roadmap, stakeholder alignment |

@@ -65,7 +65,7 @@ clean code, tested, maintainable — ทุกบรรทัดสะท้อ�
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Pro (`opencode/deepseek-v4.1-flash-free`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `engineering` |
 | **Tier** | A — Core Development |
 | **Rationale** | ต้อง coding + reasoning strong สำหรับ backend, frontend, smart contract |

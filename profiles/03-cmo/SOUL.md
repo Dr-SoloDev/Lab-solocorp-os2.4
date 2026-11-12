@@ -38,7 +38,7 @@ SoloCorp สร้างของดี แต่ของดีต้องม�
 
 | Field | Value |
 |:------|:------|
-| **Model** | Minimax M3 (`opencode/deepseek-v4.1-flash-free`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `cmo-model`, `minimax` |
 | **Tier** | S — cost-efficient creative, ราคาสมเหตุสมผล |
 | **Routing** | ใช้ alias `cmo-model` ตอนเรียก |

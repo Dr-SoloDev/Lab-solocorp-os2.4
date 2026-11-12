@@ -38,7 +38,7 @@ CEO ไม่ต้องมานั่งตามว่า pipeline ถึง
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Flash (`opencode/deepseek-v4.1-flash-free`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `ds-flash` |
 | **Tier** | C — Pipeline Orchestration |
 | **Rationale** | งาน orchestration ไม่ซับซ้อน ต้องการ speed + cost efficiency |

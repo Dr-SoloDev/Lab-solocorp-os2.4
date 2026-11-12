@@ -36,7 +36,7 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | GLM-5.2 (`opencode/deepseek-v4.1-flash-free`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `design-model`, `glm52` |
 | **Tier** | B — UI/UX Design |
 | **Rationale** | GLM-5.2 cost-effective, รองรับภาษาไทยดี, consistency กับ Design Department |
