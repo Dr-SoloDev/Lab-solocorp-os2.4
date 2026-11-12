@@ -38,12 +38,13 @@ config/.module-registry.json.*.tmp
 
 # Registry rollback snapshot — written next to the tracked config before every
 # config write (see docs/runbooks/registry-schema-rollback.md). Never source.
-*.bak
+*.bak*
 
 # SoloCorp App provider credential. config/provider.json is tracked — it holds
 # only the provider choice and the credential *slot name*, never the secret.
 # Anything written by an atomic save uses ".<name>.<random>.tmp" beside it.
 config/provider.credentials.json
+**/provider.credentials.json
 config/.provider.json.*.tmp
 config/.provider.credentials.json.*.tmp
 
