@@ -1,0 +1,45 @@
+{
+  "trace_id": "cto-mig-W2-20261112T224226Z",
+  "wave": "W2-flip-default",
+  "date": "20261113",
+  "branch": "feat/cto-phase1-wave1",
+  "parent_head": "9eabdd4",
+  "drain": {
+    "queue_high": 0,
+    "queue_normal": 0,
+    "queue_low": 0,
+    "dispatch_files": 27,
+    "central_bus_content_files": 543,
+    "freeze": "30 min (2026-11-12T22:43:03Z to 2026-11-12T23:13:03Z), no new dispatch",
+    "evidence": ["w2-trace.txt", "w2-queue-depth.txt", "w2-queue-dispatch-list.txt", "w2-freeze.json", "w2-queue-depth-post.txt"]
+  },
+  "flip_scope": [
+    "opencode.json command/pipeline -> @cto primary (alias @architect-songsak/@changful/@qa 1 release)",
+    "opencode.json command/eng-deploy -> @axis/cto/deploy primary (alias @axis/engineering/deploy 1 release)",
+    "opencode.json command/smoke-test -> @axis/cto/smoke-test primary (alias @axis/qa/smoke-test 1 release)",
+    "rules/01-receive.md 3 rows -> @cto (alias @architect-songsak/@changful/@qa 1 release)",
+    "axis_mcp/departments/engineering_mcp.py deprecated=true primary=cto forward+trace read-only",
+    "axis_mcp/departments/qa_mcp.py deprecated=true primary=cto forward+trace read-only (evidence owner stays QA-ทีม)"
+  ],
+  "kept_untouched": [
+    "product_mcp, legal_mcp, content_mcp, bus_mcp, legal_vault/**",
+    "profiles/INDEX.md, profiles/cto/CTO.SOUL.md, profiles/cto/ROUTING_MATRIX.md",
+    "axis_mcp/cto/** (no logic change)",
+    "sibling parallel WIP: w2-health.json (trace cto-wave2-20261113), w2-architect-health.json, w2-architect-wiring.json, w2-architect-deprecation-shim-plan.md (commit 9eabdd4)"
+  ],
+  "verify": {
+    "pipeline_e2e_via_cto": "deploy staging checkout-api -> [engineering, qa] (architect_route ok)",
+    "unified_pipeline_status": "ok, pipeline architect -> engineering -> qa (healthy)",
+    "unified_health": "healthy x3 (architect+engineering+qa healthy, db connected, cache active)",
+    "qa_record_evidence": "sha cfd30e30fbd297720efc5862bdb6b85eee663d289306351c335c2a6beb63dab4 path central_bus/content/qa_results/qa-w2-e2e-cto-ca51c036cedc.json exists=true sha_match=true",
+    "pytest": "1312 passed, 1 skipped",
+    "auto_qa_gate": "PASS, coverage 75.44% >= 9, evidence bus/evidence/2026-11-12/qa-gate-d15806c3.json",
+    "single_cto_key": true,
+    "engineering_qa_preserved": true
+  },
+  "rollback": "bus/evidence/cto-migration/20261113/rollback-cto-wave2.md (restore .bak + restart-mcp.sh --yes, <=15 min)",
+  "opencode_pre_sha256": "1fa373ec88cf34a0960285f65ef986545045629c19f6f6ae6adc803c9015e583",
+  "opencode_post_sha256": "eb260853db55ba66505247030432662e6c90a8de7bc74cb8d915699ca7f13506",
+  "evidence_files": ["w2-trace.txt", "w2-freeze.json", "w2-queue-depth.txt", "w2-queue-dispatch-list.txt", "w2-queue-depth-post.txt", "w2-opencode-pre-flip.bak", "w2-opencode-pre-flip.json", "w2-opencode-pre-sha.txt", "w2-opencode-post-sha.txt", "w2-e2e.json", "w2-pytest.json", "w2-sha256.txt", "rollback-cto-wave2.md", "w2-manifest.json"],
+  "orchestrator": "พี่วุฒิ (AXIS Orchestrator)"
+}

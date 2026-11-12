@@ -294,7 +294,7 @@
     },
     "eng-deploy": {
       "description": "🚀 Deploy — trigger deploy, check status, rollback service",
-      "template": "Run @axis/engineering/deploy skill for: service=$1, env=$2, action=$3\n\nPOST /v1/skills/engineering/deploy ด้วย payload action=deploy|status|rollback"
+      "template": "Run @axis/cto/deploy skill (primary, CTO Phase 1) for: service=$1, env=$2, action=$3\n\nPOST /v1/skills/cto/deploy ด้วย payload action=deploy|status|rollback (alias @axis/engineering/deploy คงไว้ 1 release)"
     },
     "budget-check": {
       "description": "💰 Budget Check — ตรวจสอบงบประมาณ department, cost analysis",
@@ -302,7 +302,7 @@
     },
     "smoke-test": {
       "description": "🧪 Smoke Test — รัน smoke test suite สำหรับ service",
-      "template": "Run @axis/qa/smoke-test skill for: service=$1, env=$2\n\nPOST /v1/skills/qa/smoke-test ด้วย payload scope=quick|full"
+      "template": "Run @axis/cto/smoke-test skill (primary, CTO Phase 1) for: service=$1, env=$2\n\nPOST /v1/skills/cto/smoke-test ด้วย payload scope=quick|full (alias @axis/qa/smoke-test คงไว้ 1 release)"
     },
     "rfc-new": {
       "description": "📜 RFC — สร้างหรือ review RFC สำหรับ governance decision",
@@ -310,7 +310,7 @@
     },
     "pipeline": {
       "description": "รัน SoloCorp pipeline workflow: spec → plan → build → qa → deliver",
-      "template": "Run the SoloCorp pipeline for: $ARGUMENTS\n\nใช้ @architect-songsak สำหรับ architecture review ก่อน build"
+      "template": "Run the SoloCorp pipeline for: $ARGUMENTS\n\nใช้ @cto เป็น primary (CTO Phase 1: Architect+Engineering+QA) สำหรับ architecture review ก่อน build (alias @architect-songsak/@changful/@qa คงไว้ 1 release)"
     },
     "handoff": {
       "description": "ทำ handoff ระหว่าง departments พร้อม context pack",
