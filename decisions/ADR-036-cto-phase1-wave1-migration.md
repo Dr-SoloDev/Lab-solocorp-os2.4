@@ -42,3 +42,45 @@
 - `axis_mcp/cto/server.py` · `axis_mcp/cto/shared/db.py` · `opencode.json` / `opencode.jsonc` (key `cto`)
 - E2E: `docs/certification/E2E-10-MCP-2026-11-10.md` (probe #9)
 - Evidence: `bus/evidence/cto-migration/20261113/w1-*`
+
+---
+
+## Wave 2 — stabilize + support (Architect, 2026-11-13, `feat/cto-phase1-wave1`)
+
+**บทบาท:** Architect (พี่ทรงศักดิ์) — ตรวจ CTO ตัวเดียว, ประสาน orchestrator ตอน flip, คง eng/qa standalone, เตรียม shim Wave 3 เท่านั้น
+**ข้อห้าม Wave 2:** ไม่แตะ `product_mcp` / `legal_mcp` / `content_mcp` / `bus_mcp` / `legal_vault/**` (ตรวจ diff แล้ว — สะอาด), ไม่ `rm -rf` / `sudo`
+
+### 1. Health (fresh process probe, `w2-architect-health.json`)
+
+- `unified_technical_health` → `healthy` ×3 (`architect` / `engineering` / `qa` healthy), `database: connected`, `cache: active`
+- `freshness` → `current`, `restart_required=false` (no source newer than process)
+- `unified_pipeline_status('w2-probe')` → `ok` (`architect -> engineering -> qa`) — ยืนยัน recursion fix Wave 1 ทำงานใน fresh process
+- Tools: `@mcp.tool()` ×10 (`unified_technical_health`, `architect_route`, `architect_pipeline_define`, `engineering_build_backend`, `engineering_build_frontend`, `engineering_code_review`, `qa_run_test`, `qa_record_evidence`, `unified_pipeline_status`, `unified_list_tools_tool`) — namespaces `architect_*` / `engineering_*` / `qa_*` / `unified_*` ครบ, ไม่ re-prefix `cto_*` (ชื่อ `unified_list_tools_tool` เป็นของเดิมตั้งแต่ `main` ไม่ใช่ regression)
+- DB: `central_bus/cto.db` — 3 tables (`tool_calls`, `build_artifacts`, `qa_evidence`), sha256 `881da767…` ตรงกับ `unified_technical.db` (source เก็บไว้, 2-step deprecation)
+
+### 2. Live resolve + flip support
+
+- `opencode mcp list` (2026-11-13 05:44 BKK): **9 connected + 1 disabled** — `cto`, `engineering`, `qa` ล้วน `connected`
+- Config: `opencode.json` (9 servers) `cto -> axis_mcp.cto.server`; `opencode.jsonc` (4 servers) `cto -> axis_mcp.cto.server`, ไม่มี key `unified-technical` แล้ว; README truth table (9/4 + `cto -> axis_mcp.cto.server`) ตรงกันทั้งสามไฟล์ — **ไม่มี tool miss / health แดงตอน flip จึงไม่ต้องซ่อม wiring**
+- Host generations: `axis_mcp.cto.server` มี 2 generations (PID 24305 @05:23 BKK = stale, เริ่มก่อน `server.py` mtime 05:24:48; PID 29123 @05:35 BKK = current) — live `connected` มาจาก generation ปัจจุบัน
+- Wrapper contention ยังเปิดอยู่: `axis_mcp/departments/cto_mcp.py` อยู่บน disk แต่ NOT host-wired; single live `cto` key = `axis_mcp.cto.server` — ให้ orchestrator/CEO adjudicate ก่อน merge `main` (ห้าม merge ชนกัน)
+
+### 3. Standalone + shim (Wave 3 เท่านั้น)
+
+- `engineering` (`axis_mcp.departments.engineering_mcp`) + `qa` (`axis_mcp.departments.qa_mcp`) คงอยู่ใน `opencode.json` — **ไม่ลบใน Wave 2**
+- Shim เป็นแค่แผน (`bus/evidence/cto-migration/20261113/w2-architect-deprecation-shim-plan.md`): thin forward + `deprecated` warning 1 release (Option A) หรือถอด key (Option B) — เริ่มได้ก็ต่อเมื่อครบเงื่อนไข Wave 3
+- หมายเหตุประสาน orchestrator (concurrent Wave 2 flip-default บน branch เดียวกัน): ฝั่ง orchestrator เติม `deprecated/read-only redirect` metadata ใน `engineering_mcp.py` + เปลี่ยน command templates เป็น `@cto` primary (alias 1 release) — Architect ไม่ขวางเพราะ keys ยังอยู่ครบ (ไม่ลบ) และ `mcp.servers.ctо` target ไม่เปลี่ยน; ถือว่า compatible กับแผน Wave 3 Option A (shim metadata มาก่อน, ถอด key ทีหลังเมื่อครบเงื่อนไข)
+
+### 4. Next — Wave 3 cleanup (เข้าได้เมื่อครบทั้ง 4 ข้อ)
+
+1. CTO นิ่ง **48 ชม.** (healthy ×3 + DB + cache ทุก probe, `restart_required=false`, ไม่มี tool miss/health แดง)
+2. ไม่มี caller เก่า **7 วัน** (standalone `engineering` / `qa` ไม่มี call 7 วันติด — มี caller = รีเซ็ตนาฬิกา)
+3. CEO/Owner sign-off (L4/L5 บันทึกชัด, ไม่ถอดเงียบ)
+4. Rollback พร้อม (`rollback-cto-wave1.md`, config `.bak` + `restart-mcp.sh --yes`, ≤15 นาที)
+
+### 5. Evidence (Wave 2, Architect)
+
+- `bus/evidence/cto-migration/20261113/w2-architect-health.json` (fresh probe + tools + DB)
+- `bus/evidence/cto-migration/20261113/w2-architect-wiring.json` (json+jsonc+README triple)
+- `bus/evidence/cto-migration/20261113/w2-architect-deprecation-shim-plan.md` (Wave 3 only)
+- หมายเหตุ: `w2-health.json` ในโฟลเดอร์เดียวกันถูก Architect เขียนทับโดยไม่ตั้งใจขณะ orchestrator ทำ W2 flip คู่ขนาน (โฟลเดอร์ `bus/evidence/` เป็น gitignored local audit) — เนื้อหาเดียวกัน (healthy ×3) จึงเก็บสำเนา namespaced เป็น `w2-architect-health.json` แทน; ให้ orchestrator regenerate `w2-health.json` ฝั่ง flip ถ้าต้องการแยกไฟล์
