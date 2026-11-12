@@ -23,7 +23,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.responses import Response
 
 from . import APP_VERSION
-from .live import SESSION_LIMIT, list_sessions, live_status, queue_depths
+from .live import live_status
 from .provider import ProviderError
 from .runtime import AppRuntime, UnknownModuleError
 from .security import (
@@ -344,18 +344,16 @@ def _register_routes(app: FastAPI, runtime: AppRuntime) -> None:
             },
         )
 
-    @reads.get("/api/sessions", include_in_schema=False)
-    def api_sessions(limit: int = SESSION_LIMIT) -> JSONResponse:
-        envelope = list_sessions(max(1, min(limit, 100)))
-        return JSONResponse(envelope)
-
-    @reads.get("/api/bus/queue", include_in_schema=False)
-    def api_bus_queue() -> JSONResponse:
-        return JSONResponse(queue_depths())
+    # PR2.1 D6: Beta เปิดแค่ 2 routes — /live + /api/live/status เท่านั้น
+    # /api/sessions + /api/bus/queue ตัดออกจาก router (ลด surface ×3)
+    # ฟังก์ชัน list_sessions / queue_depths ยังอยู่ให้ test ใช้ภายใน
 
     @reads.get("/api/live/status", include_in_schema=False)
     def api_live_status() -> JSONResponse:
-        return JSONResponse(live_status(runtime))
+        payload = live_status(runtime)
+        response = JSONResponse(payload)
+        response.headers["Cache-Control"] = "private, max-age=3"
+        return response
 
     # ---------------------------------------------------------------- tasks
 
