@@ -2,6 +2,7 @@
 # version: 1.0.0-dualrun
 # Owner mapping truth: profiles/cto/ROUTING_MATRIX.md (Legal DRAFT)
 # Dual-run: 10% -> cto, 90% -> original owners (07 engineering / 10 qa). Additive only.
+# Closure 2026-11-13 (R4): byte-identical copy -> bus/evidence/cto-migration/2026-11-13/dual-run-20calls.json (sha 1bcf342934a6b4994ce0cb72281a1e6efb5bffd3b90ba136fc96747e9ac861fd, 20/20 PASS)
 
 always_read:
   - README.md
