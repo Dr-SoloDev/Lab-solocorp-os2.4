@@ -205,3 +205,38 @@ python -m pytest tests/ central_bus/tests/ --tb=short -q   # CI suite
 
 `python -m pytest` from the repo root with both paths is the CI invocation; bare
 `pytest` misses `central_bus/tests/`.
+
+## 11. Phase 2 CEO loop (`POST /chat`)
+
+One synchronous turn: validate brief → route (content-creator only) →
+`TaskTracker.create(pending)` → `running` → `host.call_tool` → terminal
+`completed`/`failed` + `completed_at`. No worker, no retry, no silent fallback;
+`failed` still returns 200 (work finished, result failed). Only tracker `OSError`
+returns 500. `GET /chat` renders the same form with `turn=None`.
+
+| Budget | Value |
+|:-------|:------|
+| Turn deadline (`CEO_TURN_BUDGET_S`) | 180s, counted around `running` → `call_tool` return |
+| Per-tool ceiling (`TOOL_TIMEOUTS`) | default 60s · `render_*` 150s · `tools/list` 5s (`timeout=min(ceiling, remaining)`) |
+| `request()` deadline (`mcp_stdio.py`) | total `timeout` per request; id-mismatch no longer resets the clock |
+| Timeout/exit | `host.disconnect(module_id)` immediately (reuses `close()` terminate→kill) |
+
+| `error.code` | When | Hint points to |
+|:-------------|:-----|:---------------|
+| `MODULE_DISABLED` | registry intent disabled | Modules → Enable content-creator |
+| `MODULE_DISCONNECTED` | enabled but not connected | Modules → Check + `last_error` |
+| `MODULE_ERROR` | connect/probe failed | Modules → Check again / send log |
+| `TOOL_FAILED` | `call_tool` raised after connect | retry, shorten brief on repeat |
+| `BRIEF_INVALID` | brief empty / >2000 (400, no task) | retype 1–2000 chars |
+| `INTERNAL` | anything else / provider unconfigured (`/settings`) | retry + send time + task_id |
+
+Task files: `central_bus/content/tasks/task-<12hex>.json` (envelope v2:
+`route_reason` non-empty, `artifact_refs[]`, `app_version`, `error{code,message,hint}`
++ legacy mirrors `result_ref==artifact_refs[0]`, `error_detail==error.message`).
+Old files (only `result_ref`/`error_detail`) read via normalize-on-read; the
+reader never rewrites them on disk.
+
+```bash
+source .venv/bin/activate && export PYTHONPATH=.
+python -m pytest tests/test_solocorp_app_ceo_loop.py tests/test_solocorp_app_live.py tests/test_solocorp_app_runtime.py -q --tb=short
+```

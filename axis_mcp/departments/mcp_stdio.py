@@ -7,6 +7,7 @@ import os
 import queue
 import subprocess
 import threading
+import time
 from pathlib import Path
 from typing import Any
 
@@ -25,7 +26,9 @@ class MCPStdioClient:
         unset_env: tuple[str, ...] = (),
         startup_timeout: float = 15,
     ) -> None:
-        if not command or any(not isinstance(part, str) or not part for part in command):
+        if not command or any(
+            not isinstance(part, str) or not part for part in command
+        ):
             raise MCPStdioError("MCP command must be a non-empty string list")
         process_env = os.environ.copy()
         for key in unset_env:
@@ -103,9 +106,13 @@ class MCPStdioClient:
         except (BrokenPipeError, OSError) as exc:
             raise MCPStdioError("MCP server closed its input stream") from exc
 
+        deadline = time.monotonic() + timeout
         while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise MCPStdioError(f"MCP request timed out: {method}")
             try:
-                line = self._messages.get(timeout=timeout)
+                line = self._messages.get(timeout=remaining)
             except queue.Empty as exc:
                 raise MCPStdioError(f"MCP request timed out: {method}") from exc
             if line is None:

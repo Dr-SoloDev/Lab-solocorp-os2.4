@@ -25,7 +25,9 @@ from typing import Any
 from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parent.parent
-TASKS_ROOT = Path(os.environ.get("SOLOCORP_TASKS_ROOT", ROOT / "central_bus" / "content" / "tasks"))
+TASKS_ROOT = Path(
+    os.environ.get("SOLOCORP_TASKS_ROOT", ROOT / "central_bus" / "content" / "tasks")
+)
 
 VALID_STATUSES = {"pending", "running", "completed", "failed", "cancelled"}
 
@@ -58,11 +60,16 @@ class TaskTracker:
         module: str,
         brief: str,
         task_type: str = "content",
+        *,
+        route_reason: str | None = None,
+        artifact_refs: list[str] | None = None,
+        app_version: str | None = None,
     ) -> dict[str, Any]:
         """Create a new task and return its record."""
 
         task_id = f"task-{uuid4().hex[:12]}"
         now = self._now()
+        artifacts = list(artifact_refs) if artifact_refs is not None else []
         record = {
             "task_id": task_id,
             "dept": dept,
@@ -70,11 +77,15 @@ class TaskTracker:
             "task_type": task_type,
             "status": "pending",
             "brief": brief,
+            "route_reason": route_reason,
+            "artifact_refs": artifacts,
             "created_at": now,
             "started_at": None,
             "completed_at": None,
-            "result_ref": None,
+            "result_ref": artifacts[0] if artifacts else None,
+            "error": None,
             "error_detail": None,
+            "app_version": app_version,
         }
         self._write(task_id, record)
         return record
@@ -87,9 +98,10 @@ class TaskTracker:
             return None
         try:
             with open(path, "r", encoding="utf-8") as handle:
-                return json.load(handle)
+                record = json.load(handle)
         except (json.JSONDecodeError, OSError):
             return None
+        return _normalize_record(record)
 
     def list_tasks(
         self, dept: str | None = None, include_brief: bool = False
@@ -110,6 +122,7 @@ class TaskTracker:
                 continue
             if dept is not None and record.get("dept") != dept:
                 continue
+            record = _normalize_record(record)
             if not include_brief:
                 record = {k: v for k, v in record.items() if k != "brief"}
             results.append(record)
@@ -121,15 +134,27 @@ class TaskTracker:
         task_id: str,
         status: str,
         result_ref: str | None = None,
-        error_detail: str | None = None,
+        error_detail: str | dict[str, Any] | None = None,
+        *,
+        artifact_refs: list[str] | None = None,
+        error: dict[str, Any] | None = None,
     ) -> dict[str, Any] | None:
         """Update task status and optional result/error."""
 
         if status not in VALID_STATUSES:
-            raise ValueError(f"status must be one of: {', '.join(sorted(VALID_STATUSES))}")
+            raise ValueError(
+                f"status must be one of: {', '.join(sorted(VALID_STATUSES))}"
+            )
 
-        record = self.get(task_id)
-        if record is None:
+        path = self._task_path(task_id)
+        if not path.exists():
+            return None
+        try:
+            with open(path, "r", encoding="utf-8") as handle:
+                record = json.load(handle)
+        except (json.JSONDecodeError, OSError):
+            return None
+        if not isinstance(record, dict):
             return None
 
         now = self._now()
@@ -139,15 +164,76 @@ class TaskTracker:
             record["completed_at"] = now
 
         record["status"] = status
+        if artifact_refs is not None:
+            record["artifact_refs"] = list(artifact_refs)
+            if artifact_refs:
+                record["result_ref"] = artifact_refs[0]
+            elif result_ref is None:
+                record["result_ref"] = None
         if result_ref is not None:
             record["result_ref"] = result_ref
-        if error_detail is not None:
-            record["error_detail"] = error_detail
+            if artifact_refs is None:
+                record["artifact_refs"] = [result_ref] if result_ref else []
+        if error is not None:
+            record["error"] = error
+            record["error_detail"] = (
+                error.get("message") if isinstance(error, dict) else str(error)
+            )
+        elif error_detail is not None:
+            if isinstance(error_detail, dict):
+                record["error"] = error_detail
+                record["error_detail"] = error_detail.get("message")
+            else:
+                record["error_detail"] = error_detail
+                record["error"] = {
+                    "code": "UNKNOWN",
+                    "message": error_detail,
+                    "hint": "ดู task นี้ใน tasks.html แล้วรัน brief ใหม่อีกครั้ง",
+                }
 
         self._write(task_id, record)
-        return record
+        return _normalize_record(record)
 
     def _write(self, task_id: str, record: dict[str, Any]) -> None:
         path = self._task_path(task_id)
         with open(path, "w", encoding="utf-8") as handle:
             json.dump(record, handle, ensure_ascii=False, indent=2)
+
+
+def _normalize_record(record: dict[str, Any]) -> dict[str, Any]:
+    """Normalize a task record for readers without touching disk.
+
+    Backward compat (PRD §2.3 migration, additive only):
+    - old files with only ``result_ref`` get ``artifact_refs=[result_ref]``;
+    - old files with only string ``error_detail`` get
+      ``error={"code":"UNKNOWN",...}``;
+    - new files keep ``result_ref == artifact_refs[0]`` and
+      ``error_detail == error.message`` mirrors.
+    """
+
+    if not isinstance(record, dict):
+        return record
+    normalized = dict(record)
+    artifacts = normalized.get("artifact_refs")
+    if not isinstance(artifacts, list):
+        result_ref = normalized.get("result_ref")
+        normalized["artifact_refs"] = [result_ref] if result_ref else []
+    if "route_reason" not in normalized:
+        normalized["route_reason"] = None
+    if "app_version" not in normalized:
+        normalized["app_version"] = None
+    if "error" not in normalized:
+        normalized["error"] = None
+    error = normalized.get("error")
+    error_detail = normalized.get("error_detail")
+    if error is None and isinstance(error_detail, str) and error_detail:
+        normalized["error"] = {
+            "code": "UNKNOWN",
+            "message": error_detail,
+            "hint": "ดู task นี้ใน tasks.html แล้วรัน brief ใหม่อีกครั้ง",
+        }
+    elif error is None and isinstance(error_detail, dict):
+        normalized["error"] = error_detail
+    elif isinstance(error, dict) and error_detail is None:
+        normalized["error_detail"] = error.get("message")
+    return normalized

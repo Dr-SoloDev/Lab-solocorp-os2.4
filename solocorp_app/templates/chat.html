@@ -12,14 +12,36 @@
 <div class="grid grid--2">
   <section class="card">
     <h2 class="card-title">Conversation</h2>
-    <div class="placeholder">
-      <p><strong>Not wired yet.</strong> Phase 2 adds the CEO loop: brief → route
-      to an enabled department → task record → tool call → result.</p>
-      <p class="muted">
-        Phase 1 gate only covers provider configuration and module toggling.
-        Nothing is sent to a model from this page.
-      </p>
-    </div>
+    <form method="post" action="/chat">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <label class="field">
+        <span>Brief (1–2000 characters)</span>
+        <textarea name="brief" rows="4" maxlength="2000" required>{{ brief or '' }}</textarea>
+      </label>
+      <p class="card-actions"><button class="btn" type="submit">Send to CEO loop</button></p>
+    </form>
+    {% if chat_error %}
+    <p class="notice notice--error" role="alert">{{ chat_error }}</p>
+    {% endif %}
+    {% if turn and turn.task %}
+    <dl class="facts facts--stack">
+      <div><dt>Task</dt><dd class="mono">{{ turn.task.task_id }}</dd></div>
+      <div><dt>Status</dt><dd><span class="status status--{{ turn.task.status }}">{{ turn.task.status }}</span></dd></div>
+      <div><dt>Route reason</dt><dd>{{ turn.task.route_reason or turn.route_reason or '—' }}</dd></div>
+      <div><dt>Result</dt><dd class="mono">{% if turn.task.artifact_refs %}{% for ref in turn.task.artifact_refs %}<div>{{ ref }}</div>{% endfor %}{% elif turn.task.result_ref %}{{ turn.task.result_ref }}{% else %}—{% endif %}</dd></div>
+      {% if turn.task.error %}
+      <div><dt>Error</dt><dd><span class="mono">{{ turn.task.error.code }}</span> — {{ turn.task.error.message }}<br /><span class="muted">{{ turn.task.error.hint }}</span></dd></div>
+      {% elif turn.error %}
+      <div><dt>Error</dt><dd><span class="mono">{{ turn.error.code }}</span> — {{ turn.error.message }}<br /><span class="muted">{{ turn.error.hint }}</span></dd></div>
+      {% endif %}
+      <div><dt>Completed</dt><dd class="mono">{{ turn.task.completed_at | short_ts }}</dd></div>
+    </dl>
+    <p class="card-actions"><a class="btn btn--ghost" href="/tasks">Open Task History</a></p>
+    {% elif turn and turn.error %}
+    <dl class="facts facts--stack">
+      <div><dt>Error</dt><dd><span class="mono">{{ turn.error.code }}</span> — {{ turn.error.message }}<br /><span class="muted">{{ turn.error.hint }}</span></dd></div>
+    </dl>
+    {% endif %}
   </section>
 
   <section class="card">
