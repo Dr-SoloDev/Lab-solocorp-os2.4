@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 from typing import Any
 
 from axis_mcp.module_host import ModuleHost, ModuleHostError
@@ -229,6 +230,32 @@ class AppRuntime:
             return tracker.list_tasks()
         except OSError:
             return []
+
+    def tasks_summary(self, *, cap: int = 200) -> dict[str, Any]:
+        """Count TaskTracker by status with a cap (PR2.1 Product v1.0 — D4).
+
+        Read-only aggregate for ``/api/live/status`` contract v1.0::
+
+            {"total": int, "by_status": {status: count}, "updated_at": iso}
+
+        Single source of truth = :meth:`tasks` (TaskTracker JSON). Never
+        raises — a broken tracker reads as all-zero, never a 500.
+        Does not touch :meth:`tasks` behavior.
+        """
+
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        try:
+            tasks = self.tasks()
+        except Exception:  # noqa: BLE001 - fail-open for the dashboard
+            return {"total": 0, "by_status": {}, "updated_at": now}
+        if not isinstance(tasks, list):
+            return {"total": 0, "by_status": {}, "updated_at": now}
+        by_status: dict[str, int] = {}
+        for record in tasks[: max(1, cap)]:
+            status = record.get("status") if isinstance(record, dict) else None
+            key = str(status) if status else "pending"
+            by_status[key] = by_status.get(key, 0) + 1
+        return {"total": len(tasks), "by_status": by_status, "updated_at": now}
 
     # -------------------------------------------------------------- lifecycle
 

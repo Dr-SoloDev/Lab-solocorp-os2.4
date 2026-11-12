@@ -12,6 +12,7 @@
     อัปเดตล่าสุด <span class="mono" data-live-updated>{{ status.updated_at | short_ts }}</span>
     · sessions จาก <span class="mono" data-session-source>{{ status.session_source }}</span>
     {% if status.session_error %}<span class="error-detail" data-session-error>{{ status.session_error }}</span>{% endif %}
+    · <span class="mono" data-cache-hit>{% if status.cache_hit %}cache{% else %}fresh{% endif %}</span>
   </p>
 </section>
 
@@ -26,6 +27,8 @@
     <span class="chip chip--warn" data-queue-dead>dead {{ status.queues.dead | default(0) }}</span>
     <span class="chip chip--muted" data-provider-state>provider {{ status.provider_state }}</span>
     <span class="chip" data-session-count>{{ status.session_count }} sessions</span>
+    <span class="chip chip--muted" data-tasks-total>tasks {{ status.tasks_summary.total | default(0) }}</span>
+    <span class="chip {% if status.degraded %}chip--warn{% else %}chip--ok{% endif %}" data-degraded>{% if status.degraded %}degraded{% else %}ok{% endif %}</span>
   </div>
   <span class="muted small" data-live-dot>● live · 3s</span>
 </section>
@@ -38,6 +41,7 @@
 
 <section class="card">
   <h2 class="card-title">Sessions <span class="muted">({{ status.session_count }})</span></h2>
+  <p class="muted small">sessions บนเครื่องนี้ (opencode) — ไม่ใช่ app tasks · source: <span class="mono" data-session-source-badge>{{ status.session_source }}</span></p>
   {% if status.sessions %}
   <div class="table-wrap">
     <table class="table">
@@ -90,6 +94,7 @@
 
 <section class="card">
   <h2 class="card-title">Queue depth</h2>
+  <p class="muted small">source: <span class="mono" data-queue-source>{{ status.queue_source | default('empty') }}</span>{% if status.queue_error %} <span class="error-detail" data-queue-error>{{ status.queue_error }}</span>{% else %} <span data-queue-error></span>{% endif %}</p>
   <dl class="facts">
     <div><dt>Critical</dt><dd data-q-critical>{{ status.queues.critical | default(0) }}</dd></div>
     <div><dt>High</dt><dd data-q-high>{{ status.queues.high | default(0) }}</dd></div>
@@ -99,6 +104,18 @@
     <div><dt>Total</dt><dd data-q-total>{{ status.queue_total }}</dd></div>
   </dl>
   <p class="muted small">bus-queue อ่านจาก <code>bus/queue/*.jsonl</code> ไฟล์หาย = 0 (fail-open) — นี่คือคิวของ Central Bus ไม่ใช่ app-tasks (ประวัติงานของแอปดูที่ <a href="/tasks">Task History</a>)</p>
+</section>
+
+<section class="card">
+  <h2 class="card-title">Task History <span class="muted">({{ status.tasks_summary.total | default(0) }})</span></h2>
+  <p class="muted small">source: <span class="mono" data-tasks-source>app-tasks</span> · งานที่ถูก track แล้ว (ถาวร) — คนละมิติกับ queue depth (งานค้างท่อ ชั่วคราว)</p>
+  <dl class="facts">
+    {% for name, count in (status.tasks_summary.by_status | default({})).items() %}
+    <div><dt>{{ name }}</dt><dd data-t-{{ name }}>{{ count }}</dd></div>
+    {% endfor %}
+    <div><dt>Total</dt><dd data-t-total>{{ status.tasks_summary.total | default(0) }}</dd></div>
+  </dl>
+  <p class="muted small">รายละเอียดดูที่ <a href="/tasks">Task History</a></p>
 </section>
 
 <section class="card">
@@ -115,6 +132,7 @@
 </section>
 
 <p class="muted small">
-  Polls <code>/api/live/status</code> ทุก 3 วินาที — sessions ฝั่ง server มี cache 10 วินาที (poll ถี่แต่ไม่ spawn CLI ทุก poll) ถ้า fetch ล้มจะโชว์รอบล่าสุดค้างไว้ ไม่ล้างจอ
+  Polls <code>/api/live/status</code> ทุก 3 วินาที — sessions ฝั่ง server มี cache 15 วินาที queue มี cache 5 วินาที (poll ถี่แต่ไม่ spawn CLI ทุก poll) ถ้า fetch ล้มจะโชว์รอบล่าสุดค้างไว้ ไม่ล้างจอ
 </p>
+<script src="/static/live.js" defer></script>
 {% endblock %}
