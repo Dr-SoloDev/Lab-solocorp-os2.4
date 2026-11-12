@@ -99,7 +99,7 @@ def _to_iso_time(value: Any) -> str | None:
     if value is None:
         return None
     if isinstance(value, (int, float)) and value > 0:
-        # opencode.db เก็บ ms; epoch s อยู่แถว 1e9, ms อยู่แถว 1e12
+        # epoch ms อยู่แถว 1e12, epoch s อยู่แถว 1e9
         seconds = float(value) / 1000.0 if value > 1e11 else float(value)
         try:
             return datetime.fromtimestamp(seconds, tz=timezone.utc).isoformat(
@@ -315,31 +315,51 @@ def list_sessions(
                 pass
 
 
-def _count_jsonl_file(path: Path) -> int:
-    """นับบรรทัด non-empty ในไฟล์เดียวแบบมี cap กันบวม (D5)."""
+def _count_jsonl_file(path: Path) -> tuple[int, bool]:
+    """นับบรรทัด non-empty ในไฟล์เดียวแบบมี cap กันบวม (D5).
+
+    คืน ``(count, truncated)`` — truncated=True เมื่อหยุดก่อน EOF เพราะ
+    เกิน cap (50k บรรทัด / 8MB) Product v1.0 §2.5.
+    """
 
     total = 0
     seen_bytes = 0
+    truncated = False
     try:
         with open(path, encoding="utf-8") as handle:
             for line in handle:
                 seen_bytes += len(line.encode("utf-8", errors="ignore"))
                 if seen_bytes > MAX_BYTES_PER_FILE:
+                    truncated = True
                     break
                 if line.strip():
                     total += 1
                 if total >= MAX_LINES_PER_FILE:
+                    # อาจยังมีบรรทัดเหลือ — เช็คว่าถึง EOF จริงไหม
+                    rest = handle.read(1)
+                    if rest:
+                        truncated = True
                     break
     except OSError:
-        return 0
-    return total
+        return 0, False
+    return total, truncated
 
 
 def queue_depths(*, queue_dir: Path | None = None) -> dict[str, Any]:
     """นับบรรทัด JSONL ต่อ priority — ไฟล์หาย = 0, อ่านไม่ได้ = fail-open.
 
-    PR2.1 (D5): ข้าม ``*.offset`` + ``archive/`` เด็ดขาด (ห้าม ``rglob``),
-    อ่านแค่ 6 ชื่อตายตัวใน :data:`QUEUE_FILES` + cap กันไฟล์บวม.
+    PR2.1 Product v1.0 §2.2 (แทน CHECKLIST "bus-queue"):
+    ``queue_source`` คือป้ายฝั่ง queue คู่กับ ``session_source`` ฝั่ง session::
+
+        files       — อ่านไฟล์จริง มีข้อมูล (total > 0)
+        empty       — dir ว่าง/ไม่มีไฟล์/ทุกไฟล์ 0 บรรทัด (total == 0)
+        truncated   — ไฟล์เกิน cap แล้วหยุดอ่าน (50k บรรทัด / 8MB)
+        unavailable — อ่านไม่ได้เลย (exception ฝั่ง queue)
+
+    ``queue_error`` (≤200 ตัวอักษร) คือเหตุผลฝั่ง queue เท่านั้น —
+    คนละตัวกับ ``session_error`` และ ``error`` (runtime read fail).
+    ข้าม ``*.offset`` + ``archive/`` เด็ดขาด (ห้าม ``rglob``),
+    อ่านแค่ 6 ชื่อตายตัวใน :data:`QUEUE_FILES` + cap กันไฟล์บวม (D5).
     Production path มี cache 5s (D1); test path ที่ส่ง ``queue_dir`` มา
     bypass cache เสมอเพื่อ determinism.
     """
@@ -355,6 +375,7 @@ def queue_depths(*, queue_dir: Path | None = None) -> dict[str, Any]:
                 return envelope
     base = Path(queue_dir) if queue_dir else DEFAULT_QUEUE_DIR
     queues: dict[str, int] = {}
+    truncated_any = False
     try:
         for logical, files in QUEUE_FILES.items():
             total = 0
@@ -371,14 +392,26 @@ def queue_depths(*, queue_dir: Path | None = None) -> dict[str, Any]:
                         pass
                 except OSError:
                     continue
-                total += _count_jsonl_file(path)
+                count, was_truncated = _count_jsonl_file(path)
+                total += count
+                truncated_any = truncated_any or was_truncated
             queues[logical] = total
         queues.setdefault("dead", queues.pop("dead", 0))
         total = sum(queues.values())
+        if truncated_any:
+            queue_source = "truncated"
+            queue_error: str | None = "queue cap exceeded (50k lines / 8MB)"
+        elif total == 0:
+            queue_source = "empty"
+            queue_error = None
+        else:
+            queue_source = "files"
+            queue_error = None
         envelope = {
             "queues": queues,
             "total": total,
-            "queue_source": "bus-queue",
+            "queue_source": queue_source,
+            "queue_error": queue_error,
             "updated_at": _now_iso(),
             "cache_hit": False,
         }
@@ -393,53 +426,77 @@ def queue_depths(*, queue_dir: Path | None = None) -> dict[str, Any]:
         return {
             "queues": {key: 0 for key in QUEUE_FILES},
             "total": 0,
-            "queue_source": "bus-queue",
+            "queue_source": "unavailable",
+            "queue_error": f"{type(exc).__name__}: {exc}"[:200],
             "updated_at": _now_iso(),
-            "error": f"{type(exc).__name__}: {exc}"[:200],
             "cache_hit": False,
         }
 
 
-def _tasks_summary(runtime: Any, *, cap: int = 200) -> dict[str, int]:
-    """นับ TaskTracker แบบ cap กันช้า (D4) — fail-open เสมอ."""
+def _tasks_summary(runtime: Any, *, cap: int = 200) -> dict[str, Any]:
+    """นับ TaskTracker แบบ cap กันช้า — Product v1.0 §2.2 contract (D4).
+
+    Shape ล็อก:: ``{"total": int, "by_status": {status: count}, "updated_at": iso}``
+    Single source of truth = ``runtime.tasks()`` / ``runtime.tasks_summary()``
+    (TaskTracker) เท่านั้น — ห้ามนับจาก ``bus/queue/*.jsonl``.
+    fail-open เสมอ — tasks พังต้องไม่พา /live ล้ม.
+    """
 
     try:
         if hasattr(runtime, "tasks_summary"):
             summary = runtime.tasks_summary(cap=cap)
             if isinstance(summary, dict) and "total" in summary:
+                by_status = summary.get("by_status")
+                if not isinstance(by_status, dict):
+                    by_status = {}
+                updated_at = summary.get("updated_at") or _now_iso()
                 return {
-                    "pending": int(summary.get("pending", 0)),
-                    "running": int(summary.get("running", 0)),
-                    "completed": int(summary.get("completed", 0)),
-                    "failed": int(summary.get("failed", 0)),
                     "total": int(summary.get("total", 0)),
+                    "by_status": {
+                        str(key): int(value) for key, value in by_status.items()
+                    },
+                    "updated_at": str(updated_at),
                 }
         tasks = runtime.tasks()
         if not isinstance(tasks, list):
             raise TypeError("tasks() did not return a list")
-        pending = running = completed = failed = 0
+        by_status: dict[str, int] = {}
         for record in tasks[:cap]:
             status = record.get("status") if isinstance(record, dict) else None
-            if status == "pending":
-                pending += 1
-            elif status == "running":
-                running += 1
-            elif status == "completed":
-                completed += 1
-            elif status in ("failed", "cancelled"):
-                failed += 1
-            else:
-                # key ที่ไม่รู้จักนับเป็น pending — ไม่ทิ้งงาน (fail-open)
-                pending += 1
+            key = str(status) if status else "pending"
+            by_status[key] = by_status.get(key, 0) + 1
         return {
-            "pending": pending,
-            "running": running,
-            "completed": completed,
-            "failed": failed,
-            "total": min(len(tasks), cap) if len(tasks) > cap else len(tasks),
+            "total": len(tasks),
+            "by_status": by_status,
+            "updated_at": _now_iso(),
         }
     except Exception:  # noqa: BLE001 - tasks พังต้องไม่พา /live ล้ม
-        return {"pending": 0, "running": 0, "completed": 0, "failed": 0, "total": 0}
+        return {"total": 0, "by_status": {}, "updated_at": _now_iso()}
+
+
+def _degraded(
+    *,
+    session_source: str | None,
+    queue_source: str | None,
+    error: str | None,
+    provider_state: str | None,
+    registry_valid: bool,
+) -> bool:
+    """สูตร ``degraded`` ล็อก Product v1.0 §2.3 — ห้ามตีความหน้างาน.
+
+    ``True`` เมื่อข้อใดข้อหนึ่งเป็นจริง: session none / queue
+    truncated|unavailable / runtime error / provider unknown|failed /
+    registry ไม่ valid — นอกนั้น ``False``. UI ใช้ฟิลด์นี้ฟิลด์เดียว
+    ตัดสินป้ายเหลือง/แดง.
+    """
+
+    return (
+        session_source == "none"
+        or queue_source in ("truncated", "unavailable")
+        or error is not None
+        or provider_state in ("unknown", "failed")
+        or not registry_valid
+    )
 
 
 def live_status(
@@ -448,7 +505,13 @@ def live_status(
     session_limit: int = SESSION_LIMIT,
     queue_dir: Path | None = None,
 ) -> dict[str, Any]:
-    """รวมทุกอย่างที่หน้า /live ต้อง polling — ไม่ raise เด็ดขาด."""
+    """รวมทุกอย่างที่หน้า /live ต้อง polling — ไม่ raise เด็ดขาด.
+
+    Contract Product v1.0 §2.2: ``sessions/session_count/session_source/
+    session_error/queues/queue_total/queue_source/queue_error/cache_hit/
+    degraded/tasks_summary/error/updated_at`` (+ modules/provider เดิม).
+    ``tasks_summary`` มาจาก TaskTracker เท่านั้น — ห้ามนับจาก queue.
+    """
 
     try:
         sessions_envelope = list_sessions(session_limit)
@@ -468,11 +531,17 @@ def live_status(
         queue_envelope = {
             "queues": {key: 0 for key in QUEUE_FILES},
             "total": 0,
-            "queue_source": "bus-queue",
+            "queue_source": "unavailable",
+            "queue_error": f"{type(exc).__name__}: {exc}"[:200],
             "updated_at": _now_iso(),
-            "error": f"{type(exc).__name__}: {exc}"[:200],
             "cache_hit": False,
         }
+    queue_source = str(queue_envelope.get("queue_source") or "unavailable")
+    if queue_source not in ("files", "empty", "truncated", "unavailable"):
+        queue_source = "unavailable"
+    queue_error = queue_envelope.get("queue_error", queue_envelope.get("error"))
+    if queue_error is not None:
+        queue_error = str(queue_error)[:200]
     try:
         counts = runtime.counts()
         provider_state = runtime.provider.status().get("state")
@@ -486,6 +555,7 @@ def live_status(
             module_states = []
         tasks_summary = _tasks_summary(runtime)
     except Exception as exc:  # noqa: BLE001 - runtime พังก็ยังต้องตอบ JSON
+        error: str | None = f"runtime read failed: {exc}"[:200]
         return {
             "sessions": sessions_envelope["sessions"],
             "session_count": sessions_envelope["count"],
@@ -493,15 +563,13 @@ def live_status(
             "session_error": sessions_envelope.get("error"),
             "queues": queue_envelope["queues"],
             "queue_total": queue_envelope["total"],
-            "queue_source": "bus-queue",
+            "queue_source": queue_source,
+            "queue_error": queue_error,
             "tasks_summary": {
-                "pending": 0,
-                "running": 0,
-                "completed": 0,
-                "failed": 0,
                 "total": 0,
+                "by_status": {},
+                "updated_at": _now_iso(),
             },
-            "tasks_source": "app-tasks",
             "modules": {"total": 0, "enabled": 0, "connected": 0, "error": 0},
             "module_states": [],
             "provider_state": "unknown",
@@ -509,9 +577,13 @@ def live_status(
             "cache_hit": bool(
                 sessions_envelope.get("cache_hit") or queue_envelope.get("cache_hit")
             ),
-            "error": f"runtime read failed: {exc}"[:200],
+            "degraded": True,
+            "error": error,
             "updated_at": _now_iso(),
         }
+    cache_hit = bool(
+        sessions_envelope.get("cache_hit") or queue_envelope.get("cache_hit")
+    )
     return {
         "sessions": sessions_envelope["sessions"],
         "session_count": sessions_envelope["count"],
@@ -519,15 +591,20 @@ def live_status(
         "session_error": sessions_envelope.get("error"),
         "queues": queue_envelope["queues"],
         "queue_total": queue_envelope["total"],
-        "queue_source": "bus-queue",
+        "queue_source": queue_source,
+        "queue_error": queue_error,
         "tasks_summary": tasks_summary,
-        "tasks_source": "app-tasks",
         "modules": counts,
         "module_states": module_states,
         "provider_state": provider_state,
         "registry_valid": registry_valid,
-        "cache_hit": bool(
-            sessions_envelope.get("cache_hit") or queue_envelope.get("cache_hit")
+        "cache_hit": cache_hit,
+        "degraded": _degraded(
+            session_source=sessions_envelope["source"],
+            queue_source=queue_source,
+            error=None,
+            provider_state=provider_state,
+            registry_valid=registry_valid,
         ),
         "error": None,
         "updated_at": _now_iso(),

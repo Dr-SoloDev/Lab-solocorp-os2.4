@@ -28,6 +28,7 @@
     <span class="chip chip--muted" data-provider-state>provider {{ status.provider_state }}</span>
     <span class="chip" data-session-count>{{ status.session_count }} sessions</span>
     <span class="chip chip--muted" data-tasks-total>tasks {{ status.tasks_summary.total | default(0) }}</span>
+    <span class="chip {% if status.degraded %}chip--warn{% else %}chip--ok{% endif %}" data-degraded>{% if status.degraded %}degraded{% else %}ok{% endif %}</span>
   </div>
   <span class="muted small" data-live-dot>● live · 3s</span>
 </section>
@@ -93,7 +94,7 @@
 
 <section class="card">
   <h2 class="card-title">Queue depth</h2>
-  <p class="muted small">source: <span class="mono" data-queue-source>{{ status.queue_source | default('bus-queue') }}</span></p>
+  <p class="muted small">source: <span class="mono" data-queue-source>{{ status.queue_source | default('empty') }}</span>{% if status.queue_error %} <span class="error-detail" data-queue-error>{{ status.queue_error }}</span>{% else %} <span data-queue-error></span>{% endif %}</p>
   <dl class="facts">
     <div><dt>Critical</dt><dd data-q-critical>{{ status.queues.critical | default(0) }}</dd></div>
     <div><dt>High</dt><dd data-q-high>{{ status.queues.high | default(0) }}</dd></div>
@@ -107,12 +108,11 @@
 
 <section class="card">
   <h2 class="card-title">Task History <span class="muted">({{ status.tasks_summary.total | default(0) }})</span></h2>
-  <p class="muted small">source: <span class="mono" data-tasks-source>{{ status.tasks_source | default('app-tasks') }}</span> · งานที่ถูก track แล้ว (ถาวร) — คนละมิติกับ queue depth (งานค้างท่อ ชั่วคราว)</p>
+  <p class="muted small">source: <span class="mono" data-tasks-source>app-tasks</span> · งานที่ถูก track แล้ว (ถาวร) — คนละมิติกับ queue depth (งานค้างท่อ ชั่วคราว)</p>
   <dl class="facts">
-    <div><dt>Pending</dt><dd data-t-pending>{{ status.tasks_summary.pending | default(0) }}</dd></div>
-    <div><dt>Running</dt><dd data-t-running>{{ status.tasks_summary.running | default(0) }}</dd></div>
-    <div><dt>Completed</dt><dd data-t-completed>{{ status.tasks_summary.completed | default(0) }}</dd></div>
-    <div><dt>Failed</dt><dd data-t-failed>{{ status.tasks_summary.failed | default(0) }}</dd></div>
+    {% for name, count in (status.tasks_summary.by_status | default({})).items() %}
+    <div><dt>{{ name }}</dt><dd data-t-{{ name }}>{{ count }}</dd></div>
+    {% endfor %}
     <div><dt>Total</dt><dd data-t-total>{{ status.tasks_summary.total | default(0) }}</dd></div>
   </dl>
   <p class="muted small">รายละเอียดดูที่ <a href="/tasks">Task History</a></p>

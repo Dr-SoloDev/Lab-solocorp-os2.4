@@ -74,7 +74,11 @@
     text("[data-live-updated]", shortTimestamp(payload.updated_at));
     text("[data-session-source]", dash(payload.session_source));
     text("[data-session-source-badge]", dash(payload.session_source));
-    text("[data-queue-source]", dash(payload.queue_source || "bus-queue"));
+    text("[data-queue-source]", dash(payload.queue_source || "empty"));
+    var queueErrorBox = document.querySelector("[data-queue-error]");
+    if (queueErrorBox) {
+      queueErrorBox.textContent = payload.queue_error || "";
+    }
     text("[data-tasks-source]", dash(payload.tasks_source || "app-tasks"));
     text("[data-cache-hit]", payload.cache_hit ? "cache" : "fresh");
     var dot = document.querySelector("[data-live-dot]");
@@ -105,12 +109,38 @@
   }
 
   function applyTasks(payload) {
+    // Product v1.0: tasks_summary = {total, by_status, updated_at}.
+    // Render every status the server reports; zero the known lifecycle
+    // slots when absent so a resolved queue clears on screen.
     var summary = payload.tasks_summary || {};
-    text("[data-t-pending]", String(summary.pending || 0));
-    text("[data-t-running]", String(summary.running || 0));
-    text("[data-t-completed]", String(summary.completed || 0));
-    text("[data-t-failed]", String(summary.failed || 0));
+    var byStatus = summary.by_status || {};
     text("[data-t-total]", String(summary.total || 0));
+    var known = ["pending", "running", "completed", "failed", "cancelled"];
+    known.forEach(function (name) {
+      var element = document.querySelector("[data-t-" + name + "]");
+      if (element) {
+        element.textContent = String(byStatus[name] || 0);
+      }
+    });
+    Object.keys(byStatus).forEach(function (name) {
+      if (name === "total" || name === "updated_at") {
+        return;
+      }
+      var element = document.querySelector("[data-t-" + name + "]");
+      if (element) {
+        element.textContent = String(byStatus[name] || 0);
+      }
+    });
+  }
+
+  function applyDegraded(payload) {
+    // Product v1.0 §2.3: UI uses this one field for the yellow/red badge.
+    var badge = document.querySelector("[data-degraded]");
+    if (badge) {
+      badge.textContent = payload.degraded ? "degraded" : "ok";
+      badge.className =
+        "chip " + (payload.degraded ? "chip--warn" : "chip--ok");
+    }
   }
 
   function makeCell(row, value, mono) {
@@ -265,6 +295,7 @@
         applyMeta(payload);
         applyQueue(payload);
         applyTasks(payload);
+        applyDegraded(payload);
         applySessions(payload);
         applyModules(payload);
         onSuccess();

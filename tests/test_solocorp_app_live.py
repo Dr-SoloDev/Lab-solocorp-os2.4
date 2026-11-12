@@ -1,16 +1,19 @@
-"""Live dashboard PR2.1 hardening: /live + /api/live/status only.
+"""Live dashboard PR2.1 patch to contract v1.0: 2 routes + new schema.
 
 Fail-open ทุก endpoint: ไม่มี opencode CLI / ไม่มี queue ไฟล์
 ก็ต้องตอบ 200 ด้วย payload ว่าง — ห้าม 500 (PRD §9).
 
-PR2.1 contract (D1-D7):
+Product PRD-PR2.1 v1.0 contract (ล็อก):
 - 2 routes เท่านั้น: GET /live + GET /api/live/status
-  (/api/sessions + /api/bus/queue ตัดออกจาก router — D6)
-- sessions = CLI อย่างเดียว ไม่มี DB fallback (D3)
-- cache: sessions 15s / queue 5s + cache_hit + single-flight (D1/D2)
-- queue cap 50k lines / 8MB + skip *.offset + archive/ (D5)
-- tasks_summary (app-tasks) แยกจาก queue_total (bus-queue) + ป้าย source คู่ (D4)
-- live.js แยกไฟล์ + visibility/backoff, app.js frozen ไม่แตะ (D7)
+  (/api/sessions + /api/bus/queue ต้อง 404 — D6)
+- sessions = CLI อย่างเดียว ไม่มี DB fallback (``source in (cli, none)``)
+- cache: sessions 15s / queue 5s + cache_hit + single-flight
+- queue cap 50k lines / 8MB + skip *.offset + archive/
+- ``queue_source in (files, empty, truncated, unavailable)`` + ``queue_error``
+- ``tasks_summary == {total, by_status, updated_at}`` จาก TaskTracker เท่านั้น
+- ``degraded`` สูตร 4 เงื่อนไข §2.3 — UI ใช้ฟิลด์นี้ฟิลด์เดียว
+- app.js 92 บรรทัด modules-only + live.js แยกไฟล์ (poll 3s / Abort 2.5s /
+  visibility+pagehide / backoff 3→30s+jitter / single-instance)
 """
 
 from __future__ import annotations
@@ -33,6 +36,7 @@ from solocorp_app.live import (
     MAX_LINES_PER_FILE,
     TTL_QUEUE_S,
     TTL_SESSIONS_S,
+    _degraded,
     list_sessions,
     normalize_session,
     queue_depths,
@@ -42,6 +46,7 @@ from solocorp_app.runtime import AppRuntime
 
 BASE_URL = "http://127.0.0.1:8766"
 DENY_KEYS = {"api_key", "api_key_ref", "brief", "credential", "secret"}
+QUEUE_SOURCES = ("files", "empty", "truncated", "unavailable")
 
 
 class FakeClient:
@@ -109,14 +114,16 @@ def test_live_page_renders_without_sessions(shell):
     assert "data-live" in response.text
     assert "/api/live/status" in response.text
     assert "3s" in response.text or "3 วินาที" in response.text
-    # D4: ป้าย source คู่ + D7: live.js แยกไฟล์
-    assert "bus-queue" in response.text
-    assert "app-tasks" in response.text
+    # PR2.1 patch: live.js แยกไฟล์เท่านั้น ห้าม inline script
     assert "/static/live.js" in response.text
+    assert '<script src="/static/live.js" defer>' in response.text
     assert "Task History" in response.text
+    # degraded badge + tasks total chip มาจาก contract v1.0
+    assert "data-degraded" in response.text
+    assert "data-t-total" in response.text
 
 
-def test_api_live_status_matches_pr21_contract(shell):
+def test_api_live_status_matches_pr21_contract_v10(shell):
     response = shell.client.get("/api/live/status")
 
     assert response.status_code == 200
@@ -125,28 +132,37 @@ def test_api_live_status_matches_pr21_contract(shell):
         "sessions",
         "session_count",
         "session_source",
+        "session_error",
         "queues",
         "queue_total",
         "queue_source",
+        "queue_error",
         "tasks_summary",
-        "tasks_source",
         "modules",
         "provider_state",
         "registry_valid",
         "cache_hit",
+        "degraded",
+        "error",
         "updated_at",
     }
+    # session ป้ายคู่: cli|none เท่านั้น — ห้าม db
     assert payload["session_source"] in ("cli", "none")
-    assert payload["queue_source"] == "bus-queue"
-    assert payload["tasks_source"] == "app-tasks"
-    assert set(payload["tasks_summary"]) == {
-        "pending",
-        "running",
-        "completed",
-        "failed",
-        "total",
-    }
+    # queue ป้ายคู่: 4 ค่าเท่านั้น — ห้าม bus-queue (schema เก่า)
+    assert payload["queue_source"] in QUEUE_SOURCES
+    assert payload["queue_source"] != "bus-queue"
+    # queue_error: None หรือข้อความ ≤200 ตัวอักษร
+    assert payload["queue_error"] is None or (
+        isinstance(payload["queue_error"], str) and len(payload["queue_error"]) <= 200
+    )
+    # tasks_summary shape ใหม่ — ห้าม pending/running/... ระดับบน
+    assert set(payload["tasks_summary"]) == {"total", "by_status", "updated_at"}
+    assert isinstance(payload["tasks_summary"]["total"], int)
+    assert isinstance(payload["tasks_summary"]["by_status"], dict)
     assert isinstance(payload["cache_hit"], bool)
+    assert isinstance(payload["degraded"], bool)
+    # tasks_source เก่าต้องหายจาก contract v1.0
+    assert "tasks_source" not in payload
     assert payload["modules"]["total"] == 5
     assert payload["provider_state"] in (
         "configured",
@@ -160,7 +176,7 @@ def test_api_live_status_matches_pr21_contract(shell):
 def test_pr21_only_two_live_routes(shell):
     assert shell.client.get("/api/live/status").status_code == 200
     assert shell.client.get("/live").status_code == 200
-    # D6: ตัดออกจาก router — ต้อง 404 ไม่ใช่ 200
+    # ตัดออกจาก router — ต้อง 404 ไม่ใช่ 200/redirect/500
     assert shell.client.get("/api/sessions").status_code == 404
     assert shell.client.get("/api/bus/queue").status_code == 404
 
@@ -181,6 +197,7 @@ def test_nav_includes_live(shell):
 
 def test_live_payload_has_no_secrets(shell):
     payload = shell.client.get("/api/live/status").json()
+    assert "tasks_source" not in payload
     keys = _payload_keys(payload)
     leaked = DENY_KEYS & {k.lower() for k in keys}
     assert not leaked, f"secret keys leaked in live payload: {leaked}"
@@ -194,6 +211,8 @@ def test_live_payload_has_no_secrets(shell):
             "outcome",
             "time",
         }
+    # TaskTracker brief ต้องไม่รั่วผ่าน tasks_summary.by_status/keys
+    assert "brief" not in json.dumps(payload)
 
 
 # ------------------------------------------------------------------ unit
@@ -258,6 +277,7 @@ def test_list_sessions_never_returns_db_source(tmp_path: Path):
     live_module.clear_live_cache()
     envelope = list_sessions(10, queue_cli=["/nonexistent-opencode-cli-xyz"])
     assert envelope["source"] != "db"
+    assert envelope["source"] in ("cli", "none")
 
 
 def test_sessions_cache_hit_second_poll_spawns_cli_once(tmp_path: Path, monkeypatch):
@@ -278,6 +298,16 @@ def test_sessions_cache_hit_second_poll_spawns_cli_once(tmp_path: Path, monkeypa
     assert calls["n"] == 1
 
 
+def test_api_second_poll_within_ttl_is_cache_hit(shell):
+    live_module.clear_live_cache()
+    first = shell.client.get("/api/live/status").json()
+    assert first["cache_hit"] is False
+    second = shell.client.get("/api/live/status").json()
+    # queue 5s cache → poll ที่สองใน TTL ต้อง cache_hit (single-flight ฝั่ง server)
+    assert second["cache_hit"] is True
+    assert second["queue_source"] in QUEUE_SOURCES
+
+
 def test_queue_depths_counts_jsonl_lines(tmp_path: Path):
     live_module.clear_live_cache()
     queue_dir = tmp_path / "queue"
@@ -289,7 +319,17 @@ def test_queue_depths_counts_jsonl_lines(tmp_path: Path):
     assert envelope["queues"]["high"] == 2
     assert envelope["queues"]["normal"] == 1
     assert envelope["total"] >= 3
-    assert envelope["queue_source"] == "bus-queue"
+    assert envelope["queue_source"] == "files"
+    assert envelope["queue_error"] is None
+
+
+def test_queue_depths_empty_dir_is_empty_source(tmp_path: Path):
+    live_module.clear_live_cache()
+    envelope = queue_depths(queue_dir=tmp_path / "no-such-queue")
+    assert envelope["total"] == 0
+    assert envelope["queues"]["high"] == 0
+    assert envelope["queue_source"] == "empty"
+    assert envelope["queue_error"] is None
 
 
 def test_queue_depths_skips_offset_and_archive(tmp_path: Path):
@@ -307,7 +347,9 @@ def test_queue_depths_skips_offset_and_archive(tmp_path: Path):
     assert envelope["queues"]["high"] == 1
 
 
-def test_queue_depths_respects_line_cap(tmp_path: Path, monkeypatch):
+def test_queue_depths_respects_line_cap_with_truncated_source(
+    tmp_path: Path, monkeypatch
+):
     live_module.clear_live_cache()
     queue_dir = tmp_path / "queue"
     queue_dir.mkdir(parents=True, exist_ok=True)
@@ -316,6 +358,8 @@ def test_queue_depths_respects_line_cap(tmp_path: Path, monkeypatch):
 
     envelope = queue_depths(queue_dir=queue_dir)
     assert envelope["queues"]["normal"] == 3
+    assert envelope["queue_source"] == "truncated"
+    assert envelope["queue_error"] == "queue cap exceeded (50k lines / 8MB)"
 
 
 def test_queue_caps_are_50k_and_8mb():
@@ -328,6 +372,45 @@ def test_queue_depths_missing_dir_is_zero(tmp_path: Path):
     envelope = queue_depths(queue_dir=tmp_path / "no-such-queue")
     assert envelope["total"] == 0
     assert envelope["queues"]["high"] == 0
+    assert envelope["queue_source"] == "empty"
+
+
+def test_degraded_formula_matches_prd_four_conditions():
+    ok = dict(
+        session_source="cli",
+        queue_source="files",
+        error=None,
+        provider_state="configured",
+        registry_valid=True,
+    )
+    assert _degraded(**ok) is False
+    # 1. sessions หาย
+    assert _degraded(**{**ok, "session_source": "none"}) is True
+    # 2a/2b. queue truncated / unavailable
+    assert _degraded(**{**ok, "queue_source": "truncated"}) is True
+    assert _degraded(**{**ok, "queue_source": "unavailable"}) is True
+    assert _degraded(**{**ok, "queue_source": "empty"}) is False
+    # 3. runtime error
+    assert _degraded(**{**ok, "error": "runtime read failed: boom"}) is True
+    # 4a/4b. provider unknown|failed / registry ไม่ valid
+    assert _degraded(**{**ok, "provider_state": "unknown"}) is True
+    assert _degraded(**{**ok, "provider_state": "failed"}) is True
+    assert _degraded(**{**ok, "registry_valid": False}) is True
+
+
+def test_truncated_queue_marks_status_degraded(shell, tmp_path: Path, monkeypatch):
+    live_module.clear_live_cache()
+    queue_dir = tmp_path / "queue"
+    queue_dir.mkdir(parents=True, exist_ok=True)
+    (queue_dir / "normal.jsonl").write_text('{"b": 1}\n' * 10, encoding="utf-8")
+    monkeypatch.setattr(live_module, "MAX_LINES_PER_FILE", 3)
+
+    payload = live_module.live_status(shell.runtime, queue_dir=queue_dir)
+    assert payload["queue_source"] == "truncated"
+    assert payload["queue_error"] == "queue cap exceeded (50k lines / 8MB)"
+    assert payload["degraded"] is True
+    assert set(payload["tasks_summary"]) == {"total", "by_status", "updated_at"}
+    assert payload["session_source"] in ("cli", "none")
 
 
 def test_tasks_summary_is_separate_from_queue_total(shell):
@@ -341,8 +424,9 @@ def test_tasks_summary_is_separate_from_queue_total(shell):
     payload = shell.client.get("/api/live/status").json()
     summary = payload["tasks_summary"]
     assert summary["total"] >= 1
-    assert summary["failed"] >= 1
+    assert summary["by_status"].get("failed", 0) >= 1
+    assert isinstance(summary["updated_at"], str) and summary["updated_at"]
     # tasks_summary มาจาก TaskTracker — brief ต้องไม่รั่วผ่าน live
     assert "secret brief text" not in json.dumps(payload)
-    # queue_total มาจาก bus/queue — คนละมิติ คนละตัวเลข (D4 split-brain ปิด)
+    # queue_total มาจาก bus/queue — คนละมิติ คนละตัวเลข (split-brain ปิด)
     assert isinstance(payload["queue_total"], int)
