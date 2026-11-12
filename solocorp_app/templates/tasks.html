@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Task History{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Task History</h1>
+  <p class="lede">
+    Records from the task envelope store
+    (<code>central_bus/content/tasks/</code>). Phase 1 shows whatever exists;
+    the app does not create tasks yet.
+  </p>
+</section>
+
+{% if tasks %}
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th>Department</th>
+        <th>Module</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Completed</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr>
+        <td class="mono">{{ task.task_id }}</td>
+        <td>{{ task.dept or '—' }}</td>
+        <td>{{ task.module or '—' }}</td>
+        <td><span class="status status--{{ task.status or 'disabled' }}">{{ task.status or 'unknown' }}</span></td>
+        <td class="mono">{{ task.created_at | short_ts }}</td>
+        <td class="mono">{{ task.completed_at | short_ts }}</td>
+        <td class="mono">
+          {% if task.artifact_refs %}
+            {% for ref in task.artifact_refs %}<div>{{ ref }}</div>{% endfor %}
+          {% elif task.result_ref %}
+            {{ task.result_ref }}
+          {% else %}—{% endif %}
+        </td>
+      </tr>
+      {% if task.error_detail %}
+      <tr class="row-detail">
+        <td colspan="7"><span class="error-detail">{{ task.error_detail }}</span></td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card">
+  <p><strong>No tasks yet.</strong></p>
+  <p class="muted">
+    Task records appear here once the Phase 2 task path creates them. This page
+    is read-only and never invents a task.
+  </p>
+</div>
+{% endif %}
+{% endblock %}

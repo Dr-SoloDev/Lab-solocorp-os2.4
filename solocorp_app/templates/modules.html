@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Modules{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Modules</h1>
+  <p class="lede">
+    Enable or disable a department module. The toggle writes configured intent
+    to <code>config/module-registry.json</code>; connection status comes from the
+    runtime state file and is refreshed by the health poller.
+  </p>
+</section>
+
+<section class="toolbar">
+  <div class="counts">
+    <span class="chip" data-count="total">{{ counts.total }} modules</span>
+    <span class="chip chip--ok" data-count="enabled">{{ counts.enabled }} enabled</span>
+    <span class="chip chip--ok" data-count="connected">{{ counts.connected }} connected</span>
+    <span class="chip chip--bad" data-count="error">{{ counts.error }} error</span>
+  </div>
+  <form method="post" action="/modules/check-all" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <button type="submit" class="btn btn--ghost">Check all health</button>
+  </form>
+</section>
+
+{% if not registry.valid %}
+<div class="notice notice--error" role="alert">
+  <strong>Registry config invalid.</strong>
+  {% for error in registry.errors %}<span class="mono">{{ error }}</span>{% endfor %}
+  <span class="muted">Fix <code>{{ registry.registry_path }}</code> — enabling or disabling a module will not help until the config validates.</span>
+</div>
+{% endif %}
+{% if registry.warnings %}
+<div class="notice notice--warn" role="status">
+  {% for warning in registry.warnings %}<span class="mono">{{ warning }}</span>{% endfor %}
+</div>
+{% endif %}
+
+<section class="module-grid">
+  {% for module in modules %}
+  <article class="card module-card" data-module="{{ module.id }}">
+    <header class="module-head">
+      <div>
+        <h2 class="card-title">{{ module.name }}</h2>
+        <p class="mono muted">{{ module.id }}{% if module.version %} · v{{ module.version }}{% endif %}</p>
+      </div>
+      <span class="status status--{{ module.status_text }}" data-status="{{ module.id }}">{{ module.status_text }}</span>
+    </header>
+
+    {% if module.description %}<p class="muted">{{ module.description }}</p>{% endif %}
+
+    <dl class="facts">
+      <div><dt>Intent</dt><dd data-intent="{{ module.id }}">{{ module.intent }}</dd></div>
+      <div><dt>Transport</dt><dd>{{ module.transport or '—' }}</dd></div>
+      <div><dt>Last checked</dt><dd data-checked="{{ module.id }}">{{ module.last_checked | short_ts }}</dd></div>
+      <div><dt>Response</dt><dd data-response="{{ module.id }}">{% if module.response_time_ms is not none %}{{ module.response_time_ms }} ms{% else %}—{% endif %}</dd></div>
+    </dl>
+
+    <ul class="chips">
+      {% for capability in module.capabilities %}<li class="chip">{{ capability }}</li>{% endfor %}
+      {% for dependency in module.dependencies %}<li class="chip chip--warn">needs {{ dependency }}</li>{% endfor %}
+      {% for permission in module.permissions %}<li class="chip chip--muted">scope: {{ permission }}</li>{% endfor %}
+    </ul>
+
+    {% if module.last_error %}
+    <p class="error-detail" data-error="{{ module.id }}">{{ module.last_error }}</p>
+    {% endif %}
+
+    <footer class="card-actions">
+      <form method="post" action="/modules/{{ module.id }}/toggle" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+        <button type="submit" class="btn {{ 'btn--warn' if module.enabled else 'btn--primary' }}">
+          {{ 'Disable' if module.enabled else 'Enable' }}
+        </button>
+      </form>
+      <form method="post" action="/modules/{{ module.id }}/check" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+        <button type="submit" class="btn btn--ghost" {% if not module.enabled %}disabled{% endif %}>Check health</button>
+      </form>
+    </footer>
+  </article>
+  {% endfor %}
+</section>
+
+<p class="muted small">
+  Status is polled from <code>/api/modules</code>; the runtime re-checks live
+  connections every few seconds and after every action.
+</p>
+{% endblock %}
