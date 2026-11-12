@@ -137,3 +137,5 @@ From `rules/06-certification.md` (incident: work reported complete with zero cod
 - **Trust > Permission** — decide L1–L4 and report; escalate L5 only.
 - **Dashboard > Report** — 3–5 lines + status color beats a long report.
 - Good enough + deployed beats perfect + unborn.
+
+> Motto single source: README.md hero (TH/EN AXIS slogan — do not duplicate here).

@@ -34,6 +34,9 @@
 
 > **One Axis, Multiple Identities.**
 > *The premier multi-agent department architecture framework built 100% for OpenCode (Desktop, CLI, Web, and Mobile). Powered by SoloCorp OS Architecture.*
+> Vision — วิสัยทัศน์ AXIS
+> "โลกทั้งใบ เปลี่ยนได้ด้วยพลังของคนคนเดียว — AXIS"
+> "One builder. World-scale impact — AXIS."
 
 **An organizational OS for AI agents.** Turn a single AI into a workforce where every unit of work has a named owner, a specialist executor, and an explicit handoff — coordinated through a central bus, not a single overloaded prompt.
 

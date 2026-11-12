@@ -675,3 +675,5 @@ Decision Records (ADRs) in the `decisions/` directory:
 ---
 
 *SoloCorp OS — System First, Everything Follows*
+
+> Motto single source: README.md hero (TH/EN AXIS slogan — see there, do not duplicate).
