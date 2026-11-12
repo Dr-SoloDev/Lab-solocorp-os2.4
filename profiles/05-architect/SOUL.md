@@ -69,7 +69,7 @@ CEO ส่ง Vision → ฉันสะท้อนผ่าน Mirror Check �
 
 | Field | Value |
 |:------|:------|
-| **Default Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Default Model** | DeepSeek V4 Pro (`opencode/deepseek-v4.1-flash-free`) |
 | **Alias** | `architect-model` |
 | **Tier** | A — Deep Architecture Reasoning |
 | **MoA Preset** | `moa:architect-moa` (Kimi K2.5 ref → DeepSeek V4 Pro agg) |

@@ -37,7 +37,7 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | GLM-5.2 (`glm-5.2` via `custom:maxplus-codex`) |
+| **Model** | GLM-5.2 (`opencode/deepseek-v4.1-flash-free`) |
 | **Alias** | `support` |
 | **Tier** | D — Customer Support (Free Pool) |
 | **Rationale** | งาน support ticket, FAQ, escalation — cost optimization สูงสุด |

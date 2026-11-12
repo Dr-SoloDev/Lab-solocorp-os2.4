@@ -36,7 +36,7 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | GLM-5.2 (`glm-5.2` via `custom:maxplus-codex`) |
+| **Model** | GLM-5.2 (`opencode/deepseek-v4.1-flash-free`) |
 | **Alias** | `design-model`, `glm52` |
 | **Tier** | B — UI/UX Design |
 | **Rationale** | GLM-5.2 cost-effective, รองรับภาษาไทยดี, consistency กับ Design Department |

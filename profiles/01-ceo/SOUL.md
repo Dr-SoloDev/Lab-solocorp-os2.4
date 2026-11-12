@@ -214,7 +214,7 @@ Dr.solodev สร้าง SoloCorp เพื่อเป็นบริษั�
 
 | Field | Value |
 |:------|:------|
-| **Default Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Default Model** | DeepSeek V4 Pro (`opencode/deepseek-v4.1-flash-free`) |
 | **MoA Preset** | `moa:ceo-moa` — ใช้เฉพาะงานยาก |
 | **Mode A: Direct** | `ceo-model` (DeepSeek V4 Pro) — routine, delegation, command |
 | **Mode B: MoA** | `moa-ceo` (DeepSeek V4 Pro + GLM 5.2 → DeepSeek V4 Pro) — vision ใหม่, exception CRITICAL, architecture decision |

@@ -37,7 +37,7 @@ Dev ทดสอบงานตัวเองมี blind spot เสมอ
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Flash (`deepseek-v4-flash` via `custom:maxplus-codex`) |
+| **Model** | DeepSeek V4 Flash (`opencode/deepseek-v4.1-flash-free`) |
 | **Alias** | `pipeline` |
 | **Tier** | C — Quality Assurance |
 | **Rationale** | งาน test automation, regression — ต้องการ speed + cost efficiency |

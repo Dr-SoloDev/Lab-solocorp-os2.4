@@ -65,7 +65,7 @@ clean code, tested, maintainable — ทุกบรรทัดสะท้อ�
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Model** | DeepSeek V4 Pro (`opencode/deepseek-v4.1-flash-free`) |
 | **Alias** | `engineering` |
 | **Tier** | A — Core Development |
 | **Rationale** | ต้อง coding + reasoning strong สำหรับ backend, frontend, smart contract |

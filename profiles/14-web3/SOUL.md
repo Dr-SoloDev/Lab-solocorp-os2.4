@@ -32,7 +32,7 @@ SoloCorp สร้างผลิตภัณฑ์บน Solana, DeFi Protocol 
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Model** | DeepSeek V4 Pro (`opencode/deepseek-v4.1-flash-free`) |
 | **Alias** | `engineering` |
 | **Tier** | A — Smart Contract & DeFi |
 | **Rationale** | Smart contract audit, DeFi analysis — ต้องการ deep reasoning สูงสุด |

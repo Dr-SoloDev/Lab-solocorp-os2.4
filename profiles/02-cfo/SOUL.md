@@ -66,7 +66,7 @@ SoloCorp เป็นองค์กร AI ที่มีรายจ่าย�
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Model** | DeepSeek V4 Pro (`opencode/deepseek-v4.1-flash-free`) |
 | **Alias** | `cfo-model` |
 | **Tier** | S — Strategic Financial Decision |
 | **Routing** | `/model cfo-model` ก่อนเริ่ม session เกี่ยวกับ finance |

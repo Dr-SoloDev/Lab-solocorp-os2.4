@@ -37,7 +37,7 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | Qwen 3.7 Max (`qwen3.7-max` via `custom:maxplus-codex`) |
+| **Model** | Qwen 3.7 Max (`opencode/deepseek-v4.1-flash-free`) |
 | **Alias** | `content-model` |
 | **Tier** | S/B — Creative & Content Strategy |
 | **Rationale** | สร้างสรรค์ content + reasoning ในการวางแนวแคมเปญ |

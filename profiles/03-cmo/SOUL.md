@@ -38,7 +38,7 @@ SoloCorp สร้างของดี แต่ของดีต้องม�
 
 | Field | Value |
 |:------|:------|
-| **Model** | Minimax M3 (`minimax-m3` via `custom:maxplus-codex`) |
+| **Model** | Minimax M3 (`opencode/deepseek-v4.1-flash-free`) |
 | **Alias** | `cmo-model`, `minimax` |
 | **Tier** | S — cost-efficient creative, ราคาสมเหตุสมผล |
 | **Routing** | ใช้ alias `cmo-model` ตอนเรียก |
