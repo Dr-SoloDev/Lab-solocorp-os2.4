@@ -7,9 +7,19 @@ no Concat/ffmpeg, no FastAPI, no busd. Only stdlib. All I/O lives in
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 BRIEF_MAX_CHARS = 2000
+
+# P2-08: preview budget for API echo (raw stays on disk for debug).
+BRIEF_PREVIEW_CHARS = 120
+
+# P2-08: secret warning surfaced next to validate_brief (hint only, not a
+# validation failure — the turn still runs so DoD 1-5 stay green).
+BRIEF_SECRET_HINT = (
+    "อย่าใส่ secret/API key ใน brief (เช่น sk-...); เก็บ key ไว้ใน Settings → Provider แทน"
+)
 
 CEO_TURN_BUDGET_S = 180.0
 
@@ -23,7 +33,13 @@ _GENERIC_CAPABILITIES = frozenset({"tools", "resources"})
 
 
 def validate_brief(brief: Any) -> str:
-    """Trim and validate a CEO brief; raise ValueError when unusable."""
+    """Trim and validate a CEO brief; raise ValueError when unusable.
+
+    P2-08 hint: never put secrets (``sk-...``, ``api_key``, bearer tokens)
+    in the brief — see :data:`BRIEF_SECRET_HINT`. Validation itself only
+    checks length (1-2000 chars); secret filtering happens at API echo time
+    via :func:`redact_brief_for_api` so the raw stays on disk for debug.
+    """
 
     if not isinstance(brief, str):
         raise ValueError("brief must be 1-2000 characters")
@@ -31,6 +47,55 @@ def validate_brief(brief: Any) -> str:
     if not trimmed or len(trimmed) > BRIEF_MAX_CHARS:
         raise ValueError("brief must be 1-2000 characters")
     return trimmed
+
+
+_SK_TOKEN_RE = re.compile(r"sk-[A-Za-z0-9_\-\.]{4,}")
+_BEARER_RE = re.compile(r"bearer\s+[A-Za-z0-9_\-\.]+", re.IGNORECASE)
+_APIKEY_RE = re.compile(r"api[_-]?key\s*[:=]\s*\S+", re.IGNORECASE)
+
+
+def contains_possible_secret(text: Any) -> bool:
+    """Heuristic secret detector for brief text (P2-08, hint only)."""
+
+    if not isinstance(text, str) or not text:
+        return False
+    low = text.lower()
+    if "sk-" in low:
+        return True
+    if _BEARER_RE.search(text) is not None:
+        return True
+    if _APIKEY_RE.search(text) is not None:
+        return True
+    return False
+
+
+def redact_brief_for_api(brief: Any) -> str:
+    """Redacted brief for single-task API echo (P2-08 strict).
+
+    Raw stays in TaskTracker JSON on disk for debug; the API must never
+    echo the full secret. Rules:
+
+    - non-string/empty → ``""``
+    - contains a possible secret → secret tokens replaced with
+      ``[redacted]``; any leftover ``sk-`` fragment forces ``[redacted]``
+    - longer than :data:`BRIEF_PREVIEW_CHARS` → preview + ``" [redacted]"``
+    - otherwise → trimmed text as-is (no secret inside)
+    """
+
+    if not isinstance(brief, str):
+        return ""
+    text = brief.strip()
+    if not text:
+        return ""
+    redacted = _SK_TOKEN_RE.sub("[redacted]", text)
+    redacted = _BEARER_RE.sub("[redacted]", redacted)
+    redacted = _APIKEY_RE.sub("[redacted]", redacted)
+    if "sk-" in redacted.lower():
+        # Fallback for bare "sk-" fragments the token regex missed.
+        redacted = re.sub(r"sk-\S*", "[redacted]", redacted, flags=re.IGNORECASE)
+    if len(redacted) > BRIEF_PREVIEW_CHARS:
+        return redacted[:BRIEF_PREVIEW_CHARS] + " [redacted]"
+    return redacted
 
 
 def timeout_for_tool(tool_name: str, budget_remaining: float | None = None) -> float:
@@ -233,10 +298,14 @@ def map_error(
 
 __all__ = [
     "BRIEF_MAX_CHARS",
+    "BRIEF_PREVIEW_CHARS",
+    "BRIEF_SECRET_HINT",
     "CEO_TURN_BUDGET_S",
     "TOOL_TIMEOUTS",
     "artifact_refs_from_result",
+    "contains_possible_secret",
     "map_error",
+    "redact_brief_for_api",
     "route_brief",
     "timeout_for_tool",
     "validate_brief",
