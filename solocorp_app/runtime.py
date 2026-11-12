@@ -15,6 +15,7 @@ it and is probed while a connection exists.
 from __future__ import annotations
 
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from typing import Any
@@ -23,6 +24,16 @@ from axis_mcp.module_host import ModuleHost, ModuleHostError
 from axis_mcp.module_registry import ModuleRegistry
 from axis_mcp.module_registry_schema import RUNTIME_STATUSES
 from axis_mcp.task_tracking import TaskTracker
+
+from . import APP_VERSION
+from .ceo_loop import (
+    CEO_TURN_BUDGET_S,
+    artifact_refs_from_result,
+    map_error,
+    route_brief,
+    timeout_for_tool,
+    validate_brief,
+)
 
 from .provider import ProviderStore
 
@@ -192,10 +203,80 @@ class AppRuntime:
         module_id: str,
         tool_name: str,
         arguments: dict[str, Any] | None = None,
+        *,
+        timeout: float = 60.0,
     ) -> Any:
         """Pass-through used by the Phase 2 CEO loop; kept on the same interface."""
 
-        return self.host.call_tool(module_id, tool_name, arguments)
+        return self.host.call_tool(module_id, tool_name, arguments, timeout=timeout)
+
+    def run_ceo_turn(self, brief: str) -> dict[str, Any]:
+        """One synchronous CEO turn: brief → route → record → call → terminal.
+
+        D7 sync only: no worker, no queue, no retry. ``ValueError`` means the
+        brief itself is unusable (caller returns 400 without a task);
+        ``OSError`` from the tracker means storage failed (caller returns 500).
+        Every other failure becomes a ``failed`` task with a PRD §2.4 code.
+        """
+
+        trimmed = validate_brief(brief)
+        modules_view = self.modules()
+        module_id, tool_name, args, route_reason = route_brief(trimmed, modules_view)
+        observation: str | None = None
+        for module in modules_view:
+            if isinstance(module, dict) and module.get("id") == module_id:
+                observation = module.get("observation")
+                break
+
+        tracker = self.tracker or TaskTracker()
+        record = tracker.create(
+            dept="content",
+            module=module_id,
+            brief=trimmed,
+            task_type="content",
+            route_reason=route_reason,
+            app_version=APP_VERSION,
+        )
+        task_id = record["task_id"]
+        tracker.update_status(task_id, "running")
+
+        deadline = time.monotonic() + CEO_TURN_BUDGET_S
+        remaining = deadline - time.monotonic()
+        timeout = timeout_for_tool(tool_name, remaining)
+        try:
+            result = self.host.call_tool(module_id, tool_name, args, timeout=timeout)
+            if isinstance(result, dict) and result.get("isError"):
+                raise ModuleHostError(str(result.get("message", "tool failed"))[:200])
+            artifacts = artifact_refs_from_result(result)
+            if not artifacts:
+                artifacts = [f"{module_id}/{tool_name}"]
+            final = tracker.update_status(task_id, "completed", artifact_refs=artifacts)
+            return {
+                "task": final,
+                "route_reason": route_reason,
+                "result": result,
+                "error": None,
+            }
+        except Exception as exc:  # noqa: BLE001 - every failure is a failed task
+            low = str(exc).lower()
+            if (
+                "timed out" in low
+                or "timeout" in low
+                or "exited" in low
+                or "malformed" in low
+            ):
+                try:
+                    self.host.disconnect(module_id)
+                except Exception:  # noqa: BLE001 - disconnect is best-effort
+                    pass
+            err = map_error(exc, module_id, observation)
+            final = tracker.update_status(task_id, "failed", error_detail=err)
+            return {
+                "task": final,
+                "route_reason": route_reason,
+                "result": None,
+                "error": err,
+            }
 
     def _observation(self, module_id: str) -> str | None:
         for module in self.modules():

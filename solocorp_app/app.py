@@ -267,6 +267,122 @@ def _register_routes(app: FastAPI, runtime: AppRuntime) -> None:
                 "modules": modules,
                 "counts": runtime.counts(),
                 "provider": runtime.provider.status(),
+                "turn": None,
+                "brief": "",
+                "chat_error": None,
+            },
+        )
+
+    @writes.post("/chat", include_in_schema=False)
+    async def submit_chat(request: Request):
+        content_type = request.headers.get("content-type", "")
+        accept = request.headers.get("accept", "")
+        wants_json = "application/json" in accept and "text/html" not in accept
+        brief_raw: Any = ""
+        if "application/json" in content_type:
+            wants_json = True
+            try:
+                data = await request.json()
+            except Exception:  # noqa: BLE001 - malformed JSON is a 400, not a 500
+                data = None
+            if isinstance(data, dict):
+                brief_raw = data.get("brief", "")
+            else:
+                brief_raw = ""
+        else:
+            form = await request.form()
+            value = form.get("brief", "")
+            brief_raw = value if isinstance(value, str) else ""
+        trimmed = brief_raw.strip() if isinstance(brief_raw, str) else ""
+        if not trimmed or len(trimmed) > 2000:
+            err = {
+                "code": "BRIEF_INVALID",
+                "message": "brief must be 1-2000 characters",
+                "hint": "พิมพ์ brief 1–2000 ตัวอักษรแล้วส่งใหม่",
+            }
+            if wants_json:
+                return JSONResponse({"error": err}, status_code=400)
+            return _render(
+                request,
+                "chat.html",
+                active_page="chat",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                extra={
+                    "modules": runtime.modules(),
+                    "counts": runtime.counts(),
+                    "provider": runtime.provider.status(),
+                    "turn": {
+                        "task": None,
+                        "route_reason": None,
+                        "result": None,
+                        "error": err,
+                    },
+                    "brief": trimmed,
+                    "chat_error": "brief must be 1-2000 characters",
+                },
+            )
+        try:
+            turn = runtime.run_ceo_turn(trimmed)
+        except ValueError:
+            err = {
+                "code": "BRIEF_INVALID",
+                "message": "brief must be 1-2000 characters",
+                "hint": "พิมพ์ brief 1–2000 ตัวอักษรแล้วส่งใหม่",
+            }
+            if wants_json:
+                return JSONResponse({"error": err}, status_code=400)
+            return _render(
+                request,
+                "chat.html",
+                active_page="chat",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                extra={
+                    "modules": runtime.modules(),
+                    "counts": runtime.counts(),
+                    "provider": runtime.provider.status(),
+                    "turn": {
+                        "task": None,
+                        "route_reason": None,
+                        "result": None,
+                        "error": err,
+                    },
+                    "brief": trimmed,
+                    "chat_error": "brief must be 1-2000 characters",
+                },
+            )
+        except OSError:
+            if wants_json:
+                return JSONResponse(
+                    {"detail": "cannot write task record"},
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+            return _render(
+                request,
+                "chat.html",
+                active_page="chat",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                extra={
+                    "modules": runtime.modules(),
+                    "counts": runtime.counts(),
+                    "provider": runtime.provider.status(),
+                    "turn": None,
+                    "brief": trimmed,
+                    "chat_error": "cannot write task record",
+                },
+            )
+        if wants_json:
+            return JSONResponse(turn.get("task") or {}, status_code=200)
+        return _render(
+            request,
+            "chat.html",
+            active_page="chat",
+            extra={
+                "modules": runtime.modules(),
+                "counts": runtime.counts(),
+                "provider": runtime.provider.status(),
+                "turn": turn,
+                "brief": trimmed,
+                "chat_error": None,
             },
         )
 
