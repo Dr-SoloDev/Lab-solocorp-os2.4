@@ -1,0 +1,2 @@
+51f09e54023f9f0dac60a60c3487cb816e978b8a8f8fb6feced9ac72ce89e73a  opencode.json
+51f09e54023f9f0dac60a60c3487cb816e978b8a8f8fb6feced9ac72ce89e73a  bus/evidence/cto-migration/20261113/opencode.json.bak
