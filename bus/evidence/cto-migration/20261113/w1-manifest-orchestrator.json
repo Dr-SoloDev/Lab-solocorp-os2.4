@@ -1,0 +1,45 @@
+{
+  "trace_id": "cto-mig-W0-20261112T221058Z",
+  "wave": "W1-add-cto-dualrun-orchestrator",
+  "date": "20261113",
+  "parent_head": "567927bf787e9c12df678187cbdd40639a5f9e00",
+  "note_manifest_collision": "sibling owns bus/evidence/cto-migration/20261113/w1-manifest.json (feat/cto-phase1-wave1); orchestrator evidence uses w1-manifest-orchestrator.json + dual-run-* + rollback-cto-wave1.md",
+  "adjudication": {
+    "contention": "duplicate mcp.servers.cto keys in working tree (axis_mcp.cto.server staged by sibling vs axis_mcp.departments.cto_mcp created by orchestrator) — flagged in README Wave 1 rename note, ADR-036 sibling-owned",
+    "decision": "SINGLE cto = axis_mcp.cto.server (sibling Wave1-1/1-2). Orchestrator duplicate block REMOVED before commit; this commit keeps sibling staged cto hunk + adds skills/@axis/cto path.",
+    "supporting_module": "axis_mcp/departments/cto_mcp.py kept on disk (importable, NOT host-wired) for cto_department_info verification + dual-run routing evidence",
+    "engineering_qa_preserved": true
+  },
+  "files_added_by_orchestrator": [
+    "profiles/cto/cto.md",
+    "profiles/cto/routing.yaml",
+    "skills/@axis/cto/deploy/SKILL.md",
+    "skills/@axis/cto/deploy/skill.toml",
+    "skills/@axis/cto/smoke-test/SKILL.md",
+    "skills/@axis/cto/smoke-test/skill.toml",
+    "axis_mcp/departments/cto_mcp.py",
+    "bus/evidence/cto-migration/20261113/dual-run-20calls.json",
+    "bus/evidence/cto-migration/20261113/dual-run-routing.json",
+    "bus/evidence/cto-migration/20261113/rollback-cto-wave1.md"
+  ],
+  "files_modified_append_only": [
+    "opencode.json: single cto (sibling hunk, staged) + skills/@axis/cto path (orchestrator)",
+    "profiles/INDEX.md: append-only CTO section 07/10 alias"
+  ],
+  "not_in_this_commit": [
+    "README.md, opencode.jsonc, decisions/ADR-036-*, profiles/cto/CTO.SOUL.md, profiles/cto/ROUTING_MATRIX.md, axis_mcp/cto/**, central_bus/*.db, w1-00..w1-06 (all sibling WIP)"
+  ],
+  "dual_run": {"mode": "shadow-additive 10% cto / 90% original", "calls": 20, "passed": 20, "repeat_byte_identical": true, "evidence": "bus/evidence/cto-migration/20261113/dual-run-20calls.json"},
+  "verify": {
+    "cto_department_info_via_import": "ok, restart_required false",
+    "host_unified_technical_health": "healthy (architect+engineering+qa healthy, db connected, cache active)",
+    "host_architect_route_e2e": "deploy staging checkout-api -> [engineering, qa]",
+    "pytest": "1312 passed, 1 skipped",
+    "auto_qa_gate": "PASS, coverage 75.4% >= 9",
+    "opencode_json_valid": true,
+    "single_cto_key": true,
+    "engineering_qa_preserved": true
+  },
+  "rollback": "bus/evidence/cto-migration/20261113/rollback-cto-wave1.md (restore .bak + restart-mcp.sh --yes, <=15 min)",
+  "orchestrator": "พี่วุฒิ (AXIS Orchestrator)"
+}
