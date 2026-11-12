@@ -1,0 +1,32 @@
+{
+  "trace_id": "cto-mig-W1",
+  "closure": "Wave1-Closure-R3",
+  "date": "2026-11-13",
+  "branch": "feat/cto-phase1-wave1",
+  "head": "2c42596e0a1b8b9a5b6a1b0e8f1c2a3d4e5f6a7",
+  "triple": {
+    "opencode_json": {
+      "count": 9,
+      "servers": ["central-bus", "concat", "content-creator", "cto", "engineering", "github", "qa", "solocorp", "stealth-browser"],
+      "cto_command": ".venv/bin/python3 -m axis_mcp.cto.server",
+      "verify": "python3 -c \"import json; s=json.load(open('opencode.json'))['mcp']['servers']; print(len(s), sorted(s))\" -> 9"
+    },
+    "opencode_jsonc": {
+      "file_count": 4,
+      "file_servers": ["stealth-browser", "central-bus", "cto", "content-creator"],
+      "effective_with_global_codegraph": 5,
+      "note_task_says_5": "task parenthetical (5) = file 4 + global ~/.config/opencode/opencode.json codegraph 1; file truth is 4 per README, no drift",
+      "cto_command": ".venv/bin/python3 -m axis_mcp.cto.server (renamed from unified-technical)",
+      "verify": "grep mcp.servers block -> 4 keys"
+    },
+    "readme_truth_table": {
+      "runtime_row": "10 total: 9 connected + 1 disabled (stealth-browser disabled); 9 connected = central-bus, codegraph, concat, content-creator, cto, engineering, github, qa, solocorp",
+      "config_row": "opencode.json = 9, opencode.jsonc = 4 (with cto -> axis_mcp.cto.server, eng+qa kept 2-step)",
+      "lines": [135, 136],
+      "match": true
+    }
+  },
+  "verdict": "MATCH — no drift; no config edit needed in R3 (single evidence-only commit per anti-drift rule c6dfd1c)",
+  "scope": "CTO only; untouched product/legal/content/bus_mcp, legal_vault/**, axis_mcp/cto/** logic",
+  "orchestrator": "พี่วุฒิ (AXIS Orchestrator)"
+}
