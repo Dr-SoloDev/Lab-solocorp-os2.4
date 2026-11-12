@@ -166,6 +166,23 @@ To leave the tree as you found it: `rm -f config/provider.json config/provider.c
 | `/static/app.js` still behaves like the old build | browser cache (`304 Not Modified`) | hard reload; the dev server revalidates by mtime/size |
 | Jinja template error on start | templates not shipped with the package copy | run from the repo root (templates resolve relative to `solocorp_app/`) |
 
+### Single instance only (BUG-3 lesson, QA 2026-11-12)
+
+The state file (`central_bus/module-registry.state.json`) is **global** while
+connections are **per-process**. Two app processes on different ports share one
+state file, so instance B displays instance A's `connected` row as its own —
+a connection reported with no connection (PRD §9). `AppRuntime.start()` clears
+stale observations at boot, which makes a *restart* honest, but it cannot make
+two *concurrent* instances honest. **Run one instance at a time.**
+
+Hand-off cleanup checklist (run before claiming "port free / tree clean"):
+
+```bash
+ss -ltn | grep 8766 || echo "port free"
+ps aux | grep '[s]olocorp_app' || echo "no leftover app process"
+git status --short   # only intended files changed
+```
+
 ## 9. Phase 1 limits (do not read as done)
 
 - **No model calls.** `/chat` is a placeholder; nothing is sent to a provider.

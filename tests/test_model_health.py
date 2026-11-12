@@ -3,6 +3,7 @@
 เจอเคสจริง 2026-10-20: MODEL_FALLBACKS มีชื่อโมเดลที่ไม่มีอยู่จริง
 → ทุกโมเดลคืน "empty response" → agent 19 ตัว "ตาบอด" โดยไม่มี error ชัดเจน
 """
+
 from __future__ import annotations
 
 import sys
@@ -39,18 +40,19 @@ class TestModelChain:
 
     def test_known_gone_models_are_marked_dead(self):
         """ชื่อโมเดลที่หายไปต้องอยู่ใน DEAD_MODELS (ไม่งั้นจะเป็นตัวหลักได้)"""
-        for gone in ("opencode/muse-spark-1.3-contributor-free",
-                     "opencode/space-bunny-free"):
+        for gone in (
+            "opencode/muse-spark-1.3-contributor-free",
+            "opencode/space-bunny-free",
+        ):
             assert gone in lp.DEAD_MODELS
 
     def test_chain_length_is_5(self):
-        """chain ถูกวัดใหม่ 2026-10-25 (bus/evidence/2026-10-25/model-health/)"""
-        assert len(lp.MODEL_FALLBACKS) == 5
+        """chain ถูกวัดใหม่ 2026-11-12 (muse-spark 1M + deepseek fallback)"""
+        assert len(lp.MODEL_FALLBACKS) == 6
 
     def test_upstream_gone_models_are_dead(self):
         """minimax (default เดิม) + longcat หาย upstream 2026-10-25 → ต้องเป็น dead"""
-        gone = {"opencode/minimax-m3.1-flash-free",
-                "opencode/longcat-2.5-preview-free"}
+        gone = {"opencode/minimax-m3.1-flash-free", "opencode/longcat-2.5-preview-free"}
         assert gone <= lp.DEAD_MODELS, f"ยังไม่ถูก mark dead: {gone - lp.DEAD_MODELS}"
 
     def test_every_chain_model_is_alive(self):
@@ -73,21 +75,33 @@ class TestAuditModels:
 
     def test_reports_all_fields(self, monkeypatch):
         monkeypatch.setattr(
-            lp, "list_available_models",
+            lp,
+            "list_available_models",
             lambda prefix="opencode/": ["opencode/a-free", "opencode/b-free"],
         )
         r = lp.audit_models(use_cache=False)
-        for field in ("ok", "chain", "available", "missing", "usable",
-                      "candidates", "checked_at", "stale", "error"):
+        for field in (
+            "ok",
+            "chain",
+            "available",
+            "missing",
+            "usable",
+            "candidates",
+            "checked_at",
+            "stale",
+            "error",
+        ):
             assert field in r, f"ไม่มี field '{field}'"
 
     def test_detects_missing(self, monkeypatch):
         monkeypatch.setattr(
-            lp, "list_available_models",
+            lp,
+            "list_available_models",
             lambda prefix="opencode/": ["opencode/keep-free"],
         )
-        monkeypatch.setattr(lp, "MODEL_FALLBACKS",
-                            ["opencode/keep-free", "opencode/GONE-free"])
+        monkeypatch.setattr(
+            lp, "MODEL_FALLBACKS", ["opencode/keep-free", "opencode/GONE-free"]
+        )
         r = lp.audit_models(use_cache=False)
         assert r["ok"] is False
         assert r["missing"] == ["opencode/GONE-free"]
@@ -95,18 +109,21 @@ class TestAuditModels:
 
     def test_all_present_is_ok(self, monkeypatch):
         monkeypatch.setattr(
-            lp, "list_available_models",
+            lp,
+            "list_available_models",
             lambda prefix="opencode/": ["opencode/a-free", "opencode/b-free"],
         )
-        monkeypatch.setattr(lp, "MODEL_FALLBACKS",
-                            ["opencode/a-free", "opencode/b-free"])
+        monkeypatch.setattr(
+            lp, "MODEL_FALLBACKS", ["opencode/a-free", "opencode/b-free"]
+        )
         r = lp.audit_models(use_cache=False)
         assert r["ok"] is True
         assert r["missing"] == []
 
     def test_candidates_are_models_outside_chain(self, monkeypatch):
         monkeypatch.setattr(
-            lp, "list_available_models",
+            lp,
+            "list_available_models",
             lambda prefix="opencode/": ["opencode/in-chain", "opencode/new-one"],
         )
         monkeypatch.setattr(lp, "MODEL_FALLBACKS", ["opencode/in-chain"])
@@ -133,11 +150,11 @@ class TestAuditModels:
         monkeypatch.setattr(lp, "list_available_models", fake_list)
         monkeypatch.setattr(lp, "MODEL_FALLBACKS", ["opencode/x-free"])
 
-        lp.audit_models(use_cache=True)          # ครั้งแรก → สร้าง cache
+        lp.audit_models(use_cache=True)  # ครั้งแรก → สร้าง cache
         assert cache.exists()
         assert len(calls) == 1
 
-        lp.audit_models(use_cache=True)          # ครั้งที่ 2 → ใช้ cache
+        lp.audit_models(use_cache=True)  # ครั้งที่ 2 → ใช้ cache
         assert len(calls) == 1, "ควรใช้ cache ไม่เรียก opencode ซ้ำ"
 
     def test_stale_cache_triggers_refresh(self, monkeypatch, tmp_path):
@@ -146,14 +163,21 @@ class TestAuditModels:
 
         cache = tmp_path / "mh.json"
         old = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
-        cache.write_text(json.dumps({
-            "checked_at": old, "available": ["opencode/old-free"],
-        }), encoding="utf-8")
+        cache.write_text(
+            json.dumps(
+                {
+                    "checked_at": old,
+                    "available": ["opencode/old-free"],
+                }
+            ),
+            encoding="utf-8",
+        )
         monkeypatch.setattr(lp, "_MODEL_CACHE_PATH", cache)
 
         calls = []
         monkeypatch.setattr(
-            lp, "list_available_models",
+            lp,
+            "list_available_models",
             lambda prefix="opencode/": (calls.append(1), ["opencode/new-free"])[1],
         )
         monkeypatch.setattr(lp, "MODEL_FALLBACKS", ["opencode/new-free"])
@@ -173,12 +197,15 @@ class TestWatchdogModelHealth:
 
     def test_function_exists(self):
         from central_bus.monitor_watchdog import check_model_health
+
         assert callable(check_model_health)
 
     def test_returns_report(self, monkeypatch):
         from central_bus import monitor_watchdog as mw
+
         monkeypatch.setattr(
-            mw, "check_model_health",
+            mw,
+            "check_model_health",
             lambda use_cache=True: {"ok": True, "chain": [], "missing": []},
         )
         assert mw.check_model_health()["ok"] is True
@@ -187,6 +214,7 @@ class TestWatchdogModelHealth:
         """ถ้า import llm_provider ไม่ได้ → ข้าม ไม่ error"""
         from central_bus import monitor_watchdog as mw
         import builtins
+
         real_import = builtins.__import__
 
         def fake_import(name, *a, **k):
@@ -221,6 +249,7 @@ class TestModelHealthScript:
 
     def test_probe_detects_dead_markers(self):
         import importlib.util
+
         p = Path(__file__).resolve().parent.parent / "scripts" / "check-model-health.py"
         spec = importlib.util.spec_from_file_location("_cmh", p)
         mod = importlib.util.module_from_spec(spec)
@@ -233,6 +262,7 @@ class TestModelHealthScript:
         """v2.1.4 พูดว่า "Model unavailable" และ flag แปลก → "Unrecognized flag"
         ทั้งคู่ต้องถูกจัดเป็น dead ไม่ใช่ miss ธรรมดา (เคสจริง 2026-10-25)"""
         import importlib.util
+
         p = Path(__file__).resolve().parent.parent / "scripts" / "check-model-health.py"
         spec = importlib.util.spec_from_file_location("_cmh2", p)
         mod = importlib.util.module_from_spec(spec)

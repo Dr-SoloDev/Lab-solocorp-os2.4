@@ -23,6 +23,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.responses import Response
 
 from . import APP_VERSION
+from .live import SESSION_LIMIT, list_sessions, live_status, queue_depths
 from .provider import ProviderError
 from .runtime import AppRuntime, UnknownModuleError
 from .security import (
@@ -42,6 +43,7 @@ MODULE_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 
 NAV_ITEMS = (
     {"key": "chat", "href": "/chat", "label": "CEO Chat"},
+    {"key": "live", "href": "/live", "label": "Live"},
     {"key": "modules", "href": "/modules", "label": "Modules"},
     {"key": "tasks", "href": "/tasks", "label": "Task History"},
     {"key": "settings", "href": "/settings", "label": "Settings"},
@@ -76,6 +78,10 @@ NOTICES: dict[str, dict[str, str]] = {
     "provider-cleared": {
         "kind": "ok",
         "text": "Stored credential removed from the local credentials file.",
+    },
+    "provider-nothing": {
+        "kind": "ok",
+        "text": "No stored credential to remove — nothing changed.",
     },
     "provider-error": {
         "kind": "error",
@@ -323,6 +329,34 @@ def _register_routes(app: FastAPI, runtime: AppRuntime) -> None:
             }
         )
 
+    # ------------------------------------------------------------ live (Phase A)
+
+    @reads.get("/live", include_in_schema=False)
+    def live_page(request: Request):
+        payload = live_status(runtime)
+        return _render(
+            request,
+            "live.html",
+            active_page="live",
+            extra={
+                "status": payload,
+                "modules": runtime.modules(),
+            },
+        )
+
+    @reads.get("/api/sessions", include_in_schema=False)
+    def api_sessions(limit: int = SESSION_LIMIT) -> JSONResponse:
+        envelope = list_sessions(max(1, min(limit, 100)))
+        return JSONResponse(envelope)
+
+    @reads.get("/api/bus/queue", include_in_schema=False)
+    def api_bus_queue() -> JSONResponse:
+        return JSONResponse(queue_depths())
+
+    @reads.get("/api/live/status", include_in_schema=False)
+    def api_live_status() -> JSONResponse:
+        return JSONResponse(live_status(runtime))
+
     # ---------------------------------------------------------------- tasks
 
     @reads.get("/tasks", include_in_schema=False)
@@ -403,10 +437,71 @@ def _register_routes(app: FastAPI, runtime: AppRuntime) -> None:
 
     @writes.post("/settings/provider/clear-credential", include_in_schema=False)
     async def clear_credential(request: Request):
-        settings = runtime.provider.load()
+        # BUG-1 fix (QA 2026-11-12): load() raises ProviderError on a corrupt
+        # config. Every other mutation in this file guards that; this route did
+        # not, so a corrupt provider.json produced a bare 500 (PRD §9
+        # violation). A broken config is a structured failure: render the
+        # settings page with the error (400), never a 500.
+        try:
+            settings = runtime.provider.load()
+        except ProviderError as exc:
+            return _render(
+                request,
+                "settings.html",
+                active_page="settings",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                extra={
+                    "provider": runtime.provider.status(),
+                    "form": {
+                        "errors": [str(exc)],
+                        "provider": "",
+                        "model": "",
+                        "base_url": "",
+                    },
+                },
+            )
+        except OSError as exc:
+            return _render(
+                request,
+                "settings.html",
+                active_page="settings",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                extra={
+                    "provider": runtime.provider.status(),
+                    "form": {
+                        "errors": [f"cannot clear credential: {exc}"],
+                        "provider": "",
+                        "model": "",
+                        "base_url": "",
+                    },
+                },
+            )
         ref = settings.api_key_ref if settings else None
-        runtime.provider.clear_credential(ref)
-        return _redirect("/settings?notice=provider-cleared")
+        # BUG-2 fix: clear_credential() returns False when nothing was
+        # removed (missing/corrupt credentials file, unknown slot). The old
+        # code discarded the bool and always claimed "removed" — a success
+        # reported for a no-op (PRD §9). Choose the notice from the bool.
+        try:
+            removed = runtime.provider.clear_credential(ref)
+        except OSError as exc:
+            return _render(
+                request,
+                "settings.html",
+                active_page="settings",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                extra={
+                    "provider": runtime.provider.status(),
+                    "form": {
+                        "errors": [f"cannot clear credential: {exc}"],
+                        "provider": "",
+                        "model": "",
+                        "base_url": "",
+                    },
+                },
+            )
+        if removed:
+            return _redirect("/settings?notice=provider-cleared")
+        return _redirect("/settings?notice=provider-nothing")
 
     # ---------------------------------------------------------------- health
 

@@ -437,3 +437,65 @@ def test_start_clears_observations_left_by_a_previous_process(tmp_path: Path):
     assert qa["last_error"] is None
     assert "qa" not in json.loads(registry.state_path.read_text(encoding="utf-8"))
     runtime.close()
+
+
+# ------------------------------------------- clear-credential regressions (QA)
+#
+# BUG-1: corrupt provider.json + POST clear → 500 (unhandled ProviderError).
+# BUG-2: clear with nothing stored → 303 provider-cleared (lie).
+
+
+def test_clear_credential_with_corrupt_config_is_structured_not_500(shell):
+    """BUG-1: a corrupt config must yield 400 + error, never a bare 500."""
+
+    shell.provider.config_path.parent.mkdir(parents=True, exist_ok=True)
+    shell.provider.config_path.write_text("{ this is not json ", encoding="utf-8")
+
+    # The GET page still renders the failed state (200), per PRD §9.
+    assert shell.client.get("/settings").status_code == 200
+
+    response = shell.client.post(
+        "/settings/provider/clear-credential",
+        data={"csrf_token": csrf(shell)},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 400
+    assert "not valid JSON" in response.text
+
+
+def test_clear_credential_with_nothing_stored_reports_noop(shell):
+    """BUG-2: no credential stored must not claim "removed"."""
+
+    assert shell.provider.clear_credential() is False  # precondition: empty
+
+    response = shell.client.post(
+        "/settings/provider/clear-credential",
+        data={"csrf_token": csrf(shell)},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    location = response.headers["location"]
+    assert "notice=provider-nothing" in location
+    assert "notice=provider-cleared" not in location
+
+
+def test_clear_credential_reports_cleared_only_when_removed(shell):
+    shell.provider.save(provider="openai", model="gpt-test", api_key="sk-live-key")
+
+    response = shell.client.post(
+        "/settings/provider/clear-credential",
+        data={"csrf_token": csrf(shell)},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    assert "notice=provider-cleared" in response.headers["location"]
+
+    follow = shell.client.post(
+        "/settings/provider/clear-credential",
+        data={"csrf_token": csrf(shell)},
+        follow_redirects=False,
+    )
+    assert "notice=provider-nothing" in follow.headers["location"]
