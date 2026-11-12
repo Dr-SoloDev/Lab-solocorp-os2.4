@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Live{% endblock %}
+{% block content %}
+<section class="page-head" data-live>
+  <h1>Live Dashboard</h1>
+  <p class="lede">
+    ทุกห้องแบบสด — sessions, queue และ modules รีเฟรชทุก 3 วินาทีโดยไม่ reload
+    หน้า (polls <code>/api/live/status</code>) Server-render รอบแรกคือความจริง
+    ณ เวลาเปิดหน้า; JS เติมรอบถัดไป
+  </p>
+  <p class="muted small">
+    อัปเดตล่าสุด <span class="mono" data-live-updated>{{ status.updated_at | short_ts }}</span>
+    · sessions จาก <span class="mono" data-session-source>{{ status.session_source }}</span>
+    {% if status.session_error %}<span class="error-detail" data-session-error>{{ status.session_error }}</span>{% endif %}
+  </p>
+</section>
+
+<section class="toolbar">
+  <div class="counts">
+    <span class="chip" data-mod-total>{{ status.modules.total }} modules</span>
+    <span class="chip chip--ok" data-mod-connected>{{ status.modules.connected }} connected</span>
+    <span class="chip chip--bad" data-mod-error>{{ status.modules.error }} error</span>
+    <span class="chip" data-queue-total>queue {{ status.queue_total }}</span>
+    <span class="chip" data-queue-high>high {{ status.queues.high | default(0) }}</span>
+    <span class="chip" data-queue-normal>normal {{ status.queues.normal | default(0) }}</span>
+    <span class="chip chip--warn" data-queue-dead>dead {{ status.queues.dead | default(0) }}</span>
+    <span class="chip chip--muted" data-provider-state>provider {{ status.provider_state }}</span>
+    <span class="chip" data-session-count>{{ status.session_count }} sessions</span>
+  </div>
+  <span class="muted small" data-live-dot>● live · 3s</span>
+</section>
+
+{% if not status.registry_valid %}
+<div class="notice notice--warn" role="status">
+  Registry config ไม่ valid — modules ที่เห็นอาจไม่ใช่ความจริงทั้งหมด
+</div>
+{% endif %}
+
+<section class="card">
+  <h2 class="card-title">Sessions <span class="muted">({{ status.session_count }})</span></h2>
+  {% if status.sessions %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Agent</th>
+          <th>Model</th>
+          <th>Tokens</th>
+          <th>Status</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody data-sessions-body>
+        {% for session in status.sessions %}
+        <tr>
+          <td><span class="mono">{{ session.title }}</span><br /><span class="muted small mono">{{ session.id }}</span></td>
+          <td>{{ session.agent or '—' }}</td>
+          <td class="mono">{{ session.model or '—' }}</td>
+          <td class="mono">{{ session.tokens if session.tokens is not none else '—' }}</td>
+          <td><span class="status status--{{ session.outcome or 'disabled' }}">{{ session.outcome or '—' }}</span></td>
+          <td class="mono">{{ session.time | short_ts if session.time else '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="placeholder" data-sessions-empty>
+    <p><strong>ยังไม่เห็น session</strong>{% if status.session_error %} — {{ status.session_error }}{% else %} — ไม่มี session ใน opencode บนเครื่องนี้{% endif %}</p>
+    <p class="muted">หน้านี้ไม่สร้าง session เอง — เปิด opencode session ใหม่แล้วรอรอบ poll ถัดไป (3 วิ)</p>
+  </div>
+  <div class="table-wrap" data-sessions-wrap hidden>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Agent</th>
+          <th>Model</th>
+          <th>Tokens</th>
+          <th>Status</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody data-sessions-body></tbody>
+    </table>
+  </div>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2 class="card-title">Queue depth</h2>
+  <dl class="facts">
+    <div><dt>Critical</dt><dd data-q-critical>{{ status.queues.critical | default(0) }}</dd></div>
+    <div><dt>High</dt><dd data-q-high>{{ status.queues.high | default(0) }}</dd></div>
+    <div><dt>Normal</dt><dd data-q-normal>{{ status.queues.normal | default(0) }}</dd></div>
+    <div><dt>Low</dt><dd data-q-low>{{ status.queues.low | default(0) }}</dd></div>
+    <div><dt>Dead</dt><dd data-q-dead>{{ status.queues.dead | default(0) }}</dd></div>
+    <div><dt>Total</dt><dd data-q-total>{{ status.queue_total }}</dd></div>
+  </dl>
+  <p class="muted small">bus-queue อ่านจาก <code>bus/queue/*.jsonl</code> ไฟล์หาย = 0 (fail-open) — นี่คือคิวของ Central Bus ไม่ใช่ app-tasks (ประวัติงานของแอปดูที่ <a href="/tasks">Task History</a>)</p>
+</section>
+
+<section class="card">
+  <h2 class="card-title">Modules</h2>
+  <ul class="module-list">
+    {% for module in modules %}
+    <li>
+      <span class="module-name">{{ module.name }}</span>
+      <span class="status status--{{ module.status_text }}" data-live-module="{{ module.id }}">{{ module.status_text }}</span>
+      <span class="muted small mono">{{ module.id }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<p class="muted small">
+  Polls <code>/api/live/status</code> ทุก 3 วินาที — sessions ฝั่ง server มี cache 10 วินาที (poll ถี่แต่ไม่ spawn CLI ทุก poll) ถ้า fetch ล้มจะโชว์รอบล่าสุดค้างไว้ ไม่ล้างจอ
+</p>
+{% endblock %}

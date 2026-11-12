@@ -23,6 +23,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.responses import Response
 
 from . import APP_VERSION
+from .live import SESSION_LIMIT, list_sessions, live_status, queue_depths
 from .provider import ProviderError
 from .runtime import AppRuntime, UnknownModuleError
 from .security import (
@@ -42,6 +43,7 @@ MODULE_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 
 NAV_ITEMS = (
     {"key": "chat", "href": "/chat", "label": "CEO Chat"},
+    {"key": "live", "href": "/live", "label": "Live"},
     {"key": "modules", "href": "/modules", "label": "Modules"},
     {"key": "tasks", "href": "/tasks", "label": "Task History"},
     {"key": "settings", "href": "/settings", "label": "Settings"},
@@ -326,6 +328,34 @@ def _register_routes(app: FastAPI, runtime: AppRuntime) -> None:
                 "registry": runtime.registry_health(),
             }
         )
+
+    # ------------------------------------------------------------ live (PR2 Beta)
+
+    @reads.get("/live", include_in_schema=False)
+    def live_page(request: Request):
+        payload = live_status(runtime)
+        return _render(
+            request,
+            "live.html",
+            active_page="live",
+            extra={
+                "status": payload,
+                "modules": runtime.modules(),
+            },
+        )
+
+    @reads.get("/api/sessions", include_in_schema=False)
+    def api_sessions(limit: int = SESSION_LIMIT) -> JSONResponse:
+        envelope = list_sessions(max(1, min(limit, 100)))
+        return JSONResponse(envelope)
+
+    @reads.get("/api/bus/queue", include_in_schema=False)
+    def api_bus_queue() -> JSONResponse:
+        return JSONResponse(queue_depths())
+
+    @reads.get("/api/live/status", include_in_schema=False)
+    def api_live_status() -> JSONResponse:
+        return JSONResponse(live_status(runtime))
 
     # ---------------------------------------------------------------- tasks
 
