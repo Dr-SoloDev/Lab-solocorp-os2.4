@@ -60,13 +60,13 @@ cd skillhub
 curl -fsSL https://imageless.oss-cn-beijing.aliyuncs.com/runtime.sh | sh -s -- up
 
 # Create namespaces
-skillhub namespace create @solocorp/global --visibility public
-skillhub namespace create @solocorp/security --visibility restricted
-skillhub namespace create @solocorp/engineering --visibility internal
+skillhub namespace create @axis/global --visibility public
+skillhub namespace create @axis/security --visibility restricted
+skillhub namespace create @axis/engineering --visibility internal
 
 # Add members
-skillhub namespace add-member @solocorp/security --user sai --role ADMIN
-skillhub namespace add-member @solocorp/engineering --user changful --role OWNER
+skillhub namespace add-member @axis/security --user sai --role ADMIN
+skillhub namespace add-member @axis/engineering --user changful --role OWNER
 ```
 
 ### On-Demand

@@ -1,9 +1,9 @@
 # Lab-solocorp-os2.4 — Architecture Overview
 
-> **ขอบเขตและสถานะ:** เอกสารนี้อธิบายโครงสร้าง organization/agent และ Central Bus ที่มีอยู่ ส่วน product architecture เป้าหมายของ local-first SoloCorp App, CEO session, MCP registry และ task workflow ให้ยึด [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md). การประสาน Head-to-Head ภายในแผนกยังใช้ได้; การรับ brief จากมนุษย์และ route งานใน App เป็นอีก flow หนึ่ง.
+> **ขอบเขตและสถานะ:** เอกสารนี้อธิบายโครงสร้าง organization/agent และ Central Bus ที่มีอยู่ ส่วน product architecture เป้าหมายของ local-first SoloCorp App, CEO session, MCP registry และ task workflow ให้ยึด [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md). การประสาน Head-to-Head ภายในแผนกยังใช้ได้; การรับ brief จากมนุษย์และ route งานใน App เป็นอีก flow หนึ่ง. Primary product direction = PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0 (local-first SoloCorp App, MVP = 1 CEO + department MCPs + registry + task queue; app shell/registry/provider flow still **NOT IMPLEMENTED**). Content Creator Pack Phase 1–3 evidence and Concat host status (enabled + handshake verified 2026-11-07, render not yet proven): see §Content Creator Pack below + [`decisions/ADR-032-concat-host-2026-11-07.md`](../decisions/ADR-032-concat-host-2026-11-07.md) (amended). Counts source of truth: README §What is actually in the tree (verified 2026-11-07: 20 profile dirs, 21 agent files) — §Department Profiles counts below (2026-09-27) are historical.
 
 > System Architecture for SoloCorp OS
-> Designed: 2026-06-26 | Last Updated: 2026-09-27 | Version: 2.4
+> Designed: 2026-06-26 | Last Updated: 2026-11-07 | Version: 2.4
 
 ---
 
@@ -20,7 +20,8 @@
 9. [Agent Worker Service](#agent-worker-service)
 10. [LLM Provider](#llm-provider)
 11. [Open Design Integration](#open-design-integration) (Deprecated)
-12. [Key Design Decisions](#key-design-decisions)
+12. [Content Creator Pack — Local Video Pipeline](#content-creator-pack--local-video-pipeline-phase-13-2026-11-07)
+13. [Key Design Decisions](#key-design-decisions)
 
 ---
 
@@ -552,8 +553,8 @@ All agent workers use `workers/llm_provider.py` for LLM inference.
 |:----------|:------|
 | CLI | `opencode run --agent <agent> --model <model>` — **ห้ามใส่ flag ที่ `opencode run --help` ไม่มี** (เช่น `--pure` ที่ถูกถอดใน v2.1.4 → ล้มทั้ง chain) |
 | Agent | `OPENCODE_AGENT` หรือ `plan` (read-only) — subprocess ไม่มีใครกด allow ถ้าใช้ agent ที่มี shell/write โมเดลจะขอ permission แล้วค้าง |
-| Default model | `opencode/deepseek-v4.1-flash-free` (2026-10-25, วัดจริง — หลักฐาน `bus/evidence/2026-10-25/model-health/`) |
-| Fallback chain | deepseek-v4.1-flash → nemotron-3.5-lightning → nemotron-3-ultra → big-pickle → mimo-v2.6-flash (`MODEL_FALLBACKS`; dead names in `DEAD_MODELS` map straight to chain; `Model not found` **และ** `Model unavailable` (v2.1.4) ข้ามทันที) |
+| Default model | `opencode-go/muse-spark-1.3-contributor` (2026-11-12, subscription Opencode Go, 1M context — 200K → 1M) |
+| Fallback chain | muse-spark-1.3 (subscription) → deepseek-v4.1-flash → nemotron-3.5-lightning → nemotron-3-ultra → big-pickle → mimo-v2.6-flash (`MODEL_FALLBACKS`; dead names in `DEAD_MODELS` map straight to chain; `Model not found` **และ** `Model unavailable` (v2.1.4) ข้ามทันที) |
 | Max concurrent | 3 (asyncio.Semaphore) |
 | Timeout | 60s per call |
 | Max retries | 3 per model (exponential backoff) |
@@ -616,6 +617,34 @@ operational.
 | cfo, sales, legal, web3, support | Blocked |
 
 **Files:** `central_bus/open_design.py`, `bus/system/open_design_config.json`
+
+---
+
+## Content Creator Pack — Local Video Pipeline (Phase 1-3, 2026-11-07)
+
+> Current-direction update only (2026-11-07). Principles/pillars/hierarchy above unchanged. Product direction source of truth remains PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.
+
+**Pattern:** BYOM (Bring Your Own Model) + Local-First MCP + Publish Gate. The Content Creator MCP is a department MCP usable standalone from an external client (PRD §6.1); in the planned SoloCorp App it is the first integrated module (PRD §6.2/MVP scope). The MCP stores artifacts without publishing and never auto-approves: every publication requires recorded human approval for the exact campaign version.
+
+**Governed call chain (Phase 2):** `ingest → script → visual → cue → render → gate → human approval` — see [`docs/plans/CONTENT-PHASE2-GOVERNED-CALL-GRAPH.md`](plans/CONTENT-PHASE2-GOVERNED-CALL-GRAPH.md). Skill = guidance, engine = `content_service` + CLI; per-scene (local) vs continuous (Concat) paths never mix.
+
+**Local-only renderer (Phase 1 + 3, proven on this host):** `render_campaign_media_local` — Piper (`th_TH-tsync2-medium`, CC BY-NC-SA 3.0 non-commercial, internal draft only) + FFmpeg CLI direct (provider `ffmpeg-cli`, `execution_mode: local_ffmpeg_cli`; ffmpeg-skill bridge stores plan only, never executes). Supports 6×15s (90s) or 10×10s (100s); per-step `steps` 5/5 with timestamps (`input_validation`, `piper_tts`, `synthetic_visuals`, `ffmpeg_assembly`, `output_audit`), opt-in fallback (`tts_fallback`/`visual_fallback`, default `abort`, any use → `degraded: true` + failing gate check), non-blocking exclusive lock (second caller fails immediately). See [`docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md`](runbooks/CONTENT-LOCAL-MEDIA-RENDER.md) Phase 3 Features.
+
+**Concat path — enabled + handshake verified, render NOT proven (2026-11-07):** History: Concat 0.2.8 AppImage exists on this host but the FUSE mount is denied (`fusermount3 Operation not permitted`, exit 127), which blocked the original launch. Per [`decisions/ADR-032-concat-host-2026-11-07.md`](../decisions/ADR-032-concat-host-2026-11-07.md) **as amended 2026-11-07**, the `--appimage-extract` path succeeded instead: `squashfs-root` (362M) at `/home/drsolodev/.opencode/concat/`, `AppRun` = concat 0.2.8, `concat` MCP `enabled` in `opencode.json`, and the MCP handshake was verified on 2026-11-07 (tools respond; `project_list()` → `[]`). **Still NOT proven: `render_campaign_with_concat` has never been run on this host** — no render proof; if the handshake fails, the fallback is Option 1 disable. **Do not claim Concat rendering works on this host today.** Local-media renders do not need Concat. See also [`docs/MEDIA-TOOLKIT.md`](MEDIA-TOOLKIT.md) (Concat wording updated 2026-11-07).
+
+**Phase 1–3 evidence (frozen campaigns, 2026-11-07 — do not touch):**
+
+- Phase 1 `campaign_synth_phase1_20261107` v5 — SHA-256 `ef3b282fc3ed69a58064c336e780a75f79094c0d54c36ffdbe406c23837c28bb` — [`central_bus/content/ceo-phase1-completed-20261107_20261107T031659522762Z.md`](../central_bus/content/ceo-phase1-completed-20261107_20261107T031659522762Z.md)
+- Phase 2 `campaign_synth_phase2_20261107` v7 — SHA-256 `60d855b1203c5a86593c451236f03fd70bd79afa3193eb54f458f702cd0aca9b` — [`central_bus/content/ceo-phase2-completed-20261107.md`](../central_bus/content/ceo-phase2-completed-20261107.md)
+- Phase 3 `campaign_synth_phase3_20261107` v7 — SHA-256 `192ba6c5e0b0c74dcd02f262df5f8771e399a8573b220e75e267531f48a7cc32` — [`central_bus/content/ceo-phase3-completed-20261107_20261107T051235733316Z.md`](../central_bus/content/ceo-phase3-completed-20261107_20261107T051235733316Z.md)
+
+All three: 1080×1920 30fps 90s H.264/AAC 48kHz, −16.0 LUFS, `gate_passed: false`, `published: false`; provenance `client_supplied_unverified`, provider/model null; Piper non-commercial. Approval status differs: **phase 1 v5 has a recorded human approval** (2026-11-07T03:19:06Z, approval record `central_bus/content/campaign-campaign_synth_phase1_20261107-approval-v5_20261107T031906146707Z.json`, for that exact v5 SHA only, with `gate_passed: false` + 7 explicit overrides; approval does not publish — `published` remains false and the normal publish gate has not passed); **phase 2 and phase 3 remain `approved_version: null` with no approval recorded** (`review_required`). Tests 65 passed (see runbook Verification). Full render detail in runbook §Phase 3 Render Evidence.
+
+**Explicit NOT done (do not upgrade these to done):**
+
+- Degraded publication: **NO-GO** pending architect D1 waiver + real degraded render on throwaway campaign (Phase 3 completion record; degraded render can never present as clean pass).
+- Concat render proof: MCP handshake is verified (2026-11-07) but `render_campaign_with_concat` has never been run on this host — no render proof; fallback if the handshake fails is Option 1 disable.
+- Certification: D3 not passed (operational E2E runs, not independent D3/D4); SoloCorp App shell/registry/provider flow not implemented (PRD Phase 1 gate open).
 
 ---
 

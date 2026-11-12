@@ -37,7 +37,7 @@ SoloCorp ต้องการรายได้เพื่อ sustain กา�
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Flash (`deepseek-v4-flash` via `custom:maxplus-codex`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `pipeline` |
 | **Tier** | C — Sales Pipeline |
 | **Rationale** | งาน proposal, outreach, pipeline mgmt — fast response > deep reasoning |

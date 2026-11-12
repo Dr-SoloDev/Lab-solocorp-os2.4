@@ -4,8 +4,8 @@ import json
 
 import pytest
 
-from solocorp_mcp import bus_store
-from solocorp_mcp.bus_mcp import mcp
+from axis_mcp import bus_store
+from axis_mcp.bus_mcp import mcp
 
 
 def test_bus_round_trip_and_listing(tmp_path, monkeypatch):
@@ -39,7 +39,7 @@ def test_bus_mcp_exposes_storage_contract():
 
 def test_bus_tool_returns_json(tmp_path, monkeypatch):
     monkeypatch.setattr(bus_store, "BUS_ROOT", tmp_path / "central_bus")
-    from solocorp_mcp import bus_mcp
+    from axis_mcp import bus_mcp
 
     payload = json.loads(bus_mcp.submit_to_bus("content", "json-test", "ok"))
     assert payload["status"] == "submitted"

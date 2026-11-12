@@ -1,6 +1,6 @@
-# Lab-solocorp-os2.4 — Profile Index
+# AXIS — Profile Index (Powered by SoloCorp OS Architecture)
 
-> Master index of all profiles in SoloCorp OS.
+> Master index of all profiles in AXIS.
 > Sorted by hierarchy: Owner → R&D Lab → CEO → CFO → CMO → Orchestrator → Architect → Product
 > → Engineering → Design → UI-Designer → QA → Sales → Support → Legal
 > → Web3 → Content Creator → Default

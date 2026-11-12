@@ -75,6 +75,10 @@ class ContentAgent(BaseAgent):
         self._record("write_file", str(p), msg.startswith("✅"))
         return msg
 
+    def _check_out_path(self, out_path: str) -> bool:
+        """Pre-validate out_path ว่าเขียนได้รึเปล่า — ตรวจก่อน think() กันเรียก LLM ฟุ่มเฟือย"""
+        return Path(out_path).resolve().is_relative_to(WRITE_ROOT.resolve())
+
     async def _verify(self, path: str) -> dict:
         """ตรวจไฟล์จริงด้วยคำสั่ง (ไม่เชื่อตัวเอง)"""
         cmd = f"test -f {shlex.quote(path)} && wc -m < {shlex.quote(path)}"
@@ -92,6 +96,11 @@ class ContentAgent(BaseAgent):
 
         if not description and not brief_path:
             return self._fail("ไม่มี description/brief_path", "missing_input")
+
+        # 0) Pre-validate out_path ก่อนเรียก LLM (D3 case 11: write_out_of_bounds ทันทีแม้ LLM ไม่พร้อม)
+        out_path_early = params.get("out_path") or f"{WRITE_ROOT}/draft-{datetime.now():%Y%m%d-%H%M%S}.md"
+        if not self._check_out_path(out_path_early):
+            return self._fail(f"ห้ามเขียนนอก {WRITE_ROOT}: {out_path_early}", "write_out_of_bounds")
 
         # 1) อ่าน brand sources จริง (3 ไฟล์ตาม D1 §5 ข้อ 1)
         sources = {src: await self._read(src) for src in BRAND_SOURCES}
@@ -113,8 +122,8 @@ class ContentAgent(BaseAgent):
         if missing:
             return self._fail(f"draft ขาดหัวข้อ: {missing}", "structure_invalid", missing=missing)
 
-        # 5) เขียนจริง + ตรวจด้วยคำสั่ง
-        out_path = params.get("out_path") or f"{WRITE_ROOT}/draft-{datetime.now():%Y%m%d-%H%M%S}.md"
+        # 5) เขียนจริง + ตรวจด้วยคำสั่ง (out_path ตรวจจากขั้น 0 แล้ว)
+        out_path = out_path_early
         try:
             await self._write(out_path, content)
         except PermissionError as exc:

@@ -6,8 +6,8 @@ import json
 
 import pytest
 
-from solocorp_mcp.departments import qa_mcp
-from solocorp_mcp.task_tracking import TaskTracker
+from axis_mcp.departments import qa_mcp
+from axis_mcp.task_tracking import TaskTracker
 
 
 @pytest.fixture

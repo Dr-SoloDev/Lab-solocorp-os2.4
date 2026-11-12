@@ -6,9 +6,14 @@ Sound Designer (ซาวด์) remains a Content Creator specialist. Earshot l
 SFX rendering, and audio review are now exposed through the `content-creator`
 MCP; `sound-studio` is no longer registered as a separate department server.
 The ordered process is script → audio cue sheet → optional SFX/voiceover →
-Concat render → Earshot review → Publish Gate → human approval. See
+**choose the render path first** (on this host: local-media FFmpeg CLI via
+`render_campaign_media_local` is the proven primary path, Phase 1–3; Concat's
+MCP handshake was verified 2026-11-07 but `render_campaign_with_concat` has
+never been run on this host — no render proof, ADR-032 amended) → Earshot
+review → Publish Gate → human approval. See
 `docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md` for inputs and failure handling.
-Concat runs an initial gate after rendering. Run the gate again after Earshot
+The chosen path's renderer runs an initial gate after rendering. Run the gate
+again after Earshot
 review, because storing QA creates a new campaign version before approval.
 
 ## MCP Content Local Render (2026-10-30)
@@ -38,7 +43,12 @@ review, because storing QA creates a new campaign version before approval.
   กันไว้สำหรับเส้นทาง FFmpeg Direct CLI.
 - ติดตั้ง Concat `0.2.8` เป็น AppImage ที่
   `/home/drsolodev/.opencode/concat/Concat-0.2.8-x86_64.AppImage` และลงทะเบียน
-  MCP `concat` ใน OpenCode/Codex แบบ headless. Content MCP เปิดเครื่องมือ
+  MCP `concat` ใน OpenCode/Codex แบบ headless — **บน host นี้ AppImage FUSE
+  mount ไม่ได้ (Phase 4 ADR-032) จึงรันจาก path ที่ `--appimage-extract`
+  (`squashfs-root/AppRun`) แทน; handshake ผ่านแล้ว 2026-11-07 แต่
+  `render_campaign_with_concat` ยังไม่เคยรันบน host นี้ (ยังไม่มี render
+  proof) — evidence render สำเร็จ 2026-10-30 เป็น historical proof ไม่ใช่
+  current host claim**. Content MCP เปิดเครื่องมือ
   `render_campaign_with_concat` เพื่อสร้างโปรเจกต์ `concat.json`, เพิ่มสื่อ/ซับ,
   เรนเดอร์ MP4 และบันทึกผลกับ checksum ลง Central Bus.
 - ติดตั้ง Earshot `0.4.0` ใน CPU-only venv; ตอนบันทึก 2026-10-30 เครื่องมือ

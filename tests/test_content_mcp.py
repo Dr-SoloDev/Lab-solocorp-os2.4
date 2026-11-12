@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from solocorp_mcp import bus_store
-from solocorp_mcp.departments import content_helpers, content_mcp, content_service
-from solocorp_mcp.departments.content_mcp import content_sop, mcp
-from solocorp_mcp.task_tracking import TaskTracker
+from axis_mcp import bus_store
+from axis_mcp.departments import content_helpers, content_mcp, content_service
+from axis_mcp.departments.content_mcp import content_sop, mcp
+from axis_mcp.task_tracking import TaskTracker
 
 
 @pytest.fixture
@@ -335,6 +335,7 @@ CONTENT_DEPARTMENT_TOOLS = {
     "sound_review_campaign_audio",
     "generate_voice_lipsync_prompt",
     "generate_voiceover",
+    "generate_image",
     "review_publish_gate",
     "record_human_approval",
     "save_human_edited_artifact",
@@ -717,6 +718,201 @@ def test_local_media_render_rejects_non_six_scene_storyboard(isolated_bus):
         content_service.render_campaign_media_local(campaign_id)
 
 
+def test_local_media_render_failed_pipeline_is_not_review_required(isolated_bus, monkeypatch):
+    campaign_id = "local-media-render-failed-test"
+    content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+
+    def failing_pipeline(payload):
+        output_dir = Path(payload["output_dir"])
+        output_dir.mkdir(parents=True)
+        # Simulate a partial MP4 left behind by a renderer that died mid-step.
+        (output_dir / "partial.mp4").write_bytes(b"partial mp4")
+        raise content_service.ContentServiceError("local media render failed: boom")
+
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", failing_pipeline)
+    result = content_service.render_campaign_media_local(campaign_id)
+
+    assert result["execution_status"] == "failed"
+    assert result["status"] == "failed"
+    assert result["status"] != "review_required"
+    assert result["approval_required"] is False
+    assert result["published"] is False
+    assert result["render"] is None
+    assert result["error"] == "local media render failed: boom"
+    assert result["publish_gate"]["gate_passed"] is False
+
+    campaign = content_service._load_campaign("local-media-render-failed-test")
+    recorded = next(asset for asset in campaign["assets"] if asset["type"] == "local_media_render_result")
+    assert recorded["execution_status"] == "failed"
+    assert campaign["approved_version"] is None
+    local_media = isolated_bus / "content" / "local_media"
+    assert sorted(local_media.rglob("*.mp4")) == []
+
+
+def _fake_local_success_pipeline(calls):
+    def fake_pipeline(payload):
+        calls.append(payload)
+        output_dir = Path(payload["output_dir"])
+        output_dir.mkdir(parents=True)
+        video_path = output_dir / "test_render.mp4"
+        video_path.write_bytes(b"synthetic mp4 placeholder")
+        return {
+            "status": "completed",
+            "execution_mode": "local_ffmpeg_cli",
+            "video": {
+                "path": str(video_path),
+                "bytes": video_path.stat().st_size,
+                "sha256": "a" * 64,
+                "codec": "h264",
+                "width": 1080,
+                "height": 1920,
+            },
+        }
+
+    return fake_pipeline
+
+
+def test_local_media_render_explicit_filename_bypasses_newer_scaffold(isolated_bus, monkeypatch):
+    campaign_id = "local-media-explicit-script-test"
+    real = content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+    # A newer 4-scene scaffold becomes "latest" and fails 6x15/10x10 validation.
+    scaffold = content_service.create_video_script(
+        "Scaffold trap", "ข้อความหลัก", 60, campaign_id
+    )
+    assert scaffold["filename"] != real["filename"]
+
+    calls = []
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", _fake_local_success_pipeline(calls))
+    result = content_service.render_campaign_media_local(campaign_id, real["filename"])
+
+    assert result["execution_status"] == "completed"
+    assert result["script_filename"] == real["filename"]
+    assert len(calls) == 1
+    assert len(calls[0]["scenes"]) == 6
+    campaign = content_service._load_campaign("local-media-explicit-script-test")
+    job = next(asset for asset in campaign["assets"] if asset["type"] == "local_media_render_job")
+    assert job["filename"]
+    job_record = json.loads(bus_store.fetch_from_bus("content", job["filename"])["content"])
+    assert job_record["script_filename"] == real["filename"]
+
+
+def test_local_media_render_omitted_filename_keeps_latest_behavior(isolated_bus, monkeypatch):
+    campaign_id = "local-media-omitted-script-test"
+    script = content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+    calls = []
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", _fake_local_success_pipeline(calls))
+    result = content_service.render_campaign_media_local(campaign_id)
+
+    assert result["execution_status"] == "completed"
+    assert result["script_filename"] == script["filename"]
+    assert len(calls) == 1
+    assert len(calls[0]["scenes"]) == 6
+
+
+def test_local_media_render_bad_filename_no_render_no_mp4(isolated_bus, monkeypatch):
+    campaign_id = "local-media-bad-filename-test"
+    content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+    calls = []
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", _fake_local_success_pipeline(calls))
+
+    with pytest.raises(content_service.ContentServiceError, match="script_filename not found"):
+        content_service.render_campaign_media_local(campaign_id, "missing-script.md")
+
+    assert calls == []
+    campaign = content_service._load_campaign("local-media-bad-filename-test")
+    assert all(asset["type"] != "local_media_render_job" for asset in campaign["assets"])
+    local_media = isolated_bus / "content" / "local_media"
+    assert not local_media.exists() or sorted(local_media.rglob("*.mp4")) == []
+
+
+def test_local_media_render_wrong_type_filename_rejected(isolated_bus, monkeypatch):
+    campaign_id = "local-media-wrong-type-test"
+    draft = content_service.create_content_draft(
+        "Not a script", "หัวข้อทดสอบ", "ผู้อ่าน", "article", campaign_id
+    )
+    calls = []
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", _fake_local_success_pipeline(calls))
+
+    with pytest.raises(content_service.ContentServiceError, match="video_script"):
+        content_service.render_campaign_media_local(campaign_id, draft["filename"])
+
+    assert calls == []
+    local_media = isolated_bus / "content" / "local_media"
+    assert not local_media.exists() or sorted(local_media.rglob("*.mp4")) == []
+
+
+def test_local_media_render_script_from_another_campaign_rejected(isolated_bus, monkeypatch):
+    other = content_service.ingest_client_generated_artifact(
+        "local-media-other-campaign",
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+    campaign_id = "local-media-cross-campaign-test"
+    content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+    calls = []
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", _fake_local_success_pipeline(calls))
+
+    with pytest.raises(
+        content_service.ContentServiceError, match="does not belong to campaign"
+    ):
+        content_service.render_campaign_media_local(campaign_id, other["filename"])
+
+    assert calls == []
+    local_media = isolated_bus / "content" / "local_media"
+    assert not local_media.exists() or sorted(local_media.rglob("*.mp4")) == []
+
+
+def test_local_media_render_explicit_filename_via_mcp_tool(isolated_bus, monkeypatch):
+    campaign_id = "local-media-mcp-explicit-test"
+    real = content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+    content_service.create_video_script("Scaffold via MCP", "ข้อความหลัก", 60, campaign_id)
+    calls = []
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", _fake_local_success_pipeline(calls))
+
+    fn = mcp._tool_manager.get_tool("render_campaign_media_local").fn
+    payload = json.loads(fn(campaign_id, real["filename"]))
+    assert payload["status"] == "review_required"
+    assert payload["script_filename"] == real["filename"]
+    assert len(calls) == 1
+
+    # Omitted MCP arg keeps latest (scaffold) behavior and surfaces a clear error.
+    payload_error = json.loads(fn(campaign_id))
+    assert payload_error["status"] == "error"
+    assert "local render" in payload_error["message"]
+    assert len(calls) == 1  # no second pipeline run for the failing latest pick
+
+
 # --- A1: campaign asset removal -------------------------------------------------
 
 
@@ -840,3 +1036,712 @@ def test_remove_campaign_asset_mcp_tool(isolated_bus):
     payload_error = json.loads(raw_error)
     assert payload_error["status"] == "error"
     assert "asset not found" in payload_error["message"]
+
+
+# --- Publish Gate approval consistency (CEO Path A) ------------------------------
+#
+# Bug: record_human_approval(vN) returned approved while an immediate
+# review_publish_gate returned review_required / blocked despite
+# manifest.approved_version == vN. _review_campaign ignored approved_version.
+# These tests pin the fix: gate reflects approval iff approved_version equals
+# the current version, stays truthful about failed checks, and never publishes.
+
+
+def _gate_approval_campaign(campaign_id):
+    references = ["https://research.example/report"]
+    content_service.create_content_draft(
+        "Gate draft",
+        "ข้อเท็จจริงที่ต้องตรวจสอบ",
+        "ผู้ติดตามข่าวเทคโนโลยี",
+        "article",
+        campaign_id,
+        references,
+    )
+    script = content_service.create_video_script(
+        "Gate video", "สรุปประเด็นจากงานวิจัย", 60, campaign_id
+    )
+    content_service.design_visual_prompt(
+        "งานวิจัยกับการทำงาน", "LinkedIn", "16:9", campaign_id
+    )
+    content_service.design_audio_experience(campaign_id, script["filename"])
+    return campaign_id
+
+
+def test_approved_current_version_gate_reflects_approval(isolated_bus):
+    campaign_id = _gate_approval_campaign("gate-approval-consistent-test")
+
+    first = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert first["status"] == "review_required"
+    assert first["approval_required"] is True
+    assert first["publish_action"] == "blocked_until_human_approval"
+    assert first["gate_passed"] is False
+    assert first["published"] is False
+    assert first["overrides_failed_checks"] == []
+    failed_before = {c["check"] for c in first["checks"] if not c["ok"]}
+    assert failed_before
+
+    approval = content_service.record_human_approval(
+        campaign_id, first["version"], "อนุมัติเวอร์ชันที่ตรวจแล้ว"
+    )
+    assert approval["status"] == "approved"
+    assert approval["approval_required"] is False
+    assert approval["gate_passed"] is False
+    assert approval["published"] is False
+    assert set(approval["overrides_failed_checks"]) == failed_before
+
+    second = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert second["version"] == first["version"]
+    assert second["status"] == "approved"
+    assert second["approval_required"] is False
+    assert second["publish_action"] == "approved_pending_separate_publish_step"
+    assert second["publish_action"] != "blocked_until_human_approval"
+    # gate_passed stays truthful: failed checks are still listed, not hidden.
+    assert second["gate_passed"] is False
+    failed_after = {c["check"] for c in second["checks"] if not c["ok"]}
+    assert failed_after == failed_before
+    assert set(second["overrides_failed_checks"]) == failed_before
+    # Approval never publishes.
+    assert second["published"] is False
+    assert second["manifest"]["approved_version"] == second["version"]
+    key, _ = content_service._campaign_identity(campaign_id)
+    campaign = content_service._load_campaign(key)
+    assert campaign["status"] == "approved"
+    assert campaign["approved_version"] == second["version"]
+    report = bus_store.fetch_from_bus("content", second["report"]["filename"])["content"]
+    assert "approved" in report.lower()
+    assert "not published" in report.lower()
+
+
+def test_gate_rerun_after_approval_keeps_newest_manifest_snapshot_approved(isolated_bus):
+    """Regression — incident 2026-11-07 campaign_synth_phase1_20261107.
+
+    Exact sequence: review_publish_gate -> record_human_approval(v5) ->
+    review_publish_gate again ~4s later. The second call used to save a newer
+    manifest snapshot with status=review_required while approved_version=v5
+    and approval_records were still intact, so the newest manifest of an
+    approved campaign read as unapproved. Every snapshot written after the
+    approval must keep reflecting approved; only the approval-invalidating
+    paths (new asset / asset removal) may clear it.
+    """
+    campaign_id = _gate_approval_campaign("gate-rerun-latest-manifest-test")
+    key, _ = content_service._campaign_identity(campaign_id)
+    prefix = f"campaign-{key}-manifest_"
+
+    def snapshots():
+        found = []
+        for item in bus_store.list_department_bus("content")["files"]:
+            filename = item["filename"]
+            if not filename.startswith(prefix) or not filename.endswith(".json"):
+                continue
+            snap = json.loads(bus_store.fetch_from_bus("content", filename)["content"])
+            if snap.get("campaign_key") == key:
+                found.append((int(snap.get("revision", 0)), filename, snap))
+        return sorted(found)
+
+    first = content_service.review_publish_gate(campaign_id=campaign_id)
+    approval = content_service.record_human_approval(
+        campaign_id, first["version"], "อนุมัติแล้ว ก่อน re-run gate"
+    )
+    approved_revision, approved_file, approved_snap = snapshots()[-1]
+    assert approved_snap["status"] == "approved"
+    assert approved_snap["approved_version"] == first["version"]
+
+    # The incident's second call: an immediate gate re-run after approval.
+    second = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert second["campaign_manifest"]["filename"] != approved_file
+
+    after_approval = [
+        item for item in snapshots() if item[0] > approved_revision
+    ]
+    assert after_approval, "gate re-run must save a newer manifest snapshot"
+    for revision, filename, snap in after_approval:
+        assert snap["status"] == "approved", filename
+        assert snap["review"]["status"] == "approved", filename
+        assert snap["approved_version"] == first["version"], filename
+        assert snap["version"] == first["version"], filename
+        assert len(snap["approval_records"]) == 1, filename
+
+    newest_revision, newest_file, newest_snap = snapshots()[-1]
+    assert newest_revision > approved_revision
+    assert newest_snap["status"] == "approved"
+    assert (
+        newest_snap["approval_records"][-1]["filename"]
+        == approval["approval_record"]["filename"]
+    )
+    assert second["status"] == "approved"
+    assert second["approval_required"] is False
+    assert second["publish_action"] == "approved_pending_separate_publish_step"
+
+
+def test_asset_change_invalidates_prior_approval_and_gate_blocks_again(isolated_bus):
+    campaign_id = _gate_approval_campaign("gate-approval-invalidate-test")
+    review = content_service.review_publish_gate(campaign_id=campaign_id)
+    approved_version = review["version"]
+    content_service.record_human_approval(
+        campaign_id, approved_version, "อนุมัติรอบแรก"
+    )
+    approved_review = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert approved_review["status"] == "approved"
+    assert approved_review["approval_required"] is False
+
+    updated = content_service.create_content_draft(
+        "Gate update", "ฉบับแก้ไข", "ผู้ติดตามข่าวเทคโนโลยี", "article", campaign_id
+    )
+    assert updated["version"] != approved_version
+    key, _ = content_service._campaign_identity(campaign_id)
+    assert content_service._load_campaign(key)["approved_version"] is None
+
+    blocked = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert blocked["version"] == updated["version"]
+    assert blocked["status"] == "review_required"
+    assert blocked["approval_required"] is True
+    assert blocked["publish_action"] == "blocked_until_human_approval"
+    assert blocked["published"] is False
+    assert blocked["overrides_failed_checks"] == []
+
+
+def test_unapproved_gate_remains_blocked(isolated_bus):
+    campaign_id = _gate_approval_campaign("gate-no-approval-test")
+    review = content_service.review_publish_gate(campaign_id=campaign_id)
+    key, _ = content_service._campaign_identity(campaign_id)
+    assert content_service._load_campaign(key)["approved_version"] is None
+    assert review["status"] == "review_required"
+    assert review["approval_required"] is True
+    assert review["publish_action"] == "blocked_until_human_approval"
+    assert review["published"] is False
+    assert review["overrides_failed_checks"] == []
+
+
+def test_failed_render_gate_does_not_claim_approval(isolated_bus, monkeypatch):
+    campaign_id = "gate-failed-render-test"
+    content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+
+    def failing_pipeline(payload):
+        output_dir = Path(payload["output_dir"])
+        output_dir.mkdir(parents=True)
+        (output_dir / "partial.mp4").write_bytes(b"partial mp4")
+        raise content_service.ContentServiceError("local media render failed: boom")
+
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", failing_pipeline)
+    result = content_service.render_campaign_media_local(campaign_id)
+    assert result["execution_status"] == "failed"
+    assert result["status"] == "failed"
+    assert result["published"] is False
+    gate = result["publish_gate"]
+    assert gate["status"] == "review_required"
+    assert gate["approval_required"] is True
+    assert gate["publish_action"] == "blocked_render_failed"
+    assert gate["gate_passed"] is False
+    assert gate["published"] is False
+
+
+def test_failed_render_gate_uses_blocked_render_failed_action(isolated_bus, monkeypatch):
+    campaign_id = "gate-failed-render-token-test"
+    content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+
+    def failing_pipeline(payload):
+        output_dir = Path(payload["output_dir"])
+        output_dir.mkdir(parents=True)
+        (output_dir / "partial.mp4").write_bytes(b"partial mp4")
+        raise content_service.ContentServiceError("local media render failed: boom")
+
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", failing_pipeline)
+    result = content_service.render_campaign_media_local(campaign_id)
+    assert result["publish_gate"]["publish_action"] == "blocked_render_failed"
+    assert result["publish_gate"]["status"] == "review_required"
+    assert result["publish_gate"]["approval_required"] is True
+    assert result["publish_gate"]["gate_passed"] is False
+    assert result["publish_gate"]["published"] is False
+    # A fresh gate review keeps the blocked-render-failed token.
+    gate = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert gate["publish_action"] == "blocked_render_failed"
+    assert gate["status"] == "review_required"
+    assert gate["approval_required"] is True
+    assert gate["gate_passed"] is False
+    assert gate["published"] is False
+
+
+def test_record_human_approval_rejected_after_failed_render(isolated_bus, monkeypatch):
+    campaign_id = "gate-approval-after-failed-render"
+    content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+
+    def failing_pipeline(payload):
+        output_dir = Path(payload["output_dir"])
+        output_dir.mkdir(parents=True)
+        (output_dir / "partial.mp4").write_bytes(b"partial mp4")
+        raise content_service.ContentServiceError("local media render failed: boom")
+
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", failing_pipeline)
+    rendered = content_service.render_campaign_media_local(campaign_id)
+    assert rendered["execution_status"] == "failed"
+    version = rendered["publish_gate"]["version"]
+    key, _ = content_service._campaign_identity(campaign_id)
+    before = content_service._load_campaign(key)
+    assert before["approval_records"] == []
+
+    with pytest.raises(
+        content_service.ContentServiceError, match="render failed"
+    ):
+        content_service.record_human_approval(
+            campaign_id, version, "อนุมัติแม้ render ล้มเหลว"
+        )
+
+    after = content_service._load_campaign(key)
+    assert after["approval_records"] == []
+    assert after["approved_version"] is None
+    gate = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert gate["publish_action"] == "blocked_render_failed"
+    assert gate["published"] is False
+
+
+def test_record_human_approval_is_idempotent(isolated_bus):
+    campaign_id = _gate_approval_campaign("gate-approval-idempotent-test")
+    review = content_service.review_publish_gate(campaign_id=campaign_id)
+    first = content_service.record_human_approval(
+        campaign_id, review["version"], "อนุมัติครั้งแรก"
+    )
+    assert first["status"] == "approved"
+    assert first["published"] is False
+    key, _ = content_service._campaign_identity(campaign_id)
+    assert len(content_service._load_campaign(key)["approval_records"]) == 1
+
+    second = content_service.record_human_approval(
+        campaign_id, review["version"], "อนุมัติซ้ำเวอร์ชันเดียวกัน"
+    )
+    assert second["status"] == "approved"
+    assert second["version"] == review["version"]
+    assert second["approval_required"] is False
+    assert second["published"] is False
+    assert second["approval_record"]["filename"] == first["approval_record"]["filename"]
+    assert second["approval_record"]["path"] == first["approval_record"]["path"]
+    campaign = content_service._load_campaign(key)
+    assert len(campaign["approval_records"]) == 1
+    assert campaign["approval_records"][0]["filename"] == first["approval_record"]["filename"]
+    assert campaign["approved_version"] == review["version"]
+
+
+# --- Phase 3: per-step status, opt-in fallbacks, degraded gate, render lock ----
+
+import importlib.util
+import subprocess
+import wave
+
+
+def _load_renderer(tmp_path):
+    spec = importlib.util.spec_from_file_location(
+        "render_campaign_media_local_mod",
+        Path(__file__).resolve().parents[1] / "scripts" / "render_campaign_media_local.py",
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    mod.ROOT = tmp_path
+    mod.CONTENT_DIR = tmp_path / "content"
+    mod.CONTENT_DIR.mkdir(parents=True, exist_ok=True)
+    model_dir = tmp_path / "tools" / "piper" / "models"
+    model_dir.mkdir(parents=True)
+    (model_dir / "th_TH-tsync2-medium.onnx").write_bytes(b"fake model")
+    (model_dir / "th_TH-tsync2-medium.onnx.json").write_text("{}")
+    return mod
+
+
+def _fake_renderer_run(mod, *, fail_tts_index=None, fail_visual=False, bitrate="300000"):
+    def write_wav(path, seconds, rate=8000):
+        with wave.open(str(path), "wb") as wav:
+            wav.setnchannels(1)
+            wav.setsampwidth(2)
+            wav.setframerate(rate)
+            wav.writeframes(b"\x00" * (int(seconds * rate) * 2))
+
+    def fake_run(command, *, input_text=None, timeout=900):
+        joined = " ".join(command)
+        ok = subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+        if "local_tts_piper.py" in joined:
+            out_path = Path(command[command.index("--output") + 1])
+            idx = int(out_path.stem.split("-")[1])
+            if fail_tts_index is not None and idx == fail_tts_index:
+                return subprocess.CompletedProcess(command, 1, stdout="", stderr="piper boom")
+            write_wav(out_path, 5)
+            ok.stdout = json.dumps({"status": "ok", "scene_index": idx})
+            return ok
+        if "render_pdoom_scenes.mjs" in joined:
+            if fail_visual:
+                return subprocess.CompletedProcess(command, 1, stdout="", stderr="node boom")
+            image_dir = Path(command[2])
+            frames = []
+            for i in range(1, 7):
+                frame = image_dir / f"scene-{i:02d}.png"
+                frame.write_bytes(b"PNG")
+                frames.append(str(frame))
+            ok.stdout = json.dumps({"frames": frames})
+            return ok
+        if "color=" in joined:
+            Path(command[-1]).write_bytes(b"PNGCARD")
+            return ok
+        if "silenceremove" in joined:
+            write_wav(Path(command[-1]), 15, rate=48000)
+            return ok
+        if "concat=n=" in joined and "amix" in joined:
+            write_wav(Path(command[-1]), 90)
+            return ok
+        if "loudnorm" in joined and "print_format=json" in joined:
+            ok.stderr = json.dumps(
+                {
+                    "input_i": -20.0,
+                    "input_lra": 5.0,
+                    "input_tp": -3.0,
+                    "input_thresh": -30.0,
+                    "target_offset": 0.1,
+                }
+            )
+            return ok
+        if "loudnorm" in joined:
+            write_wav(Path(command[-1]), 90)
+            return ok
+        if "libx264" in joined:
+            Path(command[-1]).write_bytes(b"MP4BYTES")
+            return ok
+        if command[0] == mod.FFPROBE:
+            ok.stdout = json.dumps(
+                {
+                    "streams": [
+                        {"codec_type": "video", "codec_name": "h264", "width": 1080, "height": 1920, "avg_frame_rate": "30/1"},
+                        {"codec_type": "audio", "codec_name": "aac", "sample_rate": "48000", "channels": 2, "index": 1},
+                    ],
+                    "format": {"duration": "90.0", "bit_rate": bitrate},
+                }
+            )
+            return ok
+        if "ebur128" in joined:
+            ok.stderr = "Integrated loudness:\n I: -16.0 LUFS\nTrue peak:\n Peak: -2.0 dBFS"
+            return ok
+        raise AssertionError(f"unexpected command: {command}")
+
+    return fake_run
+
+
+def _renderer_payload(mod, **extra):
+    scenes = [
+        {
+            "start_seconds": i * 15,
+            "end_seconds": (i + 1) * 15,
+            "title": f"Title {i + 1}",
+            "description": f"Visual {i + 1}",
+            "voiceover": f"voice {i + 1}",
+        }
+        for i in range(6)
+    ]
+    return {
+        "campaign_id": "testcamp",
+        "output_dir": str(mod.CONTENT_DIR / "job1"),
+        "model_license": "test",
+        "scene_seconds": 15,
+        "duration_seconds": 90,
+        "scenes": scenes,
+        **extra,
+    }
+
+
+def test_renderer_steps_and_sync_report_on_success(tmp_path):
+    mod = _load_renderer(tmp_path)
+    mod._run = _fake_renderer_run(mod)  # type: ignore[method-assign]
+    result = mod.render(_renderer_payload(mod))
+
+    assert set(result["steps"]) == {
+        "input_validation", "piper_tts", "synthetic_visuals", "ffmpeg_assembly", "output_audit",
+    }
+    assert all(step["status"] == "completed" for step in result["steps"].values())
+    assert all(step["started_at"] and step["finished_at"] for step in result["steps"].values())
+    assert result["degraded"] is False
+    assert result["fallbacks"]["tts"]["used"] is False
+    assert len(result["sync_report"]) == 6
+    assert result["sync_report"][0] == {
+        "scene_id": "scene-01",
+        "start_sec": 0,
+        "end_sec": 15,
+        "voice_duration_sec": 5.0,
+        "padded_duration_sec": 15.0,
+        "drift_ms": 0.0,
+    }
+    assert result["video"]["bitrate_bps"] == 300000
+    assert result["video"]["file_exists"] is True
+    assert result["video"]["size_bytes"] > 0
+    assert result["steps"]["output_audit"]["output"]["bitrate_bps"] == 300000
+
+
+def test_renderer_tts_silence_fallback_degraded(tmp_path):
+    mod = _load_renderer(tmp_path)
+    mod._run = _fake_renderer_run(mod, fail_tts_index=3)  # type: ignore[method-assign]
+    result = mod.render(_renderer_payload(mod, tts_fallback="silence"))
+
+    assert result["degraded"] is True
+    assert result["steps"]["piper_tts"]["fallback_used"] is True
+    assert result["steps"]["piper_tts"]["fallback_scenes"] == ["scene-03"]
+    assert result["voice_segments"][2]["status"] == "fallback_silence"
+    assert result["voice_segments"][2]["fallback"] is True
+    # Silent buffer is the full slot; no fake voice claim (status is not "ok").
+    assert result["voice_segments"][2]["duration_seconds"] == 15
+    assert result["sync_report"][2]["voice_duration_sec"] == 15.0
+    assert result["fallbacks"]["tts"] == {"requested": "silence", "used": True, "scenes": ["scene-03"]}
+
+
+def test_renderer_tts_fail_without_fallback_aborts(tmp_path):
+    mod = _load_renderer(tmp_path)
+    mod._run = _fake_renderer_run(mod, fail_tts_index=3)  # type: ignore[method-assign]
+    with pytest.raises(RuntimeError, match="Piper scene 3") as excinfo:
+        mod.render(_renderer_payload(mod))
+    assert excinfo.value.steps["piper_tts"]["status"] == "failed"  # type: ignore[attr-defined]
+    assert excinfo.value.steps["piper_tts"]["error"] == "RuntimeError"  # type: ignore[attr-defined]
+
+
+def test_renderer_visual_static_card_fallback_degraded(tmp_path):
+    mod = _load_renderer(tmp_path)
+    mod._run = _fake_renderer_run(mod, fail_visual=True)  # type: ignore[method-assign]
+    result = mod.render(_renderer_payload(mod, visual_fallback="static_card"))
+
+    assert result["degraded"] is True
+    assert result["steps"]["synthetic_visuals"]["fallback_used"] is True
+    assert result["steps"]["synthetic_visuals"]["fallback_scenes"] == [
+        "scene-01", "scene-02", "scene-03", "scene-04", "scene-05", "scene-06",
+    ]
+    # Scene count and order preserved; every frame is a static card on disk.
+    assert len(result["frames"]) == 6
+    for i, frame in enumerate(result["frames"]):
+        assert frame.endswith(f"scene-{i + 1:02d}-static-card.png")
+        assert Path(frame).stat().st_size > 0
+
+
+def test_renderer_visual_fail_without_fallback_aborts(tmp_path):
+    mod = _load_renderer(tmp_path)
+    mod._run = _fake_renderer_run(mod, fail_visual=True)  # type: ignore[method-assign]
+    with pytest.raises(RuntimeError, match="Three.js scene renderer"):
+        mod.render(_renderer_payload(mod))
+
+
+def test_renderer_rejects_bad_fallback_values(tmp_path):
+    mod = _load_renderer(tmp_path)
+    mod._run = _fake_renderer_run(mod)  # type: ignore[method-assign]
+    with pytest.raises(ValueError, match="tts_fallback must be one of"):
+        mod.render(_renderer_payload(mod, tts_fallback="static_card"))
+    with pytest.raises(ValueError, match="visual_fallback must be one of"):
+        mod.render(_renderer_payload(mod, visual_fallback="silence"))
+
+
+def _ingest_local_script(campaign_id):
+    return content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _local_render_script(),
+        {"client": "codex", "provider": "openai", "model": "test"},
+    )
+
+
+def _degraded_fake_pipeline(payload, *, degraded=True):
+    output_dir = Path(payload["output_dir"])
+    output_dir.mkdir(parents=True)
+    video_path = output_dir / "test_render.mp4"
+    video_path.write_bytes(b"synthetic mp4 placeholder")
+    steps = {
+        "input_validation": {"name": "input_validation", "status": "completed", "fallback_used": False, "fallback_scenes": []},
+        "piper_tts": {"name": "piper_tts", "status": "completed", "fallback_used": degraded, "fallback_scenes": ["scene-02"] if degraded else []},
+        "synthetic_visuals": {"name": "synthetic_visuals", "status": "completed", "fallback_used": False, "fallback_scenes": []},
+        "ffmpeg_assembly": {"name": "ffmpeg_assembly", "status": "completed", "fallback_used": False, "fallback_scenes": []},
+        "output_audit": {"name": "output_audit", "status": "completed", "fallback_used": False, "fallback_scenes": []},
+    }
+    sync = [
+        {"scene_id": f"scene-{i + 1:02d}", "start_sec": i * 15, "end_sec": (i + 1) * 15,
+         "voice_duration_sec": 15.0 if (degraded and i == 1) else 5.0,
+         "padded_duration_sec": 15.0, "drift_ms": 0.0}
+        for i in range(6)
+    ]
+    return {
+        "status": "completed",
+        "execution_mode": "local_ffmpeg_cli",
+        "steps": steps,
+        "degraded": degraded,
+        "fallbacks": {
+            "tts": {"requested": payload.get("tts_fallback", "abort"), "used": degraded, "scenes": ["scene-02"] if degraded else []},
+            "visual": {"requested": payload.get("visual_fallback", "abort"), "used": False, "scenes": []},
+        },
+        "sync_report": sync,
+        "voice_segments": [
+            {"status": "fallback_silence", "scene_id": "scene-02", "fallback": True} if (degraded and i == 1)
+            else {"status": "ok", "scene_index": i + 1}
+            for i in range(6)
+        ],
+        "video": {
+            "path": str(video_path),
+            "bytes": video_path.stat().st_size,
+            "sha256": "a" * 64,
+            "codec": "h264",
+            "width": 1080,
+            "height": 1920,
+            "bitrate_bps": 300000,
+        },
+    }
+
+
+def test_local_render_success_persists_steps_and_sync(isolated_bus, monkeypatch):
+    campaign_id = "phase3-steps-test"
+    _ingest_local_script(campaign_id)
+    monkeypatch.setattr(
+        content_service, "_execute_local_media_pipeline",
+        lambda payload: _degraded_fake_pipeline(payload, degraded=False),
+    )
+    result = content_service.render_campaign_media_local(campaign_id)
+
+    assert result["degraded"] is False
+    assert result["tts_fallback"] == "abort"
+    assert result["visual_fallback"] == "abort"
+    assert set(result["steps"]) == {
+        "input_validation", "piper_tts", "synthetic_visuals", "ffmpeg_assembly", "output_audit",
+    }
+    assert len(result["sync_report"]) == 6
+    assert result["render"]["video"]["bitrate_bps"] == 300000
+
+    campaign = content_service._load_campaign("phase3-steps-test")
+    job = next(asset for asset in campaign["assets"] if asset["type"] == "local_media_render_job")
+    job_record = json.loads(bus_store.fetch_from_bus("content", job["filename"])["content"])
+    assert job_record["tts_fallback"] == "abort"
+    assert job_record["fallback_requested"] is False
+    recorded = next(asset for asset in campaign["assets"] if asset["type"] == "local_media_render_result")
+    assert recorded["degraded"] is False
+    result_record = json.loads(bus_store.fetch_from_bus("content", recorded["filename"])["content"])
+    assert result_record["steps"] == result["steps"]
+    assert result_record["sync_report"] == result["sync_report"]
+
+
+def test_local_render_bad_fallback_values_rejected(isolated_bus, monkeypatch):
+    campaign_id = "phase3-bad-fallback-test"
+    _ingest_local_script(campaign_id)
+    calls = []
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", _fake_local_success_pipeline(calls))
+
+    with pytest.raises(content_service.ContentServiceError, match="tts_fallback must be one of"):
+        content_service.render_campaign_media_local(campaign_id, None, "bogus")
+    with pytest.raises(content_service.ContentServiceError, match="visual_fallback must be one of"):
+        content_service.render_campaign_media_local(campaign_id, None, None, "silence")
+    assert calls == []
+    campaign = content_service._load_campaign("phase3-bad-fallback-test")
+    assert all(asset["type"] != "local_media_render_job" for asset in campaign["assets"])
+
+
+def test_local_render_concurrent_lock_rejects_second(isolated_bus, monkeypatch):
+    import fcntl
+
+    campaign_id = "phase3-lock-test"
+    _ingest_local_script(campaign_id)
+    calls = []
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", _fake_local_success_pipeline(calls))
+
+    lock_path = isolated_bus / "content" / ".local_render.lock"
+    with lock_path.open("a+b") as held:
+        fcntl.flock(held.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        with pytest.raises(content_service.ContentServiceError, match="another local render in progress"):
+            content_service.render_campaign_media_local(campaign_id)
+
+    assert calls == []
+    campaign = content_service._load_campaign("phase3-lock-test")
+    assert all(asset["type"] != "local_media_render_job" for asset in campaign["assets"])
+    local_media = isolated_bus / "content" / "local_media"
+    assert not local_media.exists() or sorted(local_media.rglob("*.mp4")) == []
+
+
+def test_local_render_tts_fallback_degraded_gate_and_approval(isolated_bus, monkeypatch):
+    campaign_id = "phase3-degraded-gate-test"
+    _ingest_local_script(campaign_id)
+    monkeypatch.setattr(
+        content_service, "_execute_local_media_pipeline",
+        lambda payload: _degraded_fake_pipeline(payload, degraded=True),
+    )
+    result = content_service.render_campaign_media_local(campaign_id, None, "silence")
+
+    assert result["execution_status"] == "completed"
+    assert result["degraded"] is True
+    assert result["tts_fallback"] == "silence"
+    assert result["render"]["voice_segments"][1]["status"] == "fallback_silence"
+    gate = result["publish_gate"]
+    assert gate["degraded"] is True
+    assert gate["gate_passed"] is False
+    degraded_check = next(
+        item for item in gate["checks"]
+        if item["check"] == "media: local render used fallback (degraded)"
+    )
+    assert degraded_check["ok"] is False
+
+    campaign = content_service._load_campaign("phase3-degraded-gate-test")
+    job = next(asset for asset in campaign["assets"] if asset["type"] == "local_media_render_job")
+    job_record = json.loads(bus_store.fetch_from_bus("content", job["filename"])["content"])
+    assert job_record["tts_fallback"] == "silence"
+    assert job_record["fallback_requested"] is True
+    recorded = next(asset for asset in campaign["assets"] if asset["type"] == "local_media_render_result")
+    assert recorded["degraded"] is True
+
+    # Degraded alone must not block human approval; it is recorded as an override.
+    approval = content_service.record_human_approval(
+        campaign_id, gate["version"], "อนุมัติแบบรับทราบ degraded media แล้ว"
+    )
+    assert approval["status"] == "approved"
+    assert approval["published"] is False
+    assert "media: local render used fallback (degraded)" in approval["overrides_failed_checks"]
+
+    reviewed = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert reviewed["status"] == "approved"
+    assert reviewed["degraded"] is True
+    assert reviewed["gate_passed"] is False
+    assert reviewed["published"] is False
+
+
+def test_local_render_fallback_params_via_mcp_tool(isolated_bus, monkeypatch):
+    campaign_id = "phase3-mcp-fallback-test"
+    _ingest_local_script(campaign_id)
+    calls = []
+    monkeypatch.setattr(
+        content_service, "_execute_local_media_pipeline",
+        lambda payload: (calls.append(payload), _degraded_fake_pipeline(payload, degraded=True))[1],
+    )
+    fn = mcp._tool_manager.get_tool("render_campaign_media_local").fn
+    payload = json.loads(fn(campaign_id, "", "silence", ""))
+    assert payload["status"] == "review_required"
+    assert payload["degraded"] is True
+    assert payload["tts_fallback"] == "silence"
+    assert calls[0]["tts_fallback"] == "silence"
+    assert calls[0]["visual_fallback"] == "abort"
+
+
+def test_local_render_failed_steps_persisted(isolated_bus, monkeypatch):
+    campaign_id = "phase3-failed-steps-test"
+    _ingest_local_script(campaign_id)
+
+    def failing_with_steps(payload):
+        output_dir = Path(payload["output_dir"])
+        output_dir.mkdir(parents=True)
+        error = content_service.ContentServiceError("local media render failed: boom")
+        error.steps = {"piper_tts": {"name": "piper_tts", "status": "failed", "error": "RuntimeError", "message": "boom"}}  # type: ignore[attr-defined]
+        raise error
+
+    monkeypatch.setattr(content_service, "_execute_local_media_pipeline", failing_with_steps)
+    result = content_service.render_campaign_media_local(campaign_id)
+
+    assert result["execution_status"] == "failed"
+    assert result["degraded"] is False
+    assert result["steps"]["piper_tts"]["status"] == "failed"
+    campaign = content_service._load_campaign("phase3-failed-steps-test")
+    recorded = next(asset for asset in campaign["assets"] if asset["type"] == "local_media_render_result")
+    result_record = json.loads(bus_store.fetch_from_bus("content", recorded["filename"])["content"])
+    assert result_record["steps"]["piper_tts"]["status"] == "failed"
+    assert result_record["degraded"] is False

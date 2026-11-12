@@ -29,7 +29,7 @@ SoloCorp OS เปิด source (MIT License) และอาจมีลูก�
 
 | Field | Value |
 |:------|:------|
-| **Model** | DeepSeek V4 Flash (`deepseek-v4-flash` via `custom:maxplus-codex`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `pipeline` |
 | **Tier** | C — Legal & Compliance |
 | **Rationale** | License check, contract review — ต้องการ reasoning moderate + speed |

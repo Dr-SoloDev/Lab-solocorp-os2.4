@@ -1,20 +1,21 @@
 <!--
-  SoloCorp OS — README
+  AXIS — README (Powered by SoloCorp OS Architecture)
   Funnel: Hook → Prerequisite → Try → Evidence
-  Counts below are from the git tree. Do not put a number here that is not in the tree.
+  Counts below are from the git tree (config-file rows) plus one runtime row
+  verified 2026-11-08 with `opencode mcp list`. No number without a verify command.
   v2.4.0 is the product-pack line, not "the OS is finished".
 -->
 
 <details>
-<summary><strong>SoloCorp OS</strong> — ASCII banner (click to expand)</summary>
+<summary><strong>AXIS</strong> — ASCII banner (click to expand)</summary>
 
 ```text
 ================================================================================
-  ███████  ██████  ██       ██████   ██████  ██████  ██████  ██████  
-  ██      ██    ██ ██      ██    ██ ██      ██    ██ ██   ██ ██   ██ 
-  ███████ ██    ██ ██      ██    ██ ██      ██    ██ ██████  ██████  
-       ██ ██    ██ ██      ██    ██ ██      ██    ██ ██   ██ ██      
-  ███████  ██████  ███████  ██████   ██████  ██████  ██   ██ ██      
+  ███████  ██████  ██       ██████   ██████  ██████  ██████  ██████
+  ██      ██    ██ ██      ██    ██ ██      ██    ██ ██   ██ ██   ██
+  ███████ ██    ██ ██      ██    ██ ██      ██    ██ ██████  ██████
+       ██ ██    ██ ██      ██    ██ ██      ██    ██ ██   ██ ██
+  ███████  ██████  ███████  ██████   ██████  ██████  ██   ██ ██
 
 
    ██████  ███████  ███████   ██   ██
@@ -29,299 +30,226 @@
 
 </details>
 
-# SoloCorp OS
+# ⚡ AXIS — OpenCode-Native Multi-Agent Framework
 
-**Department Architecture for AI Agents** — turn a single AI into a workforce where every unit of work has a named owner, a specialist executor, and an explicit handoff.
+> **One Axis, Multiple Identities.**
+> *The premier multi-agent department architecture framework built 100% for OpenCode (Desktop, CLI, Web, and Mobile). Powered by SoloCorp OS Architecture.*
+
+**An organizational OS for AI agents.** Turn a single AI into a workforce where every unit of work has a named owner, a specialist executor, and an explicit handoff — coordinated through a central bus, not a single overloaded prompt.
+
+> **Brand mapping (display → repo ID, runtime unchanged):** `axis-ceo` → `ceo-turbo` · `skills/@axis/` → `skills/@axis/` · `AXIS Central Bus` → `central_bus/` + `axis_mcp.bus_mcp`. Agent IDs and paths stay as-is until a rename runbook lands; display names above are brand-only.
 
 This repository is a **pre-release**. **v2.4.0 is the product-pack line** (CFO, Legal, Content Creator). It is not a claim that the operating system is finished.
 
 **Status:**
 [![version](https://img.shields.io/badge/packs-v2.4.0--pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases/tag/v2.4.0-pre)
 [![status](https://img.shields.io/badge/system-pre--release-%23FF6B35?style=flat-square)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/releases)
-[![Copilot Setup Steps](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml/badge.svg)](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/actions/workflows/copilot-setup-steps.yml)
 [![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
-> Counts (20 profiles · 9 skills · 21 agent files · 4 primary agents) live in [What is actually in the tree](#what-is-actually-in-the-tree) — badges don't duplicate them. Platform matrix (Hermes · OpenCode · Codex · Grok) lives in [Development Status](#development-status).
+> **License:** [MIT](LICENSE) — use, modify, and sell copies freely. Keep the copyright notice.
+> ⭐ If this helped you, **star the repo** and share your team in [Discussions](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/discussions).
 
-> **License:** [MIT](LICENSE) — เอาไปใช้ ปรับ แจก ขายต่อได้อิสระ ขอแค่เก็บ copyright ไว้
-> ⭐ ถ้าชอบ ฝากกด **Star** เป็นกำลังใจ — แล้วเอาทีมของคุณมาอวดใน [Discussions](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/discussions)!
-
-> **Current product direction (2026-11-01):** build a local-first SoloCorp App with one CEO experience, optional department MCPs, registry, and task queue. Department MCPs remain independently usable from external clients. The app is a planned MVP, not a feature already delivered. See the [current product PRD](./docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
-
-## 🌱 หนึ่งแกน หลายตัวตน
-
-SoloCorp OS เกิดจากแกนเดียวกัน แต่**ไม่จำเป็นต้องเหมือนกัน** — fork ไป เปลี่ยนชื่อ
-ปรับแผนก เพิ่มลดได้ตามใจ ขอแค่ให้มัน*เข้ากับตัวคุณ* ระบบที่ดีคือระบบที่เจ้าของใช้แล้ว
-มีความสุข ไม่ใช่ระบบที่เหมือนต้นฉบับที่สุด — *แตกต่างไม่แตกแยก เป็นตัวของตัวเอง*
-
-ดูวัฒนธรรมการแบ่งปันที่ [`COMMUNITY.md`](./COMMUNITY.md) 💬
-
-> 🧑‍🤝‍🧑 **ครอบครัว SoloCorp** — ทะเบียนสมาชิก instance ทุกตัว: [`docs/FAMILY.md`](./docs/FAMILY.md)
-> ฝากงานข้าม instance: [`sop/SOP-07-cross-instance-dispatch.md`](./sop/SOP-07-cross-instance-dispatch.md)
+> **Current product direction (2026-11-01):** build a local-first SoloCorp App with one CEO experience, optional department MCPs, a module registry, and a task queue. Department MCPs remain independently usable from external MCP clients (PRD FR-07). The app is a **planned MVP, not a delivered feature** — the first-party app shell, registry UI, and provider flow are **not implemented** (PRD Phase 1 gate open). Source of truth: [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
 
 ---
 
 ## Prerequisite
 
-The 30-second try assumes one tool is already installed.
+- **OpenCode CLI on `PATH`** — the bundled client adapters are OpenCode-only (Owner direction, L5, 2026-11-08). Confirm with:
+  ```bash
+  opencode --version
+  python3 --version   # 3.12 in CI
+  ```
+- **Python 3.12** with the project virtualenv (repo Python prep):
+  ```bash
+  source .venv/bin/activate && export PYTHONPATH=.
+  ```
+- **Git** for cloning. The generic MCP servers themselves speak standard stdio MCP and can be attached to any compatible client (see `axis_mcp/server.py` + `axis_mcp/MCP_CLIENT_CONFIGS.md` for the generic contract) — but the bundled skills, agents, and commands in this repo are wired for OpenCode.
 
-| You want | You need first |
-|:---------|:---------------|
-| Talk to the CEO | OpenCode CLI, so `opencode` is on your `PATH` |
-| Codex sub-agents | Python 3.10+ |
-| Grok project pack | Read [`docs/GROK-SUPPORT.md`](./docs/GROK-SUPPORT.md) first. This is not the 30-second path. |
-| Copilot Cloud Agent | [`COPILOT-SETUP.md`](./COPILOT-SETUP.md) |
-
----
+> **Multi-client archives (2026-11-08):** bundles for Hermes, Codex, Grok, Claude Code, and Copilot were retired from the active path by the L5 Owner direction. They are preserved in tag `archive/multi-client-2026-11-08` — do not treat any `.grok/`, `dist/codex/`, or Copilot path in the working tree as an active target; check that tag if you need the old multi-client material. Legacy helpers `scripts/build-profiles.py` and `scripts/export-codex-agents.py` remain in the tree and are slated for archiving at Phase 3.
 
 ## Try it
 
 ```bash
 git clone https://github.com/Dr-SoloDev/Lab-solocorp-os2.4.git
 cd Lab-solocorp-os2.4
-opencode "@ceo-turbo เริ่มกันเลย"
+source .venv/bin/activate && export PYTHONPATH=.
+
+# Start the CEO session (default agent: ceo-turbo)
+opencode "@ceo-turbo Start my day — show me the queue, then brief me on what needs L2/L3 decisions."
 ```
 
-The CEO routes from there. `@mention` a Head when you already know the department.
+From there:
 
-**Codex CLI (optional):**
-
-```bash
-python3 scripts/export-codex-agents.py
-codex
-```
-
-**Grok (optional, after the support doc):** skills for `/status`, `/route`, `/pipeline`, `/handoff`, `/audit`, `/deploy`, and `/brain` live in [`.grok/skills`](./.grok/skills).
+- `@mention` a department head directly (e.g. `@product-produck`, `@engineering-changful`, `@qa`).
+- Run a cross-department cycle with `/pipeline <feature>` (Spec → Plan → Build → QA → Deliver).
+- Use `/workspace <dept> <task>` for cross-department work that needs a separate agent room (manual OpenCode workflow for work spanning departments — specialists never talk cross-department directly, only through the Central Bus).
 
 ### Pipeline commands
 
-These names exist as commands in `opencode.json`.
+Defined in `opencode.json` (`command` block, 20 commands):
 
-| Command | Action |
-|:--------|:-------|
-| `/pipeline <feature>` | Run SoloCorp full cycle |
-| `/handoff <from> <to> <task>` | Structured department handoff |
-| `/status` | View pipeline health |
-| `/audit [scope]` | Inspect audit trail |
-| `/deploy` | Deploy profiles and config |
-| `/brain <context>` | Save session to brain memory |
-| `/workspace [dept] [task]` | Open department workspace (แยกแชทพร้อมตัวตน+บริบท) |
-
-🏢 **Multi-chat workspaces:** 1 แผนก = 1 แชท — ดู [`docs/OPENCODE-GUIDE.md`](./docs/OPENCODE-GUIDE.md) (คน+agent อ่านได้ในไฟล์เดียว)
-
-**Watch the 40-second demo** (Thai narration, recorded from the public repo page with [ClawForge](https://github.com/Dr-SoloDev/clawforge) — script: [`docs/demo/solocorp-demo.yaml`](./docs/demo/solocorp-demo.yaml)):
-
-<video src="./docs/demo/output/output.mp4" width="100%" controls></video>
-
-**What a healthy run looks like (real output from this tree, trimmed):**
-
-```text
-$ python -m loop_runner.main --dry-run
-[scheduler] 2026-10-10T22:20:09 fired
-[pipeline_executor] DRY-RUN: due — would execute
-
-$ python scripts/export-codex-agents.py --validate-only
-OK: validated 86 agents
-```
+| Command | Purpose |
+|:--------|:--------|
+| `/pipeline` | Full cycle: spec → plan → build → qa → deliver |
+| `/handoff` | Structured handoff between departments with a context pack |
+| `/pipeline-bridge` | Cross-department bridge with audit trail |
+| `/mirror-check`, `/mirror` | Mirror Check protocol (L3+ decisions) |
+| `/bootstrap`, `/summary` | Session start / end context |
+| `/triage`, `/orchestrate` | Queue classification and dispatch decomposition |
+| `/status`, `/audit`, `/brain` | System status, pipeline audit, brain memory |
+| `/sprint-plan`, `/daily-ops`, `/budget-check`, `/smoke-test`, `/rfc-new`, `/eng-deploy` | Department skill shortcuts |
+| `/workspace` | Open a separate department workroom for a task (no direct `@mention` across departments) |
 
 ---
 
 ## What is SoloCorp OS?
 
-SoloCorp OS is an **organizational operating system for AI agents** — a Department Architecture that gives every unit of work an owner, a specialist executor, and a defined handoff path.
+SoloCorp OS is an organizational system for AI agents: a named Head for each department, specialist sub-agents that execute, and a strict rule that ownership never disappears. A Head leads and decides; specialists do the work; every handoff is structured and logged.
 
-Instead of a monolithic AI trying to do everything, SoloCorp OS gives you:
-
-- **A public chart of 18 named Heads** — listed below. The tree also has `profiles/02-coo` and `profiles/19-rd-lab`, which are not on that chart yet.
-- **Specialists per profile** — each `team/*.SOUL.md` is one specialist. There is no single counted roster in this repo, so this page does not print one.
-- **Two-Tier Architecture** — control flows Head-to-Head; data flows through a Central Bus.
-- **Clear Chain of Command** — Human → CEO → C-Level → Department Heads → Specialist Teams.
-
-The design is inspired by how real companies scale: clear hierarchy, delegated authority, and autonomous execution at every level. No orphan work. No ambiguous ownership.
-
----
+**Why departments instead of one agent?** One prompt cannot own finance, architecture, QA, and content at the same time without losing accountability. Departments separate *deciding* from *doing* — so every result has an owner who can be asked a question and measured on the answer.
 
 ## The Problem We Solve
 
-Monolithic AI agents break down as complexity grows:
+- A single AI has no roster, no owner, and no handoff — work disappears between turns.
+- External MCP clients force per-client setup with no shared registry or queue.
+- "It runs" is not an architecture: durable execution needs a bus, a loop runner, and an audit trail.
 
-- **Context collapse** — a single AI juggling 15+ concerns loses depth; no specialist ownership
-- **No accountability chain** — when one prompt does everything, there is no clear owner
-- **Throughput ceiling** — every request bottlenecks through one context window
-- **Implicit handoffs** — coordination is unstructured; work gets lost or silently dropped
-
-SoloCorp OS replaces that single point of failure with a structured department hierarchy — each unit of work has a named owner, a specialist executor, and an explicit handoff path through the Central Bus.
+SoloCorp answers with named ownership, a Two-Tier control/data split, and tools that every department can call without talking sideways.
 
 ---
 
 ## What is actually in the tree
 
-Counted on the `main` tree. If a future commit changes a count, change this table in the same commit.
+Counts verified 2026-11-08 (`feat/registry-c2`, commit `267241c`):
 
-| Claim | Count | Where |
-|:------|------:|:------|
-| Profile directories | 20 | `profiles/01-ceo` … `profiles/19-rd-lab`, including both `02-cfo` and `02-coo` |
-| Named Heads on the chart below | 18 | This page. COO and R&D Lab are in the tree only. |
-| Canonical skills | 9 | `skills/@solocorp/**/SKILL.md` |
-| OpenCode agent files | 21 | `.opencode/agents/*.md` |
-| Primary agents registered in `opencode.json` | 4 | `ceo-turbo`, `build`, `plan`, `explore` |
+| Item | Count | Source of truth | Verify |
+|:-----|:-----:|:----------------|:-------|
+| Profile directories | **20** | `profiles/` (`01-ceo` … `19-rd-lab`, incl. `02-coo`) | `ls -d profiles/*/ \| wc -l` → 20 |
+| Canonical skills | **12** | `skills/@axis/` (`SKILL.md` files) | `find skills/@axis -name 'SKILL.md' \| wc -l` → 12 |
+| OpenCode agent files | **21** | `.opencode/agents/*.md` | `ls .opencode/agents/*.md \| wc -l` → 21 |
+| Primary agents | **4** | `opencode.json` → `agent` (`ceo-turbo`, `build`, `plan`, `explore`) | `python3 -c "import json; print(list(json.load(open('opencode.json'))['agent']))"` |
+| MCP servers — runtime (primary truth) | **10 total: 9 connected + 1 disabled** (`stealth-browser` disabled) | OpenCode runtime: 9 connected — `central-bus`, `codegraph`, `concat`, `content-creator`, `engineering`, `github`, `qa`, `solocorp`, `unified-technical`; 1 disabled — `stealth-browser` | `opencode mcp list` → 9 `✓ connected` + 1 `○ disabled` (verified 2026-11-08, exit 0) |
+| MCP servers — config files | **`opencode.json` = 8 · `opencode.jsonc` = 4** | `opencode.json`: `stealth-browser` (disabled), `solocorp`, `central-bus`, `content-creator`, `engineering`, `qa`, `concat`, `github`. `opencode.jsonc`: `stealth-browser` (disabled), `central-bus`, `unified-technical`, `content-creator`. Global `~/.config/opencode/opencode.json` binds `codegraph` (V1 shape, bounded inside `mcp.codegraph`) — tree counts never double-count it against the runtime row | `python3 -c "import json; s=json.load(open('opencode.json'))['mcp']['servers']; print(len(s), [(k,v.get('disabled')) for k,v in s.items()])"` → `8 [...]` |
+| Pipeline commands | **20** | `opencode.json` → `command` | `python3 -c "import json; print(len(json.load(open('opencode.json'))['command']))"` |
 
-Copies under `.claude/skills` and `.grok/skills` are platform packs, not a second copy of the canonical catalog: `.grok/skills/` holds 7 command skills (`audit`, `brain`, `deploy`, `handoff`, `pipeline`, `route`, `status`), and `.claude/skills/solocorp/` carries its own set (with extras like `agent-toolkit` and `ui-animation-review`, without `cross-dept/dept-workspace`). COO, R&D Lab, Network (นีต), Cyber Security (ซาย), and Psychology (จิต) do not yet have a file in `.opencode/agents/`.
+> **Resolved (2026-11-08):** the earlier MCP discrepancy is closed — runtime and file truths now match one picture: `opencode mcp list` shows **10 servers (9 connected + 1 disabled)**. The file truth splits across two tracked configs: `opencode.json` carries 8 (`stealth-browser` disabled + `solocorp`, `central-bus`, `content-creator`, `engineering`, `qa`, `concat`, `github`), and `opencode.jsonc` carries 4 (`stealth-browser` disabled + `central-bus`, `unified-technical`, `content-creator`); `codegraph` is bound in global `~/.config/opencode/opencode.json` (V1 shape, bounded inside `mcp.codegraph`). `codegraph` and `unified-technical` never appear in `opencode.json` itself — they reach the runtime through `opencode.jsonc` and the global config, so the table above counts them once in the runtime row. See [Remaining unverified facts](#remaining-unverified-facts) for the one config item still pending a commit.
+
+> **Stale claims removed:** "9 canonical skills" → corrected to **12**; "4 primary agents" confirmed (**4**); the Copilot badge was dropped (no Copilot workflow in the active path); the Hermes/OpenCode/Codex/Grok platform matrix and the Codex-export / `.grok/skills` active paths were removed and folded into the `archive/multi-client-2026-11-08` note above.
 
 ---
 
 ## Key Features
 
-| Feature | What you can verify |
-|:--------|:--------------------|
-| **Ownership Model** | Every charted department has a Head |
-| **Delegation by Design** | Heads direct, escalate, and hand off — they do not implement |
-| **Two-Tier Architecture** | Control layer separated from data layer |
-| **Central Bus** | `central_bus/` — FastAPI daemon in the tree. Pre-release, not a finished control plane. |
-| **Head-to-Head Handoff** | Work moves between departments without a single bottleneck |
-| **9 canonical skills** | `skills/@solocorp/` |
-| **21 OpenCode agent files** | `.opencode/agents/` — not all 20 profiles have one |
-| **Codex CLI Export** | `scripts/export-codex-agents.py` |
-| **xGov Governance** | RFC → ADR → Guard Gates, under `decisions/` and `gov/` |
-| **Loop Runner** | `loop_runner/` — cron auto-pilot intended every 30 min |
+- **Named ownership** — every work item has a Head who owns the outcome, not just the task.
+- **Two-Tier architecture** — control (status, goals, approvals) flows Head-to-Head; data (code, designs, reports) flows through the Central Bus. Heads never pass files directly.
+- **Central Bus (busd)** — FastAPI daemon with SQLite + JSONL compatibility on port 8099, `X-API-Key` auth (legacy `Authorization: Bearer` compat until 2026-10-04).
+- **Loop Runner** — cron-based auto-pilot (`loop_runner/`) that executes due loops without human intervention; single-flight lock + `--dry-run`.
+- **Unified Technical** — Architect + Engineering + QA combined in one MCP process (`axis_mcp/unified_technical/`), with graceful lifespan shutdown (cache cleanup task stopped, SQLite connection closed on exit — `axis_mcp/unified_technical/server.py`).
+- **Content Creator Pack** — local video pipeline (BYOM + local-first MCP + publish gate) with frozen Phase 1–3 evidence (see below).
+- **Behavior rules** — one file per behavior (`rules/INDEX.md`): receive (01), work (02), session (03), safety (04), env (05), certification (06).
+- **MCP-standalone depth** — generic stdio servers work from any compatible client without the CEO/App (PRD FR-07).
 
 ---
 
 ## Architecture
 
-```mermaid
-graph TD
-    Human["Human<br/>(Dr.solodev — Owner / Vision)"]
-    CEO["CEO<br/>เทอโบ ไชยศรีรัมย์<br/>Supreme AI Authority"]
-    CFO["CFO<br/>meetoo<br/>Finance / Budget"]
-    CMO["CMO<br/>มาร์ค<br/>Marketing / Brand"]
-    Orch["Orchestrator<br/>พี่วุฒิ<br/>Pipeline Coordination"]
-    Arch["Architect<br/>พี่ทรงศักดิ์<br/>Central Bus / Routing"]
-    Prod["Product<br/>โปรดัค<br/>Roadmap / PRD"]
-    Eng["Engineering<br/>ช่างฟูล<br/>Backend / Frontend"]
-    Des["Design<br/>ครีเอท<br/>UX / Brand Visual"]
-    UI["UI Designer<br/>UI Designer<br/>Interface / Components"]
-    QA["QA<br/>QA-ทีม<br/>Testing / Quality"]
-    Sales["Sales<br/>เซลส์<br/>B2B Pipeline"]
-    Sup["Support<br/>ซัพพอร์ต<br/>Customer Success"]
-    Legal["Legal<br/>ตุลย์<br/>Compliance / Contracts"]
-    Web3["Web3<br/>อัยวา<br/>Blockchain / DeFi / Solana"]
-    Content["Content Creator<br/>เสก<br/>Content / Creative / Media"]
-    NetEng["Network Engineer<br/>นีต<br/>Network / Infrastructure"]
-    CyberSec["Cyber Security<br/>ซาย<br/>Threat / Vulnerability / IR"]
-    Psych["Psychology<br/>จิต<br/>Behavior / Econ / Org"]
+### Two-Tier diagram (text)
 
+Control and data are separate layers by design (ADR-002). Heads work in the Control Layer; specialists work in the Data Layer through the Central Bus.
 
-    Human --> CEO
-    CEO --> CFO
-    CEO --> CMO
-    CEO --> Orch
-    Orch --> Arch
-    Orch --> Prod
-    Orch --> Eng
-    Orch --> Des
-    Orch --> UI
-    Orch --> QA
-    Orch --> Sales
-    Orch --> Sup
-    Orch --> Legal
-    Orch --> Web3
-    Orch --> Content
-    Orch --> NetEng
-    Orch --> CyberSec
-    Orch --> Psych
+```text
+CONTROL LAYER (Head-to-Head — status, goals, exceptions, approvals)
+  Head A ──handoff──→ Head B ──handoff──→ Head C
+  80% direct · 15% via Orchestrator · 5% escalate to CEO
+        │                                    │
+        ▼ below: Heads see only "Work Item X completed ✓"
+DATA LAYER (autonomous via Central Bus — code, designs, reports)
+  Specialist A ──→ CENTRAL BUS (queue + audit) ──→ Specialist B
+  Specialist C ──→ CENTRAL BUS (queue + audit) ──→ Specialist D
 ```
 
-The chart is the 18 named Heads. Not drawn, but present in the tree: COO (`profiles/02-coo`) and R&D Lab (`profiles/19-rd-lab`).
+### Hierarchy
 
-> **Why the Orchestrator is not the bottleneck it looks like:** the arrows above are the *command* hierarchy (who reports to whom), not the data path. Work coordination between departments is Head-to-Head; the Orchestrator only sees status, goals, exceptions, and approvals. Actual payloads (code, designs, reports) never pass through it — they flow Specialist → Central Bus → Specialist, so there is no single context window to clog.
-
-**Two-Tier Architecture**
-
-```
-CONTROL LAYER (Head-to-Head)
-  Status · Goals · Exceptions · Approvals · Handoffs
-  Head A ──(status/report)──→ Head B
-
-
-DATA LAYER (Autonomous)
-  Code · Designs · Reports · Raw Outputs
-  Specialist A ──(write)──→ CENTRAL BUS ──(notify)──→ Specialist B
-                                 └── Queue
+```text
+Dr.solodev (Owner, L5 — vision / org / core product ONLY)
+  └── CEO (เทอโบ, L4 — strategy, cross-dept, roadmap)
+        └── COO (กิจ, L3 — daily ops, L1–L3 gatekeeper)
+              └── Department Heads (L2)
+                    └── Specialists (L1, via Central Bus)
 ```
 
----
+Full design: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Behavior map: [`rules/INDEX.md`](rules/INDEX.md). Quickstart: [`AGENTS.md`](AGENTS.md).
 
-## Product Packs — v2.4.0 Pre-release
+### Central Bus (busd)
 
-v2.4.0 means these three profiles are being cut as packs. They are still directories inside this repository. Cloning the repo is the install. There is no separate package and no "no setup" path.
+- **Command:** `uvicorn central_bus.main:app --host 127.0.0.1 --port 8099`
+- **Auth:** `X-API-Key` header; legacy `Authorization: Bearer` compat until 2026-10-04.
+- **Code:** `central_bus/` (30+ modules). MCP adapter: `axis_mcp/bus_mcp.py` (module `axis_mcp.bus_mcp`).
 
-Specialist counts are `team/*.SOUL.md` files, not including the Head.
-
-| Pack | Head | What it does | Team SOUL files |
-|:-----|:-----|:-------------|:---------------:|
-| **CFO Pack** `@cfo-meetoo` | meetoo | Budget control · Financial analysis · Audit trail · Tax strategy · FP&A | 3 |
-| **Legal Pack** `@legal-tulya` | ตุลย์ (Tul) | Contract review · License compliance · Risk assessment · Data governance | 3 |
-| **Content Creator Pack** `@content-creator-sek` | เสก (Sek) | Multi-platform content · Video production · Copywriting · Visual creation | 0 |
-
-CFO's three files are `meetoo/team/01-dana`, `02-riley`, `03-morgan`. Legal's three are under `tulya/team/`. Content Creator's directory currently has the Head only.
-
-Each listed pack has a **SOUL.md** and routing rules. A skill library ships with the repo (`skills/@solocorp/`), not as a per-pack download.
-
-All three packs are open: fork it, clone it, `@mention` the Head. There is no qualification gate in the tree (no such flow in `profiles/02-cfo` or the CFO agent file):
+### Loop Runner (cron auto-pilot)
 
 ```bash
-opencode "@cfo-meetoo ช่วยดูงบให้หน่อย"
+*/30 * * * * cd /data/projects/Lab-solocorp-os2.4 && .venv/bin/python -m loop_runner.main >> logs/loop_runner_cron.log 2>&1
 ```
+
+| Loop | Level | Interval | Action |
+|:-----|:-----:|:---------|:-------|
+| daily_brief | L1 | 20h | Finance + brain → stdout report |
+| subscription_audit | L4 | 30d | Scan recurring charges and subscriptions |
+| brain_auto_commit | L4 | 1h | Git commit brain files when changes detected |
+| pipeline_executor | L4 | 30m | Pull queue → LLM execute → update status |
+
+Source: `loop_runner/` (`runner.py`, `main.py`, `loops/`).
+
+### Unified Technical (one process)
+
+`axis_mcp/unified_technical/server.py` — Architect, Engineering, and QA modules in one process, sharing a SQLite store and cache. Run with `python3 -m axis_mcp.unified_technical.server`. Lifespan fix (commit `267241c`): graceful shutdown stops the cache cleanup task and closes the SQLite connection; the `LockManager` is stateless (locks only) with no close hook.
+
+> Registration note: `unified-technical` **is registered in `opencode.jsonc`** (tracked config) and shows **connected** in `opencode mcp list` (verified 2026-11-08); `opencode.json` itself still does not carry the entry (see resolved note above). Any future registration change must update the table in [What is actually in the tree](#what-is-actually-in-the-tree) in the same commit.
+
+### Content Creator Pack — Phase 1–3 evidence (2026-11-07)
+
+The Content Creator Pack (BYOM + Local-First MCP + Publish Gate) has three frozen, locally rendered MP4s verified by independent ffprobe/SHA + ebur128 re-measure. **Pre-release only — not a production release, not a published campaign, not a claim that Concat rendering works on this host.** Approval status (2026-11-07): **phase 1 v5 has a recorded human approval** — [`central_bus/content/campaign-campaign_synth_phase1_20261107-approval-v5_20261107T031906146707Z.json`](central_bus/content/campaign-campaign_synth_phase1_20261107-approval-v5_20261107T031906146707Z.json), recorded 2026-11-07T03:19:06Z, for that exact v5 SHA only — with `gate_passed: false` and 7 explicit overrides (visual prompt, audio cue sheet, source verification, media rights, R1, R3, R5). That approval **does not publish**: `published` remains false and the campaign has not passed the normal publish gate. **Phase 2 and phase 3 have no approval** (`approved_version: null`, `review_required`). Nothing in any phase is published; publishing stays blocked. Piper voice (`th_TH-tsync2-medium`, CC BY-NC-SA 3.0) is internal/non-commercial only.
+
+| Phase | Campaign | Video SHA-256 | Completion record |
+|:------|:---------|:--------------|:------------------|
+| 1 | `campaign_synth_phase1_20261107` v5 | `ef3b282fc3ed69a58064c336e780a75f79094c0d54c36ffdbe406c23837c28bb` | [`central_bus/content/ceo-phase1-completed-20261107_20261107T031659522762Z.md`](central_bus/content/ceo-phase1-completed-20261107_20261107T031659522762Z.md) |
+| 2 | `campaign_synth_phase2_20261107` v7 | `60d855b1203c5a86593c451236f03fd70bd79afa3193eb54f458f702cd0aca9b` | [`central_bus/content/ceo-phase2-completed-20261107.md`](central_bus/content/ceo-phase2-completed-20261107.md) |
+| 3 | `campaign_synth_phase3_20261107` v7 | `192ba6c5e0b0c74dcd02f262df5f8771e399a8573b220e75e267531f48a7cc32` | [`central_bus/content/ceo-phase3-completed-20261107_20261107T051235733316Z.md`](central_bus/content/ceo-phase3-completed-20261107_20261107T051235733316Z.md) |
+
+Local-only renderer: Piper + FFmpeg CLI (6×15s/10×10s, per-step/fallback/lock). Concat status (2026-11-07): **not suspended** — ADR-032 was amended the same day: the `--appimage-extract` path succeeded (`squashfs-root` 362M at `/home/drsolodev/.opencode/concat/`, `AppRun` = concat 0.2.8), `concat` MCP is `enabled` in `opencode.json`, and the MCP handshake was verified on 2026-11-07 (tools answer; `project_list()` → `[]`). **Still NOT proven: `render_campaign_with_concat` has never been run on this host** — no render proof exists; if the handshake later fails, the fallback is Option 1 disable per [`decisions/ADR-032-concat-host-2026-11-07.md`](decisions/ADR-032-concat-host-2026-11-07.md) (amended). Do not claim Concat rendering works here. Runbook: [`docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md`](docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md). **Image generation (commit `001b59e`):** `generate_image(prompt, provider="nvidia")` (default) calls NVIDIA NIM FLUX.3 Klein and stores the image under `central_bus/content/` with `gate_passed: false` / `published: false` — the tool never publishes outside the human publish gate. NIM output is always JPEG: a requested `.png` is saved as `.jpg` and noted as `requested_format`/`actual_format` in the provenance manifest. License: FLUX.3 Klein defaults to **FLUX Kommunity v1.0 non-commercial** terms, recorded in the provenance `license_note`. The legacy `provider="openrouter"` path (FLUX.3 Klein chat-completions) remains unchanged. Live smoke evidence: 1 image, 197,974 bytes, JPEG, SHA-256 `ec73af27aeb2e89f21c76f8aa6d2004853d02048f21b4a0cf4e15a04fbe1fdb4`, exit 0. Tests: 65 passed (targeted `tests/test_content_mcp.py` + `tests/test_mcp_stdio.py`, re-verified 2026-11-07).
 
 ---
 
 ## The Team
 
-### C-Level Executives
+**On this chart: 18 named Heads.** Profile directories in the tree: 20 (includes `02-coo` and `19-rd-lab`). Specialist headcount is not printed here until a manifest exists.
 
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
+| # | Department | Head | Scope |
+|:--:|:-----------|:-----|:------|
 | 01 | CEO | เทอโบ (Turbo Chaisriram) | Vision, Strategy, Final Decision |
-| 02 | CFO | meetoo | Finance, Budget, Investment |
-| 03 | CMO | มาร์ค (Mark) | Marketing, Content, Brand |
+| 02 | COO | กิจ (Kit) | Daily Operations, L1–L3 gatekeeper |
+| 03 | CFO | meetoo | Finance, Budget, Investment |
+| 04 | CMO | มาร์ค (Mark) | Marketing, Content, Brand |
+| 05 | Orchestrator | พี่วุฒิ (Wut) | System Pipeline Coordination |
+| 06 | Architect | พี่ทรงศักดิ์ (Songsak) | Central Bus, Routing, Monitoring |
+| 07 | Product | โปรดัค (Produck) | Feature Roadmap, PRD, Delivery |
+| 08 | Engineering | ช่างฟูล (Changful) | Backend, Frontend, Architecture |
+| 09 | Design | ครีเอท (Kreet) | UX Research, Brand Visual |
+| 10 | UI Designer | UI Designer | Interface, Component Library |
+| 11 | QA | QA-ทีม (QA Team) | Testing, Quality, Evidence |
+| 12 | Sales | เซลส์ (Sales) | B2B Deal Strategy, Pipeline |
+| 13 | Support | ซัพพอร์ต (Support) | Customer Success, Analytics |
+| 14 | Legal | ตุลย์ (Tulya) | Compliance, Contracts, Law |
+| 15 | Web3 | อัยวา (Aywa) | Blockchain, DeFi, Solana |
+| 16 | Content Creator | เสก (Sek) | Content, Creative, Media |
+| 17 | Network Engineer | นีต (Neet) | Network Design, Infrastructure, CDN, VPN |
+| 18 | Cyber Security | ซาย (Sai) | Threat Detection, Vulnerability, Incident Response |
+| 19 | Psychology | จิต (Jit) | User Behavior, Behavioral Economics, Org Psychology |
+| 20 (lab) | R&D Lab | Lead Researcher | Curiosity-driven research, prototypes |
 
-### System Pipeline
-
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
-| 04 | Orchestrator | พี่วุฒิ (Wut) | Cross-Department Pipeline Coordination |
-| 05 | Architect | พี่ทรงศักดิ์ (Songsak) | Central Bus, Routing, Monitoring |
-
-### Product & Engineering
-
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
-| 06 | Product | โปรดัค (Produck) | Feature Roadmap, PRD, Delivery |
-| 07 | Engineering | ช่างฟูล (Changful) | Backend, Frontend, Architecture |
-| 08 | Design | ครีเอท (Kreet) | UX Research, Brand Visual |
-| 09 | UI Designer | UI Designer | Interface, Component Library |
-
-### Quality, Revenue & Customer
-
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
-| 10 | QA | QA-ทีม (QA Team) | Testing, Quality, Evidence |
-| 11 | Sales | เซลส์ (Sales) | B2B Deal Strategy, Pipeline |
-| 12 | Support | ซัพพอร์ต (Support) | Customer Success, Analytics |
-
-### Legal, Blockchain & Content
-
-| # | Role | Name | Responsibility |
-|:-:|:-----|:-----|:--------------|
-| 13 | Legal | ตุลย์ (Tul) | Compliance, Contracts, Law |
-| 14 | Web3 | อัยวา (Aywa) | Blockchain, DeFi, Solana |
-| 15 | Content Creator | เสก (Sek) | Content, Creative, Media |
-| 16 | Network Engineer | นีต (Neet) | Network Design, Infrastructure, CDN, VPN |
-| 17 | Cyber Security | ซาย (Sai) | Threat Detection, Vulnerability, Incident Response |
-| 18 | Psychology | จิต (Jit) | User Behavior, Behavioral Economics, Org Psychology |
-
-**On this chart: 18 named Heads.** Profile directories in the tree: 20. Specialist headcount is not printed here until a manifest exists.
+Thai names are kept as proper names; the explanation is in English. Full roster: [`profiles/INDEX.md`](profiles/INDEX.md).
 
 ---
 
@@ -330,48 +258,95 @@ opencode "@cfo-meetoo ช่วยดูงบให้หน่อย"
 No percent bars. A row marked **In tree** means the files exist. It does not mean done. The system line is still **pre-release**. v0.x is that system line. **v2.4.0 is only the pack line.**
 
 | Phase | Content | Version | Status |
-|:------|:--------|:-------:|:------:|
+|:------|:--------|:-------:|:-------|
 | Foundation | ADRs + CEO profile + architecture docs | v0.1–v0.2 | In tree |
 | Pipeline agents | Architect-side pipeline agent files | v0.3 | In tree |
-| Department profiles | 20 directories, 18 of them charted above | v0.5 | In tree |
-| Hermes shape | Profile files under `profiles/` | v0.5.1 | In tree — a live Hermes deploy is not proven by this repo |
+| Department profiles | 20 directories, 18 charted above | v0.5 | In tree |
 | Sub-agent teams | `team/*.SOUL.md` under most profiles | v0.6.1 | Partial — Content Creator has none |
 | Central Bus | `central_bus/` FastAPI daemon, SQLite + JSONL compat (`use_sqlite` switch) | v0.6 | In tree, pre-release |
-| Multi-platform | Hermes · OpenCode · Claude Code · Codex · Grok docs | v0.7 | Partial |
 | Dashboard + compliance | Pipeline dashboard + audit UI | v0.7 | Planned |
 | Product packs | CFO · Legal · Content Creator profiles | v2.4.0 | Pre-release |
 | Public launch | GTM · content · skill docs | v0.7 | Partial — this README is part of that work |
 | Loop runner | `loop_runner/` cron auto-pilot | v0.5+ | In tree |
+| OpenCode-only cutover (L5 2026-11-08) | `.claude/` deleted; multi-client bundles archived at tag `archive/multi-client-2026-11-08` | v2.4.0+ | In tree — `.grok/` remains as archive material, not an active target |
 
-`PROJECT.md` still says in one FAQ answer that the Central Bus is "in design" and that the system is production-ready (its own status table also marks the bus "Production Ready" in places). Those answers are stale. Believe this table, then the code.
+> **`opencode.jsonc` provider note (committed 2026-11-08):** tracked `opencode.jsonc` carries a `providers.openrouter` custom entry — model `flux-3-klein` (`black-forest-labs/flux-3-image-klein`) — alongside its MCP entries used by the runtime row above. Image generation defaults to NVIDIA NIM via the Content Creator `generate_image` tool (commit `001b59e`); the OpenRouter provider entry is kept as legacy fallback. Count it as in-tree from that commit on.
+
+`PROJECT.md` still says in one FAQ that the Central Bus is "in design" and that the system is production-ready (its own status table also marks the bus "Production Ready" in places). Those answers are stale. Believe this table, then the code.
+
+---
+
+## NOT done (explicit)
+
+Do not upgrade these to "done":
+
+- **Stealth browser MCP:** `disabled: true` in `opencode.json` (Owner). Its venv exists on disk (`tools/stealth-browser-mcp/venv/`) but the server is not started.
+- **Concat render proof:** handshake verified 2026-11-07 but `render_campaign_with_concat` has never been run on this host — no render proof. Local-media renders do not need Concat.
+- **Degraded publication:** **NO-GO** pending architect D1 waiver + a real degraded render on a throwaway campaign.
+- **Certification:** D3 not passed (operational E2E runs, not independent D3/D4).
+- **SoloCorp App shell:** first-party app shell / registry UI / provider flow **not implemented** (PRD Phase 1 gate open). The Content Creator pilot and Central Bus are evidence, not proof the app is complete.
+
+---
+
+## Remaining unverified facts
+
+Two items that used to live here as unverified claims are resolved as of 2026-11-08 and now appear with their verify commands in [What is actually in the tree](#what-is-actually-in-the-tree):
+
+- **Test suite (verified 2026-11-08):** `python -m pytest tests/ central_bus/tests/ --tb=short --no-header -q` → **1182 passed, 1 skipped, exit 0** (~96s). The live-network test was narrowed at this commit; live-gated cases skip unless `OPENROUTER_LIVE_TEST=1`. The combined suite includes runtime-touching tests — conditions follow the tools state per D3 (content-creator), so this is run evidence, not a production-readiness claim.
+- **`opencode.jsonc` provider customization (committed 2026-11-08):** `providers.openrouter` with model `flux-3-klein` (`black-forest-labs/flux-3-image-klein`) — in-tree and counted as of the commit described above (see the provider note under Development Status). Primary image generation path is NVIDIA NIM via `generate_image` (commit `001b59e`).
+
+Still unverified — do not quote until someone verifies it in a commit:
+
+- **`.grok/` retention:** `.grok/` files remain in the git tree (`git ls-files | grep '^\.grok'`) as archive material. Whether they should be deleted or tagged requires an Owner/CEO decision; this README does not claim they are gone.
 
 ---
 
 ## Get Started
 
-1. Install OpenCode.
-2. Clone this repo and run `opencode "@ceo-turbo เริ่มกันเลย"`.
+1. Install OpenCode and ensure `opencode` is on `PATH`.
+2. Clone this repo, activate the venv, and run `opencode "@ceo-turbo Start my day — show me the queue."`
 3. Use `@mention` to reach a Head directly.
 4. Run `/pipeline <feature>` for a cross-department cycle.
+5. Start Central Bus only when bus-dependent work needs it:
+   ```bash
+   uvicorn central_bus.main:app --host 127.0.0.1 --port 8099
+   ```
 
 **Reference docs:**
 
 - `profiles/INDEX.md` — profile index (reconcile it with the count table above before quoting it)
 - `docs/ARCHITECTURE.md` — system design, principles, and flow
+- `AGENTS.md` — agent quickstart (hierarchy, session protocol)
+- `rules/INDEX.md` — 30-second behavior map (one file per behavior)
+- `docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md` — current product direction (source of truth)
 - `PROJECT.md` — longer tour; its status FAQ is stale where it disagrees with this page
 - `CHANGELOG.md` — version history and release notes
-- `COPILOT-SETUP.md` — GitHub Copilot Cloud Agent
 - `decisions/` — Architecture Decision Records (ADRs)
-- `dist/codex/README-CODEX-CLI.md` — Codex CLI export
-- `docs/GROK-SUPPORT.md` — Grok pack
+- `sop/` — Standard Operating Procedures (SOP-01 through SOP-07)
+- `docs/FAMILY.md` + SOP-07 — cross-instance dispatch for family instances
+
+> **Codex export note (archived):** `scripts/build-profiles.py` and `scripts/export-codex-agents.py --validate-only` remain in the tree for audit but are **not** part of the active OpenCode path. The multi-client export they produced lives at tag `archive/multi-client-2026-11-08`.
+
+> **Grok note (archived):** `.grok/` remains in the tree as archive material only. There is no `.grok/skills` active path.
+
+---
+
+## Contributing
+
+SoloCorp OS is a small team with a high bar for honesty: **evidence beats reports**. If you change a number, change the line that generates it in the same commit.
+
+- **Report "blocked" with evidence** — that is valid work. Report "done" without evidence — that is the worst failure (see `rules/06-certification.md`).
+- **Maker ≠ checker.** Every gate needs a different checker than the maker; default status is NOT PASSED until evidence is attached.
+- **Verify before you claim.** Run the commands in [What is actually in the tree](#what-is-actually-in-the-tree) and paste the output in your PR.
+- **Docs-only changes still need `git diff --check`** and a scope note (which counts did you verify, which did you not).
 
 ---
 
 <div align="center">
 
-**SoloCorp OS — System First, Everything Follows**  
-[MIT License](LICENSE) · Copyright (c) 2026 SoloCorp Organization (Dr-SoloDev)  
-Use, modify, and sell copies. Keep this copyright notice.  
-Built by Dr.SoloDev & เทอโบ ไชยศรีรัมย์
+**SoloCorp OS — System First, Everything Follows**
+[MIT License](LICENSE) · Copyright (c) 2026 SoloCorp Organization (Dr-SoloDev)
+Use, modify, and sell copies. Keep this copyright notice.
+Built by Dr.SoloDev &amp; เทอโบ ไชยศรีรัมย์
 
 </div>

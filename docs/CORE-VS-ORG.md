@@ -13,7 +13,7 @@
 | Core (ห้ามแตก) | Org Design (แตกได้) |
 |:---------------|:--------------------|
 | `central_bus/` — queue, state, router, qa_gate, bus_tags, db, audit, health | `profiles/` — 20 dirs, SOUL.md, team specialists, routing.yaml |
-| `loop_runner/` — scheduler, loops, verdict_log, state | `skills/@solocorp/` — 9 canonical skills |
+| `loop_runner/` — scheduler, loops, verdict_log, state | `skills/@axis/` — 9 canonical skills |
 | `bus/` runtime contract — queue/evidence/verdicts/audit formats | `decisions/` ของแต่ละทีม, GTM/content ของตัวเอง |
 | `rules/`, `sop/` — กติกาพฤติกรรม + วิธีปฏิบัติ | ชื่อแผนก จำนวนแผนก โทนเสียง ภาษา |
 

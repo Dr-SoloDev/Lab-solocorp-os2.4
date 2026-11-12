@@ -57,7 +57,9 @@ OpenCode V2 / Codex
   - `create_video_script`
   - `design_visual_prompt`
   - `review_publish_gate`
-- resource: `solocorp://content/sop`
+- resource: `axis://content/sop`
+
+> **Follow-up (2026-11-07, CEO-ordered FIX F8):** รายการ 5 tools ด้านบนเป็น catalog ณ วันเขียนแผน — catalog ปัจจุบันมี **16+ tools** (ดู `axis_mcp/departments/content_mcp.py:334-345`, `tests/test_content_mcp.py:334-345`) รวมถึง `render_campaign_media_local` — **render ไม่ใช่ "not implemented"**: synthetic-only render พิสูจน์แล้ว Phase 1–3 (locally rendered MP4s ผ่าน ffprobe ที่ `central_bus/content/local_media/`); real user media ยัง blocked จน runtime ผ่าน independent verification. บรรทัด 3 (pilot ≠ app) ยังถูกต้อง — ดู PRD local-first เป็น roadmap ปัจจุบัน
 
 ทุก output เป็นไฟล์ใน `central_bus/content/` และคืน JSON สรุปผลกับ path ของ artifact เพื่อควบคุมขนาด context
 

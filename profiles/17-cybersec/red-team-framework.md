@@ -114,7 +114,7 @@
 
 | Component | รายละเอียด |
 |-----------|-----------|
-| `solocorp_mcp/` | MCP Server — tools, resources, auth layer |
+| `axis_mcp/` | MCP Server — tools, resources, auth layer |
 | `central_bus/` | API endpoints, queue, routing, audit |
 | `opencode.json` | Agent permissions, MCP config, bash rules |
 | `profiles/*/SOUL.md` | Profile integrity — ถูกแก้โดย unauthorized หรือเปล่า |
@@ -138,13 +138,13 @@ External Attackers (MCP Clients)
          │
          ▼
 ┌─────────────────────┐
-│   MCP Server        │ ← solocorp_mcp/server.py
+│   MCP Server        │ ← axis_mcp/server.py
 │   (stdio/SSE)       │   7 tools + 5 resources
 └─────────┬───────────┘
           │
           ▼
 ┌─────────────────────┐
-│   Auth Layer        │ ← solocorp_mcp/auth.py
+│   Auth Layer        │ ← axis_mcp/auth.py
 │   (3-tier scope)    │   VALID_KEYS registry
 └─────────┬───────────┘
           │
@@ -265,8 +265,8 @@ External Attackers (MCP Clients)
 | **gitleaks** | Scan secrets ใน git history | `gitleaks detect --source .` |
 | **trufflehog** | Deep secret scan | `trufflehog filesystem .` |
 | **CodeQL** | SAST สำหรับ Python | GitHub CodeQL workflow |
-| **bandit** | Python security linter | `bandit -r solocorp_mcp/ central_bus/` |
-| **custom MCP fuzzer** | ทดสอบ MCP tools ด้วย input ผิดปกติ | `solocorp_mcp/tests/fuzz.py` |
+| **bandit** | Python security linter | `bandit -r axis_mcp/ central_bus/` |
+| **custom MCP fuzzer** | ทดสอบ MCP tools ด้วย input ผิดปกติ | `axis_mcp/tests/fuzz.py` |
 | **manual review** | Logic flaw, authorization bypass | ตาม playbook |
 
 > **HackAgent** เป็น Open Source SDK/CLI จาก AISecurityLab (`github.com/AISecurityLab/hackagent`)  

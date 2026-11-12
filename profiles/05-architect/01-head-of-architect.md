@@ -101,7 +101,7 @@ Head of Architect มีทักษะผู้นำบริหารแผ�
 
 | Field | Value |
 |:------|:------|
-| **Default Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Default Model** | DeepSeek V4 Pro (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `architect-model` |
 | **MoA Preset** | `moa:architect-moa` — ใช้ตอนวิเคราะห์ deep architecture |
 

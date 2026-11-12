@@ -36,6 +36,17 @@ central_bus/module-registry.state.json
 central_bus/.module-registry.state.json.*.tmp
 config/.module-registry.json.*.tmp
 
+# Registry rollback snapshot — written next to the tracked config before every
+# config write (see docs/runbooks/registry-schema-rollback.md). Never source.
+*.bak
+
+# SoloCorp App provider credential. config/provider.json is tracked — it holds
+# only the provider choice and the credential *slot name*, never the secret.
+# Anything written by an atomic save uses ".<name>.<random>.tmp" beside it.
+config/provider.credentials.json
+config/.provider.json.*.tmp
+config/.provider.credentials.json.*.tmp
+
 # Generated voiceovers are local runtime artifacts
 central_bus/content/voiceover-*
 
@@ -44,6 +55,7 @@ central_bus/content/voiceover-*
 # Files stay on disk for review; they are not source and never go into git.
 # See docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md
 central_bus/content/local_media/
+central_bus/content/generated-image-*
 central_bus/content/concat_renders/
 
 # Agency Agents (cloned agent personality library)
@@ -86,6 +98,7 @@ build/
 .opencode/*
 !.opencode/agents/
 !.opencode/skills/
+!.opencode/commands/
 .hermes/
 
 # Local MCP runtimes

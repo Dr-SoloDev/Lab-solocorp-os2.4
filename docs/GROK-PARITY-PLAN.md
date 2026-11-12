@@ -19,7 +19,7 @@
 | Slash / pipeline commands | **19** ใน `opencode.json` | **7** skills | **19** skills ใน `.grok/skills/` |
 | Default session identity | `default_agent: ceo-turbo` | AGENTS.md เท่านั้น | Bootstrap + CEO-default behavior ใน skill + AGENTS |
 | MCP SoloCorp | list/route/SOUL/commands | เหมือนกัน (7 tools) | + runtime ops (health, queue, handoff, dispatch) |
-| Dept skills `@solocorp/*` | ผ่าน skills.paths | ไม่มี port | Port ทุก skill ที่ OpenCode เรียกได้ |
+| Dept skills `@axis/*` | ผ่าน skills.paths | ไม่มี port | Port ทุก skill ที่ OpenCode เรียกได้ |
 | Multi-dept pipeline | native multi-agent | depth 1 | Workflow / Orchestrator fan-out ชดเชย |
 | Docs + smoke | มี | partial | Checklist + automated smoke ผ่าน |
 
@@ -98,7 +98,7 @@
 | Departments / SOUL / route / commands | ✅ | — |
 | Bus health / queue / dispatch | ❌ MCP | ต้อง shell หรือขยาย MCP |
 | Create handoff record via API | ❌ MCP | ขยาย MCP หรือ skill เขียนไฟล์ |
-| SkillHub `@solocorp/*` invoke | Bus API | Grok skill ยังไม่ wrap |
+| SkillHub `@axis/*` invoke | Bus API | Grok skill ยังไม่ wrap |
 
 ### 2.4 UX / session
 
@@ -148,7 +148,7 @@ Plan 3  — Hardening & Gold        → smoke, CI drift, matrix 🟢, acceptance
 | 1.1 | ออกแบบ template agent มาตรฐาน Grok (frontmatter + When to invoke + Boundaries + SOUL path) จาก `.grok/agents/ceo-turbo.md` | Eng | ใช้ซ้ำทุก agent ใหม่ |
 | 1.2 | เพิ่ม **P0 agents**: `coo-kit`, `cfo-meetoo`, `cmo-mark`, `design-kreet`, `ui-designer` | Eng | `.grok/agents/*.md` |
 | 1.3 | เพิ่ม **P1 agents**: sales, support, legal, web3, content, monitor-watchdog, pipeline-auditor, routing-config-agent | Eng | `.grok/agents/*.md` |
-| 1.4 | Port skills ที่ขาด → `.grok/skills/<name>/SKILL.md` (map จาก `opencode.json` + `.claude/commands/` + `skills/@solocorp/*`) | Eng | skill dirs ครบ 19 |
+| 1.4 | Port skills ที่ขาด → `.grok/skills/<name>/SKILL.md` (map จาก `opencode.json` + `.claude/commands/` + `skills/@axis/*`) | Eng | skill dirs ครบ 19 |
 | 1.5 | อัปเดต `AGENTS.md` — ตาราง agent types ครบ + natural-language aliases (`@ceo` → spawn `ceo-turbo`) | CEO/Eng | `AGENTS.md` |
 | 1.6 | อัปเดต `.grok/README.md` + `docs/GROK-SUPPORT.md` รายการ agents/skills ใหม่ | Product/Eng | docs |
 | 1.7 | Manual smoke: `grok inspect` + `/` เห็น skills + spawn 1 head ใหม่ | QA | checklist pass |
@@ -182,7 +182,7 @@ Plan 3  — Hardening & Gold        → smoke, CI drift, matrix 🟢, acceptance
 
 | # | Task | Owner | Output |
 |:-:|:-----|:------|:-------|
-| 2.1 | ขยาย **solocorp MCP** (read/ops ปลอดภัย): `health`, `queue_status`, `list_dispatches`, `create_handoff_note` (เขียนภายใต้ `bus/` ตาม SOP) | Architect + Eng | `solocorp_mcp/server.py` + tests |
+| 2.1 | ขยาย **solocorp MCP** (read/ops ปลอดภัย): `health`, `queue_status`, `list_dispatches`, `create_handoff_note` (เขียนภายใต้ `bus/` ตาม SOP) | Architect + Eng | `axis_mcp/server.py` + tests |
 | 2.2 | สร้าง **export script** `scripts/export-grok-agents.py` — sync จาก `profiles/*/SOUL.md` + `.opencode/agents/` → `.grok/agents/` (validate frontmatter) | Eng | script + `--validate-only` |
 | 2.3 | เพิ่ม **Grok workflows** หรือ documented parent fan-out SOP สำหรับ `/pipeline` (ชดเชย depth-1) | Orchestrator + Eng | `.grok/workflows/*.rhai` หรือ SOP |
 | 2.4 | Port / wrap **SkillHub** skills ที่ hit Bus API ให้ skill Grok เรียก HTTP หรือ python module เดียวกับ OpenCode | Eng | skills เรียก runtime จริง |
@@ -192,7 +192,7 @@ Plan 3  — Hardening & Gold        → smoke, CI drift, matrix 🟢, acceptance
 
 #### Deliverables
 
-- MCP tools ชุด runtime (documented ใน `solocorp_mcp/README.md`)
+- MCP tools ชุด runtime (documented ใน `axis_mcp/README.md`)
 - `export-grok-agents.py` ใน local validate
 - Workflow หรือ SOP fan-out สำหรับ `/pipeline`
 - Skills ชุด dept เรียก bus ได้เมื่อ bus up
@@ -271,8 +271,8 @@ Plan 3  — Hardening & Gold        → smoke, CI drift, matrix 🟢, acceptance
 | ทำอะไร | แตะไฟล์ |
 |:-------|:--------|
 | Agents | `.grok/agents/<id>.md` ← อ้าง `profiles/**/SOUL.md`, mirror โครงสร้าง `.opencode/agents/` |
-| Skills | `.grok/skills/<cmd>/SKILL.md` ← `opencode.json` commands + `skills/@solocorp/**` |
-| MCP | `solocorp_mcp/server.py`, `.grok/config.toml` |
+| Skills | `.grok/skills/<cmd>/SKILL.md` ← `opencode.json` commands + `skills/@axis/**` |
+| MCP | `axis_mcp/server.py`, `.grok/config.toml` |
 | Session rules | `AGENTS.md`, `rules/*` |
 | Export | `scripts/export-grok-agents.py` (ใหม่ — Plan 2) |
 | Smoke | `scripts/smoke-grok-pack.sh` (ใหม่ — Plan 3) |

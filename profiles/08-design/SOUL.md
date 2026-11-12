@@ -39,7 +39,7 @@ SoloCorp ต้องการมาตรฐานด้านดีไซน�
 
 | Field | Value |
 |:------|:------|
-| **Model** | GLM-5.2 (`glm-5.2` via `custom:maxplus-codex`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `design-model` |
 | **Tier** | B — Brand & Visual Design |
 | **Rationale** | GLM-5.2 รองรับภาษาไทยดี, cost-effective สำหรับ design review |

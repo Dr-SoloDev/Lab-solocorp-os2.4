@@ -51,8 +51,11 @@ must be installed. The media renderer blocks external browser requests.
 - The FFmpeg-skill v2.17.1 manifest at
   `campaign-campaign_solocorp_os_1pt5m_narrative-ffmpeg-job-ffmpeg_20261030T012617209693Z.json`
   is a validated call plan only (`not_started`); the actual render used local
-  FFmpeg CLI. No Concat binary or MCP endpoint is available in this runtime, so
-  Concat did not execute.
+  FFmpeg CLI. This renderer's runtime has no Concat integration, so Concat did
+  not execute (host status as of 2026-11-07: Concat 0.2.8 runs via
+  `--appimage-extract` with MCP handshake verified, but
+  `render_campaign_with_concat` has never been run on this host — see
+  [`docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md`](CONTENT-LOCAL-MEDIA-RENDER.md)).
 
 ## Rights and review
 

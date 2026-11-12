@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from solocorp_mcp import bus_store
-from solocorp_mcp.departments import content_service, media_service
-from solocorp_mcp.departments.content_mcp import mcp as content_mcp
+from axis_mcp import bus_store
+from axis_mcp.departments import content_service, media_service
+from axis_mcp.departments.content_mcp import mcp as content_mcp
 
 
 @pytest.fixture

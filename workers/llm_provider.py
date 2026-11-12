@@ -49,15 +49,17 @@ log = logging.getLogger(__name__)
 #    muse-spark-1.3-contributor-free, space-bunny-free
 # ⚠️ โมเดลที่มีอยู่แต่ใช้ไม่ได้จาก repo root:
 #    beam-free (gateway ปฏิเสธ agents_md), glm-5.3-flash-free (unknown_parameter)
-DEFAULT_MODEL = "opencode/deepseek-v4.1-flash-free"
-# ยืนยันแล้วว่าใช้ได้จริงจาก repo root (2026-10-25) — ทดสอบทีละตัว
+DEFAULT_MODEL = "opencode-go/muse-spark-1.3-contributor"
+# 2026-11-12: เปลี่ยน default เป็น Muse Spark 1.3 Contributor (Opencode Go subscription)
+# 200K → 1M context, subscription ไม่ติด free-limit — ยืนยันแล้วว่าใช้ได้จริงจาก repo root (ทดสอบ 2026-11-12)
 # ดูวิธีทดสอบ: python scripts/check-model-health.py --verify <model>
 MODEL_FALLBACKS = [
-    "opencode/deepseek-v4.1-flash-free",       # ตัวหลัก · 15.1s · steadier สุด
-    "opencode/nemotron-3.5-lightning-free",    # 13.2s · ไทย 1087
-    "opencode/nemotron-3-ultra-free",          # 19.0s · ไทย 702
-    "opencode/big-pickle",                     # 19.8s · ไทย 871
-    "opencode/mimo-v2.6-flash-free",           # 82.9s + ชอบเรียก tool · ท้ายสุด
+    "opencode-go/muse-spark-1.3-contributor",  # ตัวหลัก · subscription · 1M context
+    "opencode/deepseek-v4.1-flash-free",  # fallback 1 · 15.1s · steadier สุด
+    "opencode/nemotron-3.5-lightning-free",  # fallback 2 · 13.2s · ไทย 1087
+    "opencode/nemotron-3-ultra-free",  # fallback 3 · 19.0s · ไทย 702
+    "opencode/big-pickle",  # fallback 4 · 19.8s · ไทย 871
+    "opencode/mimo-v2.6-flash-free",  # fallback 5 · 82.9s + ชอบเรียก tool · ท้ายสุด
 ]
 # Dead models — ถ้ามี caller ส่งชื่อเก่ามา ให้ map เข้า fallback chain ทันที
 DEAD_MODELS = {
@@ -101,7 +103,9 @@ def list_available_models(prefix: str = "opencode/") -> list[str]:
 
     try:
         r = subprocess.run(
-            [_CMD, "models"], capture_output=True, text=True,
+            [_CMD, "models"],
+            capture_output=True,
+            text=True,
             timeout=_MODELS_TIMEOUT,
         )
     except Exception:
@@ -123,8 +127,9 @@ def _read_model_cache() -> dict:
         checked = data.get("checked_at")
         if not checked:
             return {}
-        age_h = (datetime.now(timezone.utc)
-                 - datetime.fromisoformat(checked)).total_seconds() / 3600
+        age_h = (
+            datetime.now(timezone.utc) - datetime.fromisoformat(checked)
+        ).total_seconds() / 3600
         if age_h > _MODEL_CACHE_TTL_HOURS:
             return {}
         return data
@@ -135,10 +140,17 @@ def _read_model_cache() -> dict:
 def _write_model_cache(models: list[str]) -> None:
     try:
         _MODEL_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        _MODEL_CACHE_PATH.write_text(json.dumps({
-            "checked_at": datetime.now(timezone.utc).isoformat(),
-            "available": models,
-        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        _MODEL_CACHE_PATH.write_text(
+            json.dumps(
+                {
+                    "checked_at": datetime.now(timezone.utc).isoformat(),
+                    "available": models,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
     except Exception:
         pass
 
@@ -174,9 +186,15 @@ def audit_models(use_cache: bool = True) -> dict:
     chain = list(MODEL_FALLBACKS)
     if not available:
         return {
-            "ok": True, "chain": chain, "available": [], "missing": [],
-            "usable": chain, "candidates": [], "checked_at": checked_at,
-            "stale": stale, "error": "อ่านรายชื่อโมเดลไม่ได้ (ข้ามการตรวจ)",
+            "ok": True,
+            "chain": chain,
+            "available": [],
+            "missing": [],
+            "usable": chain,
+            "candidates": [],
+            "checked_at": checked_at,
+            "stale": stale,
+            "error": "อ่านรายชื่อโมเดลไม่ได้ (ข้ามการตรวจ)",
         }
 
     avail_set = set(available)
@@ -195,6 +213,8 @@ def audit_models(use_cache: bool = True) -> dict:
         "stale": stale,
         "error": None,
     }
+
+
 _CMD = os.environ.get("OPENCODE_BIN", os.path.expanduser("~/.opencode/bin/opencode"))
 # agent สำหรับงาน LLM แบบ one-shot: ต้อง read-only/ไม่มี tool ที่ต้องขออนุญาต
 # default agent ของโปรเจกต์ (ceo-turbo) มี shell/write → subprocess ที่ไม่มี TTY
@@ -246,6 +266,15 @@ async def think(
     full_prompt = f"{system_prompt}\n\n{prompt}" if system_prompt else prompt
     last_error = ""
 
+    # Model/timeout override (Owner 2026-11-09, Go): SOLOCORP_LLM_MODEL / SOLOCORP_LLM_TIMEOUT
+    model = os.environ.get("SOLOCORP_LLM_MODEL") or model
+    _env_model = os.environ.get("SOLOCORP_LLM_MODEL")
+    if timeout is None and os.environ.get("SOLOCORP_LLM_TIMEOUT"):
+        try:
+            timeout = int(os.environ["SOLOCORP_LLM_TIMEOUT"])
+        except ValueError:
+            pass
+
     # ── Pre-flight 1: โควตาถูกล็อกอยู่ไหม (ประหยัดเวลา + ไม่ยิงเข้ากำแพง) ──
     quota = token_ledger.quota_status()
     if quota["locked"]:
@@ -267,13 +296,15 @@ async def think(
             "ปรับเพดานที่ SOLOCORP_LLM_DAILY_*"
         )
     if budget["warn"]:
-        log.warning(
-            f"LLM ใกล้งบรายวันแล้ว: {token_ledger.format_usage(budget['totals'])}"
-        )
+        log.warning(f"LLM ใกล้งบรายวันแล้ว: {token_ledger.format_usage(budget['totals'])}")
 
     # Build try-list: requested model first, then fallbacks (skip duplicates).
     # Dead models map straight to full chain.
-    if model in DEAD_MODELS or model == DEFAULT_MODEL or model in MODEL_FALLBACKS:
+    if _env_model:
+        # env เลือกโมเดลชัดเจน (เช่น Go) — ห้าม fallback ไป free chain
+        # เพราะ free tier จะล็อก quota ทั้งระบบค้างไว้ (incident D3 2026-11-09)
+        try_list = [model]
+    elif model in DEAD_MODELS or model == DEFAULT_MODEL or model in MODEL_FALLBACKS:
         try_list = list(MODEL_FALLBACKS)
         # ถ้า caller เจาะจงตัวใน chain ให้เริ่มจากตัวนั้นก่อน
         if model in MODEL_FALLBACKS:
@@ -296,8 +327,14 @@ async def think(
                 duration_ms = int((time.monotonic() - started) * 1000)
                 usage = await token_ledger.read_session_usage_async(session_id)
                 _record_call(
-                    agent, model_name, session_id, usage, duration_ms,
-                    ok=True, prompt_chars=len(full_prompt), result_chars=len(result),
+                    agent,
+                    model_name,
+                    session_id,
+                    usage,
+                    duration_ms,
+                    ok=True,
+                    prompt_chars=len(full_prompt),
+                    result_chars=len(result),
                 )
 
                 if not result:
@@ -313,11 +350,18 @@ async def think(
                 duration_ms = int((time.monotonic() - started) * 1000)
                 usage = await token_ledger.read_session_usage_async(session_id)
                 _record_call(
-                    agent, model_name, session_id, usage, duration_ms,
-                    ok=False, error=f"timeout ({timeout or _LLM_TIMEOUT}s)",
+                    agent,
+                    model_name,
+                    session_id,
+                    usage,
+                    duration_ms,
+                    ok=False,
+                    error=f"timeout ({timeout or _LLM_TIMEOUT}s)",
                     prompt_chars=len(full_prompt),
                 )
-                log.warning(f"LLM timeout {model_name} attempt {attempt}/{_MAX_RETRIES}")
+                log.warning(
+                    f"LLM timeout {model_name} attempt {attempt}/{_MAX_RETRIES}"
+                )
                 last_error = f"{model_name}: timeout ({timeout or _LLM_TIMEOUT}s)"
                 continue
 
@@ -325,10 +369,18 @@ async def think(
                 duration_ms = int((time.monotonic() - started) * 1000)
                 usage = await token_ledger.read_session_usage_async(session_id)
                 _record_call(
-                    agent, model_name, session_id, usage, duration_ms,
-                    ok=False, error=str(e), prompt_chars=len(full_prompt),
+                    agent,
+                    model_name,
+                    session_id,
+                    usage,
+                    duration_ms,
+                    ok=False,
+                    error=str(e),
+                    prompt_chars=len(full_prompt),
                 )
-                log.warning(f"LLM error {model_name} attempt {attempt}/{_MAX_RETRIES}: {e}")
+                log.warning(
+                    f"LLM error {model_name} attempt {attempt}/{_MAX_RETRIES}: {e}"
+                )
                 last_error = f"{model_name}: {e}"
                 # Model not found / unavailable = ข้ามไปตัวถัดไปทันที ไม่ต้อง retry ซ้ำ
                 # (v2.1.4 พูดว่า "Model unavailable" — เช็คทั้งสองคำแบบ case-insensitive)
@@ -383,20 +435,24 @@ def _record_call(
             "result_chars": result_chars,
             "error": (error or "")[:300],
         }
-        for key in ("requests", "input", "output", "reasoning",
-                    "cache_read", "cache_write", "cost"):
+        for key in (
+            "requests",
+            "input",
+            "output",
+            "reasoning",
+            "cache_read",
+            "cache_write",
+            "cost",
+        ):
             entry[key] = usage.get(key, 0)
         token_ledger.record(entry)
 
         if usage.get("error"):
             log.warning(f"อ่าน usage ไม่ได้ ({session_id}): {usage['error']}")
         elif ok:
-            log.info(
-                f"LLM {model} {duration_ms}ms {token_ledger.format_usage(usage)}"
-            )
+            log.info(f"LLM {model} {duration_ms}ms {token_ledger.format_usage(usage)}")
     except Exception as e:  # noqa: BLE001 — accounting ต้องไม่ทำให้ call ล้ม
         log.debug(f"บันทึก usage ไม่สำเร็จ: {e}")
-
 
 
 def _is_dead_model_error(message: str) -> bool:
@@ -477,9 +533,11 @@ async def _safe_wait(proc: asyncio.subprocess.Process) -> int:
 
 # ── Utility ────────────────────────────────────────────────────────────
 
+
 def count_tokens(text: str) -> int:
     """นับจำนวน token โดยประมาณ (ไทย + อังกฤษ)"""
     import re
-    thai_chars = len(re.findall(r'[\u0E00-\u0E7F]', text))
-    eng_words = len(re.findall(r'[a-zA-Z]+', text))
+
+    thai_chars = len(re.findall(r"[\u0E00-\u0E7F]", text))
+    eng_words = len(re.findall(r"[a-zA-Z]+", text))
     return thai_chars + eng_words + len(text.split())

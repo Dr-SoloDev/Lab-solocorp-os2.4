@@ -197,8 +197,8 @@ Targets are initial Beta thresholds, not public launch guarantees; revise them a
 
 ## 13. Current State (2026-11-02)
 
-- `solocorp_mcp.server` is the existing Core MCP for organization/profile/routing capabilities; it is not yet the SoloCorp App, a UI, or a host for other MCP servers.
-- `solocorp_mcp.departments.content_mcp` is the first department MCP pilot and the MVP's initial module candidate. Existing pilot verification is historical evidence, not certification of the new app.
+- `axis_mcp.server` is the existing Core MCP for organization/profile/routing capabilities; it is not yet the SoloCorp App, a UI, or a host for other MCP servers.
+- `axis_mcp.departments.content_mcp` is the first department MCP pilot and the MVP's initial module candidate. Existing pilot verification is historical evidence, not certification of the new app.
 - `central_bus/` already provides FastAPI services and a SQLite-backed queue. Reuse is preferred after validating task semantics and local-app boundaries.
 - Reusable substrate exists: ModuleRegistry, TaskTracker, MCPStdioClient, artifact storage and Central Bus. ModuleHost now manages persistent stdio connections and health polling for enabled modules.
 - Phase 0 architecture and contracts are closed in the companion runtime design note. Phase 1 is in progress; the app API, provider settings, UI and Content end-to-end path are still **NOT IMPLEMENTED**.
@@ -209,5 +209,5 @@ Targets are initial Beta thresholds, not public launch guarantees; revise them a
 - [Agent Quickstart](../../AGENTS.md) — current session instructions and product-direction pointer.
 - [Local Runtime Design](../plans/SOLOCORP-APP-LOCAL-RUNTIME-DESIGN-v0.1.md) — Phase 0 decisions and Phase 1 build order.
 - [Content Creator MCP Pilot](../plans/MCP-DEPARTMENT-SERVERS-CONTENT-PILOT.md) — implementation and test history for the initial module.
-- [Core MCP README](../../solocorp_mcp/README.md) — current Core MCP capabilities and external-client setup.
+- [Core MCP README](../../axis_mcp/README.md) — current Core MCP capabilities and external-client setup.
 - [Multi-Platform Compatibility PRD](PRD-Multi-Platform-Compatibility-v1.0.md) — external-client compatibility context; it does not replace this app roadmap.

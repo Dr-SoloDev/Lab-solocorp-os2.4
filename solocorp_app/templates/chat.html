@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}CEO Chat{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>CEO Chat</h1>
+  <p class="lede">
+    One conversation with the CEO agent. The routing loop and the tracked task
+    path land in Phase 2 — this page shows what the app can see today.
+  </p>
+</section>
+
+<div class="grid grid--2">
+  <section class="card">
+    <h2 class="card-title">Conversation</h2>
+    <div class="placeholder">
+      <p><strong>Not wired yet.</strong> Phase 2 adds the CEO loop: brief → route
+      to an enabled department → task record → tool call → result.</p>
+      <p class="muted">
+        Phase 1 gate only covers provider configuration and module toggling.
+        Nothing is sent to a model from this page.
+      </p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="card-title">Provider</h2>
+    {% set state = provider.state %}
+    <p>
+      <span class="status status--{{ 'connected' if state == 'configured' else ('error' if state == 'failed' else 'disabled') }}">{{ state }}</span>
+    </p>
+    <dl class="facts facts--stack">
+      <div><dt>Provider</dt><dd>{{ provider.provider or '—' }}</dd></div>
+      <div><dt>Model</dt><dd>{{ provider.model or '—' }}</dd></div>
+      <div><dt>Credential</dt><dd>{{ provider.credential_hint or 'not set' }}</dd></div>
+    </dl>
+    <p class="card-actions"><a class="btn btn--ghost" href="/settings">Open Settings</a></p>
+  </section>
+</div>
+
+<section class="card">
+  <h2 class="card-title">Departments the CEO can see</h2>
+  {% if modules %}
+  <ul class="module-list">
+    {% for module in modules %}
+    <li>
+      <span class="module-name">{{ module.name }}</span>
+      <span class="status status--{{ module.status_text }}">{{ module.status_text }}</span>
+      {% if not module.enabled %}
+      <span class="muted">— disabled: enable it on the Modules page before routing work here.</span>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">No modules declared in the registry config.</p>
+  {% endif %}
+  <p class="muted small">
+    {{ counts.enabled }} enabled · {{ counts.connected }} connected · {{ counts.error }} in error
+  </p>
+</section>
+{% endblock %}

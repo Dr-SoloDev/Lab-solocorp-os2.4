@@ -4,6 +4,8 @@ Status: engineering phase; customer validation deferred to the final phase
 Original plan date: 2026-10-26
 Owner sequencing decision: 2026-10-29
 
+> **Superseded (Phase 1–3, 2026-11-07):** synthetic-only render ทำงานได้จริง — locally rendered MP4s ที่ `central_bus/content/local_media/` ผ่าน ffprobe; real user media ยัง blocked จน runtime ได้รับการ independent verification. แผนเดิม (lines 37, 80, 97: "clear the FFmpeg runtime gate", "local preview cut after the gate is cleared", "production rendering has not been validated") เป็นประวัติ ณ 2026-10-26 — FIX F6 (CEO-ordered 2026-11-07). ดู `docs/runbooks/CONTENT-LOCAL-MEDIA-RENDER.md`
+
 ## Purpose
 
 Make the Content Creator system work end to end before asking customers or target users to evaluate it. Defer audience interviews, demand research, willingness-to-pay questions, and adoption tests until the system-readiness gate below is met. This is a sequencing decision, not a decision to drop validation permanently.

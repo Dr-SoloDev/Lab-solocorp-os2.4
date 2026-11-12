@@ -37,7 +37,7 @@
 
 | Field | Value |
 |:------|:------|
-| **Model** | GLM-5.2 (`glm-5.2` via `custom:maxplus-codex`) |
+| **Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `support` |
 | **Tier** | D — Customer Support (Free Pool) |
 | **Rationale** | งาน support ticket, FAQ, escalation — cost optimization สูงสุด |

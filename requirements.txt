@@ -1,0 +1,12 @@
+# SoloCorp App + Central Bus runtime dependencies.
+#
+# CI installs this file before running tests (`.github/workflows/ci.yml`), so a
+# dependency declared only in a per-package file that CI does not read would
+# break the build. The pinned stack lives in central_bus/requirements.txt and is
+# included here so there is one source of truth.
+-r central_bus/requirements.txt
+
+# Server-rendered UI for the local app shell (PRD Phase 1).
+# starlette.templating.Jinja2Templates imports jinja2 lazily, so its absence
+# only fails at render time — declare it explicitly.
+jinja2>=3.1.4,<4.0

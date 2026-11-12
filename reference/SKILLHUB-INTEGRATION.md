@@ -29,7 +29,7 @@ SkillHub คือ **Agent Skill Registry** แบบ Self-hosted ที่ใ�
 | **Publish** | อัปโหลด skill packages (SKILL.md + assets) ด้วย semantic versioning |
 | **Discover** | ค้นหาด้วย full-text search + filters (namespace, tags, downloads) |
 | **Version** | semver + tags (`beta`, `stable`) + `latest` auto-track |
-| **Namespace** | `@solocorp/x`, `@ceo/x`, `@security/x` — แยกตาม department |
+| **Namespace** | `@axis/x`, `@ceo/x`, `@security/x` — แยกตาม department |
 | **Review** | Review flow + promotion request ก่อน publish สู่ global |
 | **Governance** | Audit logs สำหรับทุก action — publish, download, delete |
 | **RBAC** | Platform roles (SUPER_ADMIN, SKILL_ADMIN) + Namespace roles (OWNER, ADMIN, MEMBER) |
@@ -59,7 +59,7 @@ SkillHub คือ **Agent Skill Registry** แบบ Self-hosted ที่ใ�
 | Skill กระจายอยู่ตาม Face / Line / ไฟล์ในเครื่อง | Skill อยู่รวมใน Registry เดียว — ค้นหาได้, version ได้ |
 | ไม่รู้ version ไหนล่าสุด | Semantic versioning + `latest` tag |
 | ไม่รู้ skill ไหนใช้ได้/ไม่ได้ | Review flow + governance + audit log |
-| แชร์ยาก — ต้องบอกกันปากต่อปาก | CLI install: `skillhub install @solocorp/mcp-scan` |
+| แชร์ยาก — ต้องบอกกันปากต่อปาก | CLI install: `skillhub install @axis/mcp-scan` |
 | ไม่มี access control — ใครก็แก้ได้ | RBAC + Namespace — แยกตาม department |
 
 ### SoloCorp Use Cases
@@ -124,27 +124,27 @@ SkillHub คือ **Agent Skill Registry** แบบ Self-hosted ที่ใ�
 
 | Namespace | Owner | Description |
 |:----------|:------|:------------|
-| `@solocorp/global` | `SUPER_ADMIN` | Official SoloCorp skills — ทุก department publish ได้, ต้องผ่าน review |
-| `@solocorp/ceo` | CEO Team | CEO tools, strategy templates |
-| `@solocorp/security` | Cyber Security | Red Team playbooks, HackAgent configs, scan rules |
-| `@solocorp/engineering` | Engineering | MCP tools, code templates, CI/CD pipelines |
-| `@solocorp/architect` | Architect | Central Bus configs, routing rules, pipeline templates |
-| `@solocorp/orchestrator` | Orchestrator | Workflow definitions, handoff templates |
-| `@solocorp/marketing` | CMO | Campaign templates, content frameworks |
-| `@solocorp/product` | Product | PRD templates, roadmap frameworks |
-| `@solocorp/design` | Design | Design system components, UX patterns |
-| `@solocorp/legal` | Legal | Contract templates, compliance checkers |
-| `@solocorp/web3` | Web3 | Smart contract templates, Solana tools |
+| `@axis/global` | `SUPER_ADMIN` | Official SoloCorp skills — ทุก department publish ได้, ต้องผ่าน review |
+| `@axis/ceo` | CEO Team | CEO tools, strategy templates |
+| `@axis/security` | Cyber Security | Red Team playbooks, HackAgent configs, scan rules |
+| `@axis/engineering` | Engineering | MCP tools, code templates, CI/CD pipelines |
+| `@axis/architect` | Architect | Central Bus configs, routing rules, pipeline templates |
+| `@axis/orchestrator` | Orchestrator | Workflow definitions, handoff templates |
+| `@axis/marketing` | CMO | Campaign templates, content frameworks |
+| `@axis/product` | Product | PRD templates, roadmap frameworks |
+| `@axis/design` | Design | Design system components, UX patterns |
+| `@axis/legal` | Legal | Contract templates, compliance checkers |
+| `@axis/web3` | Web3 | Smart contract templates, Solana tools |
 
 ### Policy per Namespace
 
 | Namespace | Visibility | Review Required | Max Versions |
 |:----------|:----------:|:---------------:|:------------:|
-| `@solocorp/global` | Public | ✅ Yes | Unlimited |
-| `@solocorp/ceo` | Private | ✅ Yes | 50 |
-| `@solocorp/security` | Restricted | ✅ Yes | 100 |
-| `@solocorp/engineering` | Internal | ❌ No (Admin auto-approve) | 200 |
-| `@solocorp/architect` | Internal | ❌ No (Admin auto-approve) | 100 |
+| `@axis/global` | Public | ✅ Yes | Unlimited |
+| `@axis/ceo` | Private | ✅ Yes | 50 |
+| `@axis/security` | Restricted | ✅ Yes | 100 |
+| `@axis/engineering` | Internal | ❌ No (Admin auto-approve) | 200 |
+| `@axis/architect` | Internal | ❌ No (Admin auto-approve) | 100 |
 | อื่นๆ | Internal | ❌ No | 50 |
 
 ---
@@ -226,20 +226,20 @@ skillhub login --registry http://skillhub.solocorp.local:3000
 
 ```bash
 # จาก directory ที่มี SKILL.md
-skillhub publish --namespace @solocorp/security --name mcp-auth-validator --version 1.0.0
+skillhub publish --namespace @axis/security --name mcp-auth-validator --version 1.0.0
 ```
 
 ### Install Skill
 
 ```bash
-skillhub install @solocorp/security/mcp-auth-validator
+skillhub install @axis/security/mcp-auth-validator
 ```
 
 ### Search
 
 ```bash
 skillhub search --query "prompt injection"
-skillhub search --namespace @solocorp/engineering
+skillhub search --namespace @axis/engineering
 ```
 
 ### Manage
@@ -249,10 +249,10 @@ skillhub search --namespace @solocorp/engineering
 skillhub list
 
 # Update
-skillhub update @solocorp/security/mcp-auth-validator
+skillhub update @axis/security/mcp-auth-validator
 
 # Yank (remove version)
-skillhub yank @solocorp/security/mcp-auth-validator --version 1.0.0
+skillhub yank @axis/security/mcp-auth-validator --version 1.0.0
 ```
 
 ---
@@ -264,7 +264,7 @@ skillhub yank @solocorp/security/mcp-auth-validator --version 1.0.0
 เพิ่ม SkillHub tools ใน MCP Server:
 
 ```python
-# solocorp_mcp/server.py (ในอนาคต)
+# axis_mcp/server.py (ในอนาคต)
 @mcp.tool()
 async def skillhub_search(query: str, namespace: str = None) -> str:
     """Search SkillHub registry for agent skills"""
@@ -293,7 +293,7 @@ Pipeline Event → SkillHub Hook
 # pipeline-config.yaml (อนาคต)
 after_build:
   - action: skillhub_publish
-    namespace: "@solocorp/engineering"
+    namespace: "@axis/engineering"
     version: "$VERSION"
     auto_approve: true  # สำหรับ engineering namespace
 ```
@@ -303,7 +303,7 @@ after_build:
 ```bash
 # Publish Red Team campaign artifacts
 skillhub publish \
-  --namespace @solocorp/security \
+  --namespace @axis/security \
   --name red-team-campaign-q3-2026 \
   --version 1.0.0 \
   --tag beta
@@ -366,9 +366,9 @@ DRAFT ──▶ SCANNING ──▶ UPLOADED ──▶ PENDING_REVIEW ──▶ P
 
 | Namespace | Owner | Initial Members |
 |:----------|:------|:----------------|
-| `@solocorp/global` | `@ceo-turbo` | All department heads (MEMBER) |
-| `@solocorp/security` | `@cybersec-sai` | Red Team Operator, Threat Analyst |
-| `@solocorp/engineering` | `@changful` | Engineering team members |
+| `@axis/global` | `@ceo-turbo` | All department heads (MEMBER) |
+| `@axis/security` | `@cybersec-sai` | Red Team Operator, Threat Analyst |
+| `@axis/engineering` | `@changful` | Engineering team members |
 
 ---
 

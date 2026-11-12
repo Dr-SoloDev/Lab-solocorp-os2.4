@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Settings</h1>
+  <p class="lede">
+    One explicit provider and model. There is no silent fallback: if the
+    credential is missing the app reports <code>unconfigured</code> instead of
+    choosing a different model for you.
+  </p>
+</section>
+
+<section class="card">
+  <header class="module-head">
+    <div>
+      <h2 class="card-title">Provider status</h2>
+      <p class="mono muted">{{ provider.provider or '—' }} / {{ provider.model or '—' }}</p>
+    </div>
+    <span class="status status--{{ 'connected' if provider.state == 'configured' else ('error' if provider.state == 'failed' else 'disabled') }}">
+      {{ provider.state }}
+    </span>
+  </header>
+
+  <dl class="facts">
+    <div><dt>Base URL</dt><dd class="mono">{{ provider.base_url or '—' }}</dd></div>
+    <div><dt>Credential</dt><dd class="mono">{{ provider.credential_hint or 'not set' }}</dd></div>
+    <div><dt>Credential source</dt><dd class="mono">{{ provider.credential_source or '—' }}</dd></div>
+    <div><dt>Credential slot</dt><dd class="mono">{{ provider.api_key_ref }}</dd></div>
+    <div><dt>Config file</dt><dd class="mono">{{ provider.config_path }}</dd></div>
+    <div><dt>Credentials file</dt><dd class="mono">{{ provider.credentials_path }}</dd></div>
+  </dl>
+
+  {% if provider.errors %}
+  <div class="notice notice--error" role="alert">
+    {% for error in provider.errors %}<div class="mono">{{ error }}</div>{% endfor %}
+  </div>
+  {% endif %}
+
+  {% if provider.credential_present %}
+  <form method="post" action="/settings/provider/clear-credential" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <button type="submit" class="btn btn--warn">Remove stored credential</button>
+  </form>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2 class="card-title">Configure provider</h2>
+
+  {% if form.errors %}
+  <div class="notice notice--error" role="alert">
+    {% for error in form.errors %}<div class="mono">{{ error }}</div>{% endfor %}
+  </div>
+  {% endif %}
+
+  <form method="post" action="/settings/provider" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+    <label class="field">
+      <span class="field-label">Provider</span>
+      <input
+        class="input"
+        type="text"
+        name="provider"
+        list="provider-options"
+        value="{{ form.provider or provider.provider or '' }}"
+        placeholder="opencode"
+        required
+        autocomplete="off"
+      />
+      <datalist id="provider-options">
+        <option value="opencode"></option>
+        <option value="openai"></option>
+        <option value="anthropic"></option>
+        <option value="openrouter"></option>
+      </datalist>
+      <span class="field-hint">Lowercase id: a-z, 0-9, dot, underscore, dash.</span>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Model</span>
+      <input
+        class="input"
+        type="text"
+        name="model"
+        value="{{ form.model or provider.model or '' }}"
+        placeholder="deepseek-v4.1-flash-free"
+        required
+        autocomplete="off"
+      />
+      <span class="field-hint">Exactly the model id the provider expects.</span>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Base URL <span class="muted">(optional)</span></span>
+      <input
+        class="input"
+        type="url"
+        name="base_url"
+        value="{{ form.base_url or provider.base_url or '' }}"
+        placeholder="https://api.example.com/v1"
+        autocomplete="off"
+      />
+    </label>
+
+    <label class="field">
+      <span class="field-label">API key</span>
+      <input
+        class="input"
+        type="password"
+        name="api_key"
+        value=""
+        placeholder="{{ 'leave empty to keep the current credential' if provider.credential_present else 'paste the provider credential' }}"
+        autocomplete="new-password"
+        spellcheck="false"
+      />
+      <span class="field-hint">
+        Stored only in <code>{{ provider.credentials_path }}</code> with mode 0600.
+        It is never written to the tracked config, a task record, or a log.
+      </span>
+    </label>
+
+    <details class="advanced">
+      <summary>Advanced</summary>
+      <label class="field">
+        <span class="field-label">Credential slot name</span>
+        <input
+          class="input"
+          type="text"
+          name="api_key_ref"
+          value="{{ provider.api_key_ref }}"
+          autocomplete="off"
+        />
+        <span class="field-hint">
+          Environment variable name that can override the stored credential.
+        </span>
+      </label>
+    </details>
+
+    <div class="card-actions">
+      <button type="submit" class="btn btn--primary">Save provider settings</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

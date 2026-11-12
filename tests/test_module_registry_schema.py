@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from solocorp_mcp.module_registry_schema import (
+from axis_mcp.module_registry_schema import (
     RegistrySchemaError,
     read_json_document,
     validate_config,
@@ -25,7 +25,7 @@ def test_valid_config_passes(tmp_path: Path) -> None:
         "qa": {
             "status": "enabled",
             "transport": "stdio",
-            "command": [".venv/bin/python3", "-m", "solocorp_mcp.departments.qa_mcp"],
+            "command": [".venv/bin/python3", "-m", "axis_mcp.departments.qa_mcp"],
             "description": "QA Department",
         }
     }

@@ -1,0 +1,10 @@
+{
+  "department": "qa",
+  "note": "NEEDS WORK (live proof pending), NOT a code fail: 74d96fb static re-verify 3/3 FIX CORRECT. Live pytest/curl/PID BLOCKED in-session (shell+subagent permission.rejected; qa_run_test stub). Evidence: bus/evidence/phase1-qa-reverify.md with operator rerun block. Pass static half; live rerun then SIGN OFF.",
+  "recorded_at": "2026-11-12T11:11:43.852618+00:00",
+  "recorded_by": "qa MCP tool call",
+  "result": "failed",
+  "schema_version": 1,
+  "suite_id": "phase1-qa-reverify",
+  "task_id": "task-d6a2d8b0a931"
+}

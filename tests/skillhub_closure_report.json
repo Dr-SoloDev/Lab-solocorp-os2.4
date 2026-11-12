@@ -19,79 +19,79 @@
       "status": "PASS",
       "expected": "200 + count=9",
       "actual": "200 + count=9",
-      "evidence": "{\"count\": 9, \"skills\": [\"@solocorp/cross-dept/pipeline-bridge\", \"@solocorp/cross-dept/mirror-check\", \"@solocorp/cfo/finance-tools\", \"@solocorp/coo/daily-ops\", \"@solocorp/ceo/sprint-plan\", \"@solocorp/engineering/deploy\", \"@solocorp/cfo/budget-check\", \"@solocorp/qa/smoke-test\", \"@solocorp/governance/rfc\"]}"
+      "evidence": "{\"count\": 9, \"skills\": [\"@axis/cross-dept/pipeline-bridge\", \"@axis/cross-dept/mirror-check\", \"@axis/cfo/finance-tools\", \"@axis/coo/daily-ops\", \"@axis/ceo/sprint-plan\", \"@axis/engineering/deploy\", \"@axis/cfo/budget-check\", \"@axis/qa/smoke-test\", \"@axis/governance/rfc\"]}"
     },
     {
       "phase": "1b",
       "test": "GET /v1/skills/cross-dept/pipeline-bridge",
       "status": "PASS",
       "expected": "200 + skill detail",
-      "actual": "200 + @solocorp/cross-dept/pipeline-bridge (target=architect, mirror=L3)",
-      "evidence": "{\"skill\":\"@solocorp/cross-dept/pipeline-bridge\",\"method\":\"POST\",\"path\":\"/v1/skills/cross-dept/pipeline-bridge\",\"target_department\":\"architect\",\"queue_topic\":\"skill.invoke\",\"mirror_check\":true,\"min_mirror_level\":\"L3\",\"status\":\"registered\"}"
+      "actual": "200 + @axis/cross-dept/pipeline-bridge (target=architect, mirror=L3)",
+      "evidence": "{\"skill\":\"@axis/cross-dept/pipeline-bridge\",\"method\":\"POST\",\"path\":\"/v1/skills/cross-dept/pipeline-bridge\",\"target_department\":\"architect\",\"queue_topic\":\"skill.invoke\",\"mirror_check\":true,\"min_mirror_level\":\"L3\",\"status\":\"registered\"}"
     },
     {
       "phase": "1b",
       "test": "GET /v1/skills/cross-dept/mirror-check",
       "status": "PASS",
       "expected": "200 + skill detail",
-      "actual": "200 + @solocorp/cross-dept/mirror-check (target=ceo, mirror=L2)",
-      "evidence": "{\"skill\":\"@solocorp/cross-dept/mirror-check\",\"method\":\"POST\",\"path\":\"/v1/skills/cross-dept/mirror-check\",\"target_department\":\"ceo\",\"queue_topic\":\"governance.mirror\",\"mirror_check\":false,\"min_mirror_level\":\"L2\",\"status\":\"registered\"}"
+      "actual": "200 + @axis/cross-dept/mirror-check (target=ceo, mirror=L2)",
+      "evidence": "{\"skill\":\"@axis/cross-dept/mirror-check\",\"method\":\"POST\",\"path\":\"/v1/skills/cross-dept/mirror-check\",\"target_department\":\"ceo\",\"queue_topic\":\"governance.mirror\",\"mirror_check\":false,\"min_mirror_level\":\"L2\",\"status\":\"registered\"}"
     },
     {
       "phase": "1b",
       "test": "GET /v1/skills/cfo/finance-tools",
       "status": "PASS",
       "expected": "200 + skill detail",
-      "actual": "200 + @solocorp/cfo/finance-tools (target=cfo, mirror=L3)",
-      "evidence": "{\"skill\":\"@solocorp/cfo/finance-tools\",\"method\":\"POST\",\"path\":\"/v1/skills/cfo/finance-tools\",\"target_department\":\"cfo\",\"queue_topic\":\"skill.cfo.invoke\",\"mirror_check\":true,\"min_mirror_level\":\"L3\",\"status\":\"registered\"}"
+      "actual": "200 + @axis/cfo/finance-tools (target=cfo, mirror=L3)",
+      "evidence": "{\"skill\":\"@axis/cfo/finance-tools\",\"method\":\"POST\",\"path\":\"/v1/skills/cfo/finance-tools\",\"target_department\":\"cfo\",\"queue_topic\":\"skill.cfo.invoke\",\"mirror_check\":true,\"min_mirror_level\":\"L3\",\"status\":\"registered\"}"
     },
     {
       "phase": "1b",
       "test": "GET /v1/skills/coo/daily-ops",
       "status": "PASS",
       "expected": "200 + skill detail",
-      "actual": "200 + @solocorp/coo/daily-ops (target=coo, mirror=L2)",
-      "evidence": "{\"skill\":\"@solocorp/coo/daily-ops\",\"method\":\"POST\",\"path\":\"/v1/skills/coo/daily-ops\",\"target_department\":\"coo\",\"queue_topic\":\"skill.coo.invoke\",\"mirror_check\":false,\"min_mirror_level\":\"L2\",\"status\":\"registered\"}"
+      "actual": "200 + @axis/coo/daily-ops (target=coo, mirror=L2)",
+      "evidence": "{\"skill\":\"@axis/coo/daily-ops\",\"method\":\"POST\",\"path\":\"/v1/skills/coo/daily-ops\",\"target_department\":\"coo\",\"queue_topic\":\"skill.coo.invoke\",\"mirror_check\":false,\"min_mirror_level\":\"L2\",\"status\":\"registered\"}"
     },
     {
       "phase": "1b",
       "test": "GET /v1/skills/ceo/sprint-plan",
       "status": "PASS",
       "expected": "200 + skill detail",
-      "actual": "200 + @solocorp/ceo/sprint-plan (target=ceo, mirror=L1)",
-      "evidence": "{\"skill\":\"@solocorp/ceo/sprint-plan\",\"method\":\"POST\",\"path\":\"/v1/skills/ceo/sprint-plan\",\"target_department\":\"ceo\",\"queue_topic\":\"skill.ceo.invoke\",\"mirror_check\":false,\"min_mirror_level\":\"L1\",\"status\":\"registered\"}"
+      "actual": "200 + @axis/ceo/sprint-plan (target=ceo, mirror=L1)",
+      "evidence": "{\"skill\":\"@axis/ceo/sprint-plan\",\"method\":\"POST\",\"path\":\"/v1/skills/ceo/sprint-plan\",\"target_department\":\"ceo\",\"queue_topic\":\"skill.ceo.invoke\",\"mirror_check\":false,\"min_mirror_level\":\"L1\",\"status\":\"registered\"}"
     },
     {
       "phase": "1b",
       "test": "GET /v1/skills/engineering/deploy",
       "status": "PASS",
       "expected": "200 + skill detail",
-      "actual": "200 + @solocorp/engineering/deploy (target=engineering, mirror=L2)",
-      "evidence": "{\"skill\":\"@solocorp/engineering/deploy\",\"method\":\"POST\",\"path\":\"/v1/skills/engineering/deploy\",\"target_department\":\"engineering\",\"queue_topic\":\"skill.eng.invoke\",\"mirror_check\":true,\"min_mirror_level\":\"L2\",\"status\":\"registered\"}"
+      "actual": "200 + @axis/engineering/deploy (target=engineering, mirror=L2)",
+      "evidence": "{\"skill\":\"@axis/engineering/deploy\",\"method\":\"POST\",\"path\":\"/v1/skills/engineering/deploy\",\"target_department\":\"engineering\",\"queue_topic\":\"skill.eng.invoke\",\"mirror_check\":true,\"min_mirror_level\":\"L2\",\"status\":\"registered\"}"
     },
     {
       "phase": "1b",
       "test": "GET /v1/skills/cfo/budget-check",
       "status": "PASS",
       "expected": "200 + skill detail",
-      "actual": "200 + @solocorp/cfo/budget-check (target=cfo, mirror=L2)",
-      "evidence": "{\"skill\":\"@solocorp/cfo/budget-check\",\"method\":\"POST\",\"path\":\"/v1/skills/cfo/budget-check\",\"target_department\":\"cfo\",\"queue_topic\":\"skill.cfo.invoke\",\"mirror_check\":false,\"min_mirror_level\":\"L2\",\"status\":\"registered\"}"
+      "actual": "200 + @axis/cfo/budget-check (target=cfo, mirror=L2)",
+      "evidence": "{\"skill\":\"@axis/cfo/budget-check\",\"method\":\"POST\",\"path\":\"/v1/skills/cfo/budget-check\",\"target_department\":\"cfo\",\"queue_topic\":\"skill.cfo.invoke\",\"mirror_check\":false,\"min_mirror_level\":\"L2\",\"status\":\"registered\"}"
     },
     {
       "phase": "1b",
       "test": "GET /v1/skills/qa/smoke-test",
       "status": "PASS",
       "expected": "200 + skill detail",
-      "actual": "200 + @solocorp/qa/smoke-test (target=qa, mirror=L1)",
-      "evidence": "{\"skill\":\"@solocorp/qa/smoke-test\",\"method\":\"POST\",\"path\":\"/v1/skills/qa/smoke-test\",\"target_department\":\"qa\",\"queue_topic\":\"skill.qa.invoke\",\"mirror_check\":false,\"min_mirror_level\":\"L1\",\"status\":\"registered\"}"
+      "actual": "200 + @axis/qa/smoke-test (target=qa, mirror=L1)",
+      "evidence": "{\"skill\":\"@axis/qa/smoke-test\",\"method\":\"POST\",\"path\":\"/v1/skills/qa/smoke-test\",\"target_department\":\"qa\",\"queue_topic\":\"skill.qa.invoke\",\"mirror_check\":false,\"min_mirror_level\":\"L1\",\"status\":\"registered\"}"
     },
     {
       "phase": "1b",
       "test": "GET /v1/skills/governance/rfc",
       "status": "PASS",
       "expected": "200 + skill detail",
-      "actual": "200 + @solocorp/governance/rfc (target=legal, mirror=L3)",
-      "evidence": "{\"skill\":\"@solocorp/governance/rfc\",\"method\":\"POST\",\"path\":\"/v1/skills/governance/rfc\",\"target_department\":\"legal\",\"queue_topic\":\"skill.gov.invoke\",\"mirror_check\":true,\"min_mirror_level\":\"L3\",\"status\":\"registered\"}"
+      "actual": "200 + @axis/governance/rfc (target=legal, mirror=L3)",
+      "evidence": "{\"skill\":\"@axis/governance/rfc\",\"method\":\"POST\",\"path\":\"/v1/skills/governance/rfc\",\"target_department\":\"legal\",\"queue_topic\":\"skill.gov.invoke\",\"mirror_check\":true,\"min_mirror_level\":\"L3\",\"status\":\"registered\"}"
     },
     {
       "phase": "1c",

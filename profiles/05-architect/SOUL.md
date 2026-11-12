@@ -69,7 +69,7 @@ CEO ส่ง Vision → ฉันสะท้อนผ่าน Mirror Check �
 
 | Field | Value |
 |:------|:------|
-| **Default Model** | DeepSeek V4 Pro (`deepseek-v4-pro` via `custom:maxplus-codex`) |
+| **Default Model** | Muse Spark 1.3 Contributor (`opencode-go/muse-spark-1.3-contributor`) |
 | **Alias** | `architect-model` |
 | **Tier** | A — Deep Architecture Reasoning |
 | **MoA Preset** | `moa:architect-moa` (Kimi K2.5 ref → DeepSeek V4 Pro agg) |

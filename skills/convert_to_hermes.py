@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Convert OpenCode-format @solocorp skills to Hermes standard and install.
+"""Convert OpenCode-format @axis skills to Hermes standard and install.
 
-Reads:   <repo>/skills/@solocorp/<cat>/<skill>/SKILL.md  (OpenCode frontmatter)
+Reads:   <repo>/skills/@axis/<cat>/<skill>/SKILL.md  (OpenCode frontmatter)
 Writes:  ~/.hermes/skills/solocorp-<cat>-<skill>/SKILL.md (Hermes frontmatter)
          Body content is copied verbatim; only frontmatter is rebuilt.
 """
@@ -10,26 +10,26 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent  # P1-4: dynamic (กัน hardcode /home/... vs /data/...)
-SRC_ROOT = REPO / "skills" / "@solocorp"
+SRC_ROOT = REPO / "skills" / "@axis"
 DEST_ROOT = Path.home() / ".hermes" / "skills"
 
 # One-line "Use when ..." descriptions derived from each skill's Purpose section.
 DESCRIPTIONS = {
-    "@solocorp/ceo/sprint-plan":
+    "@axis/ceo/sprint-plan":
         "Use when a department needs a sprint plan template, progress report, or sprint status dashboard via the Central Bus.",
-    "@solocorp/cfo/budget-check":
+    "@axis/cfo/budget-check":
         "Use when a department needs budget checks, cost analysis, or ROI projection before starting a project.",
-    "@solocorp/coo/daily-ops":
+    "@axis/coo/daily-ops":
         "Use when the COO needs a daily ops report, to route requests to departments, or to scan SOP compliance.",
-    "@solocorp/cross-dept/mirror-check":
+    "@axis/cross-dept/mirror-check":
         "Use when a department head must verify that a major decision reflects Dr.solodev Owner's identity and values before acting.",
-    "@solocorp/cross-dept/pipeline-bridge":
+    "@axis/cross-dept/pipeline-bridge":
         "Use when sending work across departments with structured handoff, audit trail, and automatic Mirror Check.",
-    "@solocorp/engineering/deploy":
+    "@axis/engineering/deploy":
         "Use when engineering triggers a deploy, checks deployment status, or rolls back a service in SoloCorp OS.",
-    "@solocorp/governance/rfc":
+    "@axis/governance/rfc":
         "Use when creating or reviewing an RFC for changes impacting one or more departments in SoloCorp OS.",
-    "@solocorp/qa/smoke-test":
+    "@axis/qa/smoke-test":
         "Use when running smoke tests before deploy or health-checking services after deployment.",
 }
 
@@ -54,9 +54,9 @@ def parse_opencode_frontmatter(text):
 
 
 def hermes_name(opencode_name):
-    # "@solocorp/ceo/sprint-plan" -> "solocorp-ceo-sprint-plan"
+    # "@axis/ceo/sprint-plan" -> "solocorp-ceo-sprint-plan"
     parts = opencode_name.strip('"').split("/")
-    assert parts[0] == "@solocorp" and len(parts) == 3, f"bad name: {opencode_name}"
+    assert parts[0] == "@axis" and len(parts) == 3, f"bad name: {opencode_name}"
     return "-".join(["solocorp", parts[1], parts[2]])
 
 
@@ -109,7 +109,7 @@ def main():
     # sanity: verify installed files parse & bodies match originals
     for p in src_files:
         orig_body = parse_opencode_frontmatter(p.read_text(encoding="utf-8"))[1]
-        oc = re.search(r'name:\s*"(@solocorp/[^"]+)"', p.read_text(encoding="utf-8")).group(1)
+        oc = re.search(r'name:\s*"(@axis/[^"]+)"', p.read_text(encoding="utf-8")).group(1)
         inst = (DEST_ROOT / hermes_name(oc) / "SKILL.md").read_text(encoding="utf-8")
         inst_fm, inst_body = parse_opencode_frontmatter(inst)
         assert inst_body == orig_body, f"body mismatch for {oc}"

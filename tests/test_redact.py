@@ -33,7 +33,7 @@ class TestRedactBlocks:
         ("key is sk-abc1234567890xyz", "SECRET"),
         ("token ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123", "SECRET"),
         ("api_key = 'superSecretValue123'", "SECRET"),
-        ("ติดต่อ admin@solocorp.dev", "EMAIL"),
+        ("ติดต่อ admin@axis.dev", "EMAIL"),
         ("โทร 0812345678", "PHONE"),
         ("เลขบัญชี 123-456-7890", "ACCT"),
         ("อยู่ที่ /home/drsolodev/secret.txt", "PATH"),

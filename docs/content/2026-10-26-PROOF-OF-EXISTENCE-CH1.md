@@ -85,7 +85,7 @@ Delivery target: -16 LUFS integrated is a platform delivery target, not EBU R 12
 
 ## Evidence and Evaluation
 
-- Repository references: `solocorp_mcp/departments/content_mcp.py`, `solocorp_mcp/departments/content_service.py`, `profiles/INDEX.md`, and `docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md`.
+- Repository references: `axis_mcp/departments/content_mcp.py`, `axis_mcp/departments/content_service.py`, `profiles/INDEX.md`, and `docs/plans/CONTENT-CUSTOMER-VALUE-PILOT.md`.
 - FFmpeg integration evidence: `docs/certification/D1-content-ffmpeg-integration.md` and the two D2 runner records under `bus/evidence/2026-10-26/`.
 - Runtime limitations: `bus/evidence/2026-10-26/ffmpeg-skill-diagnostic.json`.
 - Local render and media verification: `bus/evidence/2026-10-26/content-proof-ch1-render-v2.md`.

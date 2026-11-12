@@ -18,7 +18,7 @@ async def test_content_mcp_stdio_handshake_and_tool_call(tmp_path):
     env["SOLOCORP_BUS_ROOT"] = str(tmp_path / "central_bus")
     params = StdioServerParameters(
         command=str(ROOT / ".venv/bin/python3"),
-        args=["-m", "solocorp_mcp.departments.content_mcp"],
+        args=["-m", "axis_mcp.departments.content_mcp"],
         cwd=str(ROOT),
         env=env,
     )
