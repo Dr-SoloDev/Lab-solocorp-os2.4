@@ -1,0 +1,28 @@
+{
+  "campaign_id": "ceo-loop-e2e-20261113-01",
+  "duration_seconds": 90,
+  "execution": {
+    "automatic_execution": false,
+    "requested_by": "content-creator MCP tool call",
+    "runtime_gate": "synthetic_inputs_only_pending_independent_ffmpeg_verification",
+    "status": "in_progress"
+  },
+  "fallback_requested": false,
+  "job_id": "local-media-b1fffbe4d68f461ebf4224bdd88276b7",
+  "lifecycle_state": "scaffold",
+  "output_directory": "content/local_media/ceo-loop-e2e-20261113-01/local-media-b1fffbe4d68f461ebf4224bdd88276b7",
+  "provider": "ffmpeg-cli",
+  "publication_status": "blocked_pending_human_approval_and_rights_review",
+  "scene_count": 6,
+  "scene_seconds": 15,
+  "schema_version": 1,
+  "scope": "generated voice, original synthetic 3D scenes, scene-level captions, local FFmpeg CLI",
+  "script_filename": "campaign-ceo-loop-e2e-20261113-01-client-generated-video_script_20261112T172820597442Z.md",
+  "script_version": "v1",
+  "tts_fallback": "abort",
+  "tts_provider": "piper-local",
+  "visual_fallback": "abort",
+  "visual_provider": "three.js-pdoom-local",
+  "voice_model_license": "CC-BY-NC-SA-3.0",
+  "voice_model_rights_status": "noncommercial_only_human_confirmation_required"
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "task-ca44bc2760a7",
+  "dept": "content",
+  "module": "content-creator",
+  "task_type": "content",
+  "status": "pending",
+  "brief": "Phase 2.1(a) real scratch render ceo-loop-e2e-20261113-01: ingest 6x15 synthetic script, visual tiktok 9:16, cue, local render abort/abort, gate review_required. No Concat, no ElevenLabs, no approval, no publish.",
+  "created_at": "2026-11-12T17:28:09.738691+00:00",
+  "started_at": null,
+  "completed_at": null,
+  "result_ref": null,
+  "error_detail": null
+}
