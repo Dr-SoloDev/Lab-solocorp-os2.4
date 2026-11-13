@@ -304,4 +304,22 @@ solocorp-mark-workflow, content creation pipeline
 
 ---
 
+## CAIO — AI Governance (D1 starter, DRAFT-UNAPPROVED)
+
+> Append-only 2026-11-13 (`feat/caio-d1-starter`) — DRAFT ห้ามบังคับใช้จน Owner เซ็น L5 — ไม่แก้แถวเดิมข้างบน
+
+| # | Profile | Head | Responsibility | Status |
+|:-:|:--------|:-----|:--------------|:------:|
+| `20-caio` | **CAIO** | [พี่ญาณ (Yaan)](20-caio/HEAD.md) | AI Governance: routing policy / prompt-context lint / eval co-design / token+license guardrails (recommend-only) | 🟡 DRAFT D0 |
+
+- **Reports to:** CEO (เทอโบ) + Owner (L5 doctrine) — ไม่ใต้ CTO/COO
+- **Team:** [น้องพริ้ง](20-caio/team/02-pring.SOUL.md) (lint) + [ต้นกล้า](20-caio/team/03-tonkla.SOUL.md) (eval) — D0 ทั้งคู่
+- **R&D:** Owner-direct 100% — liaison รับงานที่ส่งต่อเท่านั้น ห้ามสั่ง/ตั้ง KPI
+- **Bus:** read-only redacted consumer — audit path ไม่ผ่าน CAIO ห้าม veto (A2/A3/A6/A7/A8)
+- **Skill:** `skills/@axis/ai-governance/SKILL.md` (open-only) — registry owner คือ SkillHub Admin
+- **Agent:** `.opencode/agents/caio-yaan.md` (DRAFT D0)
+- **D-cert:** D0 — ต่อไป D1 ตรวจ → D2 `caio_governance_checker.py` (`WRITE_ROOT=bus/governance/reports/`)
+
+---
+
 *SoloCorp OS — System First, Everything Follows*
