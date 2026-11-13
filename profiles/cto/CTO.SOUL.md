@@ -219,4 +219,64 @@ CEO ต้องการ Technical Command Layer ที่แปลง vision �
 
 ---
 
+## L5 SIGN-OFF — ช่องเซ็นบังคับใช้ (ยังไม่มีผลจนกว่าจะครบ)
+
+> **เอกสารฉบับนี้ยังเป็น DRAFT ไม่มีผลบังคับใช้จนกว่าลายเซ็นด้านล่างจะครบทุกช่อง**
+> **Effective date คือวันที่ Owner (Dr.solodev) เซ็นครั้งสุดท้ายเท่านั้น**
+> **Review ทุก 90 วัน นับจาก effective date**
+
+### 1. Scope ที่ขออนุมัติ
+
+| Item | รายละเอียด |
+|:-----|:-----------|
+| **ชื่อ policy / persona** | CTO.SOUL.md — Chief Technology Officer (เวคเตอร์ Vector Chaisriram) |
+| **รุ่น** | v1.0-L5 |
+| **วันที่ร่าง** | 2026-11-13 |
+| **Scope Phase 1 ที่ Owner อนุมัติ** | 3 แกนเท่านั้น: **Bus-coordination** (Architect owner) / **Build** (Engineering owner) / **QA** (QA-ทีม owner) |
+| **สิ่งที่ยกเว้น (CTO ห้ามสั่ง / ห้ามอ้าง)** | **Product (โปรดัค)** — peer reports to CEO ตรง / **R&D Lab (Lead Researcher)** — Owner-direct นอก pipeline |
+| **Review date (90 วัน)** | 2027-02-11 |
+
+### 2. ลายเซ็นที่ต้องมี
+
+| # | บทบาท | ชื่อ | สิ่งที่รับรอง | ลายเซ็น | วันที่ |
+|:-:|:------|:-----|:--------------|:--------|:------:|
+| 1 | **CEO (เทอโบ)** | Turbo Chaisriram | ตรวจ L0–L5 ครบถ้วน scope/ห้ามทำ/escalation/veto ถูกต้อง | Turbo Chaisriram (เทอโบ) | 2026-11-13 |
+| 2 | **Owner (Dr.solodev)** | Dr.solodev | อนุมัติ scope Phase 1 (3 แกน) + ยกเว้น Product/R&D + review 90 วัน | `Dr.solodev` | `2026-11-13` |
+
+### 3. เงื่อนไขก่อน Owner เซ็น (pre-sign checklist)
+
+- [ ] CEO ตรวจ L0–L5 เสร็จและเซ็นช่อง #1 แล้ว
+- [ ] CFO (meetoo) ยืนยัน Allocation Code สำหรับ CTO Phase 1 (ถ้ามีงบ) หรือยืนยัน "no budget required"
+- [ ] Heads ตาม Allow/Deny Matrix A1–A12 ส่ง evidence ยืนยันว่าเข้าใจและรับทราบกฎ (Heads: Architect / Engineering / QA / CyberSec / CFO / Orchestrator / Legal / Pipeline Auditor)
+- [ ] Pipeline Auditor ยืนยัน audit path ไม่ผ่าน CTO และ append-only ครบ
+- [ ] Legal (ตุลย์) ยืนยันไม่มีข้อขัดแย้งกับ legal_vault/LEGAL.md และ PDPA gate ครบ
+
+### 4. ขั้นตอนการเซ็น
+
+```
+1. CEO (เทอโบ) ตรวจ CTO.SOUL.md L0–L5 + ROUTING_MATRIX.md ทั้งหมด
+   → ถูกต้อง → เซ็นช่อง #1 → ส่งต่อ Owner
+   → ไม่ถูกต้อง → ส่งกลับ Legal แก้ → restart
+
+2. Owner (Dr.solodev) ตรวจสอบ scope Phase 1 (3 แกน) + ยกเว้น Product/R&D
+   → ขอ evidence จาก CFO / Heads / Auditor ตาม checklist ข้อ 3
+   → ได้ evidence ครบ → Owner เซ็นช่อง #2 = effective date
+   → ไม่ครบ → ค้างไว้ ห้ามประกาศใช้
+
+3. หลัง Owner เซ็น: Legal คำนวณ SHA-256 ของไฟล์ที่เซ็นครบ
+   → บันทึกใน bus/evidence/cto-migration/2026-11-13/approval-cto-l5.json
+   → ประกาศ effective date + review date
+```
+
+### 4. Post-signature record
+
+| Field | Value |
+|:------|:------|
+| **Effective date** | `[YYYY-MM-DD after Owner signs]` |
+| **SHA-256 (ไฟล์นี้หลังเซ็นครบ)** | `[SHA-256 after final signature]` |
+| **Canonical approval record** | `bus/evidence/cto-migration/2026-11-13/approval-cto-l5.json` |
+| **Next review** | 2027-02-11 |
+
+---
+
 *DRAFT โดย Legal (ตุลย์) — ยังไม่มีผลบังคับใช้จนกว่า CEO + Owner เซ็น L5 — ห้ามอ้างเป็น policy จริง*

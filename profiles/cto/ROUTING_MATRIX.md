@@ -206,4 +206,71 @@ Owner (Dr.solodev) — L5
 
 ---
 
+## L5 SIGN-OFF — ช่องเซ็นบังคับใช้ (ยังไม่มีผลจนกว่าจะครบ)
+
+> **เอกสารฉบับนี้ยังเป็น DRAFT ไม่มีผลบังคับใช้จนกว่าลายเซ็นด้านล่างจะครบทุกช่อง**
+> **Effective date คือวันที่ Owner (Dr.solodev) เซ็นครั้งสุดท้ายเท่านั้น**
+> **Review ทุก 90 วัน นับจาก effective date**
+
+### 1. Scope ที่ขออนุมัติ
+
+| Item | รายละเอียด |
+|:-----|:-----------|
+| **ชื่อ policy / routing truth** | CTO Routing Matrix — Phase 1 (Bus / Build / QA) |
+| **รุ่น** | v1.0-L5 |
+| **วันที่ร่าง** | 2026-11-13 |
+| **Scope Phase 1 ที่ Owner อนุมัติ** | 3 แกนเท่านั้น: **Bus** (Architect) / **Build** (Engineering) / **QA** (QA-ทีม) |
+| **สิ่งที่ยกเว้น (ห้าม route เข้า CTO)** | **Product (โปรดัค)** — peer reports to CEO ตรง / **R&D Lab (Lead Researcher)** — Owner-direct |
+| **Review date (90 วัน)** | 2027-02-11 |
+
+### 2. ลายเซ็นที่ต้องมี
+
+| # | บทบาท | ชื่อ | สิ่งที่รับรอง | ลายเซ็น | วันที่ |
+|:-:|:------|:-----|:--------------|:--------|:------:|
+| 1 | **CEO (เทอโบ)** | Turbo Chaisriram | ตรวจ L0–L5 + routing matrix ถูกต้อง ไม่ชน C-Level / Orchestrator / Owner-direct | Turbo Chaisriram (เทอโบ) | 2026-11-13 |
+| 2 | **Owner (Dr.solodev)** | Dr.solodev | อนุมัติ scope/name ของ CTO Phase 1 + ยกเว้น Product/R&D + review 90 วัน | `Dr.solodev` | `2026-11-13` |
+| 3 | **CFO (meetoo)** | meetoo | Allocation Code สำหรับ CTO Phase 1 หรือยืนยัน "no budget required" | `[CFO sign here]` | `[date]` |
+| 4 | **Head of Architect (พี่ทรงศักดิ์)** | Songsak | Acknowledge A1–A12 โดยเฉพาะ A10 (Bus owner), A12 (routing/schema) | `[Architect sign here]` | `[date]` |
+| 5 | **Head of Engineering (ช่างฟูล)** | Changful | Acknowledge A1–A12 โดยเฉพาะ A1, A5, A10 (Build owner, ห้ามตรวจงานตัวเอง) | `[Engineering sign here]` | `[date]` |
+| 6 | **Head of QA (คิวเอ)** | QA Team | Acknowledge A1–A12 โดยเฉพาะ A1, A2, A4, A5 (independent gate) | `[QA sign here]` | `[date]` |
+| 7 | **Head of CyberSec (ซาย)** | Sai | Acknowledge A3, A7, A8 (Security BLOCKED path, audit integrity) | `[CyberSec sign here]` | `[date]` |
+| 8 | **Head of Orchestrator (พี่วุฒิ)** | Wut | Acknowledge A12 (ไม่ตั้ง pipeline ทับ Orchestrator) + sync mechanism | `[Orchestrator sign here]` | `[date]` |
+| 9 | **Head of Legal (ตุลย์)** | Tulya | ยืนยันไม่ขัด legal_vault/LEGAL.md + PDPA gate + audit path | `[Legal sign here]` | `[date]` |
+| 10 | **Pipeline Auditor** | Pipeline Auditor | ยืนยัน audit path ไม่ผ่าน CTO + append-only + confirmation store | `[Auditor sign here]` | `[date]` |
+
+### 3. เงื่อนไขก่อน Owner เซ็น (pre-sign checklist)
+
+- [ ] CEO ตรวจ L0–L5 ของ `CTO.SOUL.md` และ routing matrix นี้ครบถ้วน
+- [ ] CFO ระบุ Allocation Code หรือ "no budget required" ชัดเจน
+- [ ] Heads A1–A12 (Architect / Engineering / QA / CyberSec / Orchestrator) ส่ง evidence ยืนยันการ acknowledge
+- [ ] Pipeline Auditor ยืนยัน audit path: Specialist → Bus → Auditor → CEO + Legal (ไม่ผ่าน CTO)
+- [ ] Legal ยืนยันไม่มี red-line ข้อใดบอกว่า CTO เป็นเจ้าของ Bus/Build/QA หรือคุม Product/R&D
+
+### 4. ขั้นตอนการเซ็น
+
+```
+1. CEO (เทอโบ) ตรวจ L0–L5 ของ CTO.SOUL.md + ROUTING_MATRIX.md ทั้งหมด
+   → ถูกต้อง → เซ็นช่อง #1 → ส่งต่อ Owner
+   → ไม่ถูกต้อง → ส่งกลับ Legal แก้ → restart
+
+2. Owner ขอ evidence จาก CFO / Heads / Auditor ตาม checklist ข้อ 3
+   → ได้ครบ → Owner เซ็นช่อง #2 = effective date
+   → ไม่ครบ → ค้างไว้ ห้ามประกาศใช้
+
+3. หลัง Owner เซ็น: Legal คำนวณ SHA-256 ของไฟล์ที่เซ็นครบ
+   → บันทึกใน bus/evidence/cto-migration/2026-11-13/approval-cto-l5.json
+   → ประกาศ effective date + review date
+```
+
+### 5. Post-signature record
+
+| Field | Value |
+|:------|:------|
+| **Effective date** | `[YYYY-MM-DD after Owner signs]` |
+| **SHA-256 (ไฟล์นี้หลังเซ็นครบ)** | `[SHA-256 after final signature]` |
+| **Canonical approval record** | `bus/evidence/cto-migration/2026-11-13/approval-cto-l5.json` |
+| **Next review** | 2027-02-11 |
+
+---
+
 *DRAFT โดย Legal (ตุลย์) — ยังไม่มีผลบังคับใช้จนกว่า CEO + Owner เซ็น L5 — ห้ามอ้างเป็น policy จริง*
