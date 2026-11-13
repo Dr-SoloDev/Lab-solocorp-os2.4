@@ -1,0 +1,17 @@
+{
+  "task_id": "task-ca51c036cedc",
+  "dept": "qa",
+  "module": "qa",
+  "task_type": "qa_test",
+  "status": "pending",
+  "brief": "QA test result: suite=w2-e2e-cto status=passed note=W2 E2E via @cto primary, owner QA-ทีม",
+  "route_reason": null,
+  "artifact_refs": [],
+  "created_at": "2026-11-12T22:49:40.066921+00:00",
+  "started_at": null,
+  "completed_at": null,
+  "result_ref": null,
+  "error": null,
+  "error_detail": null,
+  "app_version": null
+}

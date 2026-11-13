@@ -1,0 +1,40 @@
+# SoloCorp Routing Manifest — CAIO (DRAFT, shadow-0%)
+# version: 0.1.0-draft — DO NOT ENFORCE until Owner signs L5
+# Owner mapping truth: profiles/20-caio/HEAD.md + SOUL.md (DRAFT)
+# Mode: recommend-only — no veto, no override, read-only Bus consumer
+
+always_read:
+  - README.md
+  - profiles/INDEX.md
+  - profiles/20-caio/HEAD.md
+  - profiles/20-caio/SOUL.md
+  - profiles/cto/ROUTING_MATRIX.md
+
+tasks:
+  - id: caio-lint
+    label: lint SOUL/SKILL/brain ตาม checklist — ออกรายงานอย่างเดียว
+    route: CAIO recommend via Bus → owner แผนกนั้นแก้เอง
+    trigger_examples:
+      - lint soul
+      - ตรวจ prompt
+      - governance check
+    route_to: caio
+    recommend_only: true
+
+  - id: caio-eval
+    label: benchmark เปรียบเทียบโมเดล + เก็บ evidence (throwaway ก่อน)
+    route: CAIO proposes candidate + score + cost → Content approve (media) / Architect register
+    trigger_examples:
+      - benchmark model
+      - เทียบโมเดล
+      - eval routing
+    route_to: caio
+    recommend_only: true
+
+out_of_scope:
+  - Product (โปรดัค) — peer, reports to CEO ตรง
+  - R&D Lab — Owner-direct, ไม่ผ่าน pipeline (liaison รับงานที่ส่งต่อเท่านั้น)
+  - Bus schema/routing/infra — owner Architect (A10/A12)
+  - Budget approval — owner CFO (A6)
+  - QA verdict — owner QA-ทีม (A2)
+  - Security verdict — owner CyberSec (A3)

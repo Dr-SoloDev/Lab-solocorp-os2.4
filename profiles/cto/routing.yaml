@@ -1,0 +1,59 @@
+# SoloCorp Routing Manifest — CTO (C-Level, Phase 1)
+# version: 1.0.0-dualrun
+# Owner mapping truth: profiles/cto/ROUTING_MATRIX.md (Legal DRAFT)
+# Dual-run: 10% -> cto, 90% -> original owners (07 engineering / 10 qa). Additive only.
+# Closure 2026-11-13 (R4): byte-identical copy -> bus/evidence/cto-migration/2026-11-13/dual-run-20calls.json (sha 1bcf342934a6b4994ce0cb72281a1e6efb5bffd3b90ba136fc96747e9ac861fd, 20/20 PASS)
+
+always_read:
+  - README.md
+  - profiles/INDEX.md
+  - profiles/cto/cto.md
+  - profiles/cto/ROUTING_MATRIX.md
+  - profiles/cto/CTO.SOUL.md
+
+dual_run:
+  mode: shadow-additive
+  cto_weight_percent: 10
+  original_weight_percent: 90
+  preserved_servers: ["engineering", "qa"]
+  evidence: "bus/evidence/cto-migration/20261113/dual-run-20calls.json"
+
+tasks:
+  - id: cto-triage
+    label: CTO triage — แยก Bus / Build / QA ไปยัง owner ตัวจริง
+    route: CTO — triage ผ่าน Bus ไปยัง Architect / Engineering / QA
+    trigger_examples:
+      - cto
+      - technical command
+      - architecture decision
+    route_to: cto
+    dual_run_weight: 10
+
+  - id: build-implementation
+    label: พัฒนา feature / แก้บั๊ก / review / deploy (07 alias)
+    route: Engineering owner (ช่างฟูล) — CTO ประสานเท่านั้น ไม่ implement เอง
+    trigger_examples:
+      - implement
+      - สร้าง feature
+      - bug
+      - review code
+      - deploy
+    route_to: engineering
+    cto_shadow_to: cto
+    dual_run_note: 90% -> engineering (เดิม), 10% shadow -> cto (compare byte-identical)
+
+  - id: qa-verification
+    label: ทดสอบ / regression / smoke / evidence (10 alias)
+    route: QA owner (QA-ทีม) — CTO เคารพ verdict ห้าม override
+    trigger_examples:
+      - test plan
+      - QA
+      - regression
+      - smoke test
+    route_to: qa
+    cto_shadow_to: cto
+    dual_run_note: 90% -> qa (เดิม), 10% shadow -> cto (compare byte-identical)
+
+out_of_scope:
+  - Product (โปรดัค) — peer, reports to CEO ตรง
+  - R&D Lab — Owner-direct, ไม่ผ่าน pipeline

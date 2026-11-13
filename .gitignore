@@ -185,3 +185,7 @@ loop_runner/.main.lock
 
 # คลิปของครีเอเตอร์ (ใหญ่) — เก็บในเครื่อง ไม่ commit
 bus/media/creator/*/clips/
+
+# Legal reviews — private (Owner 2026-11-13) — ยกเว้น public criteria 1 ไฟล์
+legal_vault/reviews/*
+!legal_vault/reviews/web3-review-criteria.md

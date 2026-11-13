@@ -1,0 +1,181 @@
+{
+  "trace_id": "cto-mig-W0-20261112T221058Z",
+  "date": "20261113",
+  "mode": "shadow-additive 10% cto / 90% original",
+  "total_calls": 20,
+  "passed": 20,
+  "all_pass": true,
+  "repeat_byte_identical": true,
+  "calls": [
+    {
+      "call": 1,
+      "topic": "implement login API",
+      "expected": "engineering-changful",
+      "got": "engineering-changful",
+      "pass": true,
+      "canonical_len": 177
+    },
+    {
+      "call": 2,
+      "topic": "fix bug in checkout",
+      "expected": "engineering-changful",
+      "got": "engineering-changful",
+      "pass": true,
+      "canonical_len": 177
+    },
+    {
+      "call": 3,
+      "topic": "review code PR-123",
+      "expected": "engineering-changful",
+      "got": "engineering-changful",
+      "pass": true,
+      "canonical_len": 176
+    },
+    {
+      "call": 4,
+      "topic": "deploy staging checkout-api",
+      "expected": "engineering-changful",
+      "got": "engineering-changful",
+      "pass": true,
+      "canonical_len": 185
+    },
+    {
+      "call": 5,
+      "topic": "build frontend dashboard",
+      "expected": "engineering-changful",
+      "got": "engineering-changful",
+      "pass": true,
+      "canonical_len": 182
+    },
+    {
+      "call": 6,
+      "topic": "backend database migration",
+      "expected": "engineering-changful",
+      "got": "engineering-changful",
+      "pass": true,
+      "canonical_len": 184
+    },
+    {
+      "call": 7,
+      "topic": "code review auth module",
+      "expected": "engineering-changful",
+      "got": "engineering-changful",
+      "pass": true,
+      "canonical_len": 181
+    },
+    {
+      "call": 8,
+      "topic": "test plan for billing v2",
+      "expected": "qa-team",
+      "got": "qa-team",
+      "pass": true,
+      "canonical_len": 163
+    },
+    {
+      "call": 9,
+      "topic": "QA regression suite",
+      "expected": "qa-team",
+      "got": "qa-team",
+      "pass": true,
+      "canonical_len": 158
+    },
+    {
+      "call": 10,
+      "topic": "quality gate check release",
+      "expected": "qa-team",
+      "got": "qa-team",
+      "pass": true,
+      "canonical_len": 165
+    },
+    {
+      "call": 11,
+      "topic": "smoke test production",
+      "expected": "qa-team",
+      "got": "qa-team",
+      "pass": true,
+      "canonical_len": 160
+    },
+    {
+      "call": 12,
+      "topic": "regression E2E checkout flow",
+      "expected": "qa-team",
+      "got": "qa-team",
+      "pass": true,
+      "canonical_len": 167
+    },
+    {
+      "call": 13,
+      "topic": "test evidence coverage report",
+      "expected": "qa-team",
+      "got": "qa-team",
+      "pass": true,
+      "canonical_len": 168
+    },
+    {
+      "call": 14,
+      "topic": "bug report login fails",
+      "expected": "engineering-changful",
+      "got": "engineering-changful",
+      "pass": true,
+      "canonical_len": 180
+    },
+    {
+      "call": 15,
+      "topic": "bus routing rule update",
+      "expected": "architect-songsak",
+      "got": "architect-songsak",
+      "pass": true,
+      "canonical_len": 200
+    },
+    {
+      "call": 16,
+      "topic": "central bus schema change",
+      "expected": "architect-songsak",
+      "got": "architect-songsak",
+      "pass": true,
+      "canonical_len": 202
+    },
+    {
+      "call": 17,
+      "topic": "routing circuit breaker OPEN",
+      "expected": "architect-songsak",
+      "got": "architect-songsak",
+      "pass": true,
+      "canonical_len": 205
+    },
+    {
+      "call": 18,
+      "topic": "schema validation bus",
+      "expected": "architect-songsak",
+      "got": "architect-songsak",
+      "pass": true,
+      "canonical_len": 198
+    },
+    {
+      "call": 19,
+      "topic": "hello what is CTO scope",
+      "expected": "cto-vector",
+      "got": "cto-vector",
+      "pass": true,
+      "canonical_len": 173
+    },
+    {
+      "call": 20,
+      "topic": "technical command sync",
+      "expected": "cto-vector",
+      "got": "cto-vector",
+      "pass": true,
+      "canonical_len": 172
+    }
+  ],
+  "info_status": "ok",
+  "info_runtime": {
+    "newer_source_count": 0,
+    "newer_sources": [],
+    "newest_source_at": "2026-11-12T22:16:57.184381+00:00",
+    "process_started_at": "2026-11-12T22:18:34.863310+00:00",
+    "reason": "no source file is newer than this process",
+    "restart_required": false,
+    "status": "current"
+  }
+}

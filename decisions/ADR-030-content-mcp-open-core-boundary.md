@@ -25,7 +25,7 @@ PRD v1.0 §7 อนุมัติทิศทางนี้ไว้แล้�
 | 1 | โค้ด `solocorp_mcp/departments/` เขียนโดยคนเดียว | `git log --format='%an' -- solocorp_mcp/departments/` | **Dr.SoloDev คนเดียว** — ไม่มี external contributor ถือ copyright |
 | 2 | โค้ด MCP ใหม่มีอายุใน git ตั้งแต่ | `git log --diff-filter=A` | **2026-10-26** (pilot) → สถาปัตยกรรมปัจจุบัน 2026-11-02 — ช่วงสั้นมาก |
 | 3 | Repo ปัจจุบัน | ตามที่ Owner ยืนยัน | **private** — โค้ดสถาปัตยกรรมใหม่ไม่เคยถูก MIT ครอบ (เว้นข้อ 4) |
-| 4 | ⚠️ **ยัง open:** เคย push ช่วง `departments/` ตอน repo public ไหม | ต้อง Owner ยืนยจากความจำ / GitHub audit log | ถ้าเคย → snapshot ช่วงนั้น MIT ถาวร (ของ immature ไม่กระทบ product) · ถ้าไม่เคย → clean |
+| 4 | ✅ **ปิดแล้ว (2026-11-13):** Owner ยืนยัน repo public + pushed (origin Dr-SoloDev/Lab-solocorp-os2.4, มี main + feat/cto-phase1-wave1@1c410e1 บน public) → **YES** — snapshot ช่วง departments/ public อยู่ใต้ MIT ถาวร แต่เป็นโค้ด immature (pilot 2026-10-26 → arch 2026-11-02) ไม่กระทบแผน open-core |
 | 5 | Fork เก่าที่กระจัดกระจายอยู่ | โครง repo ก่อนยกเครื่อง | ถือเฉพาะ **เวอร์ชันก่อนสถาปัตยกรรม MCP** — ไม่มี code path เดียวกับตัว product ปัจจุบัน |
 
 **สรุปกฎหมาย:** เจ้าของลิขสิทธิ์ (คนเดียว) relicensing งานตัวเองได้เสมอ MIT ที่เคยแจกไปมีผลแค่ snapshot ที่ผู้รับได้รับ ใช้ของเก่าต่อได้ แต่เอาไปอัพเดทเป็นเวอร์ชันใหม่ของ Owner ไม่ได้ — **ไม่มีภาระผูกพันขวางการแยก repo แบบ closed**
@@ -84,7 +84,7 @@ Post-Beta  ตัดสินใจ pricing ด้วยหลักฐาน (�
 
 ## งานที่ต้องทำต่อ
 
-- [ ] Owner ยืนยันข้อ 4: เคย push `solocorp_mcp/departments/` ตอน repo public ไหม (ตอบครั้งเดียวจบ แล้ว update ตารางข้อเท็จจริงใน ADR นี้)
+- [x] Owner ยืนยันข้อ 4: เคย push `solocorp_mcp/departments/` ตอน repo public ไหม (ตอบครั้งเดียวจบ แล้ว update ตารางข้อเท็จจริงใน ADR นี้) (Owner ยืนยัน 2026-11-13: YES public+pushed)
 - [ ] รายการไฟล์ open/closed (boundary list) — เขียนนิ่งก่อน split
 - [ ] ทำ repo split **ที่ PRD Phase 3** — license ใหม่ตั้งแต่ commit แรก + ล้าง MIT reference พร้อมกัน
 - [ ] ตรวจ CI + README ของ repo ใหม่ไม่ depend repo หลัก

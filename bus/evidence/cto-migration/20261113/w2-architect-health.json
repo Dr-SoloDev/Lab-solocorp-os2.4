@@ -1,0 +1,101 @@
+{
+  "trace_id": "cto-wave2-20261113",
+  "fresh_probe": {
+    "health": {
+      "status": "healthy",
+      "server": "cto",
+      "modules": {
+        "architect": {
+          "module": "architect",
+          "status": "healthy"
+        },
+        "engineering": {
+          "module": "engineering",
+          "status": "healthy"
+        },
+        "qa": {
+          "module": "qa",
+          "status": "healthy"
+        }
+      },
+      "database": "connected",
+      "cache": "active"
+    },
+    "pipeline": {
+      "status": "ok",
+      "project_id": "w2-probe-20261113",
+      "pipeline": "architect -> engineering -> qa"
+    },
+    "namespaces": [
+      "architect",
+      "engineering",
+      "qa",
+      "unified"
+    ],
+    "freshness": {
+      "status": "current",
+      "restart_required": false,
+      "reason": "no source file is newer than this process",
+      "process_started_at": "2026-11-12T22:42:41.260301+00:00",
+      "newest_source_at": "2026-11-12T22:24:48.630977+00:00",
+      "newer_source_count": 0,
+      "newer_sources": []
+    }
+  },
+  "tool_count": {
+    "decorators": 10,
+    "tools": [
+      "unified_technical_health",
+      "architect_route",
+      "architect_pipeline_define",
+      "engineering_build_backend",
+      "engineering_build_frontend",
+      "engineering_code_review",
+      "qa_run_test",
+      "qa_record_evidence",
+      "unified_pipeline_status",
+      "unified_list_tools_tool"
+    ],
+    "count": 10
+  },
+  "config": {
+    "opencode_json_cto": [
+      ".venv/bin/python3",
+      "-m",
+      "axis_mcp.cto.server"
+    ],
+    "engineering": [
+      ".venv/bin/python3",
+      "-m",
+      "axis_mcp.departments.engineering_mcp"
+    ],
+    "qa": [
+      ".venv/bin/python3",
+      "-m",
+      "axis_mcp.departments.qa_mcp"
+    ],
+    "servers": [
+      "central-bus",
+      "concat",
+      "content-creator",
+      "cto",
+      "engineering",
+      "github",
+      "qa",
+      "solocorp",
+      "stealth-browser"
+    ],
+    "jsonc_has_cto": true,
+    "jsonc_has_unified_technical": false
+  },
+  "db": {
+    "path": "central_bus/cto.db",
+    "tables": [
+      "build_artifacts",
+      "qa_evidence",
+      "tool_calls"
+    ],
+    "sha256": "881da7676321c249cb45288580e93b69e4bdaa3eea604752aabd56704d777128",
+    "sha_match_source": true
+  }
+}

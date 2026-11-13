@@ -1,0 +1,12 @@
+{
+  "trace_id": "cto-mig-W2-20261112T224226Z",
+  "date": "20261113",
+  "pytest_cmd": "python -m pytest tests/ central_bus/tests/ --tb=short --cov-report=json:.coverage.json --no-header -q",
+  "pytest_result": "1312 passed, 1 skipped, 123 warnings in 105.98s",
+  "coverage_total": "75%",
+  "auto_qa_gate_cmd": "python workers/auto_qa_gate.py --threshold=9 --project-id=auto-qa-pipeline --test-path=\"tests central_bus/tests\"",
+  "auto_qa_gate": "PASS",
+  "coverage_gate": "75.44% >= 9",
+  "qa_gate_evidence": "bus/evidence/2026-11-12/qa-gate-d15806c3.json",
+  "qa_gate_event_id": "qa-gate-d15806c3"
+}

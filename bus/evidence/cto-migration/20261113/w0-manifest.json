@@ -1,0 +1,24 @@
+{
+  "trace_id": "cto-mig-W0-20261112T221058Z",
+  "wave": "W0-freeze",
+  "date": "20261113",
+  "head": "0b68f1d8643c92feccec5c972bbd999947eb6a14",
+  "head_short": "0b68f1d",
+  "tag": "pre-cto-baseline-20261113",
+  "tag_sha": "0b68f1d8643c92feccec5c972bbd999947eb6a14",
+  "opencode_sha256": "51f09e54023f9f0dac60a60c3487cb816e978b8a8f8fb6feced9ac72ce89e73a",
+  "backup_path": "bus/evidence/cto-migration/20261113/opencode.json.bak",
+  "backup_sha256": "51f09e54023f9f0dac60a60c3487cb816e978b8a8f8fb6feced9ac72ce89e73a",
+  "sha_match": true,
+  "queue_depth": {
+    "dispatch_files": 27,
+    "queue_high_lines": 0,
+    "queue_normal_lines": 0,
+    "queue_low_lines": 0,
+    "central_bus_content_files": 543
+  },
+  "git_status_snapshot": "bus/evidence/cto-migration/20261113/w0-git-status.txt",
+  "git_diff_snapshot": "bus/evidence/cto-migration/20261113/w0-git-diff.txt",
+  "note": "Baseline freeze before CTO dual-run. Untracked profiles/cto/ (Legal DRAFT CTO.SOUL.md + ROUTING_MATRIX.md) present at freeze, excluded from tag (tag points to HEAD). Orchestrator Wave0 commit covers only bus/evidence/cto-migration/.",
+  "orchestrator": "พี่วุฒิ (AXIS Orchestrator)"
+}

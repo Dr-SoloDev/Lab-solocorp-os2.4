@@ -1,0 +1,13 @@
+{
+  "trace_id": "cto-mig-W0-20261112T221058Z",
+  "mode": "shadow-additive",
+  "weights": {"cto_percent": 10, "original_percent": 90},
+  "preserved": ["engineering", "qa"],
+  "rules": [
+    {"match": "build|implement|deploy|code|bug|review", "primary": "engineering (90%)", "shadow": "cto (10%)"},
+    {"match": "test|qa|regression|smoke|evidence|quality", "primary": "qa (90%)", "shadow": "cto (10%)"},
+    {"match": "bus|routing|schema|central", "primary": "architect (90%)", "shadow": "cto (10%)"}
+  ],
+  "comparison": "byte-identical 20/20 (dual-run-20calls.json), repeat-call identical true",
+  "rollback": "restore bus/evidence/cto-migration/20261113/opencode.json.bak + scripts/restart-mcp.sh --yes (<=15 min)"
+}
