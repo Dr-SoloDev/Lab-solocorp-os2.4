@@ -57,10 +57,11 @@ MODEL_FALLBACKS = [
     "opencode-go/muse-spark-1.3-contributor",  # ตัวหลัก · subscription · 1M context
     "opencode/deepseek-v4.1-flash-free",  # fallback 1 · 15.1s · steadier สุด
     "opencode/nemotron-3.5-lightning-free",  # fallback 2 · 13.2s · ไทย 1087
-    "opencode/nemotron-3-ultra-free",  # fallback 3 · 19.0s · ไทย 702
-    "opencode/big-pickle",  # fallback 4 · 19.8s · ไทย 871
-    "opencode/mimo-v2.6-flash-free",  # fallback 5 · 82.9s + ชอบเรียก tool · ท้ายสุด
+    "opencode/big-pickle",  # fallback 3 · 19.8s · ไทย 871
+    "opencode/mimo-v2.6-flash-free",  # fallback 4 · 82.9s + ชอบเรียก tool · ท้ายสุด
 ]
+# 2026-11-13 (W1b): ตัด opencode/nemotron-3-ultra-free ออก — ยืนยันหายจาก
+# `opencode models` แล้ว (grep=0) เหลือ chain 5 ตัวที่ verify ว่ามีจริงทั้งหมด
 # Dead models — ถ้ามี caller ส่งชื่อเก่ามา ให้ map เข้า fallback chain ทันที
 DEAD_MODELS = {
     # ยังไม่มีใน opencode models (Model not found)
@@ -72,6 +73,8 @@ DEAD_MODELS = {
     # หาย upstream 2026-10-25 (Model unavailable) — เดิมอยู่ใน chain
     "opencode/minimax-m3.1-flash-free",
     "opencode/longcat-2.5-preview-free",
+    # ยืนยันหาย 2026-11-13 (W1b: grep=0 ใน `opencode models`) — เดิม fallback 3
+    "opencode/nemotron-3-ultra-free",
     # มีอยู่แต่ gateway free-tier ปฏิเสธ agents_md / unknown_parameter
     "opencode/beam-free",
     "opencode/glm-5.3-flash-free",
@@ -92,8 +95,13 @@ _MODEL_CACHE_TTL_HOURS = 6
 _MODELS_TIMEOUT = 30
 
 
-def list_available_models(prefix: str = "opencode/") -> list[str]:
+def list_available_models(prefix=("opencode/", "opencode-go/")) -> list[str]:
     """รายชื่อโมเดลที่ opencode มีจริง ณ ตอนนี้ (เรียก CLI)
+
+    2026-11-13 (W1b): chain มีชื่อ `opencode-go/*` (default muse-spark) —
+    prefix เดิม `"opencode/"` ไม่ match `"opencode-go/..."` ทำให้ default
+    ถูกแจ้ง missing ทุก 5 นาที จึงรับทั้งสอง prefix ( backward-compat:
+    ส่ง str ตัวเดียวมาก็ได้)
 
     Returns:
         list[str]: เช่น ["opencode/deepseek-v4.1-flash-free", ...]
@@ -101,6 +109,7 @@ def list_available_models(prefix: str = "opencode/") -> list[str]:
     """
     import subprocess
 
+    prefixes = (prefix,) if isinstance(prefix, str) else tuple(prefix)
     try:
         r = subprocess.run(
             [_CMD, "models"],
@@ -114,7 +123,7 @@ def list_available_models(prefix: str = "opencode/") -> list[str]:
     out = []
     for line in (r.stdout or "").splitlines():
         line = line.strip()
-        if line.startswith(prefix):
+        if line.startswith(prefixes):
             out.append(line)
     return out
 

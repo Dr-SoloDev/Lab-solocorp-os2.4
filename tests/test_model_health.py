@@ -16,6 +16,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from workers import llm_provider as lp  # noqa: E402
 
 
+@pytest.fixture(autouse=True)
+def _isolated_model_cache(monkeypatch, tmp_path):
+    """กัน test เขียน cache จริง (bus/system/model_health.json)
+
+    บทเรียน W1b 2026-11-13: cache จริงเคยถูกเขียนด้วย dummy
+    ["opencode/in-chain", "opencode/new-one"] ทำให้ watchdog แจ้ง
+    missing ทั้ง chain ทุก 5 นาที — test ทุกตัวต้องใช้ tmp cache
+    """
+    monkeypatch.setattr(lp, "_MODEL_CACHE_PATH", tmp_path / "model_health.json")
+
+
 # ══════════════════════════════════════════════════════════════════════
 # Chain ปัจจุบัน
 # ══════════════════════════════════════════════════════════════════════
@@ -47,8 +58,9 @@ class TestModelChain:
             assert gone in lp.DEAD_MODELS
 
     def test_chain_length_is_5(self):
-        """chain ถูกวัดใหม่ 2026-11-12 (muse-spark 1M + deepseek fallback)"""
-        assert len(lp.MODEL_FALLBACKS) == 6
+        """chain ถูกวัดใหม่ 2026-11-12 (muse-spark 1M + deepseek fallback)
+        2026-11-13 (W1b): ตัด nemotron-3-ultra-free ที่หาย upstream → เหลือ 5"""
+        assert len(lp.MODEL_FALLBACKS) == 5
 
     def test_upstream_gone_models_are_dead(self):
         """minimax (default เดิม) + longcat หาย upstream 2026-10-25 → ต้องเป็น dead"""
@@ -137,6 +149,47 @@ class TestAuditModels:
         assert r["ok"] is True
         assert r["error"]
         assert r["missing"] == []
+
+    def test_opencode_go_prefix_is_matched(self, monkeypatch):
+        """W1b: default เป็น opencode-go/* — prefix เดิมกรองทิ้งจนแจ้ง missing ทุก 5 นาที"""
+        import subprocess as _subprocess
+
+        real_run = _subprocess.run
+
+        def fake_run(*a, **k):
+            class R:
+                stdout = (
+                    "opencode-go/muse-spark-1.3-contributor\n"
+                    "opencode/deepseek-v4.1-flash-free\n"
+                    "some-other/thing\n"
+                )
+
+            return R()
+
+        monkeypatch.setattr(_subprocess, "run", fake_run)
+        got = lp.list_available_models()
+        assert "opencode-go/muse-spark-1.3-contributor" in got
+        assert "opencode/deepseek-v4.1-flash-free" in got
+        assert "some-other/thing" not in got
+        monkeypatch.setattr(_subprocess, "run", real_run, raising=False)
+
+    def test_single_str_prefix_still_works(self, monkeypatch):
+        """backward-compat: ส่ง prefix เป็น str ตัวเดียวได้เหมือนเดิม"""
+        import subprocess as _subprocess
+
+        def fake_run(*a, **k):
+            class R:
+                stdout = "opencode/a-free\nopencode-go/b-c\n"
+
+            return R()
+
+        monkeypatch.setattr(_subprocess, "run", fake_run)
+        assert lp.list_available_models(prefix="opencode/") == ["opencode/a-free"]
+
+    def test_nemotron_3_ultra_is_dead(self):
+        """W1b: nemotron-3-ultra-free หาย upstream แล้ว — ต้อง dead ไม่อยู่ใน chain"""
+        assert "opencode/nemotron-3-ultra-free" in lp.DEAD_MODELS
+        assert "opencode/nemotron-3-ultra-free" not in lp.MODEL_FALLBACKS
 
     def test_uses_cache_when_available(self, monkeypatch, tmp_path):
         cache = tmp_path / "mh.json"
