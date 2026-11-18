@@ -97,7 +97,8 @@ def test_campaign_lock_uses_windows_lock_backend_when_fcntl_is_unavailable(isola
     monkeypatch.setattr(content_service, "msvcrt", fake_msvcrt)
 
     with content_service._campaign_lock("windows-lock-test"):
-        assert (isolated_bus / "content" / ".windows-lock-test.lock").read_bytes() == b"\0"
+        # msvcrt can lock past EOF — the lock file stays empty.
+        assert (isolated_bus / "content" / ".windows-lock-test.lock").read_bytes() == b""
 
     assert fake_msvcrt.operations == [(FakeMsvcrt.LK_NBLCK, 1), (FakeMsvcrt.LK_UNLCK, 1)]
 
@@ -1641,7 +1642,7 @@ def test_local_render_bad_fallback_values_rejected(isolated_bus, monkeypatch):
 
 
 def test_local_render_concurrent_lock_rejects_second(isolated_bus, monkeypatch):
-    import fcntl
+    from solocorp_lock import LOCK_EX, LOCK_NB, flock
 
     campaign_id = "phase3-lock-test"
     _ingest_local_script(campaign_id)
@@ -1650,7 +1651,7 @@ def test_local_render_concurrent_lock_rejects_second(isolated_bus, monkeypatch):
 
     lock_path = isolated_bus / "content" / ".local_render.lock"
     with lock_path.open("a+b") as held:
-        fcntl.flock(held.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        flock(held, LOCK_EX | LOCK_NB)
         with pytest.raises(content_service.ContentServiceError, match="another local render in progress"):
             content_service.render_campaign_media_local(campaign_id)
 

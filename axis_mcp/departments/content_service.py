@@ -13,6 +13,7 @@ import json
 import math
 import re
 import subprocess
+import sys
 import unicodedata
 import urllib.error
 import urllib.request
@@ -371,10 +372,9 @@ def _campaign_lock(campaign_key: str) -> Iterator[None]:
             fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
             lock_backend = "fcntl"
         elif msvcrt is not None:
-            handle.seek(0, os.SEEK_END)
-            if handle.tell() == 0:
-                handle.write(b"\0")
-                handle.flush()
+            # msvcrt locks work on an empty file (region may extend past EOF);
+            # never write before acquiring — byte-range locks are mandatory on
+            # Windows, so a pre-lock write would fail while a peer holds it.
             while True:
                 handle.seek(0)
                 try:
@@ -415,22 +415,39 @@ def _local_render_lock() -> Iterator[None]:
     directory.mkdir(parents=True, exist_ok=True)
     lock_path = directory / LOCAL_RENDER_LOCK_NAME
     with lock_path.open("a+b") as handle:
-        if fcntl is None:
+        lock_backend = "fcntl"
+        if fcntl is not None:
+            try:
+                fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except OSError as exc:
+                if exc.errno in {errno.EACCES, errno.EAGAIN, errno.EDEADLK}:
+                    raise ContentServiceError(
+                        "another local render in progress; wait for it to finish and retry"
+                    ) from exc
+                raise
+        elif msvcrt is not None:
+            lock_backend = "msvcrt"
+            handle.seek(0)
+            try:
+                msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+            except OSError as exc:
+                if exc.errno in {errno.EACCES, errno.EAGAIN, errno.EDEADLK}:
+                    raise ContentServiceError(
+                        "another local render in progress; wait for it to finish and retry"
+                    ) from exc
+                raise
+        else:
             raise ContentServiceError(
-                "local render locking is unsupported on this platform (fcntl unavailable)"
+                "local render locking is unsupported on this platform"
             )
-        try:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except OSError as exc:
-            if exc.errno in {errno.EACCES, errno.EAGAIN, errno.EDEADLK}:
-                raise ContentServiceError(
-                    "another local render in progress; wait for it to finish and retry"
-                ) from exc
-            raise
         try:
             yield
         finally:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+            if lock_backend == "fcntl":
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+            else:
+                handle.seek(0)
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
 
 
 def _validated_fallback(value: str | None, *, allowed: set[str], label: str) -> str:
@@ -1877,12 +1894,17 @@ def _local_media_scenes(script: str) -> list[dict[str, Any]]:
 
 
 def _execute_local_media_pipeline(payload: dict[str, Any]) -> dict[str, Any]:
+    venv_python = (
+        ROOT / ".venv" / "Scripts" / "python.exe"
+        if os.name == "nt"
+        else ROOT / ".venv" / "bin" / "python"
+    )
     command = [
-        str(ROOT / ".venv" / "bin" / "python"),
+        str(venv_python),
         str(ROOT / "scripts" / "render_campaign_media_local.py"),
     ]
     if not Path(command[0]).is_file():
-        command[0] = os.environ.get("PYTHON", "python3")
+        command[0] = os.environ.get("PYTHON") or sys.executable
     environment = os.environ.copy()
     environment["SOLOCORP_BUS_ROOT"] = str(bus_store.BUS_ROOT)
     try:

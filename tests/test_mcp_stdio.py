@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -17,7 +18,7 @@ async def test_content_mcp_stdio_handshake_and_tool_call(tmp_path):
     env = os.environ.copy()
     env["SOLOCORP_BUS_ROOT"] = str(tmp_path / "central_bus")
     params = StdioServerParameters(
-        command=str(ROOT / ".venv/bin/python3"),
+        command=sys.executable,
         args=["-m", "axis_mcp.departments.content_mcp"],
         cwd=str(ROOT),
         env=env,

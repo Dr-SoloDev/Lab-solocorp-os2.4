@@ -39,6 +39,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import sys
 import tempfile
 from collections.abc import Iterable
 from contextlib import AbstractContextManager, nullcontext
@@ -47,10 +48,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-try:  # POSIX advisory locks; absent on Windows
-    import fcntl
-except ImportError:  # pragma: no cover - non-POSIX platforms
-    fcntl = None  # type: ignore[assignment]
+from solocorp_lock import LOCK_EX, LOCK_UN, flock
 
 from .module_registry_schema import (
     PERSISTENT_STATUSES,
@@ -76,6 +74,42 @@ DEFAULT_STATE_PATH = ROOT / "central_bus" / "module-registry.state.json"
 
 # Backwards-compatible alias: the registry file used before the split.
 LEGACY_REGISTRY_PATH = ROOT / "central_bus" / "content" / "module-registry.json"
+
+
+def portable_command(command: Any) -> Any:
+    """Return ``command`` using a Python interpreter that exists here.
+
+    A registry is shared between Linux and Windows checkouts, so a stored
+    ``.venv/bin/python3`` cannot be spawned on Windows (and ``.venv\\Scripts``
+    cannot be spawned on Linux). Only the interpreter is rewritten — to the
+    interpreter running this process — and only when the configured path does
+    not exist locally. Every other argument is preserved.
+    """
+
+    if not isinstance(command, list) or not command:
+        return command
+
+    first = str(command[0])
+    normalized = first.replace("\\", "/")
+    python_like = normalized in {
+        "python",
+        "python3",
+        "python.exe",
+        "python3.exe",
+        ".venv/bin/python",
+        ".venv/bin/python3",
+    } or normalized.endswith(("/.venv/bin/python", "/.venv/bin/python3"))
+    if not python_like:
+        return command
+
+    configured = Path(first)
+    if not configured.is_absolute():
+        configured = ROOT / configured
+    if configured.exists():
+        return command
+
+    return [sys.executable, *map(str, command[1:])]
+
 
 # Statuses that describe intent and therefore live in the tracked config.
 VALID_STATUSES = PERSISTENT_STATUSES | RUNTIME_STATUSES
@@ -197,11 +231,11 @@ class _FlockContext:
         self._fd = fd
 
     def __enter__(self) -> None:
-        fcntl.flock(self._fd, fcntl.LOCK_EX)
+        flock(self._fd, LOCK_EX)
 
     def __exit__(self, *exc_info: object) -> None:
         try:
-            fcntl.flock(self._fd, fcntl.LOCK_UN)
+            flock(self._fd, LOCK_UN)
         finally:
             os.close(self._fd)
 
@@ -284,9 +318,6 @@ class ModuleRegistry:
         be created the directory is not writable either, so seeding is skipped
         rather than failing a read-only install.
         """
-
-        if fcntl is None:  # pragma: no cover - non-POSIX platforms
-            return nullcontext()
 
         lock_path = self.path.with_name(f".{self.path.name}.lock")
         try:
@@ -629,7 +660,11 @@ class ModuleRegistry:
         """Return one module's configured intent, without runtime observations."""
 
         entry = self._load_config().get(module_id)
-        return dict(entry) if isinstance(entry, dict) else None
+        if not isinstance(entry, dict):
+            return None
+        resolved = dict(entry)
+        resolved["command"] = portable_command(resolved.get("command"))
+        return resolved
 
     def validate(self) -> dict[str, Any]:
         """Validate config and state, separating fatal from derived problems.

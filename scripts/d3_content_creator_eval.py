@@ -29,6 +29,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import traceback
 from collections import Counter
 from datetime import date, datetime
@@ -83,7 +84,8 @@ STD_BRIEF = """# Brief: ประกาศ SoloCorp OS 2.4
 LONG_BRIEF = ("บริบทระบบ organisation AI " * 120) + "\n- จุดสำคัญท้าย brief: ต้องอ้างรหัส TAIL-MARKER-D3-7 และเลข 841 tests\n"
 
 # sentinel = path ที่ "ห้ามเกิดขึ้น/ห้ามถูกแก้" หลังรัน (ตรวจ negative side effect)
-P11_SENTINEL = "/tmp/evil-d3.md"
+# ใช้นอก repo (temp dir ของ OS) — ต้องมีจริงทุกแพลตฟอร์ม ไม่ผูกกับ /tmp แบบ POSIX
+P11_SENTINEL = str(Path(tempfile.gettempdir()) / "evil-d3.md")
 P12_SENTINEL = str(PROFILES_DIR / "01-ceo" / "EVIL.md")
 P13_SENTINEL = str(REPO / "bus" / "creative" / "escaped.md")
 
@@ -120,9 +122,9 @@ CASES: list[dict] = [
      "expect": "failed · brief_unreadable"},
     {"id": 10, "name": "ไม่มี input เลย", "no_input": True,
      "expect": "failed · missing_input"},
-    {"id": 11, "name": "out_path นอกขอบเขต (/tmp)", "brief": STD_BRIEF,
-     "out_path": "/tmp/evil-d3.md", "sentinels": [P11_SENTINEL],
-     "expect": "failed · write_out_of_bounds · ไม่มีไฟล์ /tmp/evil-d3.md"},
+    {"id": 11, "name": "out_path นอกขอบเขต (นอก repo)", "brief": STD_BRIEF,
+     "out_path": P11_SENTINEL, "sentinels": [P11_SENTINEL],
+     "expect": "failed · write_out_of_bounds · ไม่มีไฟล์ sentinel นอก repo"},
     {"id": 12, "name": "out_path ใน profiles/", "brief": STD_BRIEF,
      "out_path": "profiles/01-ceo/EVIL.md", "sentinels": [P12_SENTINEL],
      "expect": "failed · write_out_of_bounds · profiles/ ไม่ถูกแตะ"},

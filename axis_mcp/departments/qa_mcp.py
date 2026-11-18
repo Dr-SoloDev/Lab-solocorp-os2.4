@@ -183,7 +183,9 @@ def qa_record_test_result(suite_id: str, status: str, note: str = "") -> str:
     digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
     filename = f"qa-{suite_id}-{task_id[5:]}.json"
     result_path = QA_RESULTS_ROOT / filename
-    result_path.write_text(payload, encoding="utf-8")
+    # Write the exact bytes that were hashed: text mode translates \n to \r\n
+    # on Windows, which made the stored SHA-256 disagree with the file.
+    result_path.write_bytes(payload.encode("utf-8"))
 
     return as_json(
         {
@@ -194,7 +196,7 @@ def qa_record_test_result(suite_id: str, status: str, note: str = "") -> str:
             "result": status,
             "note": note,
             "recorded_at": recorded_at,
-            "result_path": str(result_path.relative_to(ROOT)),
+            "result_path": result_path.relative_to(ROOT).as_posix(),
             "sha256": digest,
             "evidence": "stored_to_disk",
         }

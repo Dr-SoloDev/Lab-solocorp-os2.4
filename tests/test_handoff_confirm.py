@@ -65,7 +65,7 @@ def sample_handoff_file(tmp_path: Path) -> str:
     }
 
     filepath = date_dir / "HANDOFF-001.json"
-    with open(filepath, "w") as f:
+    with open(filepath, "w", encoding="utf-8") as f:
         json.dump(handoff_data, f, indent=2)
 
     return str(tmp_path)
@@ -89,7 +89,7 @@ def sample_command_file(tmp_path: Path) -> str:
     }
 
     filepath = date_dir / "CMD-042.json"
-    with open(filepath, "w") as f:
+    with open(filepath, "w", encoding="utf-8") as f:
         json.dump(cmd_data, f, indent=2)
 
     return str(tmp_path)
@@ -247,7 +247,7 @@ class TestSaveConfirmation:
             assert "HANDOFF-005" in filepath
             assert "acknowledged" in filepath
 
-            with open(filepath, "r") as f:
+            with open(filepath, "r", encoding="utf-8") as f:
                 saved = json.load(f)
             assert saved["handoff_id"] == "HANDOFF-005"
             assert saved["status"] == "acknowledged"

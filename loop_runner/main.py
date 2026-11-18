@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from loop_runner.loops import ALL_LOOPS
 from loop_runner.state import record
 from loop_runner.verdict_log import append_verdict
+from solocorp_lock import LOCK_EX, LOCK_NB, flock
 
 
 def heartbeat() -> str:
@@ -21,13 +22,11 @@ def heartbeat() -> str:
 
 
 def main(dry_run: bool = False) -> None:
-    import fcntl
-
     # Single-flight: กัน cron รอบซ้อน (forum-20260927-004)
     lock_path = Path(__file__).parent / ".main.lock"
     with open(lock_path, "w") as lock_f:
         try:
-            fcntl.flock(lock_f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            flock(lock_f, LOCK_EX | LOCK_NB)
         except OSError:
             print("[scheduler] SKIP: another run in progress (locked)")
             return
