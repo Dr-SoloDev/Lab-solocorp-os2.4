@@ -78,7 +78,12 @@ def bind_socket(host: str, port: int) -> socket.socket:
 
     family = socket.AF_INET6 if ":" in host else socket.AF_INET
     sock = socket.socket(family, socket.SOCK_STREAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    # Windows allows a second bind to the same port with SO_REUSEADDR; only
+    # SO_EXCLUSIVEADDRUSE gives POSIX-style "port already in use" behaviour.
+    if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+    else:
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
         sock.bind((host, port))
     except OSError as exc:

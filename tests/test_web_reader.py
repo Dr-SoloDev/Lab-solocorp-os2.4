@@ -11,6 +11,7 @@ Live network tests are skipped when docker is unavailable so CI stays offline-sa
 from __future__ import annotations
 
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -29,8 +30,27 @@ from solocorp_skills.web import (  # noqa: E402
     wrap_untrusted,
 )
 
-DOCKER = shutil.which("docker") is not None
-needs_docker = pytest.mark.skipif(not DOCKER, reason="docker ไม่มี — ข้าม test ที่ต้องรันจริง")
+def _docker_daemon_ready() -> bool:
+    """True only when the docker CLI exists *and* its daemon answers."""
+
+    if shutil.which("docker") is None:
+        return False
+    try:
+        probe = subprocess.run(
+            ["docker", "info"],
+            capture_output=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    return probe.returncode == 0
+
+
+DOCKER = _docker_daemon_ready()
+needs_docker = pytest.mark.skipif(
+    not DOCKER, reason="docker daemon ไม่พร้อม — ข้าม test ที่ต้องรันจริง"
+)
 
 
 # ══════════════════════════════════════════════════════════════════════

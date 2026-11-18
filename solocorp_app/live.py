@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import threading
 import time
@@ -189,6 +190,17 @@ def normalize_session(raw: Any) -> dict[str, Any]:
     }
 
 
+def _resolved_cli(command: list[str]) -> list[str]:
+    """Resolve the CLI name and run npm-style ``.cmd`` shims on Windows."""
+
+    if not command:
+        return command
+    executable = shutil.which(command[0]) or command[0]
+    if os.name == "nt" and executable.lower().endswith((".cmd", ".bat")):
+        return ["cmd", "/c", executable, *command[1:]]
+    return [executable, *command[1:]]
+
+
 def _sessions_from_cli(
     limit: int, *, command: list[str] | None = None
 ) -> tuple[list[dict[str, Any]] | None, str | None]:
@@ -198,7 +210,7 @@ def _sessions_from_cli(
     ใช้ไม่ได้ — caller เป็นคนตัดสินใจ fail-open ต่อ.
     """
 
-    cmd = command or ["opencode", "session", "list", "--format", "json"]
+    cmd = _resolved_cli(command or ["opencode", "session", "list", "--format", "json"])
     try:
         proc = subprocess.run(
             cmd,

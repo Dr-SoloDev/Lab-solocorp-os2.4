@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import stat
+import sys
 from pathlib import Path
 
 import pytest
@@ -66,6 +67,10 @@ def test_save_writes_choice_without_the_secret(store):
     assert "sk-super-secret-value" not in json.dumps(status)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="POSIX mode bits (0600) are not enforced by Windows; ACLs would be the equivalent",
+)
 def test_credentials_file_is_owner_only(store):
     store.save(provider="openai", model="gpt-test", api_key="sk-secret-abcdef")
 

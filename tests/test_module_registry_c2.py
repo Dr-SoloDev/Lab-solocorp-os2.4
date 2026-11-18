@@ -626,7 +626,9 @@ def _sandbox(tmp_path: Path) -> tuple[Path, dict[str, str]]:
     )
     env = {
         **os.environ,
-        "PYTHONPATH": str(sandbox),
+        # sandbox first so axis_mcp comes from the copy, repo root second so
+        # shared modules (solocorp_skills, solocorp_lock) remain importable.
+        "PYTHONPATH": os.pathsep.join([str(sandbox), str(ROOT)]),
         "SOLOCORP_BUS_ROOT": str(tmp_path / "bus"),
         "SOLOCORP_TASKS_ROOT": str(tmp_path / "tasks"),
         "SOLOCORP_QA_RESULTS_ROOT": str(tmp_path / "qa_results"),

@@ -22,6 +22,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Optional
 from urllib.parse import quote_plus, urlparse
@@ -133,6 +134,118 @@ def wrap_untrusted(text: str, url: str = "") -> str:
 # ══════════════════════════════════════════════════════════════════════
 
 
+def _run_docker_native(args: list[str], timeout: int) -> str:
+    """Windows path: call docker directly instead of the bash ``web-read``.
+
+    ``tools/carbonyl/web-read`` is a bash script; Git Bash is not guaranteed on
+    Windows. The script only builds/runs the carbonyl image and pipes the raw
+    output through ``extract.py``, so do the same steps from Python.
+    """
+
+    url = ""
+    wait, cols, rows = 12, 120, 40
+    network: Optional[str] = None
+    json_out = False
+
+    index = 0
+    while index < len(args):
+        arg = args[index]
+        if arg in {"--wait", "--cols", "--rows", "--network"}:
+            value = int(args[index + 1]) if arg != "--network" else args[index + 1]
+            if arg == "--wait":
+                wait = value  # type: ignore[assignment]
+            elif arg == "--cols":
+                cols = value  # type: ignore[assignment]
+            elif arg == "--rows":
+                rows = value  # type: ignore[assignment]
+            else:
+                network = value  # type: ignore[assignment]
+            index += 2
+        elif arg == "--json":
+            json_out = True
+            index += 1
+        elif not url:
+            url = arg
+            index += 1
+        else:
+            raise WebError(f"unknown option: {arg}")
+
+    if not url:
+        raise WebError("usage: web-read <url> [--wait N] [--cols N] [--rows N]")
+
+    image = os.environ.get("WEB_READ_IMAGE", "solocorp/carbonyl-reader:latest")
+    docker = shutil.which("docker") or "docker"
+    inspect = subprocess.run(
+        [docker, "image", "inspect", image],
+        capture_output=True,
+        timeout=30,
+        check=False,
+    )
+    if inspect.returncode != 0:
+        build = subprocess.run(
+            [docker, "build", "-q", "-t", image, str(WEB_READ_CLI.parent)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=max(timeout, 600),
+            check=False,
+        )
+        if build.returncode != 0:
+            detail = (build.stderr or build.stdout or "").strip()[-400:]
+            raise WebError(f"docker build ล้มเหลว: {detail or 'no output'}")
+
+    run_cmd = [docker, "run", "--rm"]
+    if network:
+        run_cmd += ["--network", network]
+    run_cmd += [
+        "-e", f"CARBONYL_WAIT={wait}",
+        "-e", f"CARBONYL_COLS={cols}",
+        "-e", f"CARBONYL_ROWS={rows}",
+        image,
+        url,
+    ]
+    try:
+        proc = subprocess.run(
+            run_cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise WebError(f"อ่านเว็บเกินเวลา ({timeout}s)") from exc
+    except OSError as exc:
+        raise WebError(f"เรียก docker ไม่สำเร็จ: {exc}") from exc
+
+    raw = (proc.stdout or "").strip()
+    if not raw:
+        raise WebError(
+            "ไม่ได้ output — เว็บอาจโหลดไม่ทันหรือถูกบล็อก (ลอง --wait 20)"
+        )
+
+    extract_cmd = [sys.executable, str(WEB_READ_CLI.parent / "extract.py")]
+    if json_out:
+        extract_cmd.append("--json")
+    parsed = subprocess.run(
+        extract_cmd,
+        input=raw,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=60,
+        check=False,
+    )
+    out = (parsed.stdout or "").strip()
+    if not out:
+        err = (parsed.stderr or "").strip()
+        raise WebError(err or "web-read ไม่ได้ output")
+    return out
+
+
 def _run_cli(args: list[str], timeout: int) -> str:
     """เรียก web-read CLI แล้วคืน stdout"""
     if not WEB_READ_CLI.exists():
@@ -141,6 +254,9 @@ def _run_cli(args: list[str], timeout: int) -> str:
         )
     if shutil.which("docker") is None:
         raise WebError("ไม่พบ docker — web-read ต้องใช้ docker เพื่อรัน Chromium")
+
+    if os.name == "nt":
+        return _run_docker_native(args, timeout)
 
     try:
         proc = subprocess.run(

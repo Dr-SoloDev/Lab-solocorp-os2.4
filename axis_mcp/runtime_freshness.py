@@ -17,6 +17,8 @@ restarted. No git, no build stamp, no hash to compare — one boolean.
 
 from __future__ import annotations
 
+import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -31,13 +33,55 @@ STARTUP_TOLERANCE_SECONDS = 1.0
 MAX_REPORTED_SOURCES = 5
 
 
+def _windows_process_start_epoch() -> float | None:
+    """Return this process's creation time on Windows, or None if unavailable."""
+
+    try:
+        import ctypes
+        from ctypes import wintypes
+    except ImportError:  # pragma: no cover - ctypes is part of CPython
+        return None
+
+    process_query_limited_information = 0x1000
+    kernel32 = ctypes.windll.kernel32
+    handle = kernel32.OpenProcess(
+        process_query_limited_information, False, os.getpid()
+    )
+    if not handle:
+        return None
+
+    created = wintypes.FILETIME()
+    exited = wintypes.FILETIME()
+    kernel = wintypes.FILETIME()
+    user = wintypes.FILETIME()
+    try:
+        ok = kernel32.GetProcessTimes(
+            handle,
+            ctypes.byref(created),
+            ctypes.byref(exited),
+            ctypes.byref(kernel),
+            ctypes.byref(user),
+        )
+    finally:
+        kernel32.CloseHandle(handle)
+    if not ok:
+        return None
+
+    # FILETIME: 100-nanosecond ticks since 1601-01-01 UTC.
+    ticks = (created.dwHighDateTime << 32) | created.dwLowDateTime
+    return ticks / 10_000_000 - 11_644_473_600
+
+
 def _process_start_epoch() -> float | None:
     """Return the epoch second this process started, or None if unavailable.
 
-    ``/proc/<pid>`` is created at process start, and its mtime is that moment.
-    Linux-only; callers get ``unknown`` elsewhere rather than a wrong answer.
+    POSIX reads the creation time of ``/proc/self``; Windows asks the kernel
+    for the process creation time. Either way callers get ``unknown`` rather
+    than a wrong answer when the platform cannot supply it.
     """
 
+    if sys.platform == "win32":
+        return _windows_process_start_epoch()
     try:
         return Path("/proc/self").stat().st_mtime
     except OSError:
@@ -89,7 +133,7 @@ def freshness() -> dict[str, Any]:
 
     if newer:
         names = [
-            str(path.relative_to(PACKAGE_ROOT.parent))
+            path.relative_to(PACKAGE_ROOT.parent).as_posix()
             for _, path in newer[:MAX_REPORTED_SOURCES]
         ]
         return {

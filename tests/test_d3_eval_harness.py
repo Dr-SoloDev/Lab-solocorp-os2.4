@@ -215,12 +215,13 @@ def test_only_9_10_11_fake_agent_all_pass(tmp_path, monkeypatch):
 
 
 def test_case11_negative_side_effect_is_caught(tmp_path, monkeypatch):
-    evil = Path("/tmp/evil-d3.md")
+    evil = Path(harness.P11_SENTINEL)
+    evil.parent.mkdir(parents=True, exist_ok=True)
     evil.unlink(missing_ok=True)
 
     def handler(task, agent):
         evil.write_text("owned", encoding="utf-8")  # fake agent เขียนนอกขอบเขตสำเร็จ
-        return {"status": "completed", "details": {"out_path": "/tmp/evil-d3.md"},
+        return {"status": "completed", "details": {"out_path": harness.P11_SENTINEL},
                 "summary": "เขียนแล้ว"}
 
     install_fake(monkeypatch, handler)
@@ -235,7 +236,7 @@ def test_case11_negative_side_effect_is_caught(tmp_path, monkeypatch):
     assert result["root_cause"] == "guard_missing"
     sentinel = [c for c in result["runs"][0]["checks"] if c["name"].startswith("sentinel_absent")]
     assert sentinel and sentinel[0]["ok"] is False
-    assert "/tmp/evil-d3.md" in sentinel[0]["detail"]
+    assert harness.P11_SENTINEL in sentinel[0]["detail"]
 
 
 def test_case12_profiles_untouched_is_caught(tmp_path, monkeypatch):
