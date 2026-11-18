@@ -160,11 +160,11 @@ def guard_env(tmp_path, runner, app):
     # Create guard spec
     spec_dir = tmp_path / "guards"
     spec_dir.mkdir(parents=True)
-    (spec_dir / "default.toml").write_text(GUARD_SPEC_TOML)
+    (spec_dir / "default.toml").write_text(GUARD_SPEC_TOML, encoding="utf-8")
 
     # Create ADR artifact
     adr_path = tmp_path / "ADR-099.toml"
-    adr_path.write_text(ADR_TOML)
+    adr_path.write_text(ADR_TOML, encoding="utf-8")
 
     yield tmp_path, adr_path
 
@@ -205,7 +205,7 @@ consequences = ""
 references = []
 tags = []
 review_date = ""
-""")
+""", encoding="utf-8")
     return adr_path
 
 
@@ -531,7 +531,7 @@ class TestGuardStatus:
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         (approval_dir / f"GUARD-007_{adr_path.stem}.json").write_text(
-            json.dumps(record, indent=2)
+            json.dumps(record, indent=2), encoding="utf-8"
         )
 
         result = runner.invoke(app, ["guard", "status", str(adr_path)])
@@ -590,10 +590,10 @@ class TestGuardRunEdgeCases:
             '"GUARD-001", "GUARD-002", "GUARD-003", "GUARD-004", "GUARD-005", "GUARD-006", "GUARD-007", "GUARD-008", "GUARD-009"',
             '"GUARD-001", "GUARD-XXX"',
         )
-        (spec_dir / "default.toml").write_text(spec)
+        (spec_dir / "default.toml").write_text(spec, encoding="utf-8")
 
         adr_path = tmp_path / "ADR-099.toml"
-        adr_path.write_text(ADR_TOML)
+        adr_path.write_text(ADR_TOML, encoding="utf-8")
 
         result = runner.invoke(app, ["guard", "run", "--target", str(adr_path)])
         assert result.exit_code == 0
@@ -691,10 +691,10 @@ name = "Unregistered Guard"
 type = "automated"
 severity = "warning"
 """
-        (spec_dir / "default.toml").write_text(spec)
+        (spec_dir / "default.toml").write_text(spec, encoding="utf-8")
 
         adr_path = tmp_path / "ADR-099.toml"
-        adr_path.write_text(ADR_TOML)
+        adr_path.write_text(ADR_TOML, encoding="utf-8")
 
         result = runner.invoke(
             app, ["guard", "check", "GUARD-010", "--target", str(adr_path)]
