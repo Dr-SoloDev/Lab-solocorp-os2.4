@@ -1,9 +1,10 @@
-import fcntl
 import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Literal
+
+from solocorp_lock import LOCK_EX, LOCK_UN, flock
 
 log = logging.getLogger(__name__)
 
@@ -33,9 +34,9 @@ def _log_guard_event(project_id: str, event: dict) -> None:
     log_path = _safe_project_path(GOV_LOG_DIR, project_id) / "guard_events.jsonl"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with open(log_path, "a") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        flock(f, LOCK_EX)
         f.write(json.dumps(event) + "\n")
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
 
 
 # ── State file I/O ───────────────────────────────────────────────────
@@ -50,9 +51,9 @@ def _state_path(project_id: str) -> Path:
 def _write(project_id: str, state: dict) -> None:
     path = _state_path(project_id)
     with open(path, "w") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        flock(f, LOCK_EX)
         json.dump(state, f, indent=2)
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
 
 
 def init_project(project_id: str, name: str = "", threshold: str = "auto") -> dict:
@@ -125,7 +126,7 @@ def update_phase(project_id: str, phase: str, status: PhaseStatus, owner: str = 
 
     path = _state_path(project_id)
     with open(path, "r+") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        flock(f, LOCK_EX)
         state = json.load(f)
         if status != "failed":
             _validate_phase_transition(state["phases"], phase, status)
@@ -169,7 +170,7 @@ def update_phase(project_id: str, phase: str, status: PhaseStatus, owner: str = 
         f.seek(0)
         json.dump(state, f, indent=2)
         f.truncate()
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
     return state
 
 
@@ -191,7 +192,7 @@ def send_back(project_id: str, phase: str, *, missing: list[str], by: str = "qa_
     now = datetime.now(timezone.utc).isoformat()
     path = _state_path(project_id)
     with open(path, "r+") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        flock(f, LOCK_EX)
         state = json.load(f)
         blockers = state.setdefault("blockers", [])
         attempt = sum(
@@ -226,7 +227,7 @@ def send_back(project_id: str, phase: str, *, missing: list[str], by: str = "qa_
         f.seek(0)
         json.dump(state, f, indent=2)
         f.truncate()
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
 
     _log_guard_event(project_id, {"ts": now, "event": event, "guard": by, "detail": detail})
     return state
@@ -277,7 +278,7 @@ def update_governance(project_id: str, updates: dict) -> dict:
     allowed = {"rfcs", "adrs", "active_guards", "guard_status", "complexity_score", "threshold"}
     path = _state_path(project_id)
     with open(path, "r+") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        flock(f, LOCK_EX)
         state = json.load(f)
         gov = state.setdefault("governance", {
             "rfcs": [], "adrs": [], "active_guards": [],
@@ -290,7 +291,7 @@ def update_governance(project_id: str, updates: dict) -> dict:
         f.seek(0)
         json.dump(state, f, indent=2)
         f.truncate()
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
     return state
 
 
@@ -306,7 +307,7 @@ def add_guard(project_id: str, guard_name: str) -> dict:
     }
     path = _state_path(project_id)
     with open(path, "r+") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        flock(f, LOCK_EX)
         state = json.load(f)
         gov = state.setdefault("governance", {
             "rfcs": [], "adrs": [], "active_guards": [],
@@ -320,7 +321,7 @@ def add_guard(project_id: str, guard_name: str) -> dict:
         f.seek(0)
         json.dump(state, f, indent=2)
         f.truncate()
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
 
     _log_guard_event(project_id, {
         "ts": guard_entry["added_at"],
@@ -340,7 +341,7 @@ def resolve_guard(project_id: str, guard_name: str, passed: bool) -> dict:
     resolved_at = datetime.now(timezone.utc).isoformat()
     path = _state_path(project_id)
     with open(path, "r+") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        flock(f, LOCK_EX)
         state = json.load(f)
         gov = state.setdefault("governance", {
             "rfcs": [], "adrs": [], "active_guards": [],
@@ -361,7 +362,7 @@ def resolve_guard(project_id: str, guard_name: str, passed: bool) -> dict:
         f.seek(0)
         json.dump(state, f, indent=2)
         f.truncate()
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
 
     if removed:
         _log_guard_event(project_id, {

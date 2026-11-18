@@ -23,6 +23,8 @@ from typing import Optional
 from central_bus.models import BusMessage
 from central_bus.queue import enqueue
 
+from ._process import pid_is_running, spawn_detached
+
 # AO Bridge (optional — graceful degradation ถ้า import ล้มเหลว)
 try:
     from .ao import ao_listener_loop, process_ao_queue
@@ -391,11 +393,7 @@ def _read_pid() -> Optional[int]:
 
 
 def _is_running(pid: int) -> bool:
-    try:
-        os.kill(pid, 0)
-        return True
-    except OSError:
-        return False
+    return pid_is_running(pid)
 
 
 def daemon_start(gov_dir: Path = GOV_DIR, detach: bool = True) -> None:
@@ -408,6 +406,17 @@ def daemon_start(gov_dir: Path = GOV_DIR, detach: bool = True) -> None:
     if not detach:
         log.info("Starting bridge in foreground …")
         watch_loop(gov_dir)
+        return
+
+    if os.name == "nt":  # no fork on Windows: detach a child process instead
+        code = (
+            "from pathlib import Path\n"
+            "from govctl_cli.bridge import cmd_start\n"
+            f"cmd_start(Path({str(gov_dir)!r}), detach=False)\n"
+        )
+        pid = spawn_detached(code, cwd=Path(__file__).resolve().parent.parent)
+        _write_pid(pid)
+        log.info("Bridge daemon started (PID %d)", pid)
         return
 
     # --- daemonize via double-fork ---
