@@ -338,7 +338,7 @@
       },
       "central-bus": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "axis_mcp.bus_mcp"],
+        "command": ["/data/projects/Lab-solocorp-os2.4/.venv/bin/python3", "-m", "axis_mcp.bus_mcp"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -350,7 +350,7 @@
       },
       "unified-technical": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "axis_mcp.unified_technical.server"],
+        "command": ["/data/projects/Lab-solocorp-os2.4/.venv/bin/python3", "-m", "axis_mcp.unified_technical.server"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
@@ -362,7 +362,7 @@
       },
       "content-creator": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.content_mcp"],
+        "command": ["/data/projects/Lab-solocorp-os2.4/.venv/bin/python3", "-m", "axis_mcp.departments.content_mcp"],
         "cwd": ".",
         "disabled": false,
         "timeout": {
