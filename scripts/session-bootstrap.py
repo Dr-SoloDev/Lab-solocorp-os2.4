@@ -18,6 +18,8 @@ BASE = Path(__file__).parent.parent
 BRAIN_DIR = BASE / "brain"
 DISPATCH_DIR = BASE / "bus/dispatch"
 QUEUE_DIR = BASE / "bus/queue"
+CANONICAL_VENV = Path("/data/projects/Lab-solocorp-os2.4/.venv")
+CANONICAL_PY = CANONICAL_VENV / "bin/python3"
 
 
 def _git(cmd: list[str]) -> str:
@@ -26,8 +28,10 @@ def _git(cmd: list[str]) -> str:
 
 
 def _rag(v: float) -> str:
-    if v >= 90: return "🟢"
-    if v >= 70: return "🟡"
+    if v >= 90:
+        return "🟢"
+    if v >= 70:
+        return "🟡"
     return "🔴"
 
 
@@ -50,7 +54,7 @@ def last_session() -> dict:
             summary["mode"] = line.split("**Mode:**")[-1].strip()
         if "### Key Decisions" in line:
             decisions = []
-            for j in range(i+1, min(i+20, len(lines))):
+            for j in range(i + 1, min(i + 20, len(lines))):
                 if lines[j].startswith("|") and "|" in lines[j]:
                     parts = [p.strip() for p in lines[j].split("|")]
                     if len(parts) >= 3:
@@ -77,15 +81,22 @@ def active_dispatches() -> list[dict]:
                 continue
             try:
                 data = json.loads(f.read_text())
-                status = data.get("status", data.get("command", {}).get("status", "unknown"))
+                status = data.get(
+                    "status", data.get("command", {}).get("status", "unknown")
+                )
                 if status in ("pending", "in_progress", "assigned"):
-                    active.append({
-                        "id": f.stem,
-                        "date": date_dir.name,
-                        "status": status,
-                        "summary": data.get("summary", data.get("command", {}).get("description", "")),
-                        "priority": data.get("command", {}).get("priority", "P2"),
-                    })
+                    active.append(
+                        {
+                            "id": f.stem,
+                            "date": date_dir.name,
+                            "status": status,
+                            "summary": data.get(
+                                "summary",
+                                data.get("command", {}).get("description", ""),
+                            ),
+                            "priority": data.get("command", {}).get("priority", "P2"),
+                        }
+                    )
             except (json.JSONDecodeError, KeyError):
                 pass
     return active
@@ -139,6 +150,113 @@ def system_health() -> dict:
     return {"healthy": healthy, "paths": {k: v.exists() for k, v in paths.items()}}
 
 
+def preflight_venv() -> dict:
+    """Check .venv symlink — Worktree MCP Contract (plan A)."""
+    venv = BASE / ".venv"
+    py = venv / "bin/python3"
+    if not venv.exists() and not venv.is_symlink():
+        return {
+            "ok": False,
+            "status": "missing",
+            "detail": f"{venv} ไม่มี — MCP spawn จะ NotFound",
+            "fix": f"ln -s {CANONICAL_VENV} {venv}  หรือ  bash scripts/worktree-setup.sh --fix-only",
+        }
+    if venv.is_symlink():
+        target = (
+            venv.resolve()
+            if venv.exists()
+            else Path(venv.readlink() if hasattr(venv, "readlink") else "")
+        )
+        # readlink fallback
+        try:
+            link_target = Path(venv.readlink()) if hasattr(venv, "readlink") else target
+        except Exception:
+            link_target = target
+        # check raw link text
+        try:
+            raw = str((BASE / ".venv").readlink())
+        except Exception:
+            raw = str(target)
+        if raw != str(CANONICAL_VENV) and str(target) != str(CANONICAL_VENV):
+            # allow if resolves to canonical
+            if target != CANONICAL_VENV:
+                return {
+                    "ok": False,
+                    "status": "wrong_target",
+                    "detail": f".venv symlink ชี้ไป {raw} (resolve {target}) ไม่ใช่ {CANONICAL_VENV}",
+                    "fix": f"ln -snf {CANONICAL_VENV} {venv}",
+                }
+    if not py.exists():
+        return {
+            "ok": False,
+            "status": "broken",
+            "detail": f"{py} ไม่มี/h execute ไม่ได้ — venv ชี้ผิดหรือ canonical หาย",
+            "fix": f"ls -la {venv} && ls -la {CANONICAL_VENV}/bin/python3",
+        }
+    # also check not a real dir copy (should be symlink per contract)
+    if venv.is_dir() and not venv.is_symlink():
+        return {
+            "ok": False,
+            "status": "not_symlink",
+            "detail": ".venv เป็น directory จริง ไม่ใช่ symlink — เปลือง disk + ไม่ตาม contract",
+            "fix": f"rm -rf {venv} && ln -s {CANONICAL_VENV} {venv}",
+        }
+    return {
+        "ok": True,
+        "status": "ok",
+        "detail": f".venv -> {CANONICAL_VENV}",
+        "fix": "",
+    }
+
+
+def preflight_mcp_config() -> dict:
+    """Check opencode.json(c) ไม่มี relative .venv/bin/python3 เหลือ."""
+    issues: list[str] = []
+    for fname in ("opencode.json", "opencode.jsonc"):
+        p = BASE / fname
+        if not p.exists():
+            continue
+        try:
+            text = p.read_text()
+        except Exception as e:
+            issues.append(f"{fname}: อ่านไม่ได้ ({e})")
+            continue
+        # relative pattern: ".venv/bin/python3" quoted
+        if '".venv/bin/python3"' in text or "' .venv" in text:
+            issues.append(
+                f'{fname}: มี \'".venv/bin/python3"\' แบบ relative — ต้องเป็น "{CANONICAL_PY}"'
+            )
+        # catch any bare .venv in command without absolute prefix
+        # count lines with command containing .venv but not canonical
+        for i, line in enumerate(text.splitlines(), 1):
+            if ".venv/bin/python3" in line and str(CANONICAL_VENV) not in line:
+                # allow stealth-browser venv (tools/.../venv) — not counted
+                if "tools/stealth-browser-mcp" in line:
+                    continue
+                issues.append(f"{fname}:{i}: relative .venv → {line.strip()[:90]}")
+                break
+    if issues:
+        return {
+            "ok": False,
+            "status": "relative_found",
+            "detail": "; ".join(issues[:3]),
+            "fix": f"แก้ {CANONICAL_PY} ให้เป็น absolute ทุกจุด — ดู docs/runbooks/WORKTREE-MCP-CONTRACT.md §4",
+        }
+    return {
+        "ok": True,
+        "status": "ok",
+        "detail": "opencode.json(c) absolute OK",
+        "fix": "",
+    }
+
+
+def preflight_all() -> dict:
+    v = preflight_venv()
+    c = preflight_mcp_config()
+    ok = v["ok"] and c["ok"]
+    return {"ok": ok, "venv": v, "mcp_config": c}
+
+
 def bootstrap() -> dict:
     """Generate complete bootstrap context"""
     health = system_health()
@@ -146,7 +264,8 @@ def bootstrap() -> dict:
     disp = active_dispatches()
     ses = last_session()
     pending = pending_from_brain()
-    
+    preflight = preflight_all()
+
     # Calculate health score
     score = 100
     if not health["healthy"]:
@@ -157,7 +276,9 @@ def bootstrap() -> dict:
         score -= 15
     if not pending:
         score += 5  # No backlog = good
-    
+    if not preflight["ok"]:
+        score -= 30  # MCP pre-flight fail = red
+
     return {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "health": {
@@ -165,6 +286,7 @@ def bootstrap() -> dict:
             "rag": _rag(score),
             "systems": health["paths"],
         },
+        "preflight": preflight,
         "git": {
             "branch": _git(["rev-parse", "--abbrev-ref", "HEAD"]),
             "last_commit": _git(["log", "-1", "--oneline"]),
@@ -180,7 +302,7 @@ def bootstrap() -> dict:
             "active_dispatches": disp,
             "queue": q,
         },
-        "reminder": "เปิด rules/INDEX.md เมื่อไม่แน่ใจ behavior — แต่ละพฤติกรรมจบใน 1 ไฟล์"
+        "reminder": "เปิด rules/INDEX.md เมื่อไม่แน่ใจ behavior — แต่ละพฤติกรรมจบใน 1 ไฟล์",
     }
 
 
@@ -192,29 +314,47 @@ def format_markdown(data: dict) -> str:
         "",
     ]
     # Systems
-    ok = [k for k, v in data['health']['systems'].items() if v]
-    fail = [k for k, v in data['health']['systems'].items() if not v]
+    ok = [k for k, v in data["health"]["systems"].items() if v]
+    fail = [k for k, v in data["health"]["systems"].items() if not v]
     if ok:
         lines.append(f"  ✅ {', '.join(ok)}")
     if fail:
         lines.append(f"  ❌ {', '.join(fail)}")
+    # Pre-flight — Worktree MCP Contract
+    pf = data.get("preflight")
+    if pf is not None:
+        if pf["ok"]:
+            lines.append(f"  ✅ MCP pre-flight: venv OK + config absolute OK")
+        else:
+            lines.append(f"  🔴 MCP PRE-FLIGHT FAIL")
+            for key in ("venv", "mcp_config"):
+                part = pf.get(key, {})
+                if not part.get("ok"):
+                    lines.append(f"    🔴 {key}: {part.get('detail', '')}")
+                    if part.get("fix"):
+                        lines.append(f"       ↳ fix: {part.get('fix')}")
+            lines.append(f"  📖 docs/runbooks/WORKTREE-MCP-CONTRACT.md §4")
     lines += ["", f"## 📦 Git: {data['git']['branch']} — {data['git']['last_commit']}"]
-    if data['git']['dirty']:
+    if data["git"]["dirty"]:
         lines.append("  ⚠️ dirty — มี uncommitted changes")
     lines += ["", "## 🧠 Brain"]
-    lines.append(f"  Session #{data['brain']['last_session']}: {data['brain']['last_summary']}")
+    lines.append(
+        f"  Session #{data['brain']['last_session']}: {data['brain']['last_summary']}"
+    )
     lines.append(f"  Mode: {data['brain']['last_mode']}")
-    if data['brain']['pending_items']:
+    if data["brain"]["pending_items"]:
         lines.append("  📌 Pending:")
-        lines.extend(f"    - {item}" for item in data['brain']['pending_items'])
+        lines.extend(f"    - {item}" for item in data["brain"]["pending_items"])
     lines += ["", "## 📋 Active Work"]
-    q = data['work']['queue']
+    q = data["work"]["queue"]
     lines.append(f"  Queue: high={q['high']} normal={q['normal']} dead={q['dead']}")
-    disp = data['work']['active_dispatches']
+    disp = data["work"]["active_dispatches"]
     if disp:
         lines.append(f"  Active dispatches ({len(disp)}):")
         for d in disp[:5]:
-            icon = {"P0": "🔴", "P1": "🟡", "P2": "🟢", "P3": "⚪"}.get(d["priority"], "⚪")
+            icon = {"P0": "🔴", "P1": "🟡", "P2": "🟢", "P3": "⚪"}.get(
+                d["priority"], "⚪"
+            )
             lines.append(f"    {icon} [{d['priority']}] {d['summary'][:80]}")
     else:
         lines.append("  No active dispatches")
@@ -224,7 +364,16 @@ def format_markdown(data: dict) -> str:
 
 if __name__ == "__main__":
     data = bootstrap()
+    # exit code: 0 = ok, 2 = pre-flight fail (red — not green)
+    exit_code = 0
+    pf = data.get("preflight")
+    if pf is not None and not pf["ok"]:
+        exit_code = 2
+        # honor --json but still exit 2
     if "--json" in sys.argv:
         print(json.dumps(data, indent=2, ensure_ascii=False))
     else:
         print(format_markdown(data))
+    if "--no-preflight-check" in sys.argv:
+        sys.exit(0)
+    sys.exit(exit_code)
