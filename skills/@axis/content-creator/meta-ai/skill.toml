@@ -1,0 +1,28 @@
+[skill]
+name = "@axis/content-creator/meta-ai"
+version = "1.0.0"
+description = "Meta AI ผ่านเบราว์เซอร์ — ล็อกตัวละคร + คลิป 10วิ IRON TAIL + parallel split + โหลด/concat (ถอดจากงานจริง 2026-11-18)"
+category = "content-creator"
+
+[dept]
+owner = "content-creator"
+consumers = ["content-creator", "cmo", "ceo", "architect"]
+
+[bus]
+endpoint = "/v1/skills/content-creator/meta-ai"
+queue_topic = "skill.content.invoke"
+lifecycle = "skill_invoke → browser_session → lock → parallel_gen → concat → complete"
+
+[mirror]
+minimum_level = "L2"
+check_on_invoke = true
+description = "Meta AI browser workflow = งานสร้างสื่อข้ามขั้นตอน → Mirror Check L2"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/meta-gen"
+description = "Generate character-locked images/video clips via Meta AI browser workflow"
+platforms = ["opencode"]
