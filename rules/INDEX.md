@@ -10,6 +10,7 @@ INDEX.md          ← คุณอยู่ตรงนี้ — behavior map
 04-safety.md      ← เมื่อต้องระวัง: secrets, destructive, prohibited
 05-env.md         ← เมื่อลงมือ: services, commands, tests, paths
 06-certification.md ← เมื่อตรวจชิ้นงาน: บันได 4 ด่าน, หลักฐาน, ผู้ตรวจ
+07-privacy.md       ← เมื่อแตะ family-vault/private/stories: privacy gate
 ```
 
 | ต้องการทำอะไร | เปิดไฟล์นี้ |
@@ -21,6 +22,7 @@ INDEX.md          ← คุณอยู่ตรงนี้ — behavior map
 | Deploy / destructive ops / ระวัง secret | → `04-safety.md` |
 | เปิด busd / รัน test / หา path | → `05-env.md` |
 | ตรวจชิ้นงาน / ดูว่า agent ผ่านด่านไหน | → `06-certification.md` |
+| แตะ family-vault / private / stories | → `07-privacy.md` (privacy gate ก่อนใช้) |
 
 ## กฎเหล็กที่ห้ามลืม (auto-loaded ทุก session)
 

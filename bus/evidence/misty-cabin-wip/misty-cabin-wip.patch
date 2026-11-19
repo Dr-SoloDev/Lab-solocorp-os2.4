@@ -1,0 +1,131 @@
+diff --git a/opencode.json b/opencode.json
+index 201926d..caefc40 100644
+--- a/opencode.json
++++ b/opencode.json
+@@ -149,6 +149,7 @@
+         "command": ["tools/stealth-browser-mcp/venv/bin/python3", "-m", "server"],
+         "cwd": "tools/stealth-browser-mcp/src",
+         "disabled": true,
++        "description": "Browser Automation MCP (Chrome+CDP) — disabled 2026-11-08 per user decision (never worked, always failed NotFound/spawn). Re-enable by setting disabled:false.",
+         "timeout": {
+           "startup": 60000,
+           "catalog": 60000,
+@@ -174,6 +175,7 @@
+         "command": [".venv/bin/python3", "-m", "axis_mcp.bus_mcp"],
+         "cwd": ".",
+         "disabled": false,
++        "description": "AXIS Central Bus Daemon — Control/Data interface between all departments (local stdio for MVP)",
+         "timeout": {
+           "startup": 60000,
+           "catalog": 60000,
+@@ -185,6 +187,7 @@
+         "command": [".venv/bin/python3", "-m", "axis_mcp.cto.server"],
+         "cwd": ".",
+         "disabled": false,
++        "description": "AXIS CTO MCP Server (Phase 1) — Architect, Engineering, QA combined in one process; tool namespaces architect_*/engineering_*/qa_*/unified_* unchanged",
+         "timeout": {
+           "startup": 120000,
+           "catalog": 120000,
+@@ -196,6 +199,7 @@
+         "command": [".venv/bin/python3", "-m", "axis_mcp.departments.content_mcp"],
+         "cwd": ".",
+         "disabled": false,
++        "description": "AXIS Content Creator MCP — Content production, video, audio, campaign artifacts (includes Concat + Earshot)",
+         "timeout": {
+           "startup": 1800000,
+           "catalog": 1800000,
+diff --git a/opencode.jsonc b/opencode.jsonc
+index d3107e5..504fbe9 100644
+--- a/opencode.jsonc
++++ b/opencode.jsonc
+@@ -370,7 +370,90 @@
+           "catalog": 1800000,
+           "execution": 1800000
+         },
++        // NOTE (reconcile 2026-11-17): env ported from opencode.json (SSoT) — jsonc previously
++        // had NO environment here; without it Concat/Earshot paths break if host ever reads jsonc.
++        "environment": {
++          "CONCAT_BIN": "/home/drsolodev/.opencode/concat/squashfs-root/AppRun",
++          "CONCAT_MCP_ROOTS": "/data/projects/Lab-solocorp-os2.4/central_bus/content",
++          "EARSHOT_BIN": "/home/drsolodev/.opencode/earshot/venv-cpu/bin/earshot",
++          "EARSHOT_HOME": "/home/drsolodev/.opencode/earshot/cache",
++          "EARSHOT_THREADS": "4",
++          "EARSHOT_OFFLINE": "1",
++          "HF_HUB_OFFLINE": "1",
++          "TRANSFORMERS_OFFLINE": "1",
++          "XDG_CONFIG_HOME": "/home/drsolodev/.opencode/concat/config",
++          "XDG_DATA_HOME": "/home/drsolodev/.opencode/concat/data"
++        },
+         "description": "AXIS Content Creator MCP — Content production, video, audio, campaign artifacts (includes Concat + Earshot)"
++      },
++      // NOTE (reconcile 2026-11-17): 5 servers below ported from opencode.json (SSoT).
++      // opencode.json is the live host config (9 servers green); jsonc previously had only 4.
++      "solocorp": {
++        "type": "local",
++        "command": [".venv/bin/python3", "-m", "axis_mcp.server"],
++        "cwd": ".",
++        "disabled": false,
++        "timeout": {
++          "startup": 60000,
++          "catalog": 60000,
++          "execution": 60000
++        },
++        "environment": {
++          "SOLOCORP_API_KEY": "{env:SOLOCORP_API_KEY}"
++        },
++        "description": "SoloCorp Core MCP — org/registry interface (needs SOLOCORP_API_KEY from env, never committed)"
++      },
++      "engineering": {
++        "type": "local",
++        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.engineering_mcp"],
++        "cwd": ".",
++        "disabled": false,
++        "timeout": {
++          "startup": 60000,
++          "catalog": 60000,
++          "execution": 60000
++        },
++        "description": "Engineering dept MCP — backend/frontend implementation (standalone-capable)"
++      },
++      "qa": {
++        "type": "local",
++        "command": [".venv/bin/python3", "-m", "axis_mcp.departments.qa_mcp"],
++        "cwd": ".",
++        "disabled": false,
++        "timeout": {
++          "startup": 60000,
++          "catalog": 60000,
++          "execution": 60000
++        },
++        "description": "QA dept MCP — test execution + evidence recording (evidence owner stays QA-ทีม)"
++      },
++      "concat": {
++        "type": "local",
++        "command": ["/home/drsolodev/.opencode/concat/squashfs-root/AppRun", "--mcp", "headless"],
++        "cwd": ".",
++        "disabled": false,
++        "timeout": {
++          "startup": 1800000,
++          "catalog": 1800000,
++          "execution": 1800000
++        },
++        "environment": {
++          "CONCAT_MCP_ROOTS": "/data/projects/Lab-solocorp-os2.4/central_bus/content",
++          "XDG_CONFIG_HOME": "/home/drsolodev/.opencode/concat/config",
++          "XDG_DATA_HOME": "/home/drsolodev/.opencode/concat/data"
++        },
++        "description": "Concat local video engine MCP (AppImage headless) — project assembly + MP4 export"
++      },
++      "github": {
++        "type": "local",
++        "command": ["gh", "mcp"],
++        "disabled": false,
++        "timeout": {
++          "startup": 60000,
++          "catalog": 60000,
++          "execution": 60000
++        },
++        "description": "GitHub MCP via gh CLI — issues/PRs (requires gh auth, no secret in file)"
+       }
+     }
+   },
