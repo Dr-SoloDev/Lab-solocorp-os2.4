@@ -3,12 +3,27 @@
 > อัปเดตทุกครั้งก่อนเลิกงาน อ่านทุกครั้งตอนเริ่มงาน (`/bootstrap` แล้วเปิดไฟล์นี้)
 > กฎ: สั้น ตรงจุด มี commit hash + คำสั่งรันต่อเสมอ
 
-## สถานะล่าสุด (2026-11-19 เย็น)
+## สถานะล่าสุด (2026-11-19 ก่อน restart เครื่อง)
 
-- `main` = `origin` = `canonical` = **`a949834`**
+- `main` = `origin` = `canonical` = **`075f5b9`**
 - CI เขียวทั้งคู่ · validator **20/20** · full suite **1354 passed**
 - CTO กลับมาแล้ว (`cto` healthy) · manifest 87 agents · bootstrap **100/100**
 - Stash ว่าง · worktree เหลือแค่ main/canonical/session ที่ใช้จริง
+- `brain/NEXT.md` ไฟล์นี้ + `pending_next` คือตัวจริง — session-log เก่าอย่าไปขุด
+
+## ⚠️ หลัง restart เครื่อง (ทำตามนี้ก่อนเริ่มงาน)
+
+MCP processes ตายหมดตอนปิดเครื่อง — host จะ spawn ใหม่เอง แต่ต้องตรวจ:
+
+```bash
+cd /data/projects/Lab-solocorp-os2.4
+git log --oneline -1                    # ต้องเห็น 075f5b9
+python3 scripts/session-bootstrap.py    # ต้องเขียว ไม่มี PRE-FLIGHT FAIL
+opencode mcp list                       # ต้องเห็น cto ✓ connected (9 connected + 1 disabled)
+python3 scripts/generate-specialist-manifest.py --check  # ต้อง up-to-date
+```
+
+ถ้า `cto` ไม่ขึ้น: `bash scripts/restart-mcp.sh` (dry-run ก่อน) → `--yes` → `opencode mcp list` อีกรอบ
 
 ## ทำเสร็จแล้ว (วันนี้)
 
