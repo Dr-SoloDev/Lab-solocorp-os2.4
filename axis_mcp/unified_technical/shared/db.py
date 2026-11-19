@@ -1,8 +1,4 @@
-"""Shared SQLite database (WAL mode, singleton) for CTO MCP (Phase 1).
-
-Migrated from central_bus/unified_technical.db (Wave 1: sha256-verified copy
-to central_bus/cto.db; source file kept until CTO green per 2-step deprecation).
-"""
+"""Shared SQLite database (WAL mode, singleton) for Unified Technical MCP."""
 
 from __future__ import annotations
 
@@ -10,7 +6,7 @@ import aiosqlite
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent.parent
-DB_PATH = ROOT / "central_bus" / "cto.db"
+DB_PATH = ROOT / "central_bus" / "unified_technical.db"
 
 
 class UnifiedDbManager:

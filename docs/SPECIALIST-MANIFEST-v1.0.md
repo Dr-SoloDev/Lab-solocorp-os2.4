@@ -12,10 +12,8 @@
 | Team roles | 67 | `profiles/**/team/*.SOUL.md` |
 | Team agent files | 66 | 67 team roles − `lead-researcher` (ใช้ head agent `rd-lab`); `ui-designer` เป็น slug เดียวกับ head dept 09 แต่ยังนับเป็น team file — ไฟล์ agent ที่ไม่ซ้ำทั้ง manifest = 85 |
 | Head agent files | 20 | mapping dept → agent slug |
-| Agent files ทั้งหมด | 87 | `.opencode/agents/*.md` |
-| ไฟล์นอก manifest | 2 | `axis-ceo`, `cto` |
-
-> หมายเหตุ: `cto.md` มาจาก CTO Wave1 ที่ session อื่น staged ลบไว้ — ยังอยู่บนดิสก์จริง จึงถูกนับใน 87 จนกว่าการลบจะถูก merge
+| Agent files ทั้งหมด | 86 | `.opencode/agents/*.md` |
+| ไฟล์นอก manifest | 1 | `axis-ceo` |
 
 ## 2. Runtime Contract
 
@@ -31,7 +29,7 @@ Agent file ทุกไฟล์ต้องมี frontmatter 5 key ต่อ�
 
 > ค่า `mode: primary` ที่ประกาศไว้ใน `INTENTIONAL_PRIMARY_SLUGS` ถือเป็นข้อยกเว้นที่ตั้งใจ — ค่าอื่นที่ไม่ใช่ `subagent` ถือเป็น violation
 
-- ไฟล์ agent ที่ map แล้ว (unique): **85** จาก agent files ทั้งหมด **87**
+- ไฟล์ agent ที่ map แล้ว (unique): **85** จาก agent files ทั้งหมด **86**
 - มี key ครบ 5 ตัว: **85/85**
 - `mode: primary` (ตั้งใจ): `ceo-turbo` (CEO — Owner เรียกตรง), `mcp-builder` (builder agent — เปิดให้เรียกตรงจาก UI)
 
@@ -174,8 +172,8 @@ sha256sum docs/SPECIALIST-MANIFEST-v1.0.md
 - Team roles: **67**
 - Team agent files: **66** (67 team roles − `lead-researcher` ที่ใช้ head agent `rd-lab`; `ui-designer` shared กับ head dept 09 → unique mapped files = 85)
 - Head agent files: **20**
-- Agent files ทั้งหมด: **87**
-- ไฟล์นอก manifest: **2** — `axis-ceo`, `cto`
+- Agent files ทั้งหมด: **86**
+- ไฟล์นอก manifest: **1** — `axis-ceo`
 
 หลักการ:
 
