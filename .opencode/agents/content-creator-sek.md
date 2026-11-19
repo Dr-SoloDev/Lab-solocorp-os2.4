@@ -2,6 +2,8 @@
 name: content-creator-sek
 description: AXIS Head of Content & Creative Production (เสก)
 mode: subagent
+agents_md: true
+color: "#C2185B"
 permissions:
   - action: read
     resource: "*"

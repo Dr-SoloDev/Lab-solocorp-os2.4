@@ -12,11 +12,13 @@ Constraints:
   - no network access
 
 Usage:
-    python3 scripts/generate-specialist-manifest.py
+    python3 scripts/generate-specialist-manifest.py            # write the manifest
+    python3 scripts/generate-specialist-manifest.py --check    # fail if it is stale
 
 Exit codes:
-    0 = manifest written, every mapped source file exists
+    0 = manifest written (or up to date with --check), every mapped source file exists
     1 = at least one mapped source file is missing (document still written with MISSING)
+    2 = --check found the committed document stale, or the argument is unknown
 """
 
 from __future__ import annotations
@@ -76,6 +78,17 @@ HEAD_AGENT_SLUGS = {
 # Team roles that reuse a head agent file instead of owning a separate agent file.
 # `lead-researcher` reports to the R&D Lab head `rd-lab`.
 TEAM_HEAD_SHARED_SLUGS = {"rd-lab"}
+
+# Mapped agents that intentionally run as `primary` instead of `subagent`.
+# Every other non-subagent mode is reported as an unexpected contract violation.
+INTENTIONAL_PRIMARY_SLUGS = {
+    "ceo-turbo": "CEO — Owner เรียกตรง",
+    "mcp-builder": "builder agent — เปิดให้เรียกตรงจาก UI",
+}
+
+# Departments that legitimately have a head agent only and no reporting track.
+# Any other department missing from TRACKS is an error (roster grew silently).
+HEAD_ONLY_DEPTS = {"01-ceo"}
 
 # Reporting groups; ordering inside each group is dept ascending, then slug.
 TRACKS = (
@@ -151,7 +164,7 @@ def parse_frontmatter(text: str) -> dict[str, str]:
 
 
 def escape_cell(value: str) -> str:
-    return value.replace("|", "\\|").replace("\n", " ").strip()
+    return value.replace("\\", "\\\\").replace("|", "\\|").replace("\n", " ").strip()
 
 
 def code(value: str) -> str:
@@ -255,6 +268,12 @@ def validate_track_coverage(records: list[RoleRecord]) -> list[str]:
     uncovered = sorted({record.dept for record in records} - track_depts)
     if uncovered:
         errors.append(f"department missing from TRACKS: {', '.join(uncovered)}")
+    uncovered_heads = sorted(set(HEAD_AGENT_SLUGS) - track_depts - HEAD_ONLY_DEPTS)
+    if uncovered_heads:
+        errors.append(
+            "head-only department not declared in HEAD_ONLY_DEPTS: "
+            + ", ".join(uncovered_heads)
+        )
     return errors
 
 
@@ -288,7 +307,7 @@ def render(
     add(f"| Team roles | {len(records)} | `profiles/**/team/*.SOUL.md` |")
     add(
         f"| Team agent files | {len(team_agent_files)} | "
-        "67 team roles − `lead-researcher` (ใช้ head agent `rd-lab`); "
+        f"{len(records)} team roles − `lead-researcher` (ใช้ head agent `rd-lab`); "
         "`ui-designer` เป็น slug เดียวกับ head dept 09 แต่ยังนับเป็น team file — "
         f"ไฟล์ agent ที่ไม่ซ้ำทั้ง manifest = {len(mapped_slugs)} |"
     )
@@ -303,12 +322,12 @@ def render(
     if "cto" in unlisted:
         add(
             "> หมายเหตุ: `cto.md` มาจาก CTO Wave1 ที่ session อื่น staged ลบไว้ — "
-            "ยังอยู่บนดิสก์จริง จึงถูกนับใน 87 จนกว่าการลบจะถูก merge"
+            f"ยังอยู่บนดิสก์จริง จึงถูกนับใน {len(agent_files)} จนกว่าการลบจะถูก merge"
         )
         add("")
     add("## 2. Runtime Contract")
     add("")
-    add("Agent file ทุกไฟล์ต้องมี frontmatter 5 key ต่อไปนี้:")
+    add("Agent file ทุกไฟล์ต้องมี frontmatter 5 key ต่อไปนี้ (นับการมีอยู่ของ key):")
     add("")
     add("| Key | ค่าที่คาดหวัง | ความหมาย |")
     add("|:----|:--------------|:---------|")
@@ -317,6 +336,11 @@ def render(
     add("| `mode` | `subagent` | ต้องถูกเรียกผ่าน Head ไม่ใช่ primary |")
     add("| `agents_md` | `true` | ให้ runtime โหลด `AGENTS.md` ของ repo |")
     add('| `color` | hex `"#RRGGBB"` | สีประจำตัวใน UI |')
+    add("")
+    add(
+        "> ค่า `mode: primary` ที่ประกาศไว้ใน `INTENTIONAL_PRIMARY_SLUGS` "
+        "ถือเป็นข้อยกเว้นที่ตั้งใจ — ค่าอื่นที่ไม่ใช่ `subagent` ถือเป็น violation"
+    )
     add("")
     violation_rows = compliance_summary(heads, records, agent_files)
     for row in violation_rows:
@@ -392,6 +416,9 @@ def render(
     add("รันซ้ำแล้วต้องได้ไฟล์เดิมทุกครั้ง (deterministic — ไม่มี timestamp/commit hash):")
     add("")
     add("```bash")
+    add("python3 scripts/generate-specialist-manifest.py --check")
+    add("# → exit 0 = เอกสารตรงกับ roster, exit 2 = stale (ต้อง regenerate)")
+    add("")
     add("python3 scripts/generate-specialist-manifest.py")
     add("sha256sum docs/SPECIALIST-MANIFEST-v1.0.md")
     add("python3 scripts/generate-specialist-manifest.py")
@@ -405,7 +432,7 @@ def render(
     add(f"- Team roles: **{len(records)}**")
     add(
         f"- Team agent files: **{len(team_agent_files)}** "
-        "(67 team roles − `lead-researcher` ที่ใช้ head agent `rd-lab`; "
+        f"({len(records)} team roles − `lead-researcher` ที่ใช้ head agent `rd-lab`; "
         f"`ui-designer` shared กับ head dept 09 → unique mapped files = {len(mapped_slugs)})"
     )
     add(f"- Head agent files: **{len(head_slugs)}**")
@@ -435,42 +462,51 @@ def compliance_summary(
     head_slugs = {head["slug"] for head in heads}
     team_slugs = {record.slug for record in records}
     mapped = sorted(head_slugs | team_slugs)
-    missing_color: list[str] = []
-    missing_agents_md: list[str] = []
+    frontmatter = {slug: _frontmatter_by_slug(slug, heads, records) for slug in mapped}
+
+    missing_keys: dict[str, list[str]] = {
+        key: [slug for slug in mapped if frontmatter[slug].get(key, MISSING) == MISSING]
+        for key in FRONTMATTER_KEYS
+    }
+    incomplete = sorted({slug for slugs in missing_keys.values() for slug in slugs})
     bad_name: list[str] = []
-    bad_mode: list[str] = []
+    primary: list[str] = []
+    unexpected_primary: list[str] = []
     for slug in mapped:
-        frontmatter = _frontmatter_by_slug(slug, heads, records)
-        if frontmatter["color"] == MISSING:
-            missing_color.append(slug)
-        if frontmatter["agents_md"] == MISSING:
-            missing_agents_md.append(slug)
-        if frontmatter["name"] != MISSING and frontmatter["name"] != slug:
-            bad_name.append(f"{slug}→{frontmatter['name']}")
-        if frontmatter["mode"] != MISSING and frontmatter["mode"] != "subagent":
-            bad_mode.append(f"{slug}={frontmatter['mode']}")
+        data = frontmatter[slug]
+        if data.get("name", MISSING) not in (MISSING, slug):
+            bad_name.append(f"{slug}→{data['name']}")
+        if data.get("mode", MISSING) not in (MISSING, "subagent"):
+            primary.append(slug)
+            if slug not in INTENTIONAL_PRIMARY_SLUGS:
+                unexpected_primary.append(f"{slug}={data['mode']}")
 
     rows = [
         f"ไฟล์ agent ที่ map แล้ว (unique): **{len(mapped)}** จาก agent files ทั้งหมด "
         f"**{len(agent_files)}**",
-        f"มี frontmatter ครบ 5 key: **{len(mapped) - len(set(missing_color) | set(missing_agents_md))}"
-        f"/{len(mapped)}**",
+        f"มี key ครบ 5 ตัว: **{len(mapped) - len(incomplete)}/{len(mapped)}**",
     ]
-    if missing_color:
-        rows.append(
-            "ขาด `color`/`agents_md`: "
-            + ", ".join(
-                code(slug)
-                for slug in sorted(set(missing_color) | set(missing_agents_md))
+    for key in FRONTMATTER_KEYS:
+        if missing_keys[key]:
+            rows.append(
+                f"ขาด `{key}`: " + ", ".join(code(slug) for slug in missing_keys[key])
             )
+    if primary:
+        declared = ", ".join(
+            f"{code(slug)} ({INTENTIONAL_PRIMARY_SLUGS[slug]})"
+            for slug in primary
+            if slug in INTENTIONAL_PRIMARY_SLUGS
         )
-    if bad_mode:
+        if declared:
+            rows.append(f"`mode: primary` (ตั้งใจ): {declared}")
+    if unexpected_primary:
         rows.append(
-            "`mode` ไม่ใช่ `subagent`: " + ", ".join(code(item) for item in bad_mode)
+            "`mode` ไม่ใช่ `subagent` (ไม่ตั้งใจ): "
+            + ", ".join(code(item) for item in unexpected_primary)
         )
     if bad_name:
         rows.append("`name` ไม่ตรงชื่อไฟล์: " + ", ".join(code(item) for item in bad_name))
-    if not (missing_color or bad_mode or bad_name):
+    if not (incomplete or primary or bad_name):
         rows.append("ไม่พบความเบี่ยงเบนจาก contract")
     return rows
 
@@ -489,7 +525,14 @@ def _frontmatter_by_slug(
     return {key: MISSING for key in FRONTMATTER_KEYS}
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    unknown = [arg for arg in args if arg != "--check"]
+    if unknown:
+        print(f"error: unknown argument(s): {' '.join(unknown)}", file=sys.stderr)
+        return 2
+    check_only = "--check" in args
+
     missing_files: list[str] = []
 
     team_records = collect_team_records(missing_files)
@@ -512,9 +555,29 @@ def main() -> int:
         missing_files.append(".opencode/agents/*.md")
 
     content = render(heads, team_records, agent_files)
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with OUTPUT_PATH.open("w", encoding="utf-8", newline="\n") as handle:
-        handle.write(content)
+    try:
+        output_rel = OUTPUT_PATH.relative_to(REPO_ROOT).as_posix()
+    except ValueError:  # tests may point OUTPUT_PATH at a tmp directory
+        output_rel = str(OUTPUT_PATH)
+    stale = False
+    if check_only:
+        try:
+            current = OUTPUT_PATH.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            current = None
+        stale = current != content
+        if stale:
+            print(
+                f"stale: {output_rel} — run python3 scripts/generate-specialist-manifest.py",
+                file=sys.stderr,
+            )
+        else:
+            print(f"up-to-date: {output_rel}")
+    else:
+        OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with OUTPUT_PATH.open("w", encoding="utf-8", newline="\n") as handle:
+            handle.write(content)
+        print(f"generated: {output_rel}")
 
     digest = hashlib.sha256(content.encode("utf-8")).hexdigest()
     head_slugs = {head["slug"] for head in heads}
@@ -522,7 +585,6 @@ def main() -> int:
     mapped = head_slugs | team_slugs
     unlisted = sorted(set(agent_files) - mapped)
 
-    print(f"generated: {OUTPUT_PATH.relative_to(REPO_ROOT).as_posix()}")
     print(
         "heads={heads} team_roles={team_roles} team_agent_files={team_files} "
         "head_agent_files={head_files} agent_files={agent_files} unlisted={unlisted}".format(
@@ -541,6 +603,8 @@ def main() -> int:
         for item in sorted(set(missing_files)):
             print(f"  - {item}", file=sys.stderr)
         return 1
+    if stale:
+        return 2
     return 0
 
 

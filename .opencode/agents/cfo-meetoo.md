@@ -2,6 +2,8 @@
 name: cfo-meetoo
 description: AXIS CFO & Financial Operations Controller (meetoo)
 mode: subagent
+agents_md: true
+color: "#117864"
 permissions:
   - action: read
     resource: "*"

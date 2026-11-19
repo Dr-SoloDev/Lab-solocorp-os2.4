@@ -2,6 +2,8 @@
 name: orchestrator-wut
 description: AXIS Orchestrator & Pipeline Coordinator (พี่วุฒิ)
 mode: subagent
+agents_md: true
+color: "#7E5109"
 permissions:
   - action: subagent
     resource: "*"

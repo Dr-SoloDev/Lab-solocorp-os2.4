@@ -2,6 +2,8 @@
 name: architect-songsak
 description: AXIS System Architect & MCP Infrastructure Controller (พี่ทรงศักดิ์)
 mode: subagent
+agents_md: true
+color: "#1B2631"
 permissions:
   - action: read
     resource: "*"

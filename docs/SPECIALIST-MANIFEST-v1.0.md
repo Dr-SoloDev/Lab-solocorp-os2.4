@@ -19,7 +19,7 @@
 
 ## 2. Runtime Contract
 
-Agent file ทุกไฟล์ต้องมี frontmatter 5 key ต่อไปนี้:
+Agent file ทุกไฟล์ต้องมี frontmatter 5 key ต่อไปนี้ (นับการมีอยู่ของ key):
 
 | Key | ค่าที่คาดหวัง | ความหมาย |
 |:----|:--------------|:---------|
@@ -29,10 +29,11 @@ Agent file ทุกไฟล์ต้องมี frontmatter 5 key ต่อ�
 | `agents_md` | `true` | ให้ runtime โหลด `AGENTS.md` ของ repo |
 | `color` | hex `"#RRGGBB"` | สีประจำตัวใน UI |
 
+> ค่า `mode: primary` ที่ประกาศไว้ใน `INTENTIONAL_PRIMARY_SLUGS` ถือเป็นข้อยกเว้นที่ตั้งใจ — ค่าอื่นที่ไม่ใช่ `subagent` ถือเป็น violation
+
 - ไฟล์ agent ที่ map แล้ว (unique): **85** จาก agent files ทั้งหมด **87**
-- มี frontmatter ครบ 5 key: **80/85**
-- ขาด `color`/`agents_md`: `architect-songsak`, `cfo-meetoo`, `content-creator-sek`, `legal-tulya`, `orchestrator-wut`
-- `mode` ไม่ใช่ `subagent`: `ceo-turbo=primary`, `mcp-builder=primary`
+- มี key ครบ 5 ตัว: **85/85**
+- `mode: primary` (ตั้งใจ): `ceo-turbo` (CEO — Owner เรียกตรง), `mcp-builder` (builder agent — เปิดให้เรียกตรงจาก UI)
 
 > ค่า `MISSING` ในตาราง หมายถึง key/ไฟล์นั้นไม่มีอยู่จริงใน frontmatter — script ไม่เติมค่าที่เดาขึ้นเอง
 
@@ -41,11 +42,11 @@ Agent file ทุกไฟล์ต้องมี frontmatter 5 key ต่อ�
 | Dept | Head name | Agent slug | Color | SOUL path |
 |:-----|:----------|:-----------|:------|:----------|
 | `01-ceo` | เทอโบ (Turbo Chaisriram) / Mirror CEO | `ceo-turbo` | `#FFD700` | `profiles/01-ceo/SOUL.md` |
-| `02-cfo` | meetoo (มีตู๋) | `cfo-meetoo` | `MISSING` | `profiles/02-cfo/SOUL.md` |
+| `02-cfo` | meetoo (มีตู๋) | `cfo-meetoo` | `#117864` | `profiles/02-cfo/SOUL.md` |
 | `02-coo` | กิจ (Kit) | `coo-kit` | `#424949` | `profiles/02-coo/SOUL.md` |
 | `03-cmo` | มาร์ค (Mark) | `cmo-mark` | `#E74C3C` | `profiles/03-cmo/SOUL.md` |
-| `04-orchestrator` | พี่วุฒิ (Wut) | `orchestrator-wut` | `MISSING` | `profiles/04-orchestrator/SOUL.md` |
-| `05-architect` | พี่ทรงศักดิ์ (Songsak Chaisriram) | `architect-songsak` | `MISSING` | `profiles/05-architect/SOUL.md` |
+| `04-orchestrator` | พี่วุฒิ (Wut) | `orchestrator-wut` | `#7E5109` | `profiles/04-orchestrator/SOUL.md` |
+| `05-architect` | พี่ทรงศักดิ์ (Songsak Chaisriram) | `architect-songsak` | `#1B2631` | `profiles/05-architect/SOUL.md` |
 | `06-product` | โปรดัค (Produce) | `product-produck` | `#1ABC9C` | `profiles/06-product/SOUL.md` |
 | `07-engineering` | ช่างฟูล (Changful) | `engineering-changful` | `#2C3E50` | `profiles/07-engineering/SOUL.md` |
 | `08-design` | ครีเอท (Kreet) | `design-kreet` | `#E67E22` | `profiles/08-design/SOUL.md` |
@@ -53,9 +54,9 @@ Agent file ทุกไฟล์ต้องมี frontmatter 5 key ต่อ�
 | `10-qa` | คิวเอ (QA) | `qa` | `#27AE60` | `profiles/10-qa/SOUL.md` |
 | `11-sales` | เซลส์ (Sales) | `sales` | `#F39C12` | `profiles/11-sales/SOUL.md` |
 | `12-support` | ซัพพอร์ต (Support) | `support` | `#1ABC9C` | `profiles/12-support/SOUL.md` |
-| `13-legal` | คุณตุล (Tul) | `legal-tulya` | `MISSING` | `profiles/13-legal/SOUL.md` |
+| `13-legal` | คุณตุล (Tul) | `legal-tulya` | `#4A148C` | `profiles/13-legal/SOUL.md` |
 | `14-web3` | อัยวา (Aywa) | `web3-aywa` | `#00D084` | `profiles/14-web3/SOUL.md` |
-| `15-content-creator` | เสก (Sek) | `content-creator-sek` | `MISSING` | `profiles/15-content-creator/SOUL.md` |
+| `15-content-creator` | เสก (Sek) | `content-creator-sek` | `#C2185B` | `profiles/15-content-creator/SOUL.md` |
 | `16-neteng` | นีต (Neet) | `neteng-neet` | `#148F77` | `profiles/16-neteng/SOUL.md` |
 | `17-cybersec` | ซาย (Sai) | `cybersec-sai` | `#A93226` | `profiles/17-cybersec/SOUL.md` |
 | `18-psychology` | จิต (Jit) | `psych-jit` | `#A569BD` | `profiles/18-psychology/SOUL.md` |
@@ -157,6 +158,9 @@ _ไม่มี team role ใน: `02-coo` — dept นี้มีเฉพา
 รันซ้ำแล้วต้องได้ไฟล์เดิมทุกครั้ง (deterministic — ไม่มี timestamp/commit hash):
 
 ```bash
+python3 scripts/generate-specialist-manifest.py --check
+# → exit 0 = เอกสารตรงกับ roster, exit 2 = stale (ต้อง regenerate)
+
 python3 scripts/generate-specialist-manifest.py
 sha256sum docs/SPECIALIST-MANIFEST-v1.0.md
 python3 scripts/generate-specialist-manifest.py

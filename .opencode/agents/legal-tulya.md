@@ -2,6 +2,8 @@
 name: legal-tulya
 description: AXIS Head of Legal, Compliance & Governance (ตุลย์)
 mode: subagent
+agents_md: true
+color: "#4A148C"
 permissions:
   - action: read
     resource: "*"
