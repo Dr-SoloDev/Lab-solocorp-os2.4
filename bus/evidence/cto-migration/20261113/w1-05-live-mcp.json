@@ -1,0 +1,10 @@
+{
+  "trace_id": "cto-mig-W1-20261113",
+  "step": "live MCP probe via host cto tools (runtime resolved cto -> axis_mcp.cto.server)",
+  "unified_technical_health": {"status": "healthy", "server": "cto",
+    "modules": {"architect": {"status": "healthy"}, "engineering": {"status": "healthy"}, "qa": {"status": "healthy"}},
+    "database": "connected", "cache": "active"},
+  "architect_route": {"routed_to": ["engineering", "qa"]},
+  "unified_list_tools_namespaces": ["architect", "engineering", "qa", "unified"],
+  "note": "live process serves NEW code (server: cto, 10 tools). unified_pipeline_status on live process still hits pre-existing recursion (stale pre-fix generation); fix verified in fresh process, host respawn pending. E2E-original probe (unified_technical_health) is GREEN live."
+}

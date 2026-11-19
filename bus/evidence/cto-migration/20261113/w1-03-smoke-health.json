@@ -1,0 +1,17 @@
+{
+  "trace_id": "cto-mig-W1-20261113",
+  "step": "direct fresh-process probe of axis_mcp.cto (post-rewire, pre-config-commit)",
+  "health": {"status": "healthy", "server": "cto",
+    "modules": {"architect": "healthy", "engineering": "healthy", "qa": "healthy"},
+    "database": "connected", "cache": "active"},
+  "pipeline": {"status": "ok", "project_id": "smoke-w1", "pipeline": "architect -> engineering -> qa"},
+  "tool_namespaces": ["architect", "engineering", "qa", "unified"],
+  "route": {"status": "ok", "routed_to": ["engineering", "qa"]},
+  "build": {"status": "ok", "module": "engineering"},
+  "qa_run": {"status": "ok", "result": "passed"},
+  "freshness": {"status": "current", "restart_required": false,
+    "reason": "no source file is newer than this process"},
+  "py_compile": "OK (all moved files)",
+  "server_import": "OK (mcp name: cto)",
+  "pytest": {"cmd": "python3 -m pytest tests/test_mcp_stdio.py tests/test_bus_mcp.py --tb=short -q", "result": "5 passed in 5.18s"}
+}

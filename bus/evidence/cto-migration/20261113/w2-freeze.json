@@ -1,0 +1,10 @@
+{
+  "trace_id": "cto-mig-W2-20261112T224226Z",
+  "wave": "W2-flip-default",
+  "freeze_start_utc": "2026-11-12T22:43:03Z",
+  "freeze_minutes": 30,
+  "freeze_end_utc": "2026-11-12T23:13:03Z",
+  "scope": "bus/dispatch new files frozen; queue high/normal/low must stay 0",
+  "queue_depth_at_freeze": {"high": 0, "normal": 0, "low": 0, "dispatch_files": 27},
+  "orchestrator": "พี่วุฒิ (AXIS Orchestrator)"
+}

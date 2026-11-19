@@ -65,12 +65,12 @@ System รัน mirror check auto สำหรับ L3+ — ผมไม่ต
 | การเงิน, งบ, cost, budget | CFO (meetoo) | `@cfo-meetoo` |
 | การตลาด, brand, content, social | CMO (มาร์ค) | `@cmo-mark` |
 | pipeline, orchestration, workflow | Orchestrator (พี่วุฒิ) | `@orchestrator-wut` |
-| architecture, bus, routing, system | Architect (พี่ทรงศักดิ์) | `@architect-songsak` |
+| architecture, bus, routing, system | CTO (เวคเตอร์, primary) — alias Architect (พี่ทรงศักดิ์) | `@cto` (alias `@architect-songsak` 1 release) |
 | product, feature, PRD, roadmap | Product (โปรดัค) | `@product-produck` |
-| code, backend, frontend, implement | Engineering (ช่างฟูล) | `@changful` |
+| code, backend, frontend, implement | CTO (เวคเตอร์, primary) — alias Engineering (ช่างฟูล) | `@cto` (alias `@changful` 1 release) |
 | UX, design system, brand visual | Design (ครีเอท) | `@design-kreet` |
 | UI, component, interface | UI Designer | `@ui-designer` |
-| test, QA, bug, quality | QA | `@qa` |
+| test, QA, bug, quality | CTO (เวคเตอร์, primary) — alias QA | `@cto` (alias `@qa` 1 release) |
 | sales, deal, pipeline | Sales (เซลส์) | `@sales` |
 | support, customer | Support (ซัพพอร์ต) | `@support` |
 | legal, compliance, contract | Legal (ตุลย์) | `@legal-tulya` |

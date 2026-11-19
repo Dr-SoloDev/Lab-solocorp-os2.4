@@ -1,0 +1,8 @@
+{
+  "trace_id": "cto-mig-W1-20261113",
+  "bug": "server.py tool unified_pipeline_status shadowed imported helper of same name -> infinite recursion (maximum recursion depth exceeded). Pre-existing in unified_technical (E2E never probed this tool).",
+  "fix": "aliased import to _pipeline_status_impl; external tool name unchanged",
+  "files": ["axis_mcp/cto/server.py"],
+  "verify_fresh_process": {"unified_pipeline_status": {"status": "ok", "pipeline": "architect -> engineering -> qa"}},
+  "scope_note": "minimal 2-line fix inside migrated file; no namespace change; no other modules touched"
+}

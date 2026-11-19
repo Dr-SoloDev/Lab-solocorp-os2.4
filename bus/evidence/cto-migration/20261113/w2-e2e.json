@@ -1,0 +1,26 @@
+{
+  "trace_id": "cto-mig-W2-20261112T224226Z",
+  "date": "20261113",
+  "mode": "flip-default E2E via @cto primary",
+  "pipeline_task": "deploy staging checkout-api",
+  "health": {"status": "healthy", "server": "cto", "modules": {"architect": "healthy", "engineering": "healthy", "qa": "healthy"}, "database": "connected", "cache": "active"},
+  "pipeline_status": {"status": "ok", "project_id": "w2-e2e-cto-20261113", "pipeline": "architect -> engineering -> qa", "healthy": true},
+  "architect_route": {"topic": "deploy staging checkout-api", "routed_to": ["engineering", "qa"], "trace_id": "cto-mig-W2-20261112T224226Z"},
+  "qa_evidence_via_owner": {
+    "tool": "qa_mcp.qa_record_test_result (owner QA-ทีม, CTO delegates evidence)",
+    "suite_id": "w2-e2e-cto",
+    "result_path": "central_bus/content/qa_results/qa-w2-e2e-cto-ca51c036cedc.json",
+    "sha256": "cfd30e30fbd297720efc5862bdb6b85eee663d289306351c335c2a6beb63dab4",
+    "path_exists": true,
+    "sha_match": true,
+    "task_id": "task-ca51c036cedc",
+    "note": "W2 E2E via @cto primary, owner QA-ทีม"
+  },
+  "command_templates_flipped": {
+    "pipeline": "@cto primary (alias @architect-songsak/@changful/@qa 1 release)",
+    "eng-deploy": "@axis/cto/deploy primary (alias @axis/engineering/deploy 1 release)",
+    "smoke-test": "@axis/cto/smoke-test primary (alias @axis/qa/smoke-test 1 release)"
+  },
+  "rules_flipped": "rules/01-receive.md 3 rows -> @cto (alias @architect-songsak/@changful/@qa 1 release)",
+  "redirect": "engineering+qa MCPs deprecated=true primary=cto forward+trace cto-mig-W2-20261112T224226Z read-only (alias 1 release)"
+}

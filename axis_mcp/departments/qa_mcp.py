@@ -27,7 +27,9 @@ _task_tracker = TaskTracker()
 _SUITE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 
 QA_RESULTS_ROOT = Path(
-    os.environ.get("SOLOCORP_QA_RESULTS_ROOT", ROOT / "central_bus" / "content" / "qa_results")
+    os.environ.get(
+        "SOLOCORP_QA_RESULTS_ROOT", ROOT / "central_bus" / "content" / "qa_results"
+    )
 )
 QA_RESULTS_ROOT.mkdir(parents=True, exist_ok=True)
 
@@ -36,7 +38,10 @@ mcp = FastMCP(
     instructions=(
         "SoloCorp QA department. The head coordinates testing, quality, and "
         "evidence collection. Tools expose test suite status and result recording "
-        "without revealing internal QA specialist internals."
+        "without revealing internal QA specialist internals. "
+        "DEPRECATED (Wave 2 CTO flip-default 20261113): primary is now CTO (@cto); "
+        "this server is read-only redirect — forward new QA work to CTO, "
+        "evidence owner stays QA-ทีม, trace cto-mig-W2-20261112T224226Z."
     ),
 )
 
@@ -44,7 +49,9 @@ mcp = FastMCP(
 def _error(exc: Exception) -> str:
     from ..bus_store import as_json
 
-    return as_json({"status": "error", "error": type(exc).__name__, "message": str(exc)})
+    return as_json(
+        {"status": "error", "error": type(exc).__name__, "message": str(exc)}
+    )
 
 
 @mcp.tool()
@@ -83,6 +90,11 @@ def qa_department_info() -> str:
             ],
             "control_rule": "Client ส่งงานผ่านหัวหน้า; specialist เป็น implementation ภายในแผนก",
             "data_root": "central_bus/content/",
+            "deprecated": True,
+            "primary": "cto",
+            "forward_to": "cto (@axis/cto/smoke-test, @cto pipeline; evidence owner stays QA-ทีม)",
+            "trace_id": "cto-mig-W2-20261112T224226Z",
+            "mode": "read-only redirect (1 release alias @qa preserved)",
         }
     )
 

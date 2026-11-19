@@ -1,0 +1,10 @@
+{
+  "department": "qa",
+  "note": "W2 E2E via @cto primary, owner QA-ทีม",
+  "recorded_at": "2026-11-12T22:49:40.066921+00:00",
+  "recorded_by": "qa MCP tool call",
+  "result": "passed",
+  "schema_version": 1,
+  "suite_id": "w2-e2e-cto",
+  "task_id": "task-ca51c036cedc"
+}

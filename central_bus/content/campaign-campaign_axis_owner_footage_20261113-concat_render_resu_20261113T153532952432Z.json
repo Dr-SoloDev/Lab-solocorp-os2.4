@@ -1,0 +1,133 @@
+{
+  "approval_effect": "none",
+  "audio_cue_sheet_filename": "campaign-campaign_axis_owner_footage_20261113-audio-cue-campaign_20261113T150828643733Z.md",
+  "campaign_id": "campaign_axis_owner_footage_20261113",
+  "caption_count": 12,
+  "caption_source": "video_script",
+  "concat_version": {
+    "apiVersion": "0.2",
+    "capabilities": [
+      "events",
+      "mcp"
+    ],
+    "concat": "0.2.8",
+    "dirs": {
+      "config": "/home/drsolodev/.config/app.concat.editor",
+      "data": "/home/drsolodev/.local/share/app.concat.editor"
+    },
+    "mcp": {
+      "mode": "headless",
+      "writesUnder": [
+        "/data/projects/Lab-solocorp-os2.4/central_bus/content"
+      ]
+    }
+  },
+  "execution_mode": "local_concat_mcp_headless",
+  "execution_status": "completed",
+  "inputs": [
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/01_130408.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 0.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/02_130408_1.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 10.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/03_130409.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 20.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/04_130410.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 30.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/05_130411.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 40.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/06_130412.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 50.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/07_130412_1.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 60.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/08_130414.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 70.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/09_130414_1.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 80.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/10_130416.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 90.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/11_130416_1.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 100.0
+    },
+    {
+      "kind": "video",
+      "path": "content/owner_footage_staged_20261113/12_130421.mp4",
+      "source_kind": "real_owner_supplied_verified",
+      "start_seconds": 110.0
+    },
+    {
+      "kind": "audio",
+      "path": "content/campaign_axis_owner_footage_20261113-narration-combined-120s.mp3",
+      "source_kind": "elevenlabs_voiceover",
+      "start_seconds": 0.0
+    }
+  ],
+  "job_id": "concat-90dfd0b49af24cf6a0a485653420aafe",
+  "lifecycle_state": "client_generated",
+  "output": {
+    "bytes": 81907531,
+    "path": "content/concat_renders/campaign_axis_owner_footage_20261113/concat-90dfd0b49af24cf6a0a485653420aafe/campaign_axis_owner_footage_2026-3420aafe.mp4",
+    "probe": {
+      "duration_seconds": 120.0,
+      "video_streams": [
+        {
+          "avg_frame_rate": "24/1",
+          "codec_type": "video",
+          "height": 720,
+          "width": 1280
+        }
+      ]
+    },
+    "sha256": "8835120f2a04a705402aeb4e1860ae5be6a8c5824dd073a9abaccc40e5cb1ccd"
+  },
+  "project_file": "content/concat_projects/campaign_axis_owner_footage_20261113/concat-90dfd0b49af24cf6a0a485653420aafe/campaign_axis_owner_footage_2026-3420aafe/concat.json",
+  "project_path": "content/concat_projects/campaign_axis_owner_footage_20261113/concat-90dfd0b49af24cf6a0a485653420aafe/campaign_axis_owner_footage_2026-3420aafe",
+  "provider": "concat-mcp",
+  "publication_status": "blocked_pending_human_approval_and_rights_review",
+  "runtime_gate": "generated_assets_only_pending_independent_concat_runtime_verification",
+  "schema_version": 1,
+  "script_filename": "campaign-campaign_axis_owner_footage_20261113-client-generated-v_20261113T150825297817Z.md",
+  "sound_delivery_filename": null
+}

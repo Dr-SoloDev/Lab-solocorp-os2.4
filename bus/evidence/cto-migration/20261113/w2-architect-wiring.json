@@ -1,0 +1,40 @@
+{
+  "trace_id": "cto-wave2-architect-wiring-20261113",
+  "role": "Architect (\u0e1e\u0e35\u0e48\u0e17\u0e23\u0e07\u0e28\u0e31\u0e01\u0e14\u0e34\u0e4c) \u2014 Wave2 stabilize + support",
+  "checks": {
+    "opencode_json_cto_command": [
+      ".venv/bin/python3",
+      "-m",
+      "axis_mcp.cto.server"
+    ],
+    "opencode_json_cto_target": "axis_mcp.cto.server",
+    "opencode_json_servers": [
+      "central-bus",
+      "concat",
+      "content-creator",
+      "cto",
+      "engineering",
+      "github",
+      "qa",
+      "solocorp",
+      "stealth-browser"
+    ],
+    "opencode_json_engineering_kept": true,
+    "opencode_json_qa_kept": true,
+    "opencode_jsonc_has_cto": true,
+    "opencode_jsonc_has_unified_key": false,
+    "readme_truth_9_4": true,
+    "readme_cto_target": true,
+    "namespaces_preserved": [
+      "architect_*",
+      "engineering_*",
+      "qa_*",
+      "unified_*"
+    ],
+    "no_cto_reprefix": true
+  },
+  "live": {
+    "opencode_mcp_list": "cto connected, engineering connected, qa connected (2026-11-13 05:44 BKK, 9 connected + 1 disabled)"
+  },
+  "verdict": "PASS \u2014 triple (json+jsonc+README) consistent; single cto key -> axis_mcp.cto.server; eng/qa standalone kept; no re-prefix"
+}

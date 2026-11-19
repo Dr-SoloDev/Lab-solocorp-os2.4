@@ -1,0 +1,36 @@
+{
+  "trace_id": "cto-mig-W1",
+  "closure": "Wave1-Closure-R1",
+  "date": "2026-11-13",
+  "branch": "feat/cto-phase1-wave1",
+  "head": "95fb2b079fa6fe850d5db6dff7d59ddbb9bb0388",
+  "baseline": {
+    "commit": "52689ac0a597545dc6979413b305b77845730cfe",
+    "tag_dated": "pre-cto-baseline-20261113 -> 0b68f1d (Wave0)",
+    "tag_closure": "pre-cto-baseline -> 52689ac (closure R1, annotated)",
+    "note": "tag pre-cto-baseline created in closure R1; dated tag kept for audit"
+  },
+  "config_backup": {
+    "source": "opencode.json",
+    "backup_root": "opencode.json.bak (gitignored via *.bak*, rollback-only, not committed)",
+    "backup_sha256": "eb260853db55ba66505247030432662e6c90a8de7bc74cb8d915699ca7f13506",
+    "sha_match": true,
+    "evidence": "bus/evidence/cto-migration/2026-11-13/config-backup.sha256"
+  },
+  "queue_depth": {
+    "dispatch_files": 27,
+    "queue_high_lines": 0,
+    "queue_normal_lines": 0,
+    "queue_low_lines": 0,
+    "central_bus_content_files": 543
+  },
+  "db": {
+    "cto_db": "central_bus/cto.db",
+    "cto_sha256": "881da7676321c249cb45288580e93b69e4bdaa3eea604752aabd56704d777128",
+    "source_db": "central_bus/unified_technical.db",
+    "source_sha256": "881da7676321c249cb45288580e93b69e4bdaa3eea604752aabd56704d777128",
+    "sha_match": true
+  },
+  "scope": "CTO only (axis_mcp/cto + profiles/cto + opencode cto hunk + evidence). Untouched: product/legal/content/bus_mcp, legal_vault/**, axis_mcp/cto/** logic",
+  "orchestrator": "พี่วุฒิ (AXIS Orchestrator)"
+}

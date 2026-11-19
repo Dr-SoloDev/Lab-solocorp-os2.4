@@ -289,4 +289,19 @@ solocorp-mark-workflow, content creation pipeline
 
 ---
 
+## CTO — C-Level Technical Command (Wave1 dual-run, append-only)
+
+> Append-only Wave1 (20261113) — ไม่แก้แถวเดิมข้างบน
+
+| # | Profile | Head | Responsibility | Status |
+|:-:|:--------|:-----|:--------------|:------:|
+| `cto` | **CTO** | [เวคเตอร์ (Vector Chaisriram)](cto/cto.md) | C-Level reports to CEO ตรง — Phase 1: Bus-coordination / Build / QA | 🟡 Dual-run 10% |
+
+- **07 alias:** Build → owner Engineering (ช่างฟูล) — CTO ประสาน ไม่ implement
+- **10 alias:** QA → owner QA-ทีม — CTO เคารพ verdict ห้าม override
+- **Dual-run:** `engineering` + `qa` preserved 100% — `cto` shadow 10% (`profiles/cto/routing.yaml`, evidence `bus/evidence/cto-migration/20261113/dual-run-20calls.json`)
+- **Legal truth:** `profiles/cto/CTO.SOUL.md` + `profiles/cto/ROUTING_MATRIX.md` (DRAFT — CEO+Owner เซ็น L5 ก่อนบังคับใช้)
+
+---
+
 *SoloCorp OS — System First, Everything Follows*

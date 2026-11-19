@@ -59,6 +59,11 @@ central_bus/content/local_media/
 central_bus/content/generated-image-*
 central_bus/content/concat_renders/
 
+# Raw owner footage is local media (100+ MB), never source. Guard added after
+# brain_auto_commit's "bus/" substring matched "central_bus/" and swept this
+# into commit 64344c4. Existing tracked files are handled separately (Owner).
+central_bus/content/owner_footage_staged_*/
+
 # Agency Agents (cloned agent personality library)
 /reference/agency-agents/
 
@@ -185,3 +190,7 @@ loop_runner/.main.lock
 
 # คลิปของครีเอเตอร์ (ใหญ่) — เก็บในเครื่อง ไม่ commit
 bus/media/creator/*/clips/
+
+# Legal reviews — private (Owner 2026-11-13) — ยกเว้น public criteria 1 ไฟล์
+legal_vault/reviews/*
+!legal_vault/reviews/web3-review-criteria.md

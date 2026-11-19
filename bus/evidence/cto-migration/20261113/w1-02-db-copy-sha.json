@@ -1,0 +1,12 @@
+{
+  "trace_id": "cto-mig-W1-20261113",
+  "step": "DB copy unified_technical.db -> cto.db",
+  "source": "central_bus/unified_technical.db",
+  "dest": "central_bus/cto.db",
+  "source_sha256": "881da7676321c249cb45288580e93b69e4bdaa3eea604752aabd56704d777128",
+  "dest_sha256": "881da7676321c249cb45288580e93b69e4bdaa3eea604752aabd56704d777128",
+  "sha_match": true,
+  "tables": ["build_artifacts", "qa_evidence", "tool_calls"],
+  "source_kept": true,
+  "note": "WAL was 0 bytes at copy time; all state in main db file. Source kept per 2-step deprecation (delete only when CTO green)."
+}

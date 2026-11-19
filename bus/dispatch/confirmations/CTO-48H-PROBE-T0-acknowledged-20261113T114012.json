@@ -1,0 +1,13 @@
+{
+  "handoff_id": "CTO-48H-PROBE-T0",
+  "from": "unknown",
+  "to": "ceo-turbo",
+  "work_item": "CTO-48H-PROBE-T0",
+  "confirmed_by": "ceo-turbo",
+  "confirmed_at": "2026-11-13T11:40:12.714108+00:00",
+  "status": "acknowledged",
+  "acknowledge_context": true,
+  "understand_pending": true,
+  "take_over": true,
+  "notes": "Orchestrator T0 baseline 2026-11-13T11:39:57Z: 6/7 PASS, freshness STALE (restart_required=true) -> escalate CEO"
+}

@@ -17,7 +17,10 @@ mcp = FastMCP(
     instructions=(
         "SoloCorp Engineering department. The head coordinates backend, frontend, "
         "architecture, and infrastructure specialists. Tools expose project status "
-        "and routing without revealing internal specialist internals."
+        "and routing without revealing internal specialist internals. "
+        "DEPRECATED (Wave 2 CTO flip-default 20261113): primary is now CTO (@cto); "
+        "this server is read-only redirect — forward new build/deploy work to CTO, "
+        "trace cto-mig-W2-20261112T224226Z."
     ),
 )
 
@@ -25,7 +28,9 @@ mcp = FastMCP(
 def _error(exc: Exception) -> str:
     from ..bus_store import as_json
 
-    return as_json({"status": "error", "error": type(exc).__name__, "message": str(exc)})
+    return as_json(
+        {"status": "error", "error": type(exc).__name__, "message": str(exc)}
+    )
 
 
 @mcp.tool()
@@ -64,6 +69,11 @@ def engineering_department_info() -> str:
             ],
             "control_rule": "Client ส่งงานผ่านหัวหน้า; specialist เป็น implementation ภายในแผนก",
             "data_root": "central_bus/content/",
+            "deprecated": True,
+            "primary": "cto",
+            "forward_to": "cto (@axis/cto/deploy, @cto pipeline)",
+            "trace_id": "cto-mig-W2-20261112T224226Z",
+            "mode": "read-only redirect (1 release alias @changful preserved)",
         }
     )
 
@@ -110,9 +120,13 @@ def engineering_route_to_specialist(topic: str) -> str:
     topic_lower = topic.lower()
     if any(k in topic_lower for k in ("backend", "api", "database", "cloud", "infra")):
         specialist = "backend-architect"
-    elif any(k in topic_lower for k in ("frontend", "livewire", "fluxui", "three.js", "ui")):
+    elif any(
+        k in topic_lower for k in ("frontend", "livewire", "fluxui", "three.js", "ui")
+    ):
         specialist = "senior-developer"
-    elif any(k in topic_lower for k in ("design", "ddd", "microservice", "adr", "event")):
+    elif any(
+        k in topic_lower for k in ("design", "ddd", "microservice", "adr", "event")
+    ):
         specialist = "software-architect"
     else:
         specialist = "engineering-changful"

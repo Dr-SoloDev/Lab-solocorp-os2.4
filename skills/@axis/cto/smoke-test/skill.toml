@@ -1,0 +1,29 @@
+[skill]
+name = "@axis/cto/smoke-test"
+version = "1.0.0-dualrun"
+description = "CTO shadow shim — forward smoke-test to @axis/qa/smoke-test (no logic, additive)"
+category = "cto"
+
+[dept]
+owner = "cto"
+consumers = ["cto", "ceo"]
+forwards_to = "@axis/qa/smoke-test"
+
+[bus]
+endpoint = "/v1/skills/qa/smoke-test"
+queue_topic = "skill.qa.invoke"
+lifecycle = "skill_invoke → cto_shadow → qa_exec → report → complete"
+
+[mirror]
+minimum_level = "L1"
+check_on_invoke = false
+description = "Same as qa/smoke-test — L1, no mirror needed"
+
+[dependencies]
+skills = ["@axis/qa/smoke-test"]
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/cto-smoke-test"
+description = "CTO shadow smoke-test — forwards to qa/smoke-test"
+platforms = ["opencode", "grok", "claude"]

@@ -12,6 +12,30 @@ def _git(cmd: list[str]) -> str:
     return r.stdout.strip()
 
 
+_BRAIN_DIRS = ("brain/", "memory/", "bus/", ".claude/", "decisions/")
+
+
+def _is_brain_path(path: str) -> bool:
+    """Only top-level brain-owned dirs, matched at the start of the path.
+
+    Anchoring matters: a substring test made "bus/" match "central_bus/…",
+    so the loop swept source code and raw media into commit 64344c4.
+    """
+    return path.startswith(_BRAIN_DIRS)
+
+
+def _status_path(line: str) -> str:
+    """Stageable path from one `git status --porcelain` line.
+
+    Porcelain v1 is "XY path". A rename is "XY old -> new" — stage the
+    destination. Quoted paths (spaces/non-ASCII) are unquoted.
+    """
+    path = line[3:]
+    if " -> " in path:
+        path = path.split(" -> ", 1)[1]
+    return path.strip().strip('"')
+
+
 class BrainAutoCommitLoop(Loop):
     loop_id = "brain_auto_commit"
     interval = timedelta(hours=1)
@@ -23,11 +47,11 @@ class BrainAutoCommitLoop(Loop):
         if not status:
             return "✅ brain-auto-commit: nothing to commit"
 
-        changed_files = [line[3:] for line in status.splitlines() if line.strip()]
+        changed_files = [
+            _status_path(line) for line in status.splitlines() if line.strip()
+        ]
         # Only auto-commit brain/memory files — not source code
-        brain_files = [f for f in changed_files if any(
-            p in f for p in ("memory/", "bus/", ".claude/", "decisions/", "brain/")
-        )]
+        brain_files = [f for f in changed_files if _is_brain_path(f)]
         if not brain_files:
             return f"⏭ brain-auto-commit: {len(changed_files)} changes but none are brain files — skip"
 

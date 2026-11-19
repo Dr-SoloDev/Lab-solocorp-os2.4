@@ -1,0 +1,59 @@
+{
+  "trace_id": "cto-mig-W1",
+  "closure": "Wave1-Closure-R2",
+  "date": "2026-11-13",
+  "branch": "feat/cto-phase1-wave1",
+  "head": "f5ca4bdcc1c72a98a6f8d017153f253c229f16da",
+  "gates": {
+    "gate1_restart_required": {
+      "expected": false,
+      "got": false,
+      "status": "PASS",
+      "source": "bus/evidence/cto-migration/20261113/dual-run-20calls.json :: info_runtime.restart_required",
+      "detail": "newer_source_count 0, status current, reason no source file is newer than this process"
+    },
+    "gate2_db_sha_wal": {
+      "cto_db": "central_bus/cto.db",
+      "cto_sha256": "881da7676321c249cb45288580e93b69e4bdaa3eea604752aabd56704d777128",
+      "source_db": "central_bus/unified_technical.db",
+      "source_sha256": "881da7676321c249cb45288580e93b69e4bdaa3eea604752aabd56704d777128",
+      "sha_match": true,
+      "cto_wal_bytes": 0,
+      "unified_wal": "absent",
+      "wal_zero": true,
+      "status": "PASS"
+    },
+    "gate3_dual_run": {
+      "total_calls": 20,
+      "passed": 20,
+      "all_pass": true,
+      "repeat_byte_identical": true,
+      "status": "PASS",
+      "source": "bus/evidence/cto-migration/20261113/dual-run-20calls.json"
+    },
+    "gate4_qa_gate": {
+      "coverage_percent": 75.44371504984197,
+      "coverage_display": "75.44%",
+      "threshold": 9,
+      "passed": true,
+      "status": "PASS",
+      "pytest": "1312 passed, 1 skipped",
+      "evidence": "bus/evidence/2026-11-12/qa-gate-d15806c3.json (event qa-gate-d15806c3)",
+      "w2_pytest": "bus/evidence/cto-migration/20261113/w2-pytest.json"
+    },
+    "gate5_qa_record_evidence": {
+      "tool": "qa_mcp.qa_record_test_result (owner QA-ทีม, CTO delegates evidence)",
+      "suite_id": "w2-e2e-cto",
+      "task_id": "task-ca51c036cedc",
+      "result_path": "central_bus/content/qa_results/qa-w2-e2e-cto-ca51c036cedc.json",
+      "sha256": "cfd30e30fbd297720efc5862bdb6b85eee663d289306351c335c2a6beb63dab4",
+      "path_exists_live": true,
+      "sha_match_live": true,
+      "status": "PASS",
+      "source": "bus/evidence/cto-migration/20261113/w2-e2e.json :: qa_evidence_via_owner"
+    }
+  },
+  "overall": "5/5 PASS",
+  "scope": "CTO only; untouched product/legal/content/bus_mcp, legal_vault/**, axis_mcp/cto/** logic",
+  "orchestrator": "พี่วุฒิ (AXIS Orchestrator)"
+}
