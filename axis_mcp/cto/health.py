@@ -1,12 +1,12 @@
-"""Health check tools for Unified Technical MCP Server."""
+"""Health check tools for CTO MCP Server."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from axis_mcp.unified_technical.shared.db import db_manager
-from axis_mcp.unified_technical.shared.cache import cache
-from axis_mcp.unified_technical.shared.lock import lock_manager
+from axis_mcp.cto.shared.db import db_manager
+from axis_mcp.cto.shared.cache import cache
+from axis_mcp.cto.shared.lock import lock_manager
 
 
 async def health_check(
@@ -15,7 +15,7 @@ async def health_check(
     """Comprehensive health check for the unified server."""
     return {
         "status": "healthy",
-        "server": "unified-technical",
+        "server": "cto",
         "modules": {
             "architect": await architect.health_check(),
             "engineering": await engineering.health_check(),

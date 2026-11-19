@@ -1,0 +1,29 @@
+[skill]
+name = "@axis/cto/deploy"
+version = "1.0.0-dualrun"
+description = "CTO shadow shim — forward deploy to @axis/engineering/deploy (no logic, additive)"
+category = "cto"
+
+[dept]
+owner = "cto"
+consumers = ["cto", "ceo"]
+forwards_to = "@axis/engineering/deploy"
+
+[bus]
+endpoint = "/v1/skills/engineering/deploy"
+queue_topic = "skill.eng.invoke"
+lifecycle = "skill_invoke → cto_shadow → eng_review → deploy_exec → complete"
+
+[mirror]
+minimum_level = "L2"
+check_on_invoke = true
+description = "Same as engineering/deploy — production destructive → CEO gate"
+
+[dependencies]
+skills = ["@axis/engineering/deploy"]
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/cto-deploy"
+description = "CTO shadow deploy — forwards to engineering/deploy"
+platforms = ["opencode", "grok"]

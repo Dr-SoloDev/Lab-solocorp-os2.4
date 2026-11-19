@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from axis_mcp.unified_technical.modules.base import BaseModule
+from axis_mcp.cto.modules.base import BaseModule
 
 
 class QAModule(BaseModule):

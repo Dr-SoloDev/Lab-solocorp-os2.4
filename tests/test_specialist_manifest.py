@@ -25,9 +25,8 @@ SCRIPT = ROOT / "scripts" / "generate-specialist-manifest.py"
 
 EXPECTED_HEADS = 20
 MIN_TEAM_ROLES = 67
-# 2026-11-19 rollback removed .opencode/agents/cto.md (86 agent files remain).
-MIN_AGENT_FILES = 86
-ALLOWED_UNLISTED = {"axis-ceo"}
+MIN_AGENT_FILES = 87
+ALLOWED_UNLISTED = {"axis-ceo", "cto"}
 
 
 def _load_generator():
@@ -211,14 +210,11 @@ def test_snapshot_team_role_count_is_derived():
 
 def test_cto_note_count_is_derived():
     _, records, heads, agent_files = _repo_state()
-    # Simulate an unlisted cto.md (the real file was removed by the 2026-11-19
-    # rollback); the note must derive its count from the list it is given.
-    synthetic = [*agent_files, "cto"]
-    trimmed = [slug for slug in synthetic if slug != "axis-ceo"]
+    trimmed = [slug for slug in agent_files if slug != "axis-ceo"]
     rendered = gen.render(heads, records, trimmed)
     assert "`cto.md`" in rendered
     assert f"จึงถูกนับใน {len(trimmed)}" in rendered
-    assert f"จึงถูกนับใน {len(synthetic)}" not in rendered
+    assert f"จึงถูกนับใน {len(agent_files)}" not in rendered
 
 
 def test_manifest_reports_counts_derived_from_disk():
