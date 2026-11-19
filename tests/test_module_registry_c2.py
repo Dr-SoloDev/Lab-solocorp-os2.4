@@ -75,7 +75,9 @@ def _entry(**overrides: Any) -> dict[str, Any]:
     return entry
 
 
-def _config(entry: dict[str, Any] | None = None, module_id: str = "qa") -> dict[str, Any]:
+def _config(
+    entry: dict[str, Any] | None = None, module_id: str = "qa"
+) -> dict[str, Any]:
     return {module_id: entry if entry is not None else _entry()}
 
 
@@ -193,7 +195,10 @@ def test_validate_meta_never_raises_on_newer_schema() -> None:
 def test_downgrade_is_detected_before_field_validation(config_path: Path) -> None:
     # The version gate must run first, otherwise a user sees a pile of
     # "unknown field" noise instead of one actionable sentence (§1.8).
-    document = {**_config(_entry(permissions=["public"])), "_meta": {"schema_version": _newer_version()}}
+    document = {
+        **_config(_entry(permissions=["public"])),
+        "_meta": {"schema_version": _newer_version()},
+    }
     _write(config_path, document)
 
     with pytest.raises(RegistryDowngradeError) as excinfo:
@@ -443,7 +448,10 @@ def test_version_rejects_over_48_characters() -> None:
 
 
 def test_capabilities_accept_known_primitives() -> None:
-    assert validate_config(_config(_entry(capabilities=["tools", "resources", "prompts"]))) == []
+    assert (
+        validate_config(_config(_entry(capabilities=["tools", "resources", "prompts"])))
+        == []
+    )
 
 
 def test_capabilities_reject_unknown_primitive() -> None:
@@ -626,7 +634,7 @@ def _sandbox(tmp_path: Path) -> tuple[Path, dict[str, str]]:
     )
     env = {
         **os.environ,
-        "PYTHONPATH": str(sandbox),
+        "PYTHONPATH": os.pathsep.join([str(sandbox), str(ROOT)]),
         "SOLOCORP_BUS_ROOT": str(tmp_path / "bus"),
         "SOLOCORP_TASKS_ROOT": str(tmp_path / "tasks"),
         "SOLOCORP_QA_RESULTS_ROOT": str(tmp_path / "qa_results"),
@@ -635,7 +643,9 @@ def _sandbox(tmp_path: Path) -> tuple[Path, dict[str, str]]:
     return sandbox, env
 
 
-def _run_python(code: str, cwd: Path, env: dict[str, str]) -> subprocess.CompletedProcess[str]:
+def _run_python(
+    code: str, cwd: Path, env: dict[str, str]
+) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, "-c", code],
         cwd=str(cwd),
@@ -692,6 +702,12 @@ def test_fr07_host_calls_content_tool_without_api_key(
     registry = ModuleRegistry(
         registry_path=tmp_path / "config" / "module-registry.json",
         state_path=tmp_path / "state" / "module-registry.state.json",
+    )
+    # CI has no repo-local .venv; spawn the module with this test's interpreter.
+    registry.update(
+        "content-creator",
+        "enabled",
+        command=[sys.executable, "-m", "axis_mcp.departments.content_mcp"],
     )
     host = ModuleHost(
         registry,
@@ -813,7 +829,10 @@ def _repair(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 def _v2_document() -> dict[str, Any]:
-    return {**_config(), "_meta": {"schema_version": SCHEMA_VERSION, "total_modules": 1}}
+    return {
+        **_config(),
+        "_meta": {"schema_version": SCHEMA_VERSION, "total_modules": 1},
+    }
 
 
 def test_registry_repair_dry_run_changes_nothing(config_path: Path) -> None:
