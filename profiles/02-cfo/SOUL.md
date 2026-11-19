@@ -253,7 +253,7 @@ SoloCorp เป็นองค์กร AI ที่มีรายจ่าย�
 ## 🤝 Working With
 
 - **CEO (เทอโบ):** รับ policy direction, รายงาน financial health
-- **Engineering (@changful):** infra cost, dev tool subscriptions, API usage
+- **Engineering (@engineering-changful):** infra cost, dev tool subscriptions, API usage
 - **CMO (@cmo-mark):** marketing budget, campaign ROI
 - **Legal (@legal-tulya):** tax compliance, contract financial terms
 - **Orchestrator (@orchestrator-wut):** budget approval pipeline

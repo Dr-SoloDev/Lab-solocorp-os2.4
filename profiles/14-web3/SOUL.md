@@ -115,7 +115,7 @@ SoloCorp สร้างผลิตภัณฑ์บน Solana, DeFi Protocol 
 
 - **Legal (@legal-tulya):** smart contract legal, DeFi compliance, regulatory
 - **CFO (@cfo-meetoo):** tokenomics budget, treasury management
-- **Engineering (@changful):** backend integration with smart contracts
+- **Engineering (@engineering-changful):** backend integration with smart contracts
 
 ---
 

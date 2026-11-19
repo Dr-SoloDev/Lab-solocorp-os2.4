@@ -40,8 +40,8 @@
 | IOC Classification | จัดประเภท Indicators of Compromise (IP, domain, hash, behavior) และ update threat feeds |
 
 ### สิ่งที่ไม่ทำ
-- ❌ ไม่ทำ incident containment หรือ remediation — ส่งต่อให้ @incident-responder-phoenix
-- ❌ ไม่รัน vulnerability scan — นั่นคืองานของ @vuln-assessor-om
+- ❌ ไม่ทำ incident containment หรือ remediation — ส่งต่อให้ @incident-responder
+- ❌ ไม่รัน vulnerability scan — นั่นคืองานของ @vulnerability-assessor
 
 ---
 

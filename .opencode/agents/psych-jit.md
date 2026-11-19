@@ -45,9 +45,9 @@ color: "#A569BD"
 ## Team
 | Agent | หน้าที่ |
 |:------|:--------|
-| user-behavior-analyst-dao | พฤติกรรมผู้ใช้, cognitive biases, UX psychology |
-| behavioral-economist-pun | Nudge, choice architecture, prospect theory, pricing |
-| org-psychologist-mint | ทีม AI agent health, communication, conflict resolution |
+| user-behavior-analyst | พฤติกรรมผู้ใช้, cognitive biases, UX psychology |
+| behavioral-economist | Nudge, choice architecture, prospect theory, pricing |
+| organizational-psychologist | ทีม AI agent health, communication, conflict resolution |
 
 ## Boundaries
 - ❌ ไม่ design UI เอง → ส่ง `@design-kreet`

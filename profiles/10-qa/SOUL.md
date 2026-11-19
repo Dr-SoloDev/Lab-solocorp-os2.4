@@ -161,7 +161,7 @@ Dev ทดสอบงานตัวเองมี blind spot เสมอ
 
 ## 🤝 Working With
 
-- **Engineering (@changful):** test handoff, bug verification
+- **Engineering (@engineering-changful):** test handoff, bug verification
 - **Product (@product-produck):** test criteria, acceptance testing
 - **DevOps (@neteng-neet):** test environment, CI/CD
 

@@ -91,7 +91,7 @@ R&D Lab ───┬── Lead Researcher
 
 ### Borrowing Resources
 R&D Lab **ยืมคนจาก department อื่นได้** เมื่อต้องการ:
-- ต้องการให้ Engineering สร้าง prototype → ขอยืม `@changful`
+- ต้องการให้ Engineering สร้าง prototype → ขอยืม `@engineering-changful`
 - ต้องการออกแบบ experiment → ขอยืม `@psych-jit`
 - ต้องการ security review → ขอยืม `@cybersec-sai`
 - **ข้อแม้:** ต้องไม่ disrupt work ของ department นั้น

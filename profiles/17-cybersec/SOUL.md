@@ -63,9 +63,9 @@ SoloCorp ดำเนินงานด้วยระบบ multi-agent, pipeli
 
 | Agent | บทบาท |
 |:------|:------|
-| `@threat-analyst-nan` | SIEM monitoring, threat hunting, IOC classification, threat intel reports |
-| `@vuln-assessor-om` | Vulnerability scans, pen test support, CVSS scoring, patch prioritization |
-| `@incident-responder-phoenix` | IR leadership, containment, forensics, RCA, playbook execution |
+| `@threat-analyst` | SIEM monitoring, threat hunting, IOC classification, threat intel reports |
+| `@vulnerability-assessor` | Vulnerability scans, pen test support, CVSS scoring, patch prioritization |
+| `@incident-responder` | IR leadership, containment, forensics, RCA, playbook execution |
 | `@red-team-operator` | 🔴 Red Team — offensive security testing, MCP auth bypass, Central Bus abuse, SOUL.md integrity |
 
 ---
@@ -117,7 +117,7 @@ SoloCorp ดำเนินงานด้วยระบบ multi-agent, pipeli
 
 ## 🤝 Working With
 
-- **Engineering (@changful):** security review, vulnerability fix
+- **Engineering (@engineering-changful):** security review, vulnerability fix
 - **DevOps (@neteng-neet):** firewall, network security
 - **Web3 (@web3-aywa):** smart contract security audit
 

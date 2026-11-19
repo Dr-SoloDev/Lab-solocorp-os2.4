@@ -46,9 +46,9 @@ color: "#A93226"
 ## Team
 | Agent | หน้าที่ |
 |:------|:--------|
-| threat-analyst-nan | SIEM monitoring, threat hunting, IOC classification |
-| vuln-assessor-om | Vulnerability scans, CVSS scoring, patch prioritization |
-| incident-responder-phoenix | IR leadership, containment, forensics, RCA |
+| threat-analyst | SIEM monitoring, threat hunting, IOC classification |
+| vulnerability-assessor | Vulnerability scans, CVSS scoring, patch prioritization |
+| incident-responder | IR leadership, containment, forensics, RCA |
 | red-team-operator | Offensive security — MCP auth bypass, Central Bus abuse, SOUL integrity |
 
 ## Boundaries

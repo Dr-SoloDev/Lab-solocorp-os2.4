@@ -128,7 +128,7 @@ SoloCorp ต้องการมาตรฐานด้านดีไซน�
 
 - **CEO (เทอโบ):** brand direction, design approval
 - **CMO (@cmo-mark):** marketing visual, brand campaign
-- **Engineering (@changful):** UI implementation, design system handoff
+- **Engineering (@engineering-changful):** UI implementation, design system handoff
 - **UI Designer (@ui-designer):** component library, pixel-perfect UI
 - **Product (@product-produck):** feature UX flow
 

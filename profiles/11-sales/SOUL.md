@@ -157,7 +157,7 @@ SoloCorp ต้องการรายได้เพื่อ sustain กา�
 
 - **CMO (@cmo-mark):** lead generation, content marketing
 - **Support (@support):** customer handoff, success
-- **Engineering (@changful):** POC, technical support
+- **Engineering (@engineering-changful):** POC, technical support
 
 ---
 

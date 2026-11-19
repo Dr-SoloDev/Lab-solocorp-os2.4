@@ -127,7 +127,7 @@
 
 ## 🤝 Working With
 
-- **Engineering (@changful):** technical escalation, bug fix
+- **Engineering (@engineering-changful):** technical escalation, bug fix
 - **Sales (@sales):** customer handoff หลัง close deal
 - **Product (@product-produck):** feedback, feature request
 

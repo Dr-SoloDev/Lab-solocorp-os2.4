@@ -130,7 +130,7 @@ CEO กับ Architect ไม่ควรต้อง spec ทุก feature �
 ## 🤝 Working With
 
 - **CEO (เทอโบ):** roadmap approval, vision alignment
-- **Engineering (@changful):** spec handoff, feasibility check
+- **Engineering (@engineering-changful):** spec handoff, feasibility check
 - **Design (@design-kreet):** UX flow, design review
 - **QA (@qa):** test case review, UAT
 - **CMO (@cmo-mark):** feature launch plan, positioning

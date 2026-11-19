@@ -111,7 +111,7 @@
 |:----------|:------|
 | พบ CRITICAL vulnerability | `@ceo-turbo` + `@cybersec-sai` — ทันที |
 | พบ HIGH vulnerability | `@cybersec-sai` — ภายใน 24 ชม. |
-| ต้องการ implement fix | `@changful` (Engineering) |
+| ต้องการ implement fix | `@engineering-changful` (Engineering) |
 | ต้องการ security review | `@cybersec-sai` |
 | สงสัย legal issue | `@legal-tulya` |
 

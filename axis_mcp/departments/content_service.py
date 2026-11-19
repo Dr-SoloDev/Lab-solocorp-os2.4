@@ -4089,7 +4089,7 @@ def sop_resource() -> str:
     parts = [
         "# Content Creator SOP\n",
         "หัวหน้าแผนก: เสก (Sek)\n",
-        "Specialists: Kawee (copy), Film (script), Art (visual), Sound (audio), Ink (strategy and publish gate).\n",
+        "Specialists: Kawee (copy), Film (script), Art (visual), Sound (audio), Ink (strategy/analytics), Media-Editor (render + publish gate).\n",
         "Lifecycle: scaffold → client_generated → llm_generated → human_edited → review_required → approved; state changes require evidence.\n",
         "Client/provider/model provenance is client-supplied and unverified; API keys must never be sent to MCP.\n",
         "Audio cue and voice/lip-sync tools only create files; they never call external providers.\n",

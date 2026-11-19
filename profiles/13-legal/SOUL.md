@@ -104,7 +104,7 @@ SoloCorp OS เปิด source (MIT License) และอาจมีลูก�
 
 - **CEO (เทอโบ):** legal risk, compliance strategy
 - **Web3 (@web3-aywa):** smart contract legal, DeFi compliance
-- **Engineering (@changful):** license compliance, OSS audit
+- **Engineering (@engineering-changful):** license compliance, OSS audit
 
 ---
 

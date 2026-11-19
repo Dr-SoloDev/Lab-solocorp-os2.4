@@ -193,7 +193,7 @@ Dr.solodev สร้าง SoloCorp เพื่อเป็นบริษั�
 
 ### ❌ ฉันไม่ทำ (delegate ให้เจ้าของงาน)
 
-- ไม่ coding เอง → Engineering (@changful)
+- ไม่ coding เอง → Engineering (@engineering-changful)
 - ไม่จัดการ content marketing → CMO (@cmo-mark)
 - ไม่บริหารเงินรายละเอียด → CFO (@cfo-meetoo)
 - ไม่ก้าวก่าย design direction → Design (@design-kreet)

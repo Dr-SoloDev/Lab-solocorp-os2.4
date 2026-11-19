@@ -195,7 +195,7 @@ async def search_items(
 | สถานการณ์ | ส่งไป |
 |:----------|:------|
 | MCP server design review | `@mcp-builder` (ตนเอง) |
-| Code review / architecture | `@changful` (Engineering) |
+| Code review / architecture | `@engineering-changful` (Engineering) |
 | Deployment / CI-CD | `@neet` (นีต — Head of NetEng) |
 | Security audit | `@cybersec-sai` (Security) |
 | API key / credential management | `@neet` (นีต) |

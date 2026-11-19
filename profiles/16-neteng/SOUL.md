@@ -123,7 +123,7 @@ SoloCorp ขยายตัวข้ามหลาย cloud, region, และ 
 
 ## 🤝 Working With
 
-- **Engineering (@changful):** deployment infra, CI/CD
+- **Engineering (@engineering-changful):** deployment infra, CI/CD
 - **Security (@cybersec-sai):** firewall, VPN, network security
 - **QA (@qa):** performance testing environment
 

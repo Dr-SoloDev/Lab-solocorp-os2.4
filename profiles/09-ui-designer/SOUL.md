@@ -115,7 +115,7 @@
 ## 🤝 Working With
 
 - **Design Director (@design-kreet):** design direction, review
-- **Engineering (@changful):** UI implementation handoff
+- **Engineering (@engineering-changful):** UI implementation handoff
 - **Product (@product-produck):** feature UX flow
 
 ---

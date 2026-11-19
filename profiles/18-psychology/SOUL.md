@@ -62,9 +62,9 @@ SoloCorp ขับเคลื่อนด้วย AI agents แต่ผู้
 
 | Agent | บทบาท |
 |:------|:------|
-| `@user-behavior-analyst-dao` | วิเคราะห์พฤติกรรมผู้ใช้, cognitive biases, UX psychology, behavioral segmentation |
-| `@behavioral-economist-pun` | Behavioral economics สำหรับ product/pricing — nudge theory, choice architecture, prospect theory |
-| `@org-psychologist-mint` | AI agent team health, communication patterns, conflict resolution, motivation systems |
+| `@user-behavior-analyst` | วิเคราะห์พฤติกรรมผู้ใช้, cognitive biases, UX psychology, behavioral segmentation |
+| `@behavioral-economist` | Behavioral economics สำหรับ product/pricing — nudge theory, choice architecture, prospect theory |
+| `@organizational-psychologist` | AI agent team health, communication patterns, conflict resolution, motivation systems |
 
 ---
 

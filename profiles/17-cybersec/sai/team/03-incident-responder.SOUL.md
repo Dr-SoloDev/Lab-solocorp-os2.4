@@ -40,7 +40,7 @@
 | RCA & Post-Incident Report | หาสาเหตุรากเหง้า, เขียน PIR, และ update playbook เพื่อป้องกัน recurrence |
 
 ### สิ่งที่ไม่ทำ
-- ❌ ไม่ทำ threat hunting เชิงรุก — นั่นคืองานของ @threat-analyst-nan
+- ❌ ไม่ทำ threat hunting เชิงรุก — นั่นคืองานของ @threat-analyst
 - ❌ ไม่ตัดสินใจ shut down production service โดยไม่ได้รับอนุมัติจาก ซาย หรือ CEO
 
 ---
