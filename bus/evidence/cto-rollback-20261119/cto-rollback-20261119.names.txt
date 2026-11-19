@@ -1,0 +1,150 @@
+M	.gitignore
+D	.opencode/agents/cto.md
+M	README.md
+D	axis_mcp/cto/__init__.py
+D	axis_mcp/cto/tools/compat_shims.py
+D	axis_mcp/departments/cto_mcp.py
+M	axis_mcp/departments/engineering_mcp.py
+M	axis_mcp/departments/qa_mcp.py
+A	axis_mcp/unified_technical/__init__.py
+R091	axis_mcp/cto/bus_client.py	axis_mcp/unified_technical/bus_client.py
+R065	axis_mcp/cto/health.py	axis_mcp/unified_technical/health.py
+R100	axis_mcp/cto/modules/__init__.py	axis_mcp/unified_technical/modules/__init__.py
+R094	axis_mcp/cto/modules/architect_module.py	axis_mcp/unified_technical/modules/architect_module.py
+R069	axis_mcp/cto/modules/base.py	axis_mcp/unified_technical/modules/base.py
+R096	axis_mcp/cto/modules/engineering_module.py	axis_mcp/unified_technical/modules/engineering_module.py
+R095	axis_mcp/cto/modules/qa_module.py	axis_mcp/unified_technical/modules/qa_module.py
+R079	axis_mcp/cto/server.py	axis_mcp/unified_technical/server.py
+R100	axis_mcp/cto/shared/__init__.py	axis_mcp/unified_technical/shared/__init__.py
+R100	axis_mcp/cto/shared/cache.py	axis_mcp/unified_technical/shared/cache.py
+R090	axis_mcp/cto/shared/db.py	axis_mcp/unified_technical/shared/db.py
+R093	axis_mcp/cto/shared/events.py	axis_mcp/unified_technical/shared/events.py
+R100	axis_mcp/cto/shared/lock.py	axis_mcp/unified_technical/shared/lock.py
+R100	axis_mcp/cto/tools/__init__.py	axis_mcp/unified_technical/tools/__init__.py
+R088	axis_mcp/cto/tools/unified_tools.py	axis_mcp/unified_technical/tools/unified_tools.py
+D	bus/dispatch/confirmations/CTO-48H-PROBE-LIVE-CONFIRM-acknowledged-20261113T121233.json
+D	bus/dispatch/confirmations/CTO-48H-PROBE-P2-need_clarify-20261114T113702.json
+D	bus/dispatch/confirmations/CTO-48H-PROBE-T0-acknowledged-20261113T114012.json
+D	bus/evidence/cto-migration/2026-11-13/config-backup.sha256
+D	bus/evidence/cto-migration/2026-11-13/dual-run-20calls.json
+D	bus/evidence/cto-migration/2026-11-13/qa-gate-record.json
+D	bus/evidence/cto-migration/2026-11-13/routing-sha.txt
+D	bus/evidence/cto-migration/2026-11-13/triple-check.json
+D	bus/evidence/cto-migration/2026-11-13/w1-manifest.json
+D	bus/evidence/cto-migration/2026-11-13/w3-shim-legal-verify.json
+D	bus/evidence/cto-migration/2026-11-13/w3-shim-qa-verify.json
+D	bus/evidence/cto-migration/2026-11-13/waveA-changful-shim.json
+D	bus/evidence/cto-migration/20261113/dual-run-20calls.json
+D	bus/evidence/cto-migration/20261113/dual-run-routing.json
+D	bus/evidence/cto-migration/20261113/rollback-cto-wave1.md
+D	bus/evidence/cto-migration/20261113/rollback-cto-wave2.md
+D	bus/evidence/cto-migration/20261113/w1-00-opencode-working-bak.json
+D	bus/evidence/cto-migration/20261113/w1-01-git-mv.log
+D	bus/evidence/cto-migration/20261113/w1-02-db-copy-sha.json
+D	bus/evidence/cto-migration/20261113/w1-03-smoke-health.json
+D	bus/evidence/cto-migration/20261113/w1-05-live-mcp.json
+D	bus/evidence/cto-migration/20261113/w1-06-recursion-fix.json
+D	bus/evidence/cto-migration/20261113/w1-manifest-orchestrator.json
+D	bus/evidence/cto-migration/20261113/w1-sha256.txt
+D	bus/evidence/cto-migration/20261113/w2-architect-deprecation-shim-plan.md
+D	bus/evidence/cto-migration/20261113/w2-architect-health.json
+D	bus/evidence/cto-migration/20261113/w2-architect-wiring.json
+D	bus/evidence/cto-migration/20261113/w2-e2e.json
+D	bus/evidence/cto-migration/20261113/w2-freeze.json
+D	bus/evidence/cto-migration/20261113/w2-manifest.json
+D	bus/evidence/cto-migration/20261113/w2-opencode-post-sha.txt
+D	bus/evidence/cto-migration/20261113/w2-opencode-pre-flip.bak
+D	bus/evidence/cto-migration/20261113/w2-opencode-pre-flip.json
+D	bus/evidence/cto-migration/20261113/w2-opencode-pre-sha.txt
+D	bus/evidence/cto-migration/20261113/w2-pytest.json
+D	bus/evidence/cto-migration/20261113/w2-queue-depth-post.txt
+D	bus/evidence/cto-migration/20261113/w2-queue-depth.txt
+D	bus/evidence/cto-migration/20261113/w2-queue-dispatch-list.txt
+D	bus/evidence/cto-migration/20261113/w2-sha256.txt
+D	bus/evidence/cto-migration/20261113/w2-trace.txt
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-01.caption.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-01.checklist.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-01.gate.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-01.origin.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-01.post.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-01.script.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-01.shots.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-02.caption.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-02.checklist.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-02.gate.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-02.origin.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-02.post.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-02.script.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-02.shots.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-03.caption.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-03.checklist.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-03.gate.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-03.origin.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-03.post.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-03.script.md
+D	bus/media/creator/dr-solodev/2026-11-17/dr-solodev-20261117-130028-03.shots.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023015-01.caption.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023015-01.checklist.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023015-01.gate.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023015-01.origin.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023015-01.post.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023015-01.script.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023015-01.shots.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-02.caption.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-02.checklist.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-02.gate.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-02.origin.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-02.post.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-02.script.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-02.shots.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-03.caption.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-03.checklist.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-03.gate.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-03.origin.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-03.post.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-03.script.md
+D	bus/media/creator/dr-solodev/2026-11-18/dr-solodev-20261118-023016-03.shots.md
+D	central_bus/content/.campaign_axis_owner_footage_20261113.lock
+D	central_bus/content/axis-tale-rabbit-turtle/scripts-6x10s.md
+D	central_bus/content/axis-tale-rabbit-turtle/tale-th-1min.txt
+D	central_bus/content/campaign-campaign_axis_owner_footage_20261113-audio-cue-campaign_20261113T150828643733Z.md
+D	central_bus/content/campaign-campaign_axis_owner_footage_20261113-client-generated-v_20261113T150803644251Z.md
+D	central_bus/content/campaign-campaign_axis_owner_footage_20261113-client-generated-v_20261113T150825297817Z.md
+D	central_bus/content/campaign-campaign_axis_owner_footage_20261113-concat_render_resu_20261113T153532952432Z.json
+D	central_bus/content/campaign-campaign_axis_owner_footage_20261113-sound_review_repor_20261113T153715173494Z.json
+D	central_bus/content/campaign-campaign_axis_owner_footage_20261113-voice-script-axis_20261113T151841116550Z.md
+D	central_bus/content/campaign-campaign_axis_owner_footage_20261113-voice-script-axis_20261113T153004577675Z.md
+A	central_bus/content/campaign-campaign_mcp_pilot_llm_02-approval-v1_20261030T073248831783Z.json
+A	central_bus/content/campaign-campaign_mcp_pilot_llm_04-approval-v4_20261030T074044532172Z.json
+A	central_bus/content/campaign-campaign_synth_phase1_20261107-approval-v5_20261107T031906146707Z.json
+A	central_bus/content/campaign-content_dept_launch_ep01_20261102-approval-v29_20261102T185815075031Z.json
+D	central_bus/content/campaign_axis_owner_footage_20261113-consent_20261113T152917598075Z.md
+D	central_bus/content/campaign_axis_owner_footage_20261113-narration-combined-note_20261113.md
+D	central_bus/content/campaign_axis_owner_footage_20261113-pii_20261113T152952854074Z.md
+D	central_bus/content/campaign_axis_owner_footage_20261113-report-sek-20261113.md
+D	central_bus/content/campaign_axis_owner_footage_20261113-status-20261113_20261113T150924543696Z.md
+D	central_bus/content/campaign_axis_owner_footage_20261113-status-sek-20261113_20261113T152015292673Z.md
+D	central_bus/content/concat_projects/campaign_axis_owner_footage_20261113/concat-90dfd0b49af24cf6a0a485653420aafe/campaign_axis_owner_footage_2026-3420aafe/concat.json
+D	central_bus/content/qa_results/qa-w2-e2e-cto-ca51c036cedc.json
+D	central_bus/content/sound/campaign_axis_owner_footage_20261113/sound-review-b5259b1b53064013a5922fa438351e1a/earshot-audio-review.json
+M	central_bus/content/tasks/task-ca44bc2760a7.json
+D	central_bus/content/tasks/task-ca51c036cedc.json
+M	decisions/ADR-030-content-mcp-open-core-boundary.md
+D	decisions/ADR-036-cto-phase1-wave1-migration.md
+D	decisions/ADR-037-axis-csuite-ai-native-os.md
+M	loop_runner/loops/brain_auto_commit.py
+M	opencode.json
+M	opencode.jsonc
+M	profiles/INDEX.md
+D	profiles/cto/CTO.SOUL.md
+D	profiles/cto/ROUTING_MATRIX.md
+D	profiles/cto/cto.md
+D	profiles/cto/routing.yaml
+M	rules/01-receive.md
+D	skills/@axis/cto/deploy/SKILL.md
+D	skills/@axis/cto/deploy/skill.toml
+D	skills/@axis/cto/smoke-test/SKILL.md
+D	skills/@axis/cto/smoke-test/skill.toml
+D	tests/test_brain_auto_commit_filter.py
+M	tests/test_model_health.py
+M	workers/llm_provider.py
