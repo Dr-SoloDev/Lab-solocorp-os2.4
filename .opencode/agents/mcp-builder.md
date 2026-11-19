@@ -50,7 +50,7 @@ Network Engineering (16-neteng / นีต)
 | Tool naming/description review | `@mcp-builder` |
 | Deployment/infra | `@neet` |
 | Auth/security review | `@cybersec-sai` |
-| Code review (MCP servers) | `@changful` |
+| Code review (MCP servers) | `@engineering-changful` |
 
 ## Commands
 | คำสั่ง | เมื่อไหร่ | ทำอะไร |

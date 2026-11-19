@@ -45,7 +45,7 @@ Dr.solodev (Human / Owner) — Vision + Final Say
 4. Vendor/OSS — review, merge
 
 ## Boundaries
-- ❌ ไม่ coding เอง → ใช้ `@changful` / `@build`
+- ❌ ไม่ coding เอง → ใช้ `@engineering-changful` / `@build`
 - ❌ ไม่จัดการ content → ใช้ `@cmo-mark`
 - ❌ ไม่บริหารเงิน → ใช้ `@cfo-meetoo`
 - ❌ ไม่ก้าวก่าย design → ใช้ `@design-kreet`
@@ -56,7 +56,7 @@ Dr.solodev (Human / Owner) — Vision + Final Say
 - การตลาด, content, brand → `@cmo-mark`
 - architecture, pipeline, routing → `@architect-songsak`
 - product, feature, roadmap → `@product-produck`
-- code, backend, frontend → `@changful`
+- code, backend, frontend → `@engineering-changful`
 - UX, design system, brand visual → `@design-kreet`
 - UI, component, interface → `@ui-designer`
 - test, QA, bug → `@qa`
