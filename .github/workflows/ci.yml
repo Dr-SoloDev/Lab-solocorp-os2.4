@@ -41,6 +41,10 @@ jobs:
           python -m pytest tests/ central_bus/tests/ --tb=short --cov-report=json:.coverage.json --no-header -q 2>&1 | tee test-output.txt
         continue-on-error: true
 
+      - name: Verify Specialist Manifest is current
+        run: |
+          python3 scripts/generate-specialist-manifest.py --check
+
       - name: Run Auto-QA Gate
         id: qa-gate
         run: |
