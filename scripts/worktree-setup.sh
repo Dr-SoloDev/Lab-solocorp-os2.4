@@ -80,6 +80,29 @@ fi
 
 # --- 2. .venv symlink (absolute) ---
 VENV_LINK="$TARGET/.venv"
+
+# linked worktree? git-dir ≠ git-common-dir (main checkout: both .git)
+IS_LINKED_WORKTREE=0
+if _gd="$(git -C "$TARGET" rev-parse --git-dir 2>/dev/null)" \
+   && _gcd="$(git -C "$TARGET" rev-parse --git-common-dir 2>/dev/null)"; then
+  if [[ "$_gd" != "$_gcd" ]]; then IS_LINKED_WORKTREE=1; fi
+fi
+
+# main checkout: .venv ที่ใช้งานได้คือพอ — ห้ามสร้าง symlink ไปตัวเอง
+if [[ "$IS_LINKED_WORKTREE" -eq 0 ]]; then
+  if [[ -x "$VENV_LINK/bin/python3" ]]; then
+    echo "ℹ️  $TARGET เป็นโฟลเดอร์หลัก — .venv ใช้งานได้ (directory จริงใช้ได้ ไม่ต้อง symlink) ปฏิเสธการแก้"
+    exit 0
+  fi
+  echo "🔴 โฟลเดอร์หลัก: $VENV_LINK ใช้งานไม่ได้ (ไม่มี bin/python3)" >&2
+  if [[ -e "$VENV_LINK" || -L "$VENV_LINK" ]]; then
+    echo "   fix: mv $VENV_LINK $VENV_LINK.bak-$(date +%Y%m%d%H%M%S) && python3 -m venv $VENV_LINK" >&2
+  else
+    echo "   fix: python3 -m venv $VENV_LINK" >&2
+  fi
+  exit 1
+fi
+
 if [[ -L "$VENV_LINK" ]]; then
   cur="$(readlink "$VENV_LINK")"
   if [[ "$cur" == "$CANONICAL_VENV" ]]; then
@@ -90,8 +113,8 @@ if [[ -L "$VENV_LINK" ]]; then
     echo "✅ fixed: $VENV_LINK -> $CANONICAL_VENV"
   fi
 elif [[ -e "$VENV_LINK" ]]; then
-  echo "🔴 $VENV_LINK exists but is NOT a symlink (copy/dir) — contract requires symlink" >&2
-  echo "   fix: rm -rf $VENV_LINK && ln -s $CANONICAL_VENV $VENV_LINK" >&2
+  echo "🔴 $VENV_LINK exists but is NOT a symlink (copy/dir) — linked worktree requires symlink" >&2
+  echo "   fix: mv $VENV_LINK $VENV_LINK.bak-$(date +%Y%m%d%H%M%S) && ln -s $CANONICAL_VENV $VENV_LINK" >&2
   exit 1
 else
   ln -s "$CANONICAL_VENV" "$VENV_LINK"

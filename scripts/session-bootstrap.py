@@ -27,6 +27,18 @@ def _git(cmd: list[str]) -> str:
     return r.stdout.strip()
 
 
+def _is_linked_worktree() -> bool:
+    """linked worktree = git-dir ≠ git-common-dir (main checkout: both .git)."""
+    git_dir = _git(["rev-parse", "--absolute-git-dir"])
+    common_dir = _git(["rev-parse", "--git-common-dir"])
+    if not git_dir or not common_dir:
+        return False
+    try:
+        return Path(git_dir).resolve() != (BASE / common_dir).resolve()
+    except OSError:
+        return git_dir != common_dir
+
+
 def _rag(v: float) -> str:
     if v >= 90:
         return "🟢"
@@ -151,17 +163,23 @@ def system_health() -> dict:
 
 
 def preflight_venv() -> dict:
-    """Check .venv symlink — Worktree MCP Contract (plan A)."""
+    """Check .venv — Worktree MCP Contract (plan A)."""
     venv = BASE / ".venv"
     py = venv / "bin/python3"
+    linked = _is_linked_worktree()
     if not venv.exists() and not venv.is_symlink():
+        fix = (
+            f"ln -s {CANONICAL_VENV} {venv}  หรือ  bash scripts/worktree-setup.sh --fix-only"
+            if linked
+            else f"python3 -m venv {venv}"
+        )
         return {
             "ok": False,
             "status": "missing",
             "detail": f"{venv} ไม่มี — MCP spawn จะ NotFound",
-            "fix": f"ln -s {CANONICAL_VENV} {venv}  หรือ  bash scripts/worktree-setup.sh --fix-only",
+            "fix": fix,
         }
-    if venv.is_symlink():
+    if venv.is_symlink() and linked:
         target = (
             venv.resolve()
             if venv.exists()
@@ -193,18 +211,29 @@ def preflight_venv() -> dict:
             "detail": f"{py} ไม่มี/h execute ไม่ได้ — venv ชี้ผิดหรือ canonical หาย",
             "fix": f"ls -la {venv} && ls -la {CANONICAL_VENV}/bin/python3",
         }
-    # also check not a real dir copy (should be symlink per contract)
+    # real directory: valid in main checkout; linked worktree must use symlink
     if venv.is_dir() and not venv.is_symlink():
+        if not linked:
+            return {
+                "ok": True,
+                "status": "ok_real_dir",
+                "detail": f"{venv} เป็น directory จริงในโฟลเดอร์หลัก — ใช้ได้",
+                "fix": "",
+            }
+        ts = datetime.now().strftime("%Y%m%d%H%M%S")
+        bak = f"{venv}.bak-{ts}"
         return {
             "ok": False,
             "status": "not_symlink",
-            "detail": ".venv เป็น directory จริง ไม่ใช่ symlink — เปลือง disk + ไม่ตาม contract",
-            "fix": f"rm -rf {venv} && ln -s {CANONICAL_VENV} {venv}",
+            "detail": ".venv เป็น directory จริงใน linked worktree — เปลือง disk + ไม่ตาม contract",
+            "fix": f"mv {venv} {bak} && ln -s {CANONICAL_VENV} {venv}",
         }
     return {
         "ok": True,
         "status": "ok",
-        "detail": f".venv -> {CANONICAL_VENV}",
+        "detail": f".venv -> {CANONICAL_VENV}"
+        if linked
+        else f"{venv} (main checkout) ใช้ได้",
         "fix": "",
     }
 
