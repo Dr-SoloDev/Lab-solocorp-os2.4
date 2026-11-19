@@ -182,7 +182,7 @@
       },
       "cto": {
         "type": "local",
-        "command": [".venv/bin/python3", "-m", "axis_mcp.cto.server"],
+        "command": ["/data/projects/Lab-solocorp-os2.4/.venv/bin/python3", "-m", "axis_mcp.cto.server"],
         "cwd": ".",
         "disabled": false,
         "timeout": {

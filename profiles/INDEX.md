@@ -193,18 +193,22 @@
 
 ## Team — 15-content-creator (เสก)
 
-Content Creator department references 10 specialist profiles from the
-agency-agents library for content production across multiple platforms.
+Content Creator department has **6 implemented specialists** in
+`15-content-creator/sek/team/` — each with a runtime subagent file in
+`.opencode/agents/`. The earlier agency-agents reference names map as:
+`scriptwriter-film` (ฟิล์ม) → `content-scriptwriter`; `content-media-editor`
+is a new AXIS role (render + publish gate).
 
-### Named Production Specialists
+### Implemented Specialists
 
-| # | Agent | Responsibility | Status |
-|:-:|:------|:--------------|:------:|
-| 01 | `copywriter-kawee` (กวี) | Copywriting, narrative architecture, persuasion psychology | Active |
-| 02 | `scriptwriter-film` (ฟิล์ม) | Video scripts, storyboards, pacing, visual/audio cues | Active |
-| 03 | `visual-designer-art` (อาร์ต) | Visual concepts, prompts, mood and tone, infographics | Active |
-| 04 | `audio-designer-sound` (ซาวด์) | Sound design, SFX timing, voice emotion, lip-sync prompts | Active |
-| 05 | `content-analyst-ink` (อิงค์) | Content strategy, SEO, cadence, publish gate management | Active |
+| # | Agent | Runtime | Responsibility | Status |
+|:-:|:------|:--------|:--------------|:------:|
+| 01 | [content-scriptwriter](15-content-creator/sek/team/01-content-scriptwriter.SOUL.md) | `@content-scriptwriter` | Video scripts, storyboards, Thai cue, visual prompts | Active |
+| 02 | [content-media-editor](15-content-creator/sek/team/02-content-media-editor.SOUL.md) | `@content-media-editor` | Piper + FFmpeg/Concat render, LUFS/SHA-256, publish gate | Active |
+| 03 | [visual-designer-art](15-content-creator/sek/team/03-visual-designer-art.SOUL.md) | `@visual-designer-art` | Mood & tone, FLUX.3 Klein prompts, asset specs | Active |
+| 04 | [audio-designer-sound](15-content-creator/sek/team/04-audio-designer-sound.SOUL.md) | `@audio-designer-sound` | Soundscape, audio cue sheet, Earshot SFX, voice direction | Active |
+| 05 | [copywriter-kawee](15-content-creator/sek/team/05-copywriter-kawee.SOUL.md) | `@copywriter-kawee` | Headline/hook, caption, CTA, claims table | Active |
+| 06 | [content-analyst-ink](15-content-creator/sek/team/06-content-analyst-ink.SOUL.md) | `@content-analyst-ink` | Performance, SEO, feedback loop into next brief | Active |
 
 | Platform | Focus |
 |:---------|:------|
