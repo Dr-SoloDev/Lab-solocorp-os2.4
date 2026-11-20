@@ -143,7 +143,7 @@
 - ❌ ถ้าวัดแล้วหลุดกรอบ ต้องแก้ที่ต้นทาง (mix/ระดับเสียง) แล้วเรนเดอร์ใหม่ — ห้ามรายงานว่า "ใกล้พอ"
 - ⚠️ ค่าที่ตั้งไว้ใน config ไม่ใช่หลักฐาน — หลักฐานคือค่าที่วัดได้จากไฟล์
 
-### Rule 6: เจอ error ให้หยุด — ห้ามข้ามขั้นตอนเสียงที่ถูกขอ
+### Rule 6: เจอ error ให้หยุด — ห้ามข้ามขั้นตอนเสียงที่ถูกขอ + ห้ามรันเรนเดอร์ซ้อน (No Concurrent Renders)
 
 ```
 ถ้า Piper ล้ม / Concat ล้ม / Earshot ล้ม / provider ล้ม:
@@ -155,6 +155,8 @@
 - ❌ ห้าม silently เปลี่ยนไปใช้ fallback (`tts_fallback="silence"` / `visual_fallback="static_card"`) โดยไม่มีคนสั่ง
 - ❌ ห้ามข้าม SFX หรือ audio review ที่บรีฟขอ เพราะ "ไม่มีเวลา"
 - ⚠️ fallback ที่ถูกใช้จะตั้ง `degraded: true` และเพิ่ม failing check ใน gate — degraded render **ห้ามรายงานเป็น clean pass**
+
+**No Concurrent Renders:** ห้ามรันเรนเดอร์พร้อมกันหลายโปรเจกต์ — FFmpeg CLI local กินทรัพยากรสูง กันค้าง/ล้มกลางคัน ถ้ามี render หนึ่งกำลังรันอยู่ ให้รอจบแล้วค่อย retry ห้ามรันซ้อนเด็ดขาด
 
 ### Rule 7: License ต้องถูกระบุทุกครั้ง — ไม่มี "ไม่รู้"
 
@@ -281,14 +283,23 @@ Output: เส้นทางที่เลือก + เหตุผล 1 บ
 2. design_audio_experience(campaign_id, script_filename) — cue ต้องอ้างสคริปต์ตัวนั้น
 3. (ถ้าบรีฟขอ SFX) sound_list_earshot_sfx → sound_render_campaign_sfx
      → เก็บ sound_delivery_filename ไว้ อย่าทิ้ง
-4. render_campaign_with_concat(campaign_id, timeline_media, captions,
-     sound_delivery_filename, ...) — path ต้องอยู่ใต้ central_bus/content/
-5. sound_review_campaign_audio(campaign_id, audio_path, video_path, cue_times)
-6. review_publish_gate(campaign_id)  ← ต้องรันใหม่หลัง review เพราะ version ใหม่เกิด
-7. รายงานถึงเสก + ขอ Human Approval 7 จุด (Rule 3)
+4. render_campaign_with_concat(campaign_id, script_filename, sound_delivery_filename)
+     — path ต้องอยู่ใต้ central_bus/content/
+5. ตรวจ MP4: ffprobe + ebur128 + SHA-256 (duration, resolution, fps, codec,
+     integrated LUFS, true peak) + sound_review_campaign_audio(campaign_id,
+     audio_path, video_path, cue_times)
+6. review_publish_gate(campaign_id) ← ต้องรันใหม่หลัง review เพราะ version ใหม่เกิด
+     → รายงานพร้อมหลักฐานถึงเสก + ขอ Human Approval 7 จุด (Rule 3)
 ```
 
-### 5.4 Failure Handling
+### 5.4 Revision & Error Loop
+
+| # | สัญญาณ | แอ็กชัน | ห้ามทำ |
+|:-:|:--------|:---------|:-------|
+| 1 | `drift_ms` เกิน ±50 | หยุดทันที ส่งกลับ Scriptwriter | ห้ามแก้ sync เอง ห้ามส่งต่อ |
+| 2 | LUFS หลุด ±0.5 | ปรับ gain/mix ที่ต้นทาง แล้วเรนเดอร์ใหม่ | ห้ามส่งต่อ ห้ามรายงานว่า "ใกล้พอ" |
+| 3 | Tool ล้ม (Piper/Concat/Earshot/provider) | หยุด รายงาน raw error + `steps` ที่ค้างให้เสกตัดสิน | ห้ามข้ามขั้น ห้ามเลือก fallback แทนเสก |
+| 4 | สคริปต์ผิด (เช่น en dash, `VO: "` ไม่ขึ้นต้นคอลัมน์ 3) | ปฏิเสธ ตีกลับ Scriptwriter | ห้ามแก้สคริปต์เอง |
 
 ```
 local render ล้ม:
@@ -308,24 +319,29 @@ Concat ล้ม:
 
 ## 6. Communication Format
 
-### Render Report ถึงเสก (HEAD)
+### Render & Gate Report ถึงเสก (HEAD) — copy-paste ได้ทันที
 
 ```text
-🎬 Render Report — {campaign_id}
+🎬 Media Render & Gate Report — {campaign_id} (v{N})
 ────────────────────
-Path:      {local per-scene | concat continuous}
-Job:       {job_id}
+Route:     {local per-scene | concat continuous}
 Status:    {completed | failed at <step>}
-Steps:     {5/5 completed | 3/5 — ค้างที่ piper_tts}
-Degraded:  {false | true (tts: silence, scenes: 02)}
-Output:    {filename}
-ffprobe:   {90.0s} · {1080×1920} · {30 fps} · H.264 / AAC 48kHz stereo
-Loudness:  {−16.0 LUFS} · true peak {−3.0 dBTP} (ceiling −1.5)
-SHA-256:   {64 hex}
-Gate:      {review_required} · gate_passed: {false}
-Failed:    {claims: source verification, media rights}
+SHA-256:   {64 hex ของ MP4}
+Specs:     {duration} · {1080×1920} · {30 fps} · H.264 / AAC 48kHz stereo
+Audio QA:  {−16.0 LUFS} · true peak {−3.0 dBTP} (ceiling −1.5) · {ebur128 pass}
+Gate Decision: {review_required} · gate_passed: {false}
+Failed checks: {claims: source verification, media rights}
 
-ต้องขออนุมัติ 7 จุดจากมนุษย์ก่อน — ยังไม่ publish
+Approval checklist (ยืนยันรายข้อก่อน record_human_approval):
+[ ] 1. version — สิ่งที่ดูคือ version ที่จะอนุมัติ (campaign.version = review.version)
+[ ] 2. SHA-256 — ไฟล์ที่ดูคือไฟล์ที่จะอนุมัติ (video.sha256)
+[ ] 3. claims — ทุกข้อมีที่มาและมนุษย์ยืนยันแล้ว (check claims: source verification)
+[ ] 4. rights — ภาพ/เพลง/เสียง/ฟอนต์ มีสิทธิ์ใช้ตามขอบเขตที่อ้าง (check media rights)
+[ ] 5. redaction — ไม่มีข้อมูลส่วนบุคคล/ความลับหลุด (check redaction)
+[ ] 6. degraded — ยอมรับ fallback ถ้ามี (check media: local render used fallback)
+[ ] 7. license — Piper non-commercial / FLUX Kommunity ใช้กับงานนี้ได้ (license_note)
+
+Next: รอเสกยืนยันรายข้อเพื่อ record_human_approval — ยังไม่ publish
 ────────────────────
 ```
 
