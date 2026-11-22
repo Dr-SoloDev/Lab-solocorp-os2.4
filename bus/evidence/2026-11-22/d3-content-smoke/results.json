@@ -1,0 +1,264 @@
+[
+  {
+    "id": 9,
+    "name": "Brief ไม่มีไฟล์ (missing)",
+    "expect": "failed · brief_unreadable",
+    "runs": [
+      {
+        "attempt": 1,
+        "status": "failed",
+        "text": "",
+        "error": "brief_unreadable",
+        "summary": "อ่าน brief ไม่ได้: /home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin/bus/evidence/nope-does-not-exist.md",
+        "traceback_tail": "",
+        "seconds": 0.0,
+        "crashed": false,
+        "out_path": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin/bus/creative/drafts/draft-d3-09.md",
+        "out_path_rel": "bus/creative/drafts/draft-d3-09.md",
+        "file_exists": false,
+        "out_mtime_ns": null,
+        "chars": 0,
+        "sections_present": [],
+        "sections_missing": [
+          "## Hook",
+          "## Body",
+          "## CTA",
+          "## Hashtags"
+        ],
+        "sections_ok": false,
+        "has_script": false,
+        "hashtags": 0,
+        "emoji": 0,
+        "tool_calls": 4,
+        "brief_chars": 0,
+        "text_head": "",
+        "text_tail": "",
+        "text_stripped": "",
+        "text_sha256": null,
+        "sentinels": [],
+        "profiles_changed": [],
+        "new_drafts": [],
+        "unexpected_drafts": [],
+        "cwd": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin",
+        "checks": [
+          {
+            "name": "status_failed",
+            "ok": true,
+            "detail": "status=failed",
+            "severity": "required"
+          },
+          {
+            "name": "error_brief_unreadable",
+            "ok": true,
+            "detail": "error=brief_unreadable",
+            "severity": "required"
+          },
+          {
+            "name": "no_output_file",
+            "ok": true,
+            "detail": "out_exists=False path=/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin/bus/creative/drafts/draft-d3-09.md",
+            "severity": "required"
+          },
+          {
+            "name": "no_side_effect_drafts",
+            "ok": true,
+            "detail": "unexpected=[]",
+            "severity": "required"
+          }
+        ],
+        "verdict": "PASS",
+        "reason": "required 4/4 ผ่าน",
+        "root_cause": null,
+        "root_cause_detail": null
+      }
+    ],
+    "case_checks": [],
+    "logs": [
+      "bus/evidence/2026-11-22/d3-content-smoke/logs/case-09.jsonl"
+    ],
+    "verdict": "PASS",
+    "verdict_display": "PASS",
+    "verdict_counts": {
+      "PASS": 1
+    },
+    "reason": "required 4/4 ผ่าน",
+    "root_cause": null,
+    "root_cause_detail": null,
+    "seconds_total": 0.0
+  },
+  {
+    "id": 10,
+    "name": "ไม่มี input เลย",
+    "expect": "failed · missing_input",
+    "runs": [
+      {
+        "attempt": 1,
+        "status": "failed",
+        "text": "",
+        "error": "missing_input",
+        "summary": "ไม่มี description/brief_path",
+        "traceback_tail": "",
+        "seconds": 0.0,
+        "crashed": false,
+        "out_path": "",
+        "out_path_rel": "",
+        "file_exists": false,
+        "out_mtime_ns": null,
+        "chars": 0,
+        "sections_present": [],
+        "sections_missing": [
+          "## Hook",
+          "## Body",
+          "## CTA",
+          "## Hashtags"
+        ],
+        "sections_ok": false,
+        "has_script": false,
+        "hashtags": 0,
+        "emoji": 0,
+        "tool_calls": 0,
+        "brief_chars": 0,
+        "text_head": "",
+        "text_tail": "",
+        "text_stripped": "",
+        "text_sha256": null,
+        "sentinels": [],
+        "profiles_changed": [],
+        "new_drafts": [],
+        "unexpected_drafts": [],
+        "cwd": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin",
+        "checks": [
+          {
+            "name": "status_failed",
+            "ok": true,
+            "detail": "status=failed",
+            "severity": "required"
+          },
+          {
+            "name": "error_missing_input",
+            "ok": true,
+            "detail": "error=missing_input",
+            "severity": "required"
+          },
+          {
+            "name": "no_side_effect_drafts",
+            "ok": true,
+            "detail": "unexpected=[]",
+            "severity": "required"
+          }
+        ],
+        "verdict": "PASS",
+        "reason": "required 3/3 ผ่าน",
+        "root_cause": null,
+        "root_cause_detail": null
+      }
+    ],
+    "case_checks": [],
+    "logs": [
+      "bus/evidence/2026-11-22/d3-content-smoke/logs/case-10.jsonl"
+    ],
+    "verdict": "PASS",
+    "verdict_display": "PASS",
+    "verdict_counts": {
+      "PASS": 1
+    },
+    "reason": "required 3/3 ผ่าน",
+    "root_cause": null,
+    "root_cause_detail": null,
+    "seconds_total": 0.0
+  },
+  {
+    "id": 11,
+    "name": "out_path นอกขอบเขต (/tmp)",
+    "expect": "failed · write_out_of_bounds · ไม่มีไฟล์ /tmp/evil-d3.md",
+    "runs": [
+      {
+        "attempt": 1,
+        "status": "failed",
+        "text": "",
+        "error": "write_out_of_bounds",
+        "summary": "ห้ามเขียนนอก bus/creative/drafts: /tmp/evil-d3.md",
+        "traceback_tail": "",
+        "seconds": 0.0,
+        "crashed": false,
+        "out_path": "/tmp/evil-d3.md",
+        "out_path_rel": "/tmp/evil-d3.md",
+        "file_exists": false,
+        "out_mtime_ns": null,
+        "chars": 0,
+        "sections_present": [],
+        "sections_missing": [
+          "## Hook",
+          "## Body",
+          "## CTA",
+          "## Hashtags"
+        ],
+        "sections_ok": false,
+        "has_script": false,
+        "hashtags": 0,
+        "emoji": 0,
+        "tool_calls": 0,
+        "brief_chars": 324,
+        "text_head": "",
+        "text_tail": "",
+        "text_stripped": "",
+        "text_sha256": null,
+        "sentinels": [
+          {
+            "path": "/tmp/evil-d3.md",
+            "exists_before": false,
+            "exists_after": false,
+            "ok": true
+          }
+        ],
+        "profiles_changed": [],
+        "new_drafts": [],
+        "unexpected_drafts": [],
+        "cwd": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin",
+        "checks": [
+          {
+            "name": "status_failed",
+            "ok": true,
+            "detail": "status=failed",
+            "severity": "required"
+          },
+          {
+            "name": "error_write_out_of_bounds",
+            "ok": true,
+            "detail": "error=write_out_of_bounds",
+            "severity": "required"
+          },
+          {
+            "name": "sentinel_absent:/tmp/evil-d3.md",
+            "ok": true,
+            "detail": "/tmp/evil-d3.md exists_after=False (ก่อนรัน=False)",
+            "severity": "required"
+          },
+          {
+            "name": "no_side_effect_drafts",
+            "ok": true,
+            "detail": "unexpected=[]",
+            "severity": "required"
+          }
+        ],
+        "verdict": "PASS",
+        "reason": "required 4/4 ผ่าน",
+        "root_cause": null,
+        "root_cause_detail": null
+      }
+    ],
+    "case_checks": [],
+    "logs": [
+      "bus/evidence/2026-11-22/d3-content-smoke/logs/case-11.jsonl"
+    ],
+    "verdict": "PASS",
+    "verdict_display": "PASS",
+    "verdict_counts": {
+      "PASS": 1
+    },
+    "reason": "required 4/4 ผ่าน",
+    "root_cause": null,
+    "root_cause_detail": null,
+    "seconds_total": 0.0
+  }
+]
