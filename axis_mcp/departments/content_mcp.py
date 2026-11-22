@@ -15,6 +15,8 @@ from .content_service import (
     ContentServiceError,
     build_ffmpeg_job_manifest as _build_ffmpeg_job_manifest,
     build_ff_tracking_manifest as _build_ff_tracking_manifest,
+    confirm_media_rights as _confirm_media_rights,
+    confirm_source_verification as _confirm_source_verification,
     create_content_draft as _create_content_draft,
     create_video_script as _create_video_script,
     department_info,
@@ -387,6 +389,52 @@ def review_publish_gate(campaign_id: str = "", filename: str = "") -> str:
 
     try:
         return result_json(_review_publish_gate(filename or None, campaign_id or None))
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def confirm_media_rights(
+    campaign_id: str,
+    filename: str,
+    rights_origin: str = "",
+    license_proof: str = "",
+    confirmed_by: str = "",
+) -> str:
+    """Confirm media rights for one campaign asset via the round-2 flow.
+
+    rights_origin="synthetic_internal" auto-confirms eligible synthetic types
+    (system, non-commercial-only); "external"/"mixed" require license_proof +
+    confirmed_by (human id). Bumps version, resets review/approval, never
+    publishes.
+    """
+
+    try:
+        return result_json(
+            _confirm_media_rights(
+                campaign_id,
+                filename,
+                rights_origin,
+                license_proof or None,
+                confirmed_by or None,
+            )
+        )
+    except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
+        return _error(exc)
+
+
+@mcp.tool()
+def confirm_source_verification(
+    campaign_id: str, verified_by: str = "", note: str = ""
+) -> str:
+    """Record human source-verification for the current campaign version.
+
+    Gate passes only when auto-check (URL+quote / repo_path exists+mention)
+    passes AND this flag is pinned to the reviewed version. Never publishes.
+    """
+
+    try:
+        return result_json(_confirm_source_verification(campaign_id, verified_by, note))
     except (ContentServiceError, FileNotFoundError, OSError, UnicodeError) as exc:
         return _error(exc)
 

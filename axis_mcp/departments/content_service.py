@@ -105,6 +105,27 @@ LIFECYCLE_STATES = {
     "review_required",
     "approved",
 }
+# Round-2 rights/source flows (ADR-style: design, not copy).
+# - rights_origin: synthetic_internal = fully synthetic local pipeline
+#   (Piper TTS + FFmpeg synthetic visuals, no external image/music/footage).
+#   External/mixed MUST supply license_proof + human confirmed_by.
+# - source verification = auto-check (URL+quote / repo_path exists+mention)
+#   AND human confirm flag pinned to the exact campaign version.
+RIGHTS_ORIGINS = {"synthetic_internal", "external", "mixed"}
+RIGHTS_AUTO_ELIGIBLE_TYPES = {
+    "video_script",
+    "visual_prompt",
+    "audio_cue_sheet",
+    "voice_lipsync_config",
+    "local_media_render_job",
+    "local_media_render_result",
+    "draft",
+    "article",
+    "social_post",
+    "newsletter",
+    "voiceover_transcript",
+}
+RIGHTS_EXTERNAL_ONLY_TYPES = {"voiceover_audio"}
 FFMPEG_SCHEMA_VERSION = "2.17.1"
 FFMPEG_MAX_OPERATIONS = 12
 FFMPEG_MAX_RESULT_BYTES = 64 * 1024
@@ -2664,6 +2685,146 @@ def _campaign_check(
     return {"check": check, "ok": bool(ok), "detail": detail}
 
 
+def _classify_source_reference(reference: str) -> str:
+    value = str(reference or "").strip()
+    if re.match(r"^https?://", value, re.IGNORECASE):
+        return "url"
+    if (
+        "/" in value
+        or value.endswith(".md")
+        or value.startswith("decisions/")
+        or value.startswith("docs/")
+    ):
+        return "repo_path"
+    return "citation"
+
+
+def _auto_verify_source_references(
+    source_references: list[str],
+    all_text: str,
+) -> list[dict[str, Any]]:
+    """Auto-check each source reference; never approves, only reports.
+
+    - url: must be syntactically valid AND appear verbatim in campaign text
+      (URL+quote match — the claim must quote/cite the URL it lists).
+    - repo_path: must stay inside the repo (no .. / absolute), the file must
+      exist under ROOT, and the reference string must be mentioned in text.
+    - citation: free-text citation must appear verbatim in campaign text.
+
+    Returns per-reference {reference, kind, ok, detail}. Human confirmation
+    is a separate flag (confirm_source_verification); gate passes only when
+    auto-check passes AND the human flag is pinned to the current version.
+    """
+    results: list[dict[str, Any]] = []
+    haystack = str(all_text or "")
+    for reference in source_references or []:
+        value = str(reference or "").strip()
+        kind = _classify_source_reference(value)
+        if not value:
+            results.append(
+                {"reference": value, "kind": kind, "ok": False, "detail": "ว่างเปล่า"}
+            )
+            continue
+        if kind == "url":
+            valid = bool(
+                re.match(r"^https?://[^\s/$.?#].[^\s]*$", value, re.IGNORECASE)
+            )
+            mentioned = value in haystack
+            ok = valid and mentioned
+            if not valid:
+                detail = "URL ไม่ถูกต้องตามรูปแบบ"
+            elif not mentioned:
+                detail = "URL ไม่อยู่ในเนื้อหา campaign (ต้อง quote/cite URL ที่อ้าง)"
+            else:
+                detail = "URL ถูกต้องและพบ quote ตรงในเนื้อหา"
+            results.append(
+                {"reference": value, "kind": kind, "ok": ok, "detail": detail}
+            )
+            continue
+        if kind == "repo_path":
+            candidate = Path(value)
+            if value.startswith("/") or ".." in candidate.parts:
+                results.append(
+                    {
+                        "reference": value,
+                        "kind": kind,
+                        "ok": False,
+                        "detail": "path ต้องอยู่ภายใน repo (ห้าม .. / absolute)",
+                    }
+                )
+                continue
+            target = (ROOT / value).resolve(strict=False)
+            try:
+                inside = target.is_relative_to(ROOT.resolve())
+            except (OSError, ValueError):
+                inside = False
+            exists = inside and target.is_file()
+            mentioned = value in haystack
+            ok = bool(exists and mentioned)
+            if not inside:
+                detail = "path อยู่นอก repo"
+            elif not exists:
+                detail = f"ไม่พบไฟล์ใน repo: {value}"
+            elif not mentioned:
+                detail = "path ไม่ถูกอ้างถึงในเนื้อหา campaign"
+            else:
+                detail = f"พบไฟล์ใน repo และถูกอ้างถึง ({target.stat().st_size} bytes)"
+            results.append(
+                {"reference": value, "kind": kind, "ok": ok, "detail": detail}
+            )
+            continue
+        mentioned = value in haystack
+        results.append(
+            {
+                "reference": value,
+                "kind": kind,
+                "ok": bool(mentioned),
+                "detail": "พบ citation ตรงในเนื้อหา"
+                if mentioned
+                else "citation ไม่ปรากฏในเนื้อหา campaign",
+            }
+        )
+    return results
+
+
+def _summarize_rights_status(assets: list[dict[str, Any]]) -> tuple[bool, str]:
+    """Evaluate the media-rights gate check under the round-2 flow.
+
+    Passes only when every asset has media_rights_status == "confirmed".
+    Statuses are set ONLY via confirm_media_rights:
+    - synthetic_internal auto-confirms (system) for eligible types,
+      recorded as internal_synthetic non-commercial-only.
+    - external/mixed require license_proof + human confirmed_by.
+    Legacy assets default to human_confirmation_required, so old campaigns
+    (e.g. gate72 v7) stay REVIEW until the flow is explicitly run.
+    """
+    if not assets:
+        return False, "ยังไม่มี asset ให้ยืนยันสิทธิ์"
+    pending = [
+        str(asset.get("filename"))
+        for asset in assets
+        if asset.get("media_rights_status") != "confirmed"
+    ]
+    if pending:
+        return (
+            False,
+            f"ต้องยืนยันลิขสิทธิ์ภาพ/เพลง/เสียงก่อนเผยแพร่ ({len(pending)} ค้าง: "
+            + ", ".join(pending[:3])
+            + ("" if len(pending) <= 3 else f" +{len(pending) - 3} อื่นๆ")
+            + ")",
+        )
+    auto = sum(
+        1 for asset in assets if asset.get("rights_origin") == "synthetic_internal"
+    )
+    human = len(assets) - auto
+    parts = []
+    if auto:
+        parts.append(f"auto internal_synthetic {auto}")
+    if human:
+        parts.append(f"human license_proof {human}")
+    return True, "ยืนยันสิทธิ์ครบทุก asset (" + ", ".join(parts) + ")"
+
+
 def _latest_local_render_failed(assets: list[dict[str, Any]]) -> bool:
     failed = False
     for asset in assets:
@@ -2924,6 +3085,38 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
                 "ready_for_human_review": render_is_current and audio_review_is_current,
             }
         source_references = campaign.get("source_references", [])
+        source_auto = _auto_verify_source_references(source_references, all_text)
+        source_human = campaign.get("source_verification") or {}
+        source_human_ok = bool(
+            source_human.get("verified_by")
+            and source_human.get("version") == campaign.get("version")
+        )
+        source_auto_ok = bool(source_references) and all(
+            item.get("ok") for item in source_auto
+        )
+        source_ok = bool(source_auto_ok and source_human_ok)
+        if not source_references:
+            source_detail = "ยังไม่มีแหล่งอ้างอิง"
+        elif not source_auto_ok:
+            bad = [item for item in source_auto if not item.get("ok")]
+            source_detail = (
+                f"auto-check ไม่ผ่าน {len(bad)}/{len(source_auto)}: "
+                + "; ".join(
+                    f"{item['reference']} ({item['detail']})" for item in bad[:2]
+                )
+            )
+        elif not source_human_ok:
+            source_detail = (
+                f"auto-check ผ่าน {len(source_auto)}/{len(source_auto)} "
+                "แต่ยังไม่มี human confirm flag สำหรับเวอร์ชันนี้"
+            )
+        else:
+            source_detail = (
+                f"auto-check ผ่าน {len(source_auto)}/{len(source_auto)} + "
+                f"human confirm โดย {source_human.get('verified_by')} "
+                f"({source_human.get('verified_at', '')})"
+            )
+        rights_ok, rights_detail = _summarize_rights_status(assets)
         checks = [
             _campaign_check(
                 "dependencies: primary content",
@@ -2955,16 +3148,13 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             ),
             _campaign_check(
                 "claims: source verification",
-                False,
-                "ระบบยังไม่ได้ตรวจสอบแหล่งอ้างอิงโดยอิสระ; ต้องให้มนุษย์ยืนยัน",
+                source_ok,
+                source_detail,
             ),
             _campaign_check(
                 "media rights",
-                bool(assets)
-                and all(
-                    asset.get("media_rights_status") == "confirmed" for asset in assets
-                ),
-                "ต้องยืนยันลิขสิทธิ์ภาพ/เพลง/เสียงก่อนเผยแพร่",
+                rights_ok,
+                rights_detail,
             ),
             _campaign_check(
                 "redaction",
@@ -3069,6 +3259,44 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
         report_lines.extend(
             ["", "## Redaction and R1–R5 detail", gate_report_md(redaction, gate)]
         )
+        if source_auto:
+            report_lines.extend(["", "## Source auto-check"])
+            report_lines.extend(
+                f"- {'PASS' if item.get('ok') else 'REVIEW'} — "
+                f"{item.get('reference')} [{item.get('kind')}]: {item.get('detail')}"
+                for item in source_auto
+            )
+            if source_human_ok:
+                report_lines.append(
+                    f"- human confirm: {source_human.get('verified_by')} "
+                    f"at {source_human.get('verified_at', '')} "
+                    f"for {source_human.get('version', '')}"
+                    + (
+                        f" — {source_human.get('note')}"
+                        if source_human.get("note")
+                        else ""
+                    )
+                )
+            else:
+                report_lines.append("- human confirm: ยังไม่มีสำหรับเวอร์ชันนี้")
+        rights_lines = [
+            f"- `{asset.get('filename')}`: {asset.get('media_rights_status')}"
+            + (
+                f" ({asset.get('rights_origin')}"
+                + (
+                    f"; {asset.get('rights_proof')}"
+                    if asset.get("rights_proof")
+                    else ""
+                )
+                + ")"
+                if asset.get("rights_origin")
+                else ""
+            )
+            for asset in assets
+        ]
+        if rights_lines:
+            report_lines.extend(["", "## Media rights"])
+            report_lines.extend(rights_lines)
         report_task = _asset_task_id(canonical_id, "publish-gate", campaign["version"])
         report_result = submit_to_bus(
             DEPARTMENT, report_task, "\n".join(report_lines), "md"
@@ -3082,6 +3310,8 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             "overrides_failed_checks": failed_checks if approved_for_version else [],
             "published": False,
             "checks": checks,
+            "source_auto_checks": source_auto,
+            "source_verification": source_human if source_human else None,
             "media_workflow": media_workflow,
             "report": {
                 "filename": report_result["filename"],
@@ -3102,6 +3332,8 @@ def _review_campaign(campaign_id: str) -> dict[str, Any]:
             "overrides_failed_checks": review["overrides_failed_checks"],
             "published": False,
             "checks": checks,
+            "source_auto_checks": source_auto,
+            "source_verification": source_human if source_human else None,
             "media_workflow": media_workflow,
             "manifest": _campaign_manifest_summary(campaign),
             "campaign_manifest": manifest_file,
@@ -3345,6 +3577,165 @@ def record_human_approval(
                 "filename": approval_result["filename"],
                 "path": approval_result["path"],
             },
+            "campaign_manifest": manifest_file,
+        }
+
+
+def confirm_media_rights(
+    campaign_id: str,
+    filename: str,
+    rights_origin: str,
+    license_proof: str | None = None,
+    confirmed_by: str | None = None,
+) -> dict[str, Any]:
+    """Confirm media rights for one asset via the round-2 flow.
+
+    - rights_origin="synthetic_internal": auto-confirm for eligible synthetic
+      types. No license_proof required; records system auto-confirmation as
+      internal_synthetic non-commercial-only (Piper CC-BY-NC-SA-3.0).
+      Rejects external-only types (e.g. voiceover_audio from ElevenLabs).
+    - rights_origin in {"external", "mixed"}: requires license_proof
+      (1-500 chars, e.g. SPDX / license URL / consent record) AND
+      confirmed_by (human id, 1-80 chars).
+
+    Bumps the campaign version and resets review/approval because the gate
+    input changed. Never publishes; publish still needs record_human_approval
+    for the exact version plus a separate publish step.
+    """
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    target = str(filename or "").strip()
+    if not target:
+        raise ContentServiceError("filename is required")
+    origin = str(rights_origin or "").strip().lower()
+    if origin not in RIGHTS_ORIGINS:
+        raise ContentServiceError(
+            "rights_origin must be one of: synthetic_internal, external, mixed"
+        )
+    proof = str(license_proof or "").strip()
+    confirmer = str(confirmed_by or "").strip()
+    if len(proof) > 500:
+        raise ContentServiceError("license_proof must be at most 500 characters")
+    if len(confirmer) > 80:
+        raise ContentServiceError("confirmed_by must be at most 80 characters")
+
+    with _campaign_lock(campaign_key):
+        campaign = _load_campaign(campaign_key)
+        if campaign is None or campaign.get("campaign_id") != canonical_id:
+            raise ContentServiceError(f"campaign not found: {canonical_id}")
+        asset = next(
+            (a for a in campaign.get("assets", []) if a.get("filename") == target),
+            None,
+        )
+        if asset is None:
+            raise ContentServiceError(f"asset not found in campaign: {target}")
+        asset_type = str(asset.get("type") or "")
+
+        if origin == "synthetic_internal":
+            if asset_type in RIGHTS_EXTERNAL_ONLY_TYPES:
+                raise ContentServiceError(
+                    f"type {asset_type} is external-provider audio and cannot "
+                    "auto-confirm as synthetic_internal; use external with license_proof"
+                )
+            if asset_type not in RIGHTS_AUTO_ELIGIBLE_TYPES:
+                raise ContentServiceError(
+                    f"type {asset_type} is not eligible for synthetic auto-confirm"
+                )
+            asset["media_rights_status"] = "confirmed"
+            asset["rights_origin"] = "synthetic_internal"
+            asset["rights_proof"] = (
+                "auto: synthetic internal pipeline only "
+                "(Piper TTS + FFmpeg synthetic visuals, no external "
+                "image/music/footage); non-commercial-only "
+                "(Piper CC-BY-NC-SA-3.0)"
+            )
+            asset["rights_confirmed_by"] = "system:auto-internal_synthetic"
+            asset["rights_confirmed_at"] = _now()
+        else:
+            if not proof:
+                raise ContentServiceError(
+                    "license_proof is required for external/mixed "
+                    "(SPDX, license URL, or consent record, 1-500 chars)"
+                )
+            if not confirmer:
+                raise ContentServiceError(
+                    "confirmed_by (human id) is required for external/mixed"
+                )
+            asset["media_rights_status"] = "confirmed"
+            asset["rights_origin"] = origin
+            asset["rights_proof"] = proof
+            asset["rights_confirmed_by"] = confirmer
+            asset["rights_confirmed_at"] = _now()
+
+        version_number = int(campaign.get("version_number", 0)) + 1
+        campaign["version_number"] = version_number
+        campaign["version"] = f"v{version_number}"
+        campaign["review"] = None
+        campaign["approved_version"] = None
+        manifest_file = _save_campaign(campaign)
+        return {
+            "campaign_id": canonical_id,
+            "filename": target,
+            "type": asset_type,
+            "version": campaign["version"],
+            "media_rights_status": asset["media_rights_status"],
+            "rights_origin": asset["rights_origin"],
+            "rights_confirmed_by": asset["rights_confirmed_by"],
+            "review_reset": True,
+            "approval_reset": True,
+            "published": False,
+            "campaign_manifest": manifest_file,
+        }
+
+
+def confirm_source_verification(
+    campaign_id: str,
+    verified_by: str,
+    note: str = "",
+) -> dict[str, Any]:
+    """Record human source-verification for the current campaign version.
+
+    The gate passes "claims: source verification" only when BOTH hold:
+    (1) _auto_verify_source_references passes for every reference
+        (URL valid + verbatim quote match; repo_path exists + mentioned), and
+    (2) this human flag is pinned to the exact current version.
+
+    Recording the flag bumps the campaign version and resets review/approval,
+    so the next review_publish_gate evaluates the flag + auto-check together.
+    Never publishes.
+    """
+    campaign_key, canonical_id = _campaign_identity(campaign_id)
+    human = str(verified_by or "").strip()
+    if not human:
+        raise ContentServiceError("verified_by (human id) is required")
+    if len(human) > 80:
+        raise ContentServiceError("verified_by must be at most 80 characters")
+    clean_note = str(note or "").strip()
+    if len(clean_note) > 500:
+        raise ContentServiceError("note must be at most 500 characters")
+
+    with _campaign_lock(campaign_key):
+        campaign = _load_campaign(campaign_key)
+        if campaign is None or campaign.get("campaign_id") != canonical_id:
+            raise ContentServiceError(f"campaign not found: {canonical_id}")
+        if not campaign.get("source_references"):
+            raise ContentServiceError("campaign has no source_references to verify")
+        record = {
+            "verified_by": human,
+            "verified_at": _now(),
+            "note": clean_note or None,
+            "version": campaign.get("version"),
+        }
+        campaign["source_verification"] = record
+        manifest_file = _save_campaign(campaign)
+        return {
+            "campaign_id": canonical_id,
+            "version": campaign.get("version"),
+            "source_verification": record,
+            "source_references": campaign.get("source_references"),
+            "review_reset": False,
+            "approval_reset": False,
+            "published": False,
+            "next_step": "run review_publish_gate for this version",
             "campaign_manifest": manifest_file,
         }
 
