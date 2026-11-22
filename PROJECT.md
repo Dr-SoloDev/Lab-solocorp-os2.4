@@ -1,5 +1,7 @@
 # SoloCorp OS 2.4 — Getting Started Guide
 
+> **⚠️ Legacy guide — read SSOT first:** this file is a historical orientation guide; its platform/readiness labels are superseded. Current status: [`README.md` (Prerequisite + Multi-client archives)](README.md) and source of truth [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md). Do not treat this file's platform matrix as current.
+
 > **Status note (2026-11-02):** This is a legacy orientation guide; its readiness labels are historical and do not describe the Local-First App MVP. Current product status is in [the current PRD](docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
 
 > A complete orientation for newcomers. Read this first to understand the

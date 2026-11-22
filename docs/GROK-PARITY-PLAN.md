@@ -1,5 +1,7 @@
 # SoloCorp OS × Grok Build — Parity Plan (→ OpenCode Gold)
 
+> **⚠️ Archived scope (L5 OpenCode-only, 2026-11-08):** this parity plan is historical and will not advance. Active path is OpenCode-only — see [`README.md` (Prerequisite + Multi-client archives)](../README.md). Old material preserved at tag `archive/multi-client-2026-11-08`.
+
 **Status:** Phase 0 complete · Plan 1–3 not started  
 **Created:** 2026-07-27  
 **Approved:** 2026-07-27 (Owner)  

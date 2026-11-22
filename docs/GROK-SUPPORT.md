@@ -1,5 +1,7 @@
 # SoloCorp OS × Grok Build — Support Guide
 
+> **⚠️ Archived scope (L5 OpenCode-only, 2026-11-08):** this Grok pack is retired from the active path. Active path is OpenCode-only — see [`README.md` (Prerequisite + Multi-client archives)](../README.md). Old material preserved at tag `archive/multi-client-2026-11-08`.
+
 **Status:** Active (v1 pack) · **Parity:** Planned (Phase 0 docs done)  
 **Updated:** 2026-07-27  
 **Pack location:** `.grok/` + root `AGENTS.md`  
