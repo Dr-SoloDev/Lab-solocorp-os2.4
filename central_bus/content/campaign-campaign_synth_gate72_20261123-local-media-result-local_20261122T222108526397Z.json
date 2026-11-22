@@ -1,0 +1,73 @@
+{
+  "approval_effect": "none",
+  "campaign_id": "campaign_synth_gate72_20261123",
+  "degraded": false,
+  "error": "ContentServiceError",
+  "execution_status": "failed",
+  "fallbacks": null,
+  "job_id": "local-media-481f93c615c448d4a8c904aafba795f0",
+  "lifecycle_state": "scaffold",
+  "message": "local media render failed: {\"status\": \"failed\", \"error\": \"FileNotFoundError\", \"message\": \"local Thai Piper model/config not installed under tools/piper/models\", \"steps\": {\"input_validation\": {\"name\": \"input_validation\", \"status\": \"failed\", \"started_at\": \"2026-11-22T22:21:08.344188+00:00\", \"finished_at\": \"2026-11-22T22:21:08.345651+00:00\", \"output\": null, \"fallback_used\": false, \"fallback_scenes\": [], \"error\": \"FileNotFoundError\", \"message\": \"local Thai Piper model/config not installed under tools/piper/models\"}, \"piper_tts\": {\"name\": \"piper_tts\", \"status\": \"pending\", \"started_at\": null, \"finished_at\": null, \"output\": null, \"fallback_used\": false, \"fallback_scenes\": [], \"error\": null, \"message\": \"\"}, \"synthetic_visuals\": {\"name\": \"synthetic_visuals\", \"status\": \"pending\", \"started_at\": null, \"finished_at\": null, \"output\": null, \"fallback_used\": false, \"fallback_scenes\": [], \"error\": null, \"message\": \"\"}, \"ffmpeg_assembly\": {\"name\": \"ffmpeg_assembly\", \"status\": \"pending\", \"started_at\": null, \"finished_at\": null, \"output\": null, \"fallback_used\": false, \"fallback_scenes\": [], \"error\": null, \"message\": \"\"}, \"output_audit\": {\"name\": \"output_audit\", \"status\": \"pending\", \"started_at\": null, \"finished_at\": null, \"output\": null, \"fallback_used\": false, \"fallback_scenes\": [], \"error\": null, \"message\": \"\"}}}",
+  "provider": "ffmpeg-cli",
+  "schema_version": 1,
+  "steps": {
+    "ffmpeg_assembly": {
+      "error": null,
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": null,
+      "message": "",
+      "name": "ffmpeg_assembly",
+      "output": null,
+      "started_at": null,
+      "status": "pending"
+    },
+    "input_validation": {
+      "error": "FileNotFoundError",
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": "2026-11-22T22:21:08.345651+00:00",
+      "message": "local Thai Piper model/config not installed under tools/piper/models",
+      "name": "input_validation",
+      "output": null,
+      "started_at": "2026-11-22T22:21:08.344188+00:00",
+      "status": "failed"
+    },
+    "output_audit": {
+      "error": null,
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": null,
+      "message": "",
+      "name": "output_audit",
+      "output": null,
+      "started_at": null,
+      "status": "pending"
+    },
+    "piper_tts": {
+      "error": null,
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": null,
+      "message": "",
+      "name": "piper_tts",
+      "output": null,
+      "started_at": null,
+      "status": "pending"
+    },
+    "synthetic_visuals": {
+      "error": null,
+      "fallback_scenes": [],
+      "fallback_used": false,
+      "finished_at": null,
+      "message": "",
+      "name": "synthetic_visuals",
+      "output": null,
+      "started_at": null,
+      "status": "pending"
+    }
+  },
+  "sync_report": [],
+  "tts_fallback": "abort",
+  "visual_fallback": "abort"
+}
