@@ -19,6 +19,7 @@ Product PRD-PR2.1 v1.0 contract (ล็อก):
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -252,14 +253,15 @@ def test_no_db_fallback_in_live_module():
 
 def test_list_sessions_with_fake_cli(tmp_path: Path):
     live_module.clear_live_cache()
-    fake = tmp_path / "fake-opencode"
+    fake = tmp_path / "fake-opencode.py"
     fake.write_text(
-        "#!/usr/bin/env python3\nimport json,sys\n"
+        "import json, sys\n"
         'json.dump([{"id": "s1", "title": "t", "model": "m"}], sys.stdout)\n',
         encoding="utf-8",
     )
-    fake.chmod(0o755)
-    envelope = list_sessions(10, queue_cli=[str(fake)])
+    # Run the fake CLI with the current interpreter: a shebang script is not
+    # executable on Windows, and spawning python explicitly works everywhere.
+    envelope = list_sessions(10, queue_cli=[sys.executable, str(fake)])
     assert envelope["source"] == "cli"
     assert envelope["count"] == 1
     assert envelope["sessions"][0]["id"] == "s1"

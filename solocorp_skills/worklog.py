@@ -184,8 +184,8 @@ def _from_git(days: int = 14, limit: int = 60) -> list[WorkStory]:
         out = subprocess.run(
             ["git", "log", f"-{days*3}", "--format=%H%x1f%ad%x1f%s%x1f%b%x1e",
              "--date=short"],
-            capture_output=True, text=True, timeout=30, cwd=str(ROOT),
-        ).stdout
+            capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30, cwd=str(ROOT),
+        ).stdout or ""
     except Exception:
         return []
 

@@ -30,7 +30,7 @@ id = "ADR-001"
 [body]
 en = "English summary"
 th = "สรุปภาษาไทย"
-""")
+""", encoding="utf-8")
         assert val_mod._check_toml(adr) == []
 
     def test_missing_metadata_section(self, tmp_path: Path) -> None:
@@ -40,7 +40,7 @@ th = "สรุปภาษาไทย"
 [body]
 en = "English summary"
 th = "สรุปภาษาไทย"
-""")
+""", encoding="utf-8")
         errors = val_mod._check_toml(adr)
         assert "Missing [metadata] section" in errors
 
@@ -54,7 +54,7 @@ title = "Test"
 [body]
 en = "English summary"
 th = "สรุปภาษาไทย"
-""")
+""", encoding="utf-8")
         errors = val_mod._check_toml(adr)
         assert "Missing metadata.id" in errors
 
@@ -64,7 +64,7 @@ th = "สรุปภาษาไทย"
         adr.write_text("""\
 [metadata]
 id = "ADR-001"
-""")
+""", encoding="utf-8")
         errors = val_mod._check_toml(adr)
         assert "Missing [body] section" in errors
 
@@ -77,7 +77,7 @@ id = "ADR-001"
 
 [body]
 th = "สรุปภาษาไทย"
-""")
+""", encoding="utf-8")
         errors = val_mod._check_toml(adr)
         assert "Missing body.en" in errors
 
@@ -90,14 +90,14 @@ id = "ADR-001"
 
 [body]
 en = "English summary"
-""")
+""", encoding="utf-8")
         errors = val_mod._check_toml(adr)
         assert "Missing body.th" in errors
 
     def test_invalid_toml(self, tmp_path: Path) -> None:
         """Completely invalid TOML returns TOML parse error."""
         adr = tmp_path / "ADR-001.toml"
-        adr.write_text("this is not valid toml {{{")
+        adr.write_text("this is not valid toml {{{", encoding="utf-8")
         errors = val_mod._check_toml(adr)
         assert any("TOML parse error" in e for e in errors)
 
@@ -133,7 +133,7 @@ id = "ADR-001"
 [body]
 en = "English summary"
 th = "สรุปภาษาไทย"
-""")
+""", encoding="utf-8")
         monkeypatch.setattr(val_mod, "GOV_DIR", tmp_path)
         result = runner.invoke(app, ["validate", "adr", "ADR-001"])
         assert result.exit_code == 0
@@ -153,7 +153,7 @@ th = "สรุปภาษาไทย"
         (adr_dir / "ADR-001.toml").write_text("""\
 [metadata]
 id = "ADR-001"
-""")
+""", encoding="utf-8")
         monkeypatch.setattr(val_mod, "GOV_DIR", tmp_path)
         result = runner.invoke(app, ["validate", "adr", "ADR-001"])
         assert "❌ ADR-001" in result.stdout
@@ -170,7 +170,7 @@ id = "ADR-001"
 [body]
 en = "English summary"
 th = "สรุปภาษาไทย"
-""")
+""", encoding="utf-8")
         (adr_dir / "ADR-002.toml").write_text("""\
 [metadata]
 id = "ADR-002"
@@ -178,7 +178,7 @@ id = "ADR-002"
 [body]
 en = "English summary"
 th = "สรุปภาษาไทย"
-""")
+""", encoding="utf-8")
         monkeypatch.setattr(val_mod, "GOV_DIR", tmp_path)
         result = runner.invoke(app, ["validate", "adr"])
         assert result.exit_code == 0

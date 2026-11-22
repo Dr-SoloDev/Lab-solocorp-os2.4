@@ -57,7 +57,10 @@ async def test_brief_path_missing_file_returns_failed(tmp_path):
     _assert_failed_unreadable(result)
 
 
-@pytest.mark.skipif(os.geteuid() == 0, reason="root อ่านไฟล์ chmod 000 ได้ — permission ไม่ถูกบังคับ")
+@pytest.mark.skipif(
+    sys.platform == "win32" or not hasattr(os, "geteuid") or os.geteuid() == 0,
+    reason="chmod 000 ไม่ถูกบังคับบน Windows — และ root อ่านไฟล์ได้",
+)
 async def test_brief_path_unreadable_file_returns_failed(tmp_path):
     """ไฟล์ไม่มีสิทธิ์อ่าน → PermissionError (OSError) ต้องกลายเป็น failed"""
     locked = tmp_path / "locked.md"

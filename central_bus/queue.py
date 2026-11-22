@@ -27,6 +27,7 @@ from typing import Any, Optional
 from central_bus.config import settings
 from central_bus.db import DbManager, new_id, now_iso
 from central_bus.models import BusMessage, Priority
+from solocorp_lock import LOCK_EX, LOCK_SH, LOCK_UN, flock
 
 log = logging.getLogger(__name__)
 
@@ -57,7 +58,6 @@ def _offset_file(priority: Priority) -> Path:
 
 
 def _read_offset(priority: Priority) -> int:
-    import fcntl
     f = _offset_file(priority)
     if not f.exists():
         return 0
@@ -72,19 +72,18 @@ def _write_offset(priority: Priority, offset: int) -> None:
 
 
 def _compact(path: Path, priority: Priority) -> None:
-    import fcntl
     offset = _read_offset(priority)
     if offset == 0:
         return
     try:
         with open(path, "r+") as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
+            flock(f, LOCK_EX)
             lines = f.readlines()
             remaining = lines[offset:]
             f.seek(0)
             f.writelines(remaining)
             f.truncate()
-            fcntl.flock(f, fcntl.LOCK_UN)
+            flock(f, LOCK_UN)
         _write_offset(priority, 0)
     except OSError:
         pass
@@ -92,36 +91,33 @@ def _compact(path: Path, priority: Priority) -> None:
 
 def enqueue(msg: BusMessage) -> None:
     """JSONL enqueue — kept for backward compatibility."""
-    import fcntl
     path = _queue_file(msg.priority)
     line = json.dumps(msg.__dict__) + "\n"
     with open(path, "a") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        flock(f, LOCK_EX)
         f.write(line)
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
 
 
 def dequeue(priority: Priority) -> BusMessage | None:
     """JSONL dequeue — kept for backward compatibility."""
-    import fcntl
     path = _queue_file(priority)
     if not path.exists():
         return None
     with open(path, "r") as f:
-        fcntl.flock(f, fcntl.LOCK_SH)
+        flock(f, LOCK_SH)
         lines = f.readlines()
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
 
     offset = _read_offset(priority)
     while offset < len(lines) and not lines[offset].strip():
         offset += 1
     if offset >= len(lines):
         if offset > 0:
-            import fcntl
             with open(path, "w") as f:
-                fcntl.flock(f, fcntl.LOCK_EX)
+                flock(f, LOCK_EX)
                 f.truncate(0)
-                fcntl.flock(f, fcntl.LOCK_UN)
+                flock(f, LOCK_UN)
             _write_offset(priority, 0)
         return None
     line = lines[offset]
@@ -144,7 +140,6 @@ def requeue(msg: BusMessage) -> bool:
 
 def _enqueue_dead_letter(msg: BusMessage, reason: str) -> None:
     """JSONL dead-letter enqueue — kept for backward compatibility."""
-    import fcntl
     path = _queue_file(msg.priority, dead_letter=True)
     record = {
         "message": msg.__dict__,
@@ -153,14 +148,13 @@ def _enqueue_dead_letter(msg: BusMessage, reason: str) -> None:
         "moved_at": datetime.now(timezone.utc).isoformat(),
     }
     with open(path, "a") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+        flock(f, LOCK_EX)
         f.write(json.dumps(record) + "\n")
-        fcntl.flock(f, fcntl.LOCK_UN)
+        flock(f, LOCK_UN)
 
 
 def list_dead_letters(priority: Priority | None = None) -> list[dict]:
     """JSONL list dead letters — kept for backward compatibility."""
-    import fcntl
     results = []
     if priority:
         sources = [priority]

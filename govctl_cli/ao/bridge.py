@@ -32,6 +32,8 @@ from central_bus.queue import dequeue, enqueue
 import asyncio
 from central_bus.audit import log as _audit_log_coro
 
+from .._process import pid_is_running, spawn_detached
+
 
 def _audit_sync(msg) -> None:
     """Fire-and-forget audit write from a sync context (no running loop)."""
@@ -174,11 +176,7 @@ def _read_pid() -> Optional[int]:
 
 
 def _is_running(pid: int) -> bool:
-    try:
-        os.kill(pid, 0)
-        return True
-    except OSError:
-        return False
+    return pid_is_running(pid)
 
 
 def daemon_start(detach: bool = True) -> None:
@@ -191,6 +189,16 @@ def daemon_start(detach: bool = True) -> None:
     if not detach:
         log.info("Starting AO bridge in foreground …")
         watch_loop()
+        return
+
+    if os.name == "nt":  # no fork on Windows: detach a child process instead
+        code = (
+            "from govctl_cli.ao.bridge import cmd_start\n"
+            "cmd_start(detach=False)\n"
+        )
+        pid = spawn_detached(code, cwd=Path(__file__).resolve().parents[2])
+        _write_pid(pid)
+        log.info("AO bridge daemon started (PID %d)", pid)
         return
 
     # Daemonize via double-fork

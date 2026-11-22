@@ -22,7 +22,7 @@ def _features(text: str) -> list[str]:
 
 class TfidfRouter:
     def __init__(self, profiles_path: Path = PROFILES_PATH):
-        raw = json.loads(profiles_path.read_text())
+        raw = json.loads(profiles_path.read_text(encoding="utf-8"))
         self.threshold = raw["threshold"]
         self.profiles: dict[str, list[str]] = raw["profiles"]
         self.dept_names: list[str] = list(self.profiles.keys())

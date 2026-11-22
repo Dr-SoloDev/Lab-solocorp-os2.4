@@ -60,7 +60,7 @@ def _get_semantic_router() -> TfidfRouter:
 
 
 def _load_rules() -> dict:
-    return json.loads(RULES_PATH.read_text())
+    return json.loads(RULES_PATH.read_text(encoding="utf-8"))
 
 
 def _has_thai(s: str) -> bool:

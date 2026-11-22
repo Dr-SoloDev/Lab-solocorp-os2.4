@@ -79,7 +79,7 @@ def _find_handoff_file(handoff_id: str) -> str | None:
                 continue
             fpath = os.path.join(date_dir, fname)
             try:
-                with open(fpath, "r") as f:
+                with open(fpath, "r", encoding="utf-8") as f:
                     data = json.load(f)
                 # Check both handoff.id and command.id patterns
                 if "handoff" in data and data["handoff"].get("id") == handoff_id:
@@ -107,7 +107,7 @@ def _read_handoff_metadata(handoff_id: str) -> dict[str, Any]:
         }
 
     try:
-        with open(filepath, "r") as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)
     except (json.JSONDecodeError, IOError):
         return {

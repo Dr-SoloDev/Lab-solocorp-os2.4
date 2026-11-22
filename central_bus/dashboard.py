@@ -102,7 +102,7 @@ def _count_dispatches() -> dict:
                 continue
             counts["total"] += 1
             try:
-                data = json.loads(f.read_text())
+                data = json.loads(f.read_text(encoding="utf-8"))
                 pri = data.get("command", data).get("priority", "P2")
                 if pri in counts:
                     counts[pri] += 1
@@ -116,9 +116,9 @@ def _queue_depth_jsonl() -> dict:
     q = {"high": 0, "normal": 0, "dead": 0}
     try:
         if (BUS_QUEUE / "high.jsonl").exists():
-            q["high"] = len((BUS_QUEUE / "high.jsonl").read_text().splitlines())
+            q["high"] = len((BUS_QUEUE / "high.jsonl").read_text(encoding="utf-8").splitlines())
         if (BUS_QUEUE / "normal.jsonl").exists():
-            q["normal"] = len((BUS_QUEUE / "normal.jsonl").read_text().splitlines())
+            q["normal"] = len((BUS_QUEUE / "normal.jsonl").read_text(encoding="utf-8").splitlines())
         dl = BUS_QUEUE / "dead_letter"
         if dl.exists():
             q["dead"] = len(list(dl.iterdir())) if dl.is_dir() else 0
@@ -217,7 +217,7 @@ def _active_dispatches() -> list[dict]:
         if f.suffix != ".json":
             continue
         try:
-            data = json.loads(f.read_text())
+            data = json.loads(f.read_text(encoding="utf-8"))
             cmd = data.get("command", data)
             dispatches.append({
                 "id": cmd.get("id", f.stem),
