@@ -40,11 +40,32 @@ from .media_service import (
     render_campaign_with_concat as _render_campaign_with_concat,
     review_campaign_audio as _review_campaign_audio,
 )
+from ..auth import verify_scope
 from ..module_registry import ModuleRegistry
 from ..task_tracking import TaskTracker
 
 _module_registry: ModuleRegistry | None = None
 _task_tracker = TaskTracker()
+
+
+def _check_scope(required: str):
+    """Check auth scope inside a tool function.
+
+    Raises PermissionError if scope insufficient, which FastMCP converts to
+    isError response. Mirrors ``axis_mcp.server._check_scope`` — the
+    department adapter keeps its own copy so it stays standalone (PRD §6.1:
+    usable without the Core MCP). Must be called BEFORE the try/except in
+    each guarded tool so PermissionError propagates instead of being
+    wrapped as a JSON error.
+    """
+    import os
+
+    key = os.environ.get("SOLOCORP_API_KEY")
+    if not verify_scope(required, key):
+        raise PermissionError(
+            f"Requires scope '{required}' — set SOLOCORP_API_KEY with scope >= '{required}'\n"
+            f"(current key: {'not set' if key is None else 'insufficient scope'})"
+        )
 
 
 def _registry() -> ModuleRegistry:
@@ -627,6 +648,7 @@ def task_create(
     task_type: str = "content",
 ) -> str:
     """Create a new task record and return its task_id."""
+    _check_scope("team")
     try:
         if dept != "content" or module != "content-creator":
             return result_json(
@@ -662,6 +684,7 @@ def _task_not_found(task_id: str) -> str:
 @mcp.tool()
 def task_get_status(task_id: str) -> str:
     """Return the current status record for a task."""
+    _check_scope("team")
     try:
         record = _task_tracker.get(task_id)
         if not _is_content_task(record):
@@ -674,6 +697,7 @@ def task_get_status(task_id: str) -> str:
 @mcp.tool()
 def task_list(dept: str = "") -> str:
     """List Content Creator tasks only."""
+    _check_scope("team")
     try:
         if dept not in {"", "content"}:
             return result_json(
@@ -697,6 +721,7 @@ def task_update_status(
     error_detail: str = "",
 ) -> str:
     """Update task status and optional result/error detail."""
+    _check_scope("team")
     try:
         if not _is_content_task(_task_tracker.get(task_id)):
             return _task_not_found(task_id)
