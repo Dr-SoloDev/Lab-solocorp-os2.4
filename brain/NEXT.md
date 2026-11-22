@@ -3,50 +3,43 @@
 > อัปเดตทุกครั้งก่อนเลิกงาน อ่านทุกครั้งตอนเริ่มงาน (`/bootstrap` แล้วเปิดไฟล์นี้)
 > กฎ: สั้น ตรงจุด มี commit hash + คำสั่งรันต่อเสมอ
 
-## สถานะล่าสุด (2026-11-19 ก่อน restart เครื่อง)
+## สถานะล่าสุด (2026-11-22 22:07 — หลัง merge PR #30)
 
-- `main` = `origin` = `canonical` = **`075f5b9`**
-- CI เขียวทั้งคู่ · validator **20/20** · full suite **1354 passed**
-- CTO กลับมาแล้ว (`cto` healthy) · manifest 87 agents · bootstrap **100/100**
-- Stash ว่าง · worktree เหลือแค่ main/canonical/session ที่ใช้จริง
-- `brain/NEXT.md` ไฟล์นี้ + `pending_next` คือตัวจริง — session-log เก่าอย่าไปขุด
+- งานวันนี้ขึ้น `origin/main` แล้ว: `7798c6d` (merge PR #30) ← `18d4892` ← `840cad0`
+- branch ที่ใช้ทำงาน `feat/content-growth-phase1` = `18d4892` — ตามหลัง origin/main 3 commit (`7798c6d`, `093f6ea`, `7702956`) · tree สะอาด
+- ⚠️ canonical checkout `/data/projects/Lab-solocorp-os2.4` = **detached HEAD `87ed75d`** (เก่ากว่า origin/main) + `brain/learnt.md` ค้าง modified → ต้องกู้ก่อนใช้เป็นที่ทำงาน (ดูขั้น "เริ่มงานครั้งหน้า")
 
-## ⚠️ หลัง restart เครื่อง (ทำตามนี้ก่อนเริ่มงาน)
+## ⚠️ งานแรกของ session หน้า (P1 — หลักฐานไม่ตรงคำกล่าวอ้าง)
 
-MCP processes ตายหมดตอนปิดเครื่อง — host จะ spawn ใหม่เอง แต่ต้องตรวจ:
+commit `18d4892` message เขียน `(QA+Architect+Legal PASS)` แต่ของจริงคือ:
 
-```bash
-cd /data/projects/Lab-solocorp-os2.4
-git log --oneline -1                    # ต้องเห็น 075f5b9
-python3 scripts/session-bootstrap.py    # ต้องเขียว ไม่มี PRE-FLIGHT FAIL
-opencode mcp list                       # ต้องเห็น cto ✓ connected (9 connected + 1 disabled)
-python3 scripts/generate-specialist-manifest.py --check  # ต้อง up-to-date
-```
+- `docs/showcase/CONTENT-GROWTH-PHASE2-READINESS-CHECKLIST-v1.md` และ `...PROGRESS-RAIL-v1.md` ยังเขียน **`สถานะ: DRAFT พร้อมตรวจ — รอ … เซ็น`**
+- `docs/showcase/CONTENT-GROWTH-DECISION-LOG-v1.md` มีถึง **D-005 (ส่ง Checker)** — ไม่มี **D-009** (entry ที่จองไว้สำหรับ "commit หลัง PASS ครบ")
+- ⇒ ตาม `rules/06-certification.md` (maker ≠ checker · default = ยังไม่ผ่าน) **M2/M3 = ยังไม่ PASS**
 
-ถ้า `cto` ไม่ขึ้น: `bash scripts/restart-mcp.sh` (dry-run ก่อน) → `--yes` → `opencode mcp list` อีกรอบ
+เลือกทางเดียวให้จบ:
 
-## ทำเสร็จแล้ว (วันนี้)
+- (ก) เก็บลายเซ็น QA / Legal / Architect เป็นลายลักษณ์อักษร → เขียน D-009 → แล้วค่อยนับ PASS
+- (ข) แก้ถ้อยคำในเอกสาร/บันทึกให้ตรงว่า "ส่งตรวจแล้ว ยังไม่ผ่าน"
 
-1. Preflight fix + test harness (`56555ac`, `4c137ed`)
-2. Specialist roster 20 heads + 67 roles + manifest generator (`f7dd40c`→`25bd8c1`, `f7c59fb`)
-3. CI debt 4 เทสต์ + `opencode.json:185` + INDEX content links (`0e01c65`, `5078c23`)
-4. CTO rollback สะอาด (`d12a050` + ADR-038) → re-apply กลับ (`4f0b557` + ADR-039)
-5. เคลียร์ค้างหมด: stash, patch, worktree เก่า, validator, naming (`01a40c3`, `a949834`)
+**ห้ามอ้าง M2/M3 PASS ต่อ Owner หรือภายนอกจนปิดข้อนี้**
 
-## ค้างอยู่ (ทำต่อรอบหน้า)
+จุดที่ checker ควรจับ (เจอตอนบันทึก brain): rail อ้าง steps 5 ขั้นที่ `axis_mcp/departments/content_service.py` แต่ชื่อจริง `input_validation` / `piper_tts` / `synthetic_visuals` / `ffmpeg_assembly` / `output_audit` อยู่ที่ `scripts/render_campaign_media_local.py` (content_service เป็น wrapper ที่ spawn CLI) — ชื่อถูก แต่ path คลาด 1 ชั้น
 
-- [ ] `misty-cabin` ถูกลบแล้ว แต่ jsonc parity (env + 5 servers) ยังเป็นแค่ patch ใน `bus/evidence/misty-cabin-wip/` — ถ้าจะทำ ค่อยเปิด issue ใหม่ อย่า apply ตรง
-- [ ] `brain/learnt.md` ใน canonical — auto-commit รายชั่วโมงเก็บเอง ไม่ต้องมือ
-- [ ] `/tmp/opencode/*.txt` — ของ session อื่น ไม่ใช่ของเรา
-- [ ] `02-coo` ผ่านแล้ว แต่ถ้า validator เพิ่มเกณฑ์ใหม่แล้วแดง ให้แก้ตาม pattern เดิม (ดู commit `a949834`)
+## ค้าง (ลำดับ)
+
+1. ปิดหลักฐาน M2/M3 (หัวข้อ P1 ข้างบน)
+2. Architect + Legal ตรวจ `docs/prds/PRD-AXIS-DEFAULT-EXECUTIVE-v1.1.md` — acceptance ยังว่าง 3 ข้อ (flow + ADR-036..039 / bundle exception ไม่ล้าง standalone / ไฟล์ไม่ทับของเก่า)
+3. Content Growth: **M4** ingest → **M5** ชิ้นจริง end-to-end (วัดรอบแก้/เวลา) → **M6** adapter + ADR paid-call + ADR secrets
+4. L5 parked เดิม: history ~400 MB ใน `.git` (git filter-repo) + ยืนยันก่อน split Phase 3 ว่า dept MCP code เคยถูก push ตอน repo public ไหม (ADR-030)
 
 ## เริ่มงานครั้งหน้า (3 ขั้น)
 
 ```bash
 cd /data/projects/Lab-solocorp-os2.4
-git log --oneline -3              # ต้องเห็น a949834 บนสุด
-python3 scripts/session-bootstrap.py   # ต้องเขียว ไม่มี PRE-FLIGHT FAIL
-python3 scripts/generate-specialist-manifest.py --check  # ต้อง up-to-date
+git fetch origin && git checkout main && git pull --ff-only   # ต้องได้ 7798c6d ขึ้นไป (ตอนนี้ checkout ค้างที่ 87ed75d)
+python3 scripts/session-bootstrap.py                          # ต้องเขียว ไม่มี PRE-FLIGHT FAIL
+python3 scripts/generate-specialist-manifest.py --check        # ต้อง up-to-date
 ```
 
-ถ้า 3 ข้อนี้ผ่าน = ต่อได้เลย ไม่ต้องย้อนอ่านอะไรทั้งนั้น
+ถ้า 3 ข้อผ่าน = ต่อได้เลย ไม่ต้องย้อนอ่านอะไรทั้งนั้น (รายละเอียดรอบล่าสุด: `brain/session-log.md` entry 2026-11-22 22:07)

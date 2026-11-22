@@ -1290,3 +1290,34 @@ State tracking files: 0
 - ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
 
 ---
+
+---
+
+## 2026-11-22 22:07 — 🧠 Content Growth M2/M3 ขึ้น main (PR #30) + ล็อก PRD Default Executive v1.1
+
+**Mode:** Command → Review (subagent บันทึกความจำจากหลักฐาน git/ไฟล์จริง — ไม่ได้เดาจากบทสนทนา)
+**Branch:** `feat/content-growth-phase1` → merge `7798c6d` (PR #30) · **HEAD local** `18d4892` · tree สะอาด
+**Push:** ขึ้น `origin/main` แล้ว (origin/main = `7798c6d` · local branch ตามหลัง 3 merge commit)
+
+### เสร็จวันนี้ (2 commits)
+1. `840cad0` — `docs/prds/PRD-AXIS-DEFAULT-EXECUTIVE-v1.1.md` (ไฟล์ใหม่ 96 บรรทัด · ไม่ทับ PRD เก่า)
+   - Owner L5 22:00 — **Default Executive = Axis ก้อนเดียว `CEO → (CTO ∥ COO)`** + **CTO primary** (alias เดิม 1 release per ADR-039)
+   - หน้าแรกแบบ Gemini: `Where should we start?` + `@ connectors` + `Auto` + `mic` · ป้ายโชว์แค่ `Axis` · แผนกอื่นเป็น catalog เสียบตาม context (ลดจำนวน MCP ที่ต้องต่อพร้อมกัน)
+   - งาน non-tech ไม่ transit ผ่าน CTO (กัน bottleneck) · COO = handoff gate บน Central Bus
+   - Standalone ไม่ถูกยกเลิก: bundle exception เฉพาะก้อน Default · catalog ยัง standalone ตาม PRD MVP v1.0 §4
+   - Acceptance ติ๊ก 2/5 (Owner L5 ×2) — **Architect + Legal checker ยังไม่ตรวจ** (เอกสารระบุเองตรง ๆ)
+2. `18d4892` — showcase 5 ไฟล์ +571: plan v1 · M2 readiness checklist (17 ข้อ A–F) · M3 progress rail (steps 5 + time-box) · risk register (DRAG-01/RISK-01) · decision log D-001…D-005
+
+### ⚠️ ต้องแก้ให้ตรงก่อนนับ PASS (P1)
+- commit message `18d4892` เขียน `(QA+Architect+Legal PASS)` แต่ **ในไฟล์ยังเป็น `สถานะ: DRAFT พร้อมตรวจ — รอ … เซ็น`** และ decision log มีถึงแค่ D-005 (ส่ง Checker) — **ไม่มี entry D-009** ที่จองไว้สำหรับ "commit หลัง PASS ครบ"
+- ⇒ ตาม `rules/06-certification.md` (maker ≠ checker · default = ยังไม่ผ่าน) **M2/M3 = ยังไม่ PASS** — หลักฐานที่มีคือ "ส่งตรวจแล้ว" ไม่ใช่ "ผ่านแล้ว"
+- จุดที่ checker ควรจับ: rail อ้าง steps 5 ขั้นที่ `axis_mcp/departments/content_service.py` แต่ชื่อจริง (`input_validation` / `piper_tts` / `synthetic_visuals` / `ffmpeg_assembly` / `output_audit`) อยู่ที่ `scripts/render_campaign_media_local.py` — content_service เป็น wrapper ที่ spawn CLI ⇒ ชื่อถูก แต่ path คลาด 1 ชั้น
+- รอบนี้: gate/renderer ไม่ถูกแตะ · paid call 0 · ไม่มี render ใหม่ (ตรงตามที่เอกสารอ้าง)
+
+### ค้าง (ทำต่อ)
+- [ ] ปิดหลักฐาน M2/M3: QA เซ็น checklist · Legal เซ็น (license/secrets) · QA+Architect เซ็น rail → เขียน D-009 แล้วค่อยนับ PASS **หรือ** แก้ถ้อยคำให้ตรงสถานะจริง
+- [ ] Architect + Legal ตรวจ PRD v1.1 (flow · ADR-036..039 · bundle exception ไม่ล้าง standalone · ไฟล์ไม่ทับของเก่า)
+- [ ] M4 ingest → M5 ชิ้นจริง end-to-end (วัดรอบแก้/เวลา) → M6 adapter + ADR paid-call/secrets
+- [ ] L5 parked เดิมยังอยู่: history ~400 MB ใน `.git` (git filter-repo) + ยืนยันก่อน split Phase 3 ว่า dept MCP code เคยถูก push ตอน repo public ไหม (ADR-030)
+
+> บันทึกโดย subagent — ทุกข้ออ้างอิง hash/ไฟล์ที่ตรวจได้ ณ 2026-11-22T15:37Z
