@@ -338,6 +338,8 @@ CONTENT_DEPARTMENT_TOOLS = {
     "generate_voiceover",
     "generate_image",
     "review_publish_gate",
+    "confirm_media_rights",
+    "confirm_source_verification",
     "record_human_approval",
     "save_human_edited_artifact",
     "build_ffmpeg_job_manifest",
@@ -1796,3 +1798,151 @@ def test_task_tools_accept_team_key_and_registry_status_stays_public(
     monkeypatch.delenv("SOLOCORP_API_KEY", raising=False)
     payload = json.loads(mcp._tool_manager.get_tool("module_registry_status").fn())
     assert "error" not in payload
+# ── Round-2 rights/source flows (gate72 2→0, 2026-11-23) ──────────────
+
+_R2_SCRIPT = """# Video Script — r2 synthetic
+
+| Table | Visual scene | Voiceover / Audio |
+|:--|:--|:--|
+| 0-5s | Hook | Open with a question |
+| 5-30s | Context | Explain the problem |
+| 30-50s | Example | Show the steps |
+| 50-60s | Close | One-line summary |
+
+## Source References
+
+- decisions/ADR-032-concat-host-2026-11-07.md
+
+## Calibration
+
+- VO line: script rights not yet independently verified
+
+## Open question
+
+- What is still pending in your work?
+"""
+
+
+def _r2_campaign(isolated_bus, campaign_id="r2-rights-source-test"):
+    return content_service.ingest_client_generated_artifact(
+        campaign_id,
+        "video_script",
+        _R2_SCRIPT,
+        {"client": "sek"},
+        ["decisions/ADR-032-concat-host-2026-11-07.md"],
+    )
+
+
+def test_rights_synthetic_auto_confirms_and_external_requires_proof(isolated_bus):
+    seed = _r2_campaign(isolated_bus)
+    campaign_id = seed["campaign_id"]
+    campaign = content_service._load_campaign("r2-rights-source-test")
+    target = campaign["assets"][0]["filename"]
+
+    confirmed = content_service.confirm_media_rights(
+        campaign_id, target, "synthetic_internal"
+    )
+    assert confirmed["media_rights_status"] == "confirmed"
+    assert confirmed["rights_origin"] == "synthetic_internal"
+    assert confirmed["published"] is False
+
+    campaign2 = content_service._load_campaign("r2-rights-source-test")
+    assert campaign2["version"] != campaign["version"]
+    assert campaign2["review"] is None
+
+    with pytest.raises(content_service.ContentServiceError, match="license_proof"):
+        content_service.confirm_media_rights(
+            campaign_id, target, "external", confirmed_by="sek"
+        )
+    with pytest.raises(content_service.ContentServiceError, match="confirmed_by"):
+        content_service.confirm_media_rights(
+            campaign_id, target, "external", license_proof="CC-BY-4.0"
+        )
+    human = content_service.confirm_media_rights(
+        campaign_id,
+        target,
+        "external",
+        license_proof="CC-BY-4.0 https://example.invalid/license",
+        confirmed_by="sek",
+    )
+    assert human["rights_origin"] == "external"
+    assert human["rights_confirmed_by"] == "sek"
+
+
+def test_rights_rejects_external_audio_auto_confirm(isolated_bus):
+    seed = _r2_campaign(isolated_bus, "r2-voiceover-audio-test")
+    campaign = content_service._load_campaign("r2-voiceover-audio-test")
+    campaign["assets"].append(
+        {
+            "filename": "voiceover-external-test.mp3",
+            "type": "voiceover_audio",
+            "version": seed["version"],
+            "status": "scaffold",
+            "media_rights_status": "human_confirmation_required",
+        }
+    )
+    content_service._save_campaign(campaign)
+    with pytest.raises(
+        content_service.ContentServiceError, match="cannot.*auto-confirm"
+    ):
+        content_service.confirm_media_rights(
+            seed["campaign_id"], "voiceover-external-test.mp3", "synthetic_internal"
+        )
+
+
+def test_source_verify_needs_auto_check_and_human_flag(isolated_bus):
+    seed = _r2_campaign(isolated_bus, "r2-source-verify-test")
+    campaign_id = seed["campaign_id"]
+
+    gate_before = content_service.review_publish_gate(campaign_id=campaign_id)
+    source_check = next(
+        c for c in gate_before["checks"] if c["check"] == "claims: source verification"
+    )
+    assert source_check["ok"] is False
+
+    content_service.confirm_media_rights(
+        campaign_id,
+        content_service._load_campaign("r2-source-verify-test")["assets"][0][
+            "filename"
+        ],
+        "synthetic_internal",
+    )
+    gate_no_human = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert (
+        next(
+            c
+            for c in gate_no_human["checks"]
+            if c["check"] == "claims: source verification"
+        )["ok"]
+        is False
+    )
+
+    flag = content_service.confirm_source_verification(
+        campaign_id, verified_by="sek", note="checked ADR file and quote match"
+    )
+    assert flag["published"] is False
+    gate_after = content_service.review_publish_gate(campaign_id=campaign_id)
+    assert (
+        next(
+            c
+            for c in gate_after["checks"]
+            if c["check"] == "claims: source verification"
+        )["ok"]
+        is True
+    )
+    assert gate_after["published"] is False
+
+
+def test_source_verify_rejects_missing_reference(isolated_bus):
+    content_service.ingest_client_generated_artifact(
+        "r2-source-missing-test",
+        "video_script",
+        "Script with no references listed.",
+        {"client": "sek"},
+    )
+    with pytest.raises(
+        content_service.ContentServiceError, match="no source_references"
+    ):
+        content_service.confirm_source_verification(
+            "r2-source-missing-test", verified_by="sek"
+        )
