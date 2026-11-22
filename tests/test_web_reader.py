@@ -235,9 +235,10 @@ class TestBusEndpoint:
 # ══════════════════════════════════════════════════════════════════════
 
 
+@pytest.mark.live  # QUARANTINE 2026-11-22: live-network flake ออกจาก gate — รันแยกด้วย `-m live`, ห้ามลบ
 @needs_docker
 class TestLiveRead:
-    """ทดสอบจริงกับเว็บ — ข้ามถ้าไม่มี docker"""
+    """ทดสอบจริงกับเว็บ — ข้ามถ้าไม่มี docker (quarantined from CI gate 2026-11-22, pre-existing — ห้ามลบ)"""
 
     def test_read_static_page(self):
         r = read_url("https://example.com", wait=12)
