@@ -1,0 +1,12 @@
+=== A. v1 code reads REPAIRED config (expect CLEAN) ===
+v1 validate_config(repaired): CLEAN - 0 errors
+repaired _meta: {'schema_version': 1, 'total_modules': 5}
+modules kept: ['central-bus', 'content-creator', 'engineering', 'qa', 'solocorp']
+
+=== B. live v2 gate: schema_version 99 vs current code ===
+RegistryDowngradeError raised BEFORE field validation: OK
+message: /tmp/tmpaonm01lm.json was written by a newer config schema (schema_version 99; this build supports 2). Refusing to overwrite it. Restore the config or revert the upgrade commit — see docs/runbooks/reg
+
+=== C. live config validate/status ===
+validate: valid = True | error_kind = None
+status: error_kind = None

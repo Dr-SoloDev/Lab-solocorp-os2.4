@@ -1,0 +1,137 @@
+removing 30 field(s) unknown to schema 1:
+  - central-bus.capabilities
+  - central-bus.dependencies
+  - central-bus.entry_repo
+  - central-bus.name
+  - central-bus.permissions
+  - central-bus.version
+  - content-creator.capabilities
+  - content-creator.dependencies
+  - content-creator.entry_repo
+  - content-creator.name
+  - content-creator.permissions
+  - content-creator.version
+  - engineering.capabilities
+  - engineering.dependencies
+  - engineering.entry_repo
+  - engineering.name
+  - engineering.permissions
+  - engineering.version
+  - qa.capabilities
+  - qa.dependencies
+  - qa.entry_repo
+  - qa.name
+  - qa.permissions
+  - qa.version
+  - solocorp.capabilities
+  - solocorp.dependencies
+  - solocorp.entry_repo
+  - solocorp.name
+  - solocorp.permissions
+  - solocorp.version
+--- /tmp/opencode/evidence-work/v2-config-copy.json
++++ /tmp/opencode/evidence-work/v2-config-copy.json (schema 1)
+@@ -1,8 +1,4 @@
+ {
+-  "_meta": {
+-    "schema_version": 2,
+-    "total_modules": 5
+-  },
+   "solocorp": {
+     "status": "enabled",
+     "transport": "stdio",
+@@ -11,19 +7,6 @@
+       "-m",
+       "axis_mcp.server"
+     ],
+-    "name": "Core MCP — Organization & Routing",
+-    "version": "0.1.0",
+-    "capabilities": [
+-      "tools",
+-      "resources"
+-    ],
+-    "dependencies": [],
+-    "permissions": [
+-      "public",
+-      "team",
+-      "admin"
+-    ],
+-    "entry_repo": "internal",
+     "description": "Core MCP — Organization & Routing"
+   },
+   "central-bus": {
+@@ -34,16 +17,6 @@
+       "-m",
+       "axis_mcp.bus_mcp"
+     ],
+-    "name": "Central Bus — Storage & Queue",
+-    "version": "0.1.0",
+-    "capabilities": [
+-      "tools"
+-    ],
+-    "dependencies": [],
+-    "permissions": [
+-      "public"
+-    ],
+-    "entry_repo": "internal",
+     "description": "Central Bus — Storage & Queue"
+   },
+   "content-creator": {
+@@ -54,17 +27,6 @@
+       "-m",
+       "axis_mcp.departments.content_mcp"
+     ],
+-    "name": "Content Creator",
+-    "version": "0.1.0",
+-    "capabilities": [
+-      "tools",
+-      "resources"
+-    ],
+-    "dependencies": [],
+-    "permissions": [
+-      "public"
+-    ],
+-    "entry_repo": "internal",
+     "description": "Content Creator Department"
+   },
+   "engineering": {
+@@ -75,16 +37,6 @@
+       "-m",
+       "axis_mcp.departments.engineering_mcp"
+     ],
+-    "name": "Engineering",
+-    "version": "0.1.0",
+-    "capabilities": [
+-      "tools"
+-    ],
+-    "dependencies": [],
+-    "permissions": [
+-      "public"
+-    ],
+-    "entry_repo": "internal",
+     "description": "Engineering Department"
+   },
+   "qa": {
+@@ -95,16 +47,10 @@
+       "-m",
+       "axis_mcp.departments.qa_mcp"
+     ],
+-    "name": "QA",
+-    "version": "0.1.0",
+-    "capabilities": [
+-      "tools"
+-    ],
+-    "dependencies": [],
+-    "permissions": [
+-      "public"
+-    ],
+-    "entry_repo": "internal",
+     "description": "QA Department"
++  },
++  "_meta": {
++    "schema_version": 1,
++    "total_modules": 5
+   }
+ }
+
+wrote /tmp/opencode/evidence-work/v2-config-copy.json at schema 1
