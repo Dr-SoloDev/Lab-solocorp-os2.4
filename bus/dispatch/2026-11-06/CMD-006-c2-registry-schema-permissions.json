@@ -13,7 +13,7 @@
       {
         "id": "CMD-006-T1",
         "priority": "P0",
-        "status": "pending",
+        "status": "completed",
         "description": "เคาะรูปแบบของ field 'permissions' ใน module manifest — เป็นตัวบล็อกเดียวของ C2 (CEO decision D4 เลื่อนมาให้ Architect ตัดสิน)",
         "deliverable": "Decision note: รูปแบบ JSON ที่แน่นอน + กฎ validator + เหตุผลที่ผูกกับ SCOPE_LEVELS (หรือไม่ผูก) + ตัวอย่าง 3 module จริง (solocorp / content-creator / qa)",
         "acceptance_criteria": [
@@ -23,12 +23,18 @@
           "ระบุว่าต้องแก้ auth.py หรือไม่ (ถ้าเพิ่ม scope ใหม่ ต้องแก้ SCOPE_LEVELS + KEY_PATTERN + tests หรือไม่)",
           "ระบุ behavior เมื่อ module ขอ scope ที่ยังไม่มีในระบบ (error / warning / เก็บไว้เฉยๆ)"
         ],
-        "deadline": "2026-11-10"
+        "deadline": "2026-11-10",
+        "completed_at": "2026-11-22",
+        "evidence": [
+          "bus/evidence/2026-11-06/CMD-006-decision.md §T1",
+          "a866fd6 (PRD wording)",
+          "d41b711 (enum validator)"
+        ]
       },
       {
         "id": "CMD-006-T2",
         "priority": "P1",
-        "status": "pending",
+        "status": "completed",
         "description": "นโยบาย schema migration + rollback (QA พบกับดัก: config เป็น git-tracked และ validator reject unknown field ⇒ merge C2 แล้ว rollback โค้ดแต่ไม่ revert config = registry ตายทั้งก้อน)",
         "deliverable": "Migration policy 1 หน้า: กฎการอ่าน config รุ่นเก่า/ใหม่ + สิ่งที่ต้อง commit คู่กัน + recovery steps",
         "acceptance_criteria": [
@@ -37,12 +43,18 @@
           "ระบุว่า schema_version ต้อง bump เมื่อไหร่ (เพิ่ม field optional = bump หรือไม่)",
           "ระบุ recovery path เมื่อ config ใหม่กว่า code (เช่น ไฟล์ .bak, git revert คู่กัน, หรือ downgrade path)"
         ],
-        "deadline": "2026-11-10"
+        "deadline": "2026-11-10",
+        "completed_at": "2026-11-22",
+        "evidence": [
+          "bus/evidence/2026-11-06/CMD-006-decision.md §T2",
+          "bus/evidence/2026-11-22/CMD-006-T2/ (dry-run + downgrade test + pytest 81 passed)",
+          "d41b711 + docs/runbooks/registry-schema-rollback.md"
+        ]
       },
       {
         "id": "CMD-006-T3",
         "priority": "P2",
-        "status": "pending",
+        "status": "completed",
         "description": "ตัดสินชนิดข้อมูลของ field ที่เหลือใน D3 เพื่อให้ Engineering implement ครั้งเดียวจบ",
         "deliverable": "ตาราง field → type → validation rule → ตัวอย่างค่าจริง 5 module",
         "acceptance_criteria": [
@@ -52,7 +64,12 @@
           "entry_repo: ค่า 'internal' | path | url — และผลต่อ ADR-030 split (เปลี่ยนแค่ field นี้แล้ว app ไม่แก้โค้ด)",
           "transport: จะขยายเกิน stdio เมื่อไหร่ และต้องมี field entry point อะไรต่อ transport (command vs url)"
         ],
-        "deadline": "2026-11-12"
+        "deadline": "2026-11-12",
+        "completed_at": "2026-11-22",
+        "evidence": [
+          "bus/evidence/2026-11-06/CMD-006-decision.md §T3",
+          "d41b711 (6 manifest fields + transport enum)"
+        ]
       }
     ],
     "constraints": [
@@ -78,9 +95,21 @@
       "ModuleHost.connect โยน RegistrySchemaError ดิบ → ควรเป็น ModuleHostError"
     ],
     "references": {
-      "c1_commits": ["650205c", "e7b78ea", "c4cd046", "08060dd", "b430398", "ebde1d4"],
+      "c1_commits": [
+        "650205c",
+        "e7b78ea",
+        "c4cd046",
+        "08060dd",
+        "b430398",
+        "ebde1d4"
+      ],
       "qa_signoff": "PASSED — E1–E8 + 8 gates, 1059 passed, ไม่ weaken test, ไม่ scope creep",
-      "ceo_decisions_c1": ["D1 ขยาย tool register/update", "D2 unknown field fatal + blocklist + schema_version", "D3 corrupt state = quarantine", "D4 permissions enum → Architect (this ticket)"]
+      "ceo_decisions_c1": [
+        "D1 ขยาย tool register/update",
+        "D2 unknown field fatal + blocklist + schema_version",
+        "D3 corrupt state = quarantine",
+        "D4 permissions enum → Architect (this ticket)"
+      ]
     }
   }
 }
