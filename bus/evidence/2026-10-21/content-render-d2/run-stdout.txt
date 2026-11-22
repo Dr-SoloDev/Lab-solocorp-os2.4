@@ -1,0 +1,21 @@
+[1/6] project_create -> thokchai-001
+{
+  "steps": [
+    "project_create",
+    "background",
+    "font",
+    "cards=11",
+    "sounds=11"
+  ],
+  "clip_count": 11,
+  "export": {
+    "state": "done",
+    "frames": 1980,
+    "width": 1080,
+    "height": 1920,
+    "output": "thokchai-001/export/thokchai-001.mp4",
+    "bytes": 674528
+  },
+  "seconds": 58.1
+}
+CONTENT_RENDER_OK
