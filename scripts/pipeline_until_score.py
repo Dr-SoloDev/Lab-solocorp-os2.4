@@ -59,7 +59,7 @@ def drain_and_execute():
 
 def score_project() -> dict:
     r = subprocess.run(
-        ["claude", "--dangerously-skip-permissions", "-p", SCORE_PROMPT],
+        ["opencode", "run", "-p", SCORE_PROMPT],
         capture_output=True, text=True, timeout=120, cwd=PROJECT_PATH,
     )
     output = r.stdout.strip()

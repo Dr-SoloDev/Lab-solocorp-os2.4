@@ -405,7 +405,7 @@
     },
     "deploy": {
       "description": "Deploy SoloCorp OS config and profiles",
-      "template": "1. python3 scripts/build-profiles.py (build profiles)\n2. python3 scripts/export-codex-agents.py (export agents)\n3. python3 scripts/validate-soul-profiles.py (validate SOUL profiles — Quality Gate)\n4. python3 workers/auto_qa_gate.py --threshold=9 --project-id=auto-qa-pipeline --test-path=\"tests central_bus/tests\" (QA gate — บังคับก่อน deploy)\n5. python3 scripts/export-codex-agents.py --validate-only (verify)\n6. Commit และรายงานผล",
+      "template": "1. python3 scripts/validate-soul-profiles.py (validate SOUL profiles — Quality Gate)\n2. python3 workers/auto_qa_gate.py --threshold=9 --project-id=auto-qa-pipeline --test-path=\"tests central_bus/tests\" (QA gate — บังคับก่อน deploy)\n3. Commit และรายงานผล (OpenCode-only; multi-client export archived at archive/multi-client/)",
       "agent": "ceo-turbo",
       "subagent": true
     },

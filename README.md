@@ -67,9 +67,9 @@ This repository is a **pre-release**. **v2.4.0 is the product-pack line** (CFO, 
   ```bash
   source .venv/bin/activate && export PYTHONPATH=.
   ```
-- **Git** for cloning. The generic MCP servers themselves speak standard stdio MCP and can be attached to any compatible client (see `axis_mcp/server.py` + `axis_mcp/MCP_CLIENT_CONFIGS.md` for the generic contract) — but the bundled skills, agents, and commands in this repo are wired for OpenCode.
+- **Git** for cloning. The generic MCP servers themselves speak standard stdio MCP and can be attached to any compatible client (see `axis_mcp/server.py` + `archive/multi-client/MCP_CLIENT_CONFIGS.md` for the generic contract) — but the bundled skills, agents, and commands in this repo are wired for OpenCode.
 
-> **Multi-client archives (2026-11-08):** bundles for Hermes, Codex, Grok, Claude Code, and Copilot were retired from the active path by the L5 Owner direction. They are preserved in tag `archive/multi-client-2026-11-08` — do not treat any `.grok/`, `dist/codex/`, or Copilot path in the working tree as an active target; check that tag if you need the old multi-client material. Legacy helpers `scripts/build-profiles.py` and `scripts/export-codex-agents.py` remain in the tree and are slated for archiving at Phase 3.
+> **Multi-client archives (2026-11-08 → 2026-11-22):** bundles for Hermes, Codex, Grok, Claude Code, and Copilot were retired from the active path by the L5 Owner direction. They are preserved in tag `archive/multi-client-2026-11-08` — do not treat any `.grok/`, `dist/codex/`, or Copilot path in the working tree as an active target; check that tag if you need the old multi-client material. Legacy helpers `scripts/build-profiles.py` and `scripts/export-codex-agents.py` were archived to `archive/multi-client/` on 2026-11-22 (branch `chore/archive-multi-client`, guard tag `archive/opencode-cutover-20261122`) — canonical config is `opencode.jsonc`.
 
 ## Try it
 
@@ -330,7 +330,7 @@ Still unverified — do not quote until someone verifies it in a commit:
 - `sop/` — Standard Operating Procedures (SOP-01 through SOP-07)
 - `docs/FAMILY.md` + SOP-07 — cross-instance dispatch for family instances
 
-> **Codex export note (archived):** `scripts/build-profiles.py` and `scripts/export-codex-agents.py --validate-only` remain in the tree for audit but are **not** part of the active OpenCode path. The multi-client export they produced lives at tag `archive/multi-client-2026-11-08`.
+> **Codex export note (archived 2026-11-22):** `archive/multi-client/build-profiles.py` and `archive/multi-client/export-codex-agents.py --validate-only` are **not** part of the active OpenCode path. The multi-client export they produced lives at tag `archive/multi-client-2026-11-08` and working copy at `archive/multi-client/`.
 
 > **Grok note (archived):** `.grok/` remains in the tree as archive material only. There is no `.grok/skills` active path.
 

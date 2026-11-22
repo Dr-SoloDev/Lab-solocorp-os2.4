@@ -3,16 +3,15 @@
 # SoloCorp OS — CEO Bootstrap Script
 #
 # ใช้เมื่อ:
-#   1. clone repo ใหม่บน platform ใดก็ตาม
+#   1. clone repo ใหม่บน OpenCode
 #   2. ต้องการ restore CEO memory + เปิด services
-#   3. ย้ายระหว่าง OpenCode ↔ Claude Code ↔ Codex ↔ Cursor
+#   3. ย้ายระหว่าง OpenCode Desktop ↔ CLI ↔ Web (OpenCode-only)
 #
 # หลักการ: private repo → ทุกอย่างมากับ git (ยกเว้น .venv, .db)
 #   ✅ .env.example  → API key
-#   ✅ .claude/settings.json → Claude Code MCP
-#   ✅ .codex/config.toml    → Codex CLI MCP
-#   ✅ .cursor/mcp.json      → Cursor MCP
-#   ✅ opencode.json         → OpenCode MCP
+#   ✅ opencode.jsonc → OpenCode canonical MCP config
+#   ✅ archive/multi-client/ → retired multi-client material (read-only reference)
+#   ✅ brain/ceo-memory.json → CEO memory
 #   ✅ brain/ceo-memory.json → CEO memory
 #   ✅ brain/session-log.md  → session history
 #

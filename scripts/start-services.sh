@@ -1,5 +1,5 @@
 #!/bin/bash
-# SoloCorp OS — Start All Services (Grok / OpenCode / local)
+# SoloCorp OS — Start All Services (OpenCode / local)
 # ใช้: bash scripts/start-services.sh
 # ตรวจ: curl -s http://127.0.0.1:8099/v1/health
 
@@ -72,11 +72,11 @@ fi
 
 sleep 1
 echo ""
-echo "✅ SoloCorp OS runtime ready for Grok"
+echo "✅ SoloCorp OS runtime ready for OpenCode"
 echo "   Central Bus : http://127.0.0.1:8099/v1/health"
 echo "   govctl API  : http://127.0.0.1:8765/api/v1/health"
-echo "   Grok pack   : AGENTS.md + .grok/ (skills, agents, MCP)"
+echo "   OpenCode pack : AGENTS.md + .opencode/ (skills, agents, MCP)"
 echo ""
-echo "Next (Grok Build CLI):"
-echo "   cd $REPO_DIR && source .venv/bin/activate && export PYTHONPATH=. && grok"
+echo "Next (OpenCode CLI):"
+echo "   cd $REPO_DIR && source .venv/bin/activate && export PYTHONPATH=. && opencode"
 echo "   In TUI: /status  ·  /route <request>  ·  MCP tools solocorp_*"
