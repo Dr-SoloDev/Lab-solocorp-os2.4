@@ -1,5 +1,7 @@
 # 📱 Platform Compatibility
 
+> **⚠️ Archived scope (L5 OpenCode-only, 2026-11-08):** this matrix is historical multi-client material, superseded by the Owner direction. Active path is OpenCode-only — see [`README.md` (Prerequisite + Multi-client archives)](../README.md). Old bundles preserved at tag `archive/multi-client-2026-11-08`; do not treat paths here as active targets.
+
 > SoloCorp OS รองรับ AI Client ไหนบ้าง? — 2026-07-27
 
 ## Overview

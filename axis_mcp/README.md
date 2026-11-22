@@ -1,5 +1,8 @@
 # 🔌 SoloCorp MCP Server
 
+> **Scope:** the generic MCP servers here speak standard stdio MCP and attach to any compatible client — but the bundled skills, agents, and commands in this repo are wired **OpenCode-only** (L5, 2026-11-08; see [`README.md` Prerequisites](../README.md)).
+> **Product target:** see [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](../docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
+
 > **ขอบเขตปัจจุบัน:** README นี้อธิบาย Core MCP เดิม (`axis_mcp.server`) และวิธีต่อ MCP กับ client. Core MCP ให้ข้อมูลระบบและ routing; มันยังไม่ใช่ SoloCorp App, UI, หรือ host ที่ควบคุม connection ของ MCP อื่น. Department MCPs ยังคงเป็นโมดูลที่ต่อใช้งานเดี่ยวได้. Product target และ MVP ปัจจุบันอยู่ใน [`docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md`](../docs/prds/PRD-SOLOCORP-LOCAL-FIRST-MCP-APP-MVP-v1.0.md).
 
 > ให้ AI agent ภายนอก (OpenCode, Claude Code, Kimi CLI, Cursor, Codex CLI อะไรก็ได้) **เข้าใจและเรียกใช้ SoloCorp OS ได้** ผ่าน MCP protocol โดยไม่ต้องรู้โครงสร้างภายใน
