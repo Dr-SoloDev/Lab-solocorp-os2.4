@@ -1,0 +1,21 @@
+{
+  "campaign_id": "campaign_media_editor_d2_20261123",
+  "version": "v1",
+  "route": "local per-scene",
+  "degraded": false,
+  "gate_passed": false,
+  "published": false,
+  "approved_version": null,
+  "video": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "render": {
+    "duration_seconds": 90.0,
+    "scene_count": 6,
+    "fps": 30,
+    "audio_measurement": {
+      "integrated_lufs": -16.0,
+      "true_peak_dbtp": -3.0
+    }
+  }
+}

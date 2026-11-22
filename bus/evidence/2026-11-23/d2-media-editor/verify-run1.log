@@ -1,0 +1,11 @@
+
+====================================================================
+PASS 1 read SOUL+SKILL                read 3 files
+PASS 2 read render record             render=bus/evidence/2026-11-23/d2-media-editor/render-sample.json
+PASS 3 write QA checklist             bus/creative/media-qa/qa-campaign_media_editor_d2_20261123.md
+PASS 4 checklist has 4 sections       missing=none
+PASS 5 gate integrity untouched       record_gate=True text_gate=True no_approval=True
+PASS 6 no write outside scope         leaked=none
+====================================================================
+agent status = completed tool calls = 5
+D2 VERDICT: PASSED

@@ -1,0 +1,80 @@
+{
+  "agent_result": {
+    "status": "completed",
+    "summary": "qa campaign_media_editor_d2_20261123 PASS",
+    "details": {
+      "agent": "team-content-media-editor",
+      "out_path": "bus/creative/media-qa/qa-campaign_media_editor_d2_20261123-run2.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "errors": [],
+      "tool_calls": [
+        {
+          "ts": "2026-11-22T22:21:29.373755+00:00",
+          "tool": "read_file",
+          "args": "profiles/15-content-creator/sek/team/02-content-media-editor.SOUL.md",
+          "ok": true
+        },
+        {
+          "ts": "2026-11-22T22:21:29.374158+00:00",
+          "tool": "read_file",
+          "args": "axis_mcp/departments/content_skills/media-production/SKILL.md",
+          "ok": true
+        },
+        {
+          "ts": "2026-11-22T22:21:29.374403+00:00",
+          "tool": "read_file",
+          "args": "bus/evidence/2026-11-23/d2-media-editor/render-sample.json",
+          "ok": true
+        },
+        {
+          "ts": "2026-11-22T22:21:29.374813+00:00",
+          "tool": "write_file",
+          "args": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin/bus/creative/media-qa/qa-campaign_media_editor_d2_20261123-run2.md",
+          "ok": true
+        },
+        {
+          "ts": "2026-11-22T22:21:29.377959+00:00",
+          "tool": "run_command",
+          "args": "test -f bus/creative/media-qa/qa-campaign_media_editor_d2_20261123-run2.md && wc -c < bus/creative/media-qa/qa-campaign_media_editor_d2_20261123-run2.md",
+          "ok": true
+        }
+      ],
+      "log": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin/bus/evidence/2026-11-23/d2-media-editor/tool-calls-verify-run2.jsonl"
+    }
+  },
+  "checks": [
+    {
+      "check": "1 read SOUL+SKILL",
+      "ok": true,
+      "detail": "read 3 files"
+    },
+    {
+      "check": "2 read render record",
+      "ok": true,
+      "detail": "render=bus/evidence/2026-11-23/d2-media-editor/render-sample.json"
+    },
+    {
+      "check": "3 write QA checklist",
+      "ok": true,
+      "detail": "bus/creative/media-qa/qa-campaign_media_editor_d2_20261123-run2.md"
+    },
+    {
+      "check": "4 checklist has 4 sections",
+      "ok": true,
+      "detail": "missing=none"
+    },
+    {
+      "check": "5 gate integrity untouched",
+      "ok": true,
+      "detail": "record_gate=True text_gate=True no_approval=True"
+    },
+    {
+      "check": "6 no write outside scope",
+      "ok": true,
+      "detail": "leaked=none"
+    }
+  ],
+  "passed": true,
+  "tool_call_count": 5,
+  "render": "bus/evidence/2026-11-23/d2-media-editor/render-sample.json"
+}
