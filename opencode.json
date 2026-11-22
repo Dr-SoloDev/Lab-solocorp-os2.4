@@ -86,6 +86,11 @@
     "explore": {
       "disable": false,
       "description": "Codebase exploration agent — ใช้สำรวจ codebase ทำความเข้าใจ structure"
+    },
+    "sek-crea": {
+      "description": "Sek-Crea — Head of Content รับบรีฟตรง ไม่ต้องผ่าน CEO — Brief ศิลปะ+สเปกพร้อมกัน",
+      "mode": "primary",
+      "color": "#C2185B"
     }
   },
 
