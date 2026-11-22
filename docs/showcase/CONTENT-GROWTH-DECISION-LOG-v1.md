@@ -65,3 +65,12 @@
 | D-009 | Commit M2+M3 (Orchestrator) | หลัง D-005 PASS ครบทุกฝ่าย |
 
 > 🎯 **ประโยคปิด:** "ทุกบรรทัดมีคนเซ็น — ไม่มี 'น่าจะผ่าน' มีแค่ PASS ที่มีหลักฐานกับ FAIL ที่มี root cause"
+
+## D-006 — Owner เซ็น M2 Readiness Checklist v1.1 (2026-11-22 22:52)
+- ผู้เซ็น: Dr.solodev (Owner, L5)
+- งาน: M2 Readiness Checklist v1.1 — ใบเช็ก 17 ข้อ (A–F) + เคส 1 PASS 17/17 + เคส 2 จับข้อ 8 ได้
+- Checker: QA PASS + Legal PASS + Architect PASS (ในแชท session 2026-11-22 ก่อนเซ็น)
+- ผล: M2 (ส่วน checklist) Owner รับรองแล้ว — เหลือ D-009 สรุป M2/M3 PASS รวม
+
+## D-007 — เลื่อนเลขจองเดิม (Owner อนุมัติ 2026-11-22)
+- D-006 เดิมที่จองไว้ให้ M4 ย้ายเป็นของจริงแล้ว (Owner เซ็น M2) — เลขจอง M4–M6 เลื่อนเป็น D-008..D-010 ตามลำดับ ไม่แก้ข้อความจองเดิม แค่ mapping ใหม่
