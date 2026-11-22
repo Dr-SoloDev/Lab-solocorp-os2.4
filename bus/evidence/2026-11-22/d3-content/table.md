@@ -4,7 +4,7 @@
 - out-dir: `/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin/bus/evidence/2026-11-22/d3-content`
 - harness sha256: `216e6ea9adfcf37e06f0105cced3d8de118450576f04b0fd411151b86d1a2632` (agent: `07b7c5e18b468295d7eda3aacc7010ca7a3d58ce0b8a0ce480bad7ea752a422b`)
 - argv: `--out-dir bus/evidence/2026-11-22/d3-content --repeat-ids 3,15,17,20 --repeats 3`
-- รวม **20** เคส · PASS 11 · FAIL 4 · SKIP-NA 5 · CRASH 0
+- รวม **20** เคส · PASS 11 · FAIL 3 + FLAKY 1 · SKIP-NA 5 · CRASH 0
 
 | # | งาน | คาดว่าได้ | ได้จริง | ผล | root cause | หลักฐาน |
 |:--:|:--|:--|:--|:--|:--|:--|
