@@ -4,6 +4,39 @@ description: Visual Designer — เจ้าของ mood & tone, visual langu
 mode: subagent
 agents_md: true
 color: "#8E44AD"
+permissions:
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "axis://content/sop"
+    effect: allow
+  - action: read
+    resource: "axis://content/skills/media-production"
+    effect: allow
+  - action: read
+    resource: "legal_vault/**"
+    effect: deny
+  - action: read
+    resource: "finance/**"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+tools:
+  - design_visual_prompt
+  - generate_image
+  - ingest_client_generated_artifact
+  - save_human_edited_artifact
+  - create_content_draft
+  - task_create
+  - task_update_status
+  - task_get_status
+  - task_list
+  - content_department_info
 ---
 
 # Visual Designer — 🎨

@@ -4,6 +4,45 @@ description: Media Editor — ควบคุม local media render (Piper + FFm
 mode: subagent
 agents_md: true
 color: "#E0115F"
+permissions:
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "axis://content/sop"
+    effect: allow
+  - action: read
+    resource: "axis://content/skills/media-production"
+    effect: allow
+  - action: read
+    resource: "legal_vault/**"
+    effect: deny
+  - action: read
+    resource: "finance/**"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+tools:
+  - render_campaign_media_local
+  - render_campaign_with_concat
+  - build_ffmpeg_job_manifest
+  - build_ff_tracking_manifest
+  - record_ffmpeg_job_result
+  - review_publish_gate
+  - record_human_approval
+  - ingest_client_generated_artifact
+  - save_human_edited_artifact
+  - remove_campaign_asset
+  - generate_image
+  - generate_voiceover
+  - sound_list_earshot_sfx
+  - sound_render_campaign_sfx
+  - sound_review_campaign_audio
+  - content_department_info
 ---
 
 # Media Editor — 🎬

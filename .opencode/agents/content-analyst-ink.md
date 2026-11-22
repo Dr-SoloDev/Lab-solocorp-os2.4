@@ -4,6 +4,34 @@ description: Content Analyst (อิ้ง) — วิเคราะห์ perf
 mode: subagent
 agents_md: true
 color: "#2C3E50"
+permissions:
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "axis://content/sop"
+    effect: allow
+  - action: read
+    resource: "axis://content/skills/media-production"
+    effect: allow
+  - action: read
+    resource: "legal_vault/**"
+    effect: deny
+  - action: read
+    resource: "finance/**"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+tools:
+  - content_department_info
+  - task_create
+  - task_update_status
+  - task_get_status
+  - task_list
 ---
 
 # Content Analyst — 📊

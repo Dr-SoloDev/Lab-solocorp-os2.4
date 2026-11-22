@@ -4,6 +4,40 @@ description: Content Scriptwriter — แปลงบรีฟวิดีโอ
 mode: subagent
 agents_md: true
 color: "#FF5733"
+permissions:
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "axis://content/sop"
+    effect: allow
+  - action: read
+    resource: "axis://content/skills/media-production"
+    effect: allow
+  - action: read
+    resource: "legal_vault/**"
+    effect: deny
+  - action: read
+    resource: "finance/**"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+tools:
+  - create_video_script
+  - design_visual_prompt
+  - design_audio_experience
+  - generate_voice_lipsync_prompt
+  - create_content_draft
+  - save_human_edited_artifact
+  - task_create
+  - task_update_status
+  - task_get_status
+  - task_list
+  - content_department_info
 ---
 
 # Content Scriptwriter — ✍️

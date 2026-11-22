@@ -5,6 +5,10 @@
   // AXIS — OpenCode Desktop Configuration (Powered by SoloCorp OS Architecture)
   // Version: 2.4 | Date: 2026-11-08 | Owner: AXIS CEO (Turbo)
   // Note: Uses .jsonc to support comments explaining department structure and permissions
+  // SOURCE OF TRUTH: this file (opencode.jsonc) is canonical.
+  // opencode.json is a runtime mirror — edit here, then re-sync
+  // agents/permissions/compaction to opencode.json. Do not diverge manually.
+  // Sync state (P0-1 2026-11-22): agents ✓ permissions ✓ compaction ✓
   // ==========================================
 
   // ------------------------------------------------------------
@@ -94,6 +98,19 @@
       "mode": "subagent",
       "level": 2,
       "color": "#FF69B4",
+      "permissions": [
+        { "action": "read", "resource": "media/**", "effect": "allow" },
+        { "action": "edit", "resource": "media/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" }
+      ]
+    },
+    // Mirror of opencode.json "sek-crea" (same role/head, alternate entry name) — P0-1 sync
+    "sek-crea": {
+      "description": "Sek-Crea — Head of Content รับบรีฟตรง ไม่ต้องผ่าน CEO — Brief ศิลปะ+สเปกพร้อมกัน",
+      "mode": "primary",
+      "level": 2,
+      "color": "#C2185B",
       "permissions": [
         { "action": "read", "resource": "media/**", "effect": "allow" },
         { "action": "edit", "resource": "media/**", "effect": "allow" },
@@ -243,14 +260,23 @@
     { "action": "edit", "resource": "opencode.json", "effect": "ask" },
 
     // Shell commands — confirmation required for most, only safe commands allowed
+    // P0-1: allow-list aligned with opencode.json global bash allows (keep system working,
+    // goal is parity not lockdown — rules/04-safety.md). Last matching rule wins.
     { "action": "bash", "resource": "*", "effect": "ask" },
     { "action": "bash", "resource": "git status *", "effect": "allow" },
     { "action": "bash", "resource": "git diff *", "effect": "allow" },
+    { "action": "bash", "resource": "ls", "effect": "allow" },
     { "action": "bash", "resource": "ls *", "effect": "allow" },
     { "action": "bash", "resource": "pwd", "effect": "allow" },
     { "action": "bash", "resource": "whoami", "effect": "allow" },
     { "action": "bash", "resource": "echo *", "effect": "allow" },
     { "action": "bash", "resource": "date *", "effect": "allow" },
+    { "action": "bash", "resource": "head *", "effect": "allow" },
+    { "action": "bash", "resource": "tail *", "effect": "allow" },
+    { "action": "bash", "resource": "wc *", "effect": "allow" },
+    { "action": "bash", "resource": "find *", "effect": "allow" },
+    { "action": "bash", "resource": "du *", "effect": "allow" },
+    { "action": "bash", "resource": "cat *", "effect": "allow" },
     { "action": "bash", "resource": "git push *", "effect": "deny" },
     { "action": "bash", "resource": "git commit *", "effect": "ask" },
     { "action": "bash", "resource": "git merge *", "effect": "ask" },
@@ -262,14 +288,15 @@
     { "action": "bash", "resource": "sudo *", "effect": "deny" },
     { "action": "bash", "resource": "chown *", "effect": "deny" },
     { "action": "bash", "resource": "docker *", "effect": "ask" },
-    { "action": "bash", "resource": "npm *", "effect": "ask" },
-    { "action": "bash", "resource": "pip *", "effect": "ask" },
-    { "action": "bash", "resource": "python*", "effect": "ask" },
-    { "action": "bash", "resource": "node*", "effect": "ask" },
-    { "action": "bash", "resource": "curl *", "effect": "ask" },
-    { "action": "bash", "resource": "wget *", "effect": "ask" },
-    { "action": "bash", "resource": "gh *", "effect": "ask" },
-    { "action": "bash", "resource": "jj *", "effect": "ask" },
+    // P0-1 parity with opencode.json working allows (rules/04-safety.md allow list)
+    { "action": "bash", "resource": "npm *", "effect": "allow" },
+    { "action": "bash", "resource": "pip *", "effect": "allow" },
+    { "action": "bash", "resource": "python*", "effect": "allow" },
+    { "action": "bash", "resource": "node*", "effect": "allow" },
+    { "action": "bash", "resource": "curl *", "effect": "allow" },
+    { "action": "bash", "resource": "wget *", "effect": "allow" },
+    { "action": "bash", "resource": "gh *", "effect": "allow" },
+    { "action": "bash", "resource": "jj *", "effect": "allow" },
 
     // Task / subagent — confirmation required before cross-department task
     { "action": "subagent", "resource": "*", "effect": "ask" },
@@ -506,7 +533,15 @@
   },
 
   // ------------------------------------------------------------
-  // 10. Formatter
+  // 10. Compaction — mirrors opencode.json (P0-1 sync: identical)
+  // ------------------------------------------------------------
+  "compaction": {
+    "auto": true,
+    "tail_turns": 10
+  },
+
+  // ------------------------------------------------------------
+  // 11. Formatter
   // ------------------------------------------------------------
   "formatter": true
 }

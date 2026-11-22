@@ -8,15 +8,63 @@ permissions:
   - action: read
     resource: "*"
     effect: allow
-  - action: edit
-    resource: "media/**"
+  - action: read
+    resource: "axis://content/sop"
+    effect: allow
+  - action: read
+    resource: "axis://content/skills/media-production"
     effect: allow
   - action: read
     resource: "legal_vault/**"
     effect: deny
+  - action: read
+    resource: "finance/**"
+    effect: deny
+  - action: task
+    resource: "*"
+    effect: allow
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "media/**"
+    effect: allow
+  - action: shell
+    resource: "ls"
+    effect: allow
+  - action: shell
+    resource: "ls *"
+    effect: allow
+  - action: shell
+    resource: "pwd"
+    effect: allow
+  - action: shell
+    resource: "echo *"
+    effect: allow
+  - action: shell
+    resource: "date *"
+    effect: allow
+  - action: shell
+    resource: "whoami"
+    effect: allow
+  - action: shell
+    resource: "cat *"
+    effect: allow
+  - action: shell
+    resource: "git status *"
+    effect: allow
+  - action: shell
+    resource: "git diff *"
+    effect: allow
   - action: shell
     resource: "*"
-    effect: ask
+    effect: deny
+tools:
+  - task_create
+  - task_update_status
+  - task_get_status
+  - task_list
+  - content_department_info
 ---
 
 # 🎨 AXIS Content Creator — System Instructions & Operational Protocol

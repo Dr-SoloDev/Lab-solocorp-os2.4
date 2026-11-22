@@ -4,6 +4,36 @@ description: Copywriter (กวี) — เจ้าของ headline, hook, ca
 mode: subagent
 agents_md: true
 color: "#F39C12"
+permissions:
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "axis://content/sop"
+    effect: allow
+  - action: read
+    resource: "axis://content/skills/media-production"
+    effect: allow
+  - action: read
+    resource: "legal_vault/**"
+    effect: deny
+  - action: read
+    resource: "finance/**"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+tools:
+  - create_content_draft
+  - save_human_edited_artifact
+  - content_department_info
+  - task_create
+  - task_update_status
+  - task_get_status
+  - task_list
 ---
 
 # Copywriter — 🖋️

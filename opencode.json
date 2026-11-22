@@ -1,6 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
+  "_source_of_truth": "opencode.jsonc is canonical. This file mirrors its agents/permissions/compaction (P0-1 sync 2026-11-22). Edit opencode.jsonc first, then re-sync here. Do not diverge manually.",
+
   "default_agent": "axis-ceo",
   "username": "Dr.solodev",
 
@@ -64,28 +66,98 @@
 
   "agent": {
     "ceo-turbo": {
-      "description": "CEO of SoloCorp OS — Supreme AI Authority. รับ vision จาก Owner → ตัดสินใจ → delegate ไปยัง Department Heads",
+      "description": "CEO — Supreme AI Authority. Receives vision from Owner → makes decisions → delegates to Department Heads",
       "mode": "subagent",
       "color": "#FFD700"
     },
     "axis-ceo": {
-      "description": "AXIS CEO — Supreme AI Authority & Primary Controller. รับ vision จาก Owner → ตัดสินใจ → delegate ไปยัง Department Heads",
+      "description": "AXIS CEO — Supreme AI Authority & Primary Controller. Receives vision from Owner → makes decisions → delegates to Department Heads",
       "mode": "primary",
       "color": "#FFD700"
     },
     "build": {
       "disable": false,
       "mode": "primary",
-      "description": "Coding agent — ใช้สำหรับ implement code, features, fixes"
+      "description": "Coding agent — implement code, features, fixes (delegate from Engineering Head)"
     },
     "plan": {
       "disable": false,
       "mode": "primary",
-      "description": "Planning agent — ใช้สำหรับวางแผน, decompose tasks, architecture design"
+      "description": "Planning agent — decompose tasks, architecture design (delegate from Product/Architect)"
     },
     "explore": {
       "disable": false,
-      "description": "Codebase exploration agent — ใช้สำรวจ codebase ทำความเข้าใจ structure"
+      "description": "Codebase exploration agent — read-only (passes free-tier limit per ADR-017)"
+    },
+    "coo-kit": {
+      "description": "COO (Kit) — L3 gatekeeper: daily ops, L1–L3 control, filter before sending to CEO",
+      "mode": "primary",
+      "color": "#00BFFF"
+    },
+    "orchestrator-wut": {
+      "description": "Orchestrator (Wut) — Pipeline Coordination, handoff management",
+      "mode": "subagent",
+      "color": "#00BFFF"
+    },
+    "architect-songsak": {
+      "description": "Architect (Songsak) — Central Bus, System Routing, Monitoring, Exception Handling",
+      "mode": "subagent",
+      "color": "#6B8E23"
+    },
+    "cfo-meetoo": {
+      "description": "CFO (Metoo) — Finance, Budget, Investment, FP&A",
+      "mode": "subagent",
+      "color": "#4169E1"
+    },
+    "cmo-mark": {
+      "description": "CMO (Mark) — Marketing, Content Strategy, Brand, Social Media",
+      "mode": "subagent",
+      "color": "#FF69B4"
+    },
+    "content-creator-sek": {
+      "description": "Content Creator (Sek) — Content Production, Caption, Image, Video, Campaign",
+      "mode": "subagent",
+      "color": "#FF69B4"
+    },
+    "design-kreet": {
+      "description": "Design (Kreet) — UX Research, Visual Design System, Brand Visual",
+      "mode": "subagent",
+      "color": "#9932CC"
+    },
+    "legal-tulya": {
+      "description": "Legal (Tulya) — Compliance, Contract Review, Governance, Risk Management",
+      "mode": "subagent",
+      "color": "#8B0000"
+    },
+    "engineering-changful": {
+      "description": "Engineering (Changful) — Backend, Frontend, Code, Technology",
+      "mode": "subagent",
+      "color": "#228B22"
+    },
+    "qa-team": {
+      "description": "QA Team — Testing, Quality Assurance, Evidence Collection, Bug Tracking",
+      "mode": "subagent",
+      "color": "#FF8C00"
+    },
+    "ui-designer": {
+      "description": "UI Designer — Interface Design, Component Library, Pixel-perfect UI",
+      "mode": "subagent",
+      "color": "#9932CC"
+    },
+    "sales-team": {
+      "description": "Sales Team — B2B Deal Strategy, Pipeline Analytics, Outbound, Proposal",
+      "mode": "subagent",
+      "color": "#32CD32"
+    },
+    "support-team": {
+      "description": "Support Team — Customer Support, Analytics, Executive Summaries",
+      "mode": "subagent",
+      "color": "#20B2AA"
+    },
+    "web3-aywa": {
+      "description": "Web3 & DeFi — Blockchain, Smart Contracts, Solana, Security Audit",
+      "mode": "subagent",
+      "color": "#1E90FF"
     },
     "sek-crea": {
       "description": "Sek-Crea — Head of Content รับบรีฟตรง ไม่ต้องผ่าน CEO — Brief ศิลปะ+สเปกพร้อมกัน",

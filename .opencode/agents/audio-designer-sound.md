@@ -4,6 +4,42 @@ description: Audio Designer — เจ้าของ soundscape, audio cue shee
 mode: subagent
 agents_md: true
 color: "#16A085"
+permissions:
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "axis://content/sop"
+    effect: allow
+  - action: read
+    resource: "axis://content/skills/media-production"
+    effect: allow
+  - action: read
+    resource: "legal_vault/**"
+    effect: deny
+  - action: read
+    resource: "finance/**"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+tools:
+  - design_audio_experience
+  - sound_list_earshot_sfx
+  - sound_render_campaign_sfx
+  - sound_review_campaign_audio
+  - generate_voiceover
+  - generate_voice_lipsync_prompt
+  - ingest_client_generated_artifact
+  - save_human_edited_artifact
+  - task_create
+  - task_update_status
+  - task_get_status
+  - task_list
+  - content_department_info
 ---
 
 # Audio Designer — 🎧
