@@ -371,6 +371,7 @@ def test_content_server_contract_and_resource():
 
 
 def test_content_task_tools_cannot_read_or_update_other_departments(tmp_path, monkeypatch):
+    monkeypatch.setenv("SOLOCORP_API_KEY", "sk-solocorp-admin-local-dev-001")
     tracker = TaskTracker(tmp_path / "tasks")
     monkeypatch.setattr(content_mcp, "_task_tracker", tracker)
     content_task = tracker.create("content", "content-creator", "private content brief")
@@ -1746,3 +1747,52 @@ def test_local_render_failed_steps_persisted(isolated_bus, monkeypatch):
     result_record = json.loads(bus_store.fetch_from_bus("content", recorded["filename"])["content"])
     assert result_record["steps"]["piper_tts"]["status"] == "failed"
     assert result_record["degraded"] is False
+
+
+# ── P1 scope guard (adapter back-door close, 2026-11-22) ─────────────
+# Core MCP (axis_mcp/server.py) locks task_get_status/task_list/
+# task_update_status behind _check_scope("team"); the department adapter
+# (axis_mcp/departments/content_mcp.py) had only the _is_content_task
+# dept filter and no auth guard (admitted in commit 8b5c599). These tests
+# pin the fix: no key → PermissionError on all four task tools, while
+# module_registry_status stays public by design (CMD-006 §4.2).
+
+TEAMLESS_SCOPE_CONTRACT_TOOLS = (
+    "task_create",
+    "task_get_status",
+    "task_list",
+    "task_update_status",
+)
+
+
+def test_task_tools_require_team_scope_without_key(monkeypatch):
+    monkeypatch.delenv("SOLOCORP_API_KEY", raising=False)
+    calls = {
+        "task_create": ("content", "content-creator", "brief"),
+        "task_get_status": ("task-does-not-exist",),
+        "task_list": (),
+        "task_update_status": ("task-does-not-exist", "completed"),
+    }
+    for tool_name in TEAMLESS_SCOPE_CONTRACT_TOOLS:
+        fn = mcp._tool_manager.get_tool(tool_name).fn
+        with pytest.raises(PermissionError, match="Requires scope 'team'"):
+            fn(*calls[tool_name])
+
+
+def test_task_tools_accept_team_key_and_registry_status_stays_public(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setenv("SOLOCORP_API_KEY", "sk-solocorp-admin-local-dev-001")
+    tracker = TaskTracker(tmp_path / "tasks")
+    monkeypatch.setattr(content_mcp, "_task_tracker", tracker)
+
+    create_task = mcp._tool_manager.get_tool("task_create").fn
+    record = json.loads(create_task("content", "content-creator", "scoped brief"))
+    assert record["task_id"].startswith("task-")
+    listed = json.loads(mcp._tool_manager.get_tool("task_list").fn())
+    assert [r["task_id"] for r in listed["tasks"]] == [record["task_id"]]
+
+    # Public by design: read-only registry status answers without a key.
+    monkeypatch.delenv("SOLOCORP_API_KEY", raising=False)
+    payload = json.loads(mcp._tool_manager.get_tool("module_registry_status").fn())
+    assert "error" not in payload
