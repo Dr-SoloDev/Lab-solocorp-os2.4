@@ -1,0 +1,6 @@
+# D3 harness fingerprint — ผูกหลักฐานกับโค้ดตอนรัน
+# generated: 2026-11-23T04:40:13
+# git HEAD: c3fd2d4
+# argv: --only 9,10,11 --out-dir bus/evidence/2026-11-22/d3-content-smoke
+216e6ea9adfcf37e06f0105cced3d8de118450576f04b0fd411151b86d1a2632  scripts/d3_content_creator_eval.py
+07b7c5e18b468295d7eda3aacc7010ca7a3d58ce0b8a0ce480bad7ea752a422b  workers/agents/content_agent.py
