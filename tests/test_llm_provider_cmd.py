@@ -6,6 +6,7 @@ chain ล้มเหมือนกันหมด → `think()` คืน "⚠
 
 เทสนี้ตรวจ argv ที่จะถูก exec จริง (ไม่ยิง network)
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -60,7 +61,12 @@ class TestAgentOverride:
         try:
             reloaded = importlib.reload(lp)
             assert reloaded._AGENT == "custom-readonly"
-            assert reloaded._CMD_WITH_FLAGS == [reloaded._CMD, "run", "--agent", "custom-readonly"]
+            assert reloaded._CMD_WITH_FLAGS == [
+                reloaded._CMD,
+                "run",
+                "--agent",
+                "custom-readonly",
+            ]
         finally:
             monkeypatch.delenv("OPENCODE_AGENT", raising=False)
             importlib.reload(lp)
@@ -76,10 +82,14 @@ class TestAgentOverride:
 
 class TestDeadModelDetection:
     def test_unavailable_is_dead(self):
-        assert lp._is_dead_model_error("opencode run exit 1: Model unavailable: opencode/x")
+        assert lp._is_dead_model_error(
+            "opencode run exit 1: Model unavailable: opencode/x"
+        )
 
     def test_not_found_is_dead(self):
-        assert lp._is_dead_model_error("opencode run exit 1: Model not found: opencode/x")
+        assert lp._is_dead_model_error(
+            "opencode run exit 1: Model not found: opencode/x"
+        )
 
     def test_case_insensitive(self):
         assert lp._is_dead_model_error("MODEL UNAVAILABLE: x")
@@ -218,7 +228,12 @@ class TestBinOverride:
         try:
             reloaded = importlib.reload(lp)
             assert reloaded._CMD == "/tmp/custom/opencode"
-            assert reloaded._CMD_WITH_FLAGS == ["/tmp/custom/opencode", "run", "--agent", "plan"]
+            assert reloaded._CMD_WITH_FLAGS == [
+                "/tmp/custom/opencode",
+                "run",
+                "--agent",
+                "plan",
+            ]
             assert [f for f in reloaded._CMD_WITH_FLAGS if f in REMOVED_FLAGS] == []
         finally:
             monkeypatch.delenv("OPENCODE_BIN", raising=False)
@@ -268,8 +283,15 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setattr(lp.token_ledger, "QUOTA_PATH", tmp_path / "quota.json")
 
     usage = {
-        "requests": 1, "input": 10, "output": 20, "reasoning": 5,
-        "cache_read": 100, "cache_write": 0, "failed": 0, "cost": 0.0, "error": "",
+        "requests": 1,
+        "input": 10,
+        "output": 20,
+        "reasoning": 5,
+        "cache_read": 100,
+        "cache_write": 0,
+        "failed": 0,
+        "cost": 0.0,
+        "error": "",
     }
 
     async def fake_usage(session_id, **kw):
@@ -283,7 +305,9 @@ def _ledger_rows(path):
     f = path / "ledger.jsonl"
     if not f.exists():
         return []
-    return [json.loads(l) for l in f.read_text(encoding="utf-8").splitlines() if l.strip()]
+    return [
+        json.loads(l) for l in f.read_text(encoding="utf-8").splitlines() if l.strip()
+    ]
 
 
 class TestCallAccounting:
@@ -320,6 +344,7 @@ class TestCallAccounting:
 
     def test_accounting_failure_does_not_break_call(self, isolated, monkeypatch):
         """ledger เขียนไม่ได้ → ยังต้องได้คำตอบจาก LLM"""
+
         async def fake(full_prompt, model, *, timeout=None, session_id=None):
             return "OK"
 
@@ -389,7 +414,9 @@ class TestBudgetGuard:
 
         monkeypatch.setattr(lp, "_run_opencode", fake)
         monkeypatch.setenv("SOLOCORP_LLM_DAILY_REQUESTS", "1")
-        lp.token_ledger.record({"requests": 1, "output": 10}, path=isolated / "ledger.jsonl")
+        lp.token_ledger.record(
+            {"requests": 1, "output": 10}, path=isolated / "ledger.jsonl"
+        )
 
         out = asyncio.run(lp.think("hi"))
         assert calls == []
@@ -402,3 +429,65 @@ class TestBudgetGuard:
         monkeypatch.setattr(lp, "_run_opencode", fake)
         monkeypatch.setenv("SOLOCORP_LLM_DAILY_REQUESTS", "100")
         assert asyncio.run(lp.think("hi")) == "OK"
+
+
+# ══════════════════════════════════════════════════════════════════════
+# PR #22 superseded (2026-11-22) — judgment-agent idea, ported
+#
+# ที่มา: PR #22 (2026-10-21) เสนอ `.opencode/agents/llm-judge.md` +
+# `--agent llm-judge` + fallback เพื่อกัน defect "exit 0 แต่ stdout ว่าง"
+# (persona หลักพยายามใช้เครื่องมือ → permission auto-reject → stdout ว่าง
+# → provider ไล่เปลี่ยนโมเดลจนหมด → "⚠️ LLM ไม่พร้อม")
+#
+# ทำไมไม่ merge ดิบ: main แก้ไปแล้วคนละทาง (2026-10-25) —
+# ถอด `--pure` (v2.1.4 ไม่รู้จัก flag นี้ → ทั้ง chain ล้ม), บังคับ
+# `--agent plan` (built-in read-only) ผ่าน OPENCODE_AGENT แทน
+# การ merge ดิบจะเอา `--pure` กลับมา = พังทั้ง org
+# → ปิด PR #22 เป็น SUPERSEDED, port เฉพาะแก่น regression มาผูกกับ
+# `_CMD_WITH_FLAGS` ปัจจุบัน (เทสด้านล่าง)
+# ══════════════════════════════════════════════════════════════════════
+
+
+class TestPR22SupersededAgentGuard:
+    """แก่นของ PR #22 ที่ยังใช้ได้: ห้ามรัน bare โดยไม่มี --agent"""
+
+    def test_run_never_bare_without_agent(self, monkeypatch):
+        captured = _patch_exec(monkeypatch)
+        asyncio.run(lp._run_opencode("hi", "opencode/m"))
+        argv = captured["argv"]
+        assert argv[:2] == [lp._CMD, "run"]
+        assert "--agent" in argv
+        idx = argv.index("--agent")
+        assert argv[idx + 1], "--agent ต้องมีชื่อ agent ตามหลังเสมอ"
+
+    def test_no_custom_agent_file_dependency(self):
+        """main ใช้ built-in `plan` — ไม่ต้องมีไฟล์ agent เพิ่มใน repo"""
+        assert lp._AGENT == os.environ.get("OPENCODE_AGENT", "plan")
+        assert "--agent" in lp._CMD_WITH_FLAGS
+
+
+class TestPR22EmptyStdoutChain:
+    """อาการหลักของ defect PR #22: exit 0 + stdout ว่าง → ต้องไปโมเดลถัดไป
+    (ห้ามคืนสตริงว่างให้ caller — นั่นคือสิ่งที่ทำให้ org "ตาบอด")"""
+
+    def test_empty_stdout_moves_to_next_model(self, isolated, monkeypatch):
+        seen: list[str] = []
+
+        async def fake(full_prompt, model, *, timeout=None, session_id=None):
+            seen.append(model)
+            return "" if len(seen) == 1 else "YES"
+
+        monkeypatch.setattr(lp, "_run_opencode", fake)
+        out = asyncio.run(lp.think("ตอบ YES/NO", model=lp.MODEL_FALLBACKS[0]))
+
+        assert out == "YES"
+        assert len(seen) >= 2, f"stdout ว่างต้องไปโมเดลถัดไป ได้ {seen}"
+
+    def test_all_empty_returns_not_ready(self, isolated, monkeypatch):
+        async def fake(full_prompt, model, *, timeout=None, session_id=None):
+            return ""
+
+        monkeypatch.setattr(lp, "_run_opencode", fake)
+        out = asyncio.run(lp.think("hi"))
+
+        assert out.startswith("⚠️ LLM ไม่พร้อม")
