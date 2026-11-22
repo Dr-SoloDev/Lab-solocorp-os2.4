@@ -331,7 +331,7 @@
     },
     "deploy": {
       "description": "Deploy ระบบ SoloCorp OS (profiles, skills, config)",
-      "template": "Deploy SoloCorp OS changes: $ARGUMENTS\n\nSteps:\n1. Build profiles — python3 scripts/build-profiles.py\n2. Export agents — python3 scripts/export-codex-agents.py\n3. Verify — python3 scripts/export-codex-agents.py --validate-only\n4. Commit\n5. Report"
+      "template": "Deploy SoloCorp OS changes: $ARGUMENTS\n\nSteps:\n1. Validate — python3 scripts/validate-soul-profiles.py\n2. Commit\n3. Report (OpenCode-only; multi-client export archived at archive/multi-client/)"
     },
     "brain": {
       "description": "บันทึก context/session ลง brain memory",
