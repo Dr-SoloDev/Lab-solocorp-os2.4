@@ -126,7 +126,7 @@ generate_voiceover(title, text, voice_id, model_id="eleven_v4", language_code="t
 
 - ✅ คำขอตรงจากผู้ใช้ให้สร้าง voiceover = อำนาจใช้เครดิตที่ขอ ไม่ต้องถามอนุมัติซ้ำ
 - ❌ ห้ามสร้าง variant เพิ่ม, ห้ามสร้างเวอร์ชัน "เผื่อเลือก", ห้ามเรียกซ้ำเมื่อสร้างสำเร็จแล้วโดยไม่มีคำขอใหม่
-- ⚠️ text ยาวได้ไม่เกิน **2,000 ตัวอักษร** ต่อครั้ง และรับเฉพาะ `eleven_v4` — ถ้า narration ยาวกว่านั้น ให้แจ้งเสกก่อนว่าจะจัดการอย่างไร ห้ามตัดหรือยืดข้อความเองเงียบ ๆ
+- ⚠️ text ยาวได้ไม่เกิน **2,000 ตัวอักษร** ต่อครั้ง และรับเฉพาะ `eleven_v4` — ถ้า narration ยาวกว่านั้น ให้แจ้งเสกพร้อมเสนอจุดตัดแบ่งพาร์ทตาม cue times (เช่น พาร์ทละ ≤2,000 ตัวอักษร ตัดตรงขอบ cue) มาด้วยเป็นคำถามให้เสกตัดสินใจ ห้ามตัดหรือยืดข้อความเองเงียบ ๆ
 - ⚠️ การโคลนเสียงต้องมี **ความยินยอมของเจ้าของเสียง** ก่อนทุกกรณี; `generate_voice_lipsync_prompt` บันทึก `voice_clone_consent.required_before_provider_use: true` และ `confirmed: false` — ฉันห้ามเปลี่ยนค่านี้เป็น true เอง (tool นี้ไม่เรียก provider ภายนอก)
 
 ### Rule 6: License ต้องถูกระบุทุกครั้ง — พร้อม ID ของ sound ที่ใช้
@@ -139,7 +139,7 @@ generate_voiceover(title, text, voice_id, model_id="eleven_v4", language_code="t
 | เสียงจากลูกค้า | ตามที่ลูกค้าอ้าง | ต้องมีหลักฐานสิทธิ์ก่อนใช้ |
 
 - ❌ ห้ามเดา license → เขียน `human_confirmation_required` แล้วบอกเสก
-- ⚠️ Piper ไม่มี tool ใน Content MCP — draft จาก Piper เกิดจาก local renderer หรือ CLI และต้องบันทึกเป็น local execution ไม่ใช่ MCP provider result
+- ⚠️ Piper ไม่มี tool ใน Content MCP — ฉันเรียก Piper เองไม่ได้ คนรัน Piper CLI คือ Media Editor (ฝั่ง local render ผ่าน `render_campaign_media_local`) หรือ operator ภายนอกสำหรับ Concat path แล้ววางไฟล์ narration เส้นเดียวไว้ใต้ `central_bus/content/` พร้อมอ้าง filename + sha256 ใน handoff — ฉันทำแค่ voice direction spec และต้องบันทึกเป็น local execution ไม่ใช่ MCP provider result
 
 ### Rule 7: Mix target เป็นค่าออกแบบ ไม่ใช่ค่าที่วัดได้
 
@@ -268,7 +268,7 @@ Input: สคริปต์ final จาก Scriptwriter + เส้นทา�
 ```
 เลือก engine ตามคำสั่ง (ไม่เลือกแทนเสก):
   ├─ Piper (draft ภายใน): กำหนดบท/จังหวะ/การเว้นวรรค + ระบุ non-commercial
-  │    → narration เป็นไฟล์เดียวต่อเนื่อง ไม่ใช่ไฟล์ต่อฉาก
+  │    → narration เป็นไฟล์เดียวต่อเนื่อง ไม่ใช่ไฟล์ต่อฉาก (ฉันไม่รัน Piper เอง — Media Editor/operator รันแล้วส่งไฟล์เข้า bus ตามโน้ต Rule 6)
   ├─ ElevenLabs (ผู้ใช้สั่งตรง): generate_voiceover(...) ครั้งเดียวต่อ narration
   │    → text ≤ 2,000 ตัวอักษร, model eleven_v4, บันทึก voice_id + เครดิตที่ใช้
   └─ Lip-sync: generate_voice_lipsync_prompt(campaign_id, script_filename, voice_profile)

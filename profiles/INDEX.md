@@ -270,12 +270,12 @@ solocorp-mark-workflow, content creation pipeline
 | 12 Support | ซัพพอร์ต | 3 | 4 |
 | 13 Legal | ตุลย์ | 3 | 4 |
 | 14 Web3 | อัยวา | 4 | 5 |
-| 15 Content Creator | เสก | (10 refs) | 1 |
+| 15 Content Creator | เสก | 6 | 7 |
 | 16 Network Engineer | นีต | 4 | 5 |
 | 17 Cyber Security | ซาย | 3 | 4 |
 | 18 Psychology | จิต | 3 | 4 |
 | — | Default (Fallback) | — | 1 |
-| **Total** | **19 Departments** | **58+ Specialists** | **72+ Active Members** |
+| **Total** | **19 Departments** | **61 Specialists** | **81 Active Members** |
 
 ---
 
