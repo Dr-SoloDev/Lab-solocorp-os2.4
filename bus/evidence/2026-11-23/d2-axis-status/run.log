@@ -1,7 +1,6 @@
-$ PYTHONPATH=. .venv/bin/python3 -m pytest tests/test_axis_status.py -q
-............................./data/projects/Lab-solocorp-os2.4/.venv/lib/python3.12/site-packages/coverage/control.py:956: CoverageWarning: No data was collected. (no-data-collected); see https://coverage.readthedocs.io/en/7.15.0/messages.html#warning-no-data-collected
+.............................../data/projects/Lab-solocorp-os2.4/.venv/lib/python3.12/site-packages/coverage/control.py:956: CoverageWarning: No data was collected. (no-data-collected); see https://coverage.readthedocs.io/en/7.15.0/messages.html#warning-no-data-collected
   self._warn("No data was collected.", slug="no-data-collected")
-                                            [100%]
+                                          [100%]
 ================================ tests coverage ================================
 _______________ coverage: platform linux, python 3.12.3-final-0 ________________
 
@@ -52,5 +51,5 @@ central_bus/webhook_receiver.py                    83     83     0%
 -------------------------------------------------------------------
 TOTAL                                            4807   4807     0%
 Coverage JSON written to file .coverage.json
-29 passed in 5.95s
+31 passed in 5.99s
 EXIT_CODE=0

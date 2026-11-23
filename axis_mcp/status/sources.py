@@ -242,6 +242,21 @@ def probe_busd() -> dict[str, Any]:
         return _result(
             "down", False, detail, "busd health payload is missing status and db"
         )
+
+    # Contract §3 lists these as primary busd data. A payload without them is a
+    # partial measurement, not a healthy busd: do not let an absent field read
+    # as "no problem". Present-but-bad values keep their existing warnings.
+    missing_fields = [
+        field
+        for field in ("rules_in_sync", "version", "uptime_seconds")
+        if field not in data
+    ]
+    if missing_fields:
+        warnings.append(
+            "busd health payload is missing required field(s): "
+            f"{', '.join(missing_fields)} — partial measurement"
+        )
+
     if not db:
         warnings.append("busd health payload has no db block")
     if data.get("status") != "ok":

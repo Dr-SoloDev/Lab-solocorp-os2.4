@@ -203,6 +203,12 @@ def _run_probes(
 
 
 def score_sources(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    # A critical source that is absent from the rows is unmeasured, not healthy.
+    # The aggregator always supplies all seven rows, so this guard only matters
+    # to direct callers of this public helper (D3 NIT-4).
+    present = {row["id"] for row in rows}
+    missing_critical = sorted(CRITICAL_SOURCES - present)
+
     earned = 0.0
     measured = 0
     for row in rows:
@@ -214,7 +220,14 @@ def score_sources(rows: list[dict[str, Any]]) -> dict[str, Any]:
         measured += weight
 
     if measured == 0:
-        return {"status": "down", "score": 0, "color": "red"}
+        result: dict[str, Any] = {"status": "down", "score": 0, "color": "red"}
+        if missing_critical:
+            result["missing_critical"] = missing_critical
+            result["warning"] = (
+                "critical source(s) missing from the score: "
+                f"{', '.join(missing_critical)} — overall forced down"
+            )
+        return result
 
     score = int(math.floor(earned / measured * 100 + 0.5))
     critical_down = any(
@@ -223,7 +236,7 @@ def score_sources(rows: list[dict[str, Any]]) -> dict[str, Any]:
     critical_unknown = any(
         row["status"] == "unknown" and row["id"] in CRITICAL_SOURCES for row in rows
     )
-    if critical_down or critical_unknown:
+    if critical_down or critical_unknown or missing_critical:
         status = "down"
     elif score >= 90:
         status = "healthy"
@@ -231,7 +244,14 @@ def score_sources(rows: list[dict[str, Any]]) -> dict[str, Any]:
         status = "degraded"
     else:
         status = "down"
-    return {"status": status, "score": score, "color": _COLORS[status]}
+    result = {"status": status, "score": score, "color": _COLORS[status]}
+    if missing_critical:
+        result["missing_critical"] = missing_critical
+        result["warning"] = (
+            "critical source(s) missing from the score: "
+            f"{', '.join(missing_critical)} — overall forced down"
+        )
+    return result
 
 
 def _secret() -> str:
@@ -250,7 +270,14 @@ def _scrub(value: Any, secret: str) -> Any:
 
 def _build_payload(rows: list[dict[str, Any]], duration_ms: float) -> dict[str, Any]:
     overall = score_sources(rows)
+    # score_sources may annotate a partial-row result with missing-critical
+    # context. The payload's overall object stays the contract's fixed
+    # {status, score, color} shape; the warning moves to the top-level list.
+    overall_warning = overall.pop("warning", None)
+    overall.pop("missing_critical", None)
     warnings = [f"{row['id']}: {row['warning']}" for row in rows if row["warning"]]
+    if overall_warning:
+        warnings.append(overall_warning)
     unverified = [
         row["id"]
         for row in rows

@@ -47,6 +47,22 @@ def probes_with(**overrides):
     }
 
 
+class _FakeResponse:
+    """Minimal ``urlopen`` context manager for the busd probe."""
+
+    def __init__(self, body: bytes):
+        self._body = body
+
+    def read(self, _size: int = -1) -> bytes:
+        return self._body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_exc):
+        return False
+
+
 def row(payload, source_id):
     return next(item for item in payload["sources"] if item["id"] == source_id)
 
@@ -125,6 +141,38 @@ def test_non_critical_down_bands():
         ),
     )
     assert down["overall"] == {"status": "down", "score": 65, "color": "red"}
+
+
+def test_score_sources_missing_critical_is_down():
+    rows = [
+        {"id": "git", "status": "ok", "warning": None},
+        {"id": "cto", "status": "ok", "warning": None},
+    ]
+
+    result = aggregator.score_sources(rows)
+
+    assert result["status"] == "down"
+    assert result["color"] == "red"
+    # The renormalized score over git+cto is still 100; the status is forced
+    # down because busd and mcp_freshness are absent.
+    assert result["score"] == 100
+    assert result["missing_critical"] == ["busd", "mcp_freshness"]
+    assert "busd" in result["warning"]
+    assert "mcp_freshness" in result["warning"]
+    assert result["status"] != "healthy"
+
+    # _build_payload keeps the contract's overall shape and surfaces the
+    # missing-critical warning at the top level.
+    payload = aggregator._build_payload(rows, 1.0)
+    assert payload["overall"] == {
+        "status": "down",
+        "score": 100,
+        "color": "red",
+    }
+    assert any(
+        "busd" in warning and "mcp_freshness" in warning
+        for warning in payload["warnings"]
+    )
 
 
 def test_slow_probe_is_cut_and_partial_result_returned():
@@ -218,6 +266,44 @@ def test_non_boolean_fresh_is_down():
     assert item["fresh"] is False
     assert "non-boolean" in item["warning"]
     assert payload["overall"]["score"] == 90
+
+
+def test_busd_partial_payload_is_degraded(monkeypatch):
+    body = json.dumps(
+        {
+            "status": "ok",
+            "db": {
+                "queue_pending": 0,
+                "queue_failed": 0,
+                "queue_dead": 0,
+            },
+        }
+    ).encode("utf-8")
+    monkeypatch.setattr(
+        sources.urllib.request,
+        "urlopen",
+        lambda *args, **kwargs: _FakeResponse(body),
+    )
+
+    result = sources.probe_busd()
+
+    assert result["status"] == "degraded"
+    assert result["fresh"] is True
+    assert "partial measurement" in result["warning"]
+    for field in ("rules_in_sync", "version", "uptime_seconds"):
+        assert field in result["warning"]
+        assert result["detail"][field] is None
+    # Fields that were present are kept, not invented.
+    assert result["detail"]["status"] == "ok"
+    assert result["detail"]["queue_failed"] == 0
+
+    payload = aggregator.aggregate(force=True, probes=probes_with(busd=lambda: result))
+    # busd carries 25 of 100 weight at half value -> 87.5 -> 88, amber.
+    assert payload["overall"] == {
+        "status": "degraded",
+        "score": 88,
+        "color": "amber",
+    }
 
 
 def test_secret_never_appears_in_output(monkeypatch):

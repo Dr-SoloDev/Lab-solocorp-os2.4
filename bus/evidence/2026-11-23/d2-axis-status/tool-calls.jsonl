@@ -1,7 +1,7 @@
-{"source": "busd", "status": "degraded", "method": "GET http://127.0.0.1:8099/v1/health (X-API-Key header when set)", "latency_ms": 9, "at": "2026-11-23T07:44:35.647026+00:00"}
-{"source": "cto", "status": "ok", "method": "process scan /proc + sqlite3 mode=ro central_bus/cto.db", "latency_ms": 94, "at": "2026-11-23T07:44:35.647026+00:00"}
-{"source": "content", "status": "degraded", "method": "process scan /proc + read central_bus/content/ + derived restart_required", "latency_ms": 142, "at": "2026-11-23T07:44:35.647026+00:00"}
-{"source": "mcp_freshness", "status": "degraded", "method": "/proc/<pid>/stat start vs newest axis_mcp/**/*.py mtime", "latency_ms": 108, "at": "2026-11-23T07:44:35.647026+00:00"}
-{"source": "git", "status": "ok", "method": "git rev-parse / branch --show-current / status --porcelain", "latency_ms": 31, "at": "2026-11-23T07:44:35.647026+00:00"}
-{"source": "browse", "status": "down", "method": "browse status --json (fallback: TCP 127.0.0.1:19988)", "latency_ms": 13, "at": "2026-11-23T07:44:35.647026+00:00"}
-{"source": "codegraph", "status": "ok", "method": "read .codegraph/codegraph.db mode=ro", "latency_ms": 11, "at": "2026-11-23T07:44:35.647026+00:00"}
+{"source": "busd", "status": "degraded", "method": "GET http://127.0.0.1:8099/v1/health (X-API-Key header when set)", "latency_ms": 5, "at": "2026-11-23T08:34:42.890148+00:00"}
+{"source": "cto", "status": "ok", "method": "process scan /proc + sqlite3 mode=ro central_bus/cto.db", "latency_ms": 98, "at": "2026-11-23T08:34:42.890148+00:00"}
+{"source": "content", "status": "degraded", "method": "process scan /proc + read central_bus/content/ + derived restart_required", "latency_ms": 138, "at": "2026-11-23T08:34:42.890148+00:00"}
+{"source": "mcp_freshness", "status": "degraded", "method": "/proc/<pid>/stat start vs newest axis_mcp/**/*.py mtime", "latency_ms": 102, "at": "2026-11-23T08:34:42.890148+00:00"}
+{"source": "git", "status": "ok", "method": "git rev-parse / branch --show-current / status --porcelain", "latency_ms": 33, "at": "2026-11-23T08:34:42.890148+00:00"}
+{"source": "browse", "status": "down", "method": "browse status --json (fallback: TCP 127.0.0.1:19988)", "latency_ms": 9, "at": "2026-11-23T08:34:42.890148+00:00"}
+{"source": "codegraph", "status": "ok", "method": "read .codegraph/codegraph.db mode=ro", "latency_ms": 8, "at": "2026-11-23T08:34:42.890148+00:00"}
