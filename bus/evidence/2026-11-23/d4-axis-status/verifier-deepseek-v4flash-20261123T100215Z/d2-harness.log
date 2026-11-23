@@ -1,0 +1,14 @@
+PASS schema is axis.status/1
+PASS 7 sources in order
+PASS every source has contract fields
+PASS ok is fresh, non-ok warns
+PASS non-ok sources appear in warnings
+PASS overall score and bands
+PASS meta fields and 2000 ms budget
+PASS generated_at is ISO-8601
+PASS no API key or headers
+PASS cache hit keeps generated_at, force bypasses
+PASS tool-calls.jsonl has one complete line per source
+
+11/11 checks passed · 169 ms
+SMOKE: busd=degraded · cto=ok · content=degraded · mcp_freshness=degraded · git=ok · browse=down · codegraph=ok

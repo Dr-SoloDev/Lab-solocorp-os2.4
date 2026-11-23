@@ -1,0 +1,27 @@
+D4 FINAL re-check (runbook v1.1, 2026-11-23) — commands, exit codes, wall times
+UTC 2026-11-23T10:12:25Z · branch feat/axis-status-c1 · HEAD e5b9d74c3b7c113decee5e67950e99872c4329f0
+Runbook: docs/runbooks/AXIS-STATUS.md · 207 lines · sha256 5bf6c664356b3ee94b5d6d9d28c96e0c578e514b771a8543de19c443eee820b1
+
+§3 (exact, from repo root)
+1) PYTHONPATH=. .venv/bin/python3 -m pytest tests/test_axis_status.py -q
+   exit=0  wall=7164 ms  "40 passed in 6.24s"
+2) PYTHONPATH=. .venv/bin/python3 scripts/d2_axis_status_check.py
+   exit=0  wall=1586 ms  "11/11 checks passed · 169 ms"
+3) PYTHONPATH=. .venv/bin/python3 -m axis_mcp.status.server --smoke
+   exit=0  wall=1193 ms  schema=axis.status/1 sources=7 overall=down/63/red duration_ms=159
+4) PYTHONPATH=. .venv/bin/python3 scripts/d3_axis_status_eval.py
+   exit=0  wall=12999 ms CASES: 43 P43 F0 S0; PYTEST: 40 passed in 6.45s (exit 0); EXIT: 0
+
+§4 snippet (extracted verbatim from runbook lines 89-104, run as `bash stdio-snippet.sh` from repo root)
+5) stdio snippet
+   exit=0  wall=1330 ms  stdout="axis.status/1 7 False"  stderr=0 bytes  EXACT_MATCH=yes
+   (client-side exit code; server stderr suppressed by the snippet per its own line 92)
+
+extras
+6) stdio_probe.py (raw transcript: bare -32602; initialize -> initialized -> tools/call)
+   exit=0  required fields: isError=false, schema=axis.status/1, 7 sources
+
+restore (§3 line 56), rc=0:
+git checkout -- bus/evidence/2026-11-23/d2-axis-status bus/evidence/2026-11-23/d3-axis-status docs/certification/D3-axis-status-2026-11-23.md
+
+signature commands field (per §9 line 192): 1:pytest:0;2:d2:0;3:smoke:0;4:d3:0;stdio:0

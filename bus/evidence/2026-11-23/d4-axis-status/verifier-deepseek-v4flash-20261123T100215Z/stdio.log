@@ -1,0 +1,29 @@
+### CASE A — bare tools/call (no initialize)
+>> {"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"axis_status","arguments":{"force":true}}}
+<< {"jsonrpc":"2.0","id":1,"error":{"code":-32602,"message":"Invalid request parameters","data":""}}
+exit_code=0 stderr='[11/23/26 17:13:06] WARNING  Failed to validate request: Received session.py:383\n                             request before initialization was                  \n                             complete                                           \n'
+
+### CASE B — initialize -> notifications/initialized -> tools/call
+>> {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"axis-status-runbook","version":"1.0"}}}
+<< {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2024-11-05","capabilities":{"experimental":{},"prompts":{"listChanged":false},"resources":{"subscribe":false,"listChanged":false},"tools":{"listChanged":false}},"serverInfo":{"name":"axis-status","version":"1.28.1"},"instructions":"Read-only AX …(truncated display)
+>> {"jsonrpc":"2.0","method":"notifications/initialized"}
+>> {"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"axis_status","arguments":{"force":true}}}
+<< {"jsonrpc":"2.0","id":2,"result":{"content":[{"type":"text","text":"{\n  \"schema\": \"axis.status/1\",\n  \"generated_at\": \"2026-11-23T10:13:08.093525+00:00\",\n  \"overall\": {\n    \"status\": \"down\",\n    \"score\": 63,\n    \"color\": \"red\"\n  },\n  \"sources\": [\n    {\n      \"id\": …(truncated display)
+exit_code=0 stderr='[11/23/26 17:13:07] INFO     Processing request of type            server.py:733\n                             CallToolRequest                                    \n'
+
+### CHECKS
+initialize_result_present    True
+init_protocolVersion         2024-11-05
+call_has_result              True
+call_isError                 False
+call_error                   None
+structuredContent_is_null    False
+content_len                  1
+content_type                 text
+text_json_parsed             True
+schema                       axis.status/1
+n_sources                    7
+source_ids                   ['busd', 'cto', 'content', 'mcp_freshness', 'git', 'browse', 'codegraph']
+overall                      {'status': 'down', 'score': 63, 'color': 'red'}
+
+VERDICT stdio: PASS
