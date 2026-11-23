@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AXIS STATUS — Option C · Unified Status Layer</title>
+<style>
+  :root{
+    --void:#070B14;
+    --surface:#0E1524;
+    --surface-2:#121C2E;
+    --line:#1E2A3F;
+    --line-soft:#16203368;
+    --cyan:#4CC9F0;
+    --violet:#7B61FF;
+    --mint:#34D399;
+    --amber:#FFB020;
+    --coral:#F87171;
+    --text:#E6EDF7;
+    --muted:#8DA0BC;
+    --dim:#5A6B85;
+    --radius:16px;
+    --max:1180px;
+    --font:"Noto Sans Thai","Inter","IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"JetBrains Mono","SFMono-Regular",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--void);color:var(--text);font-family:var(--font);
+    font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(900px 500px at 15% -10%, #4cc9f012, transparent 60%),
+      radial-gradient(900px 600px at 90% 0%, #7b61ff10, transparent 55%),
+      linear-gradient(#0a101c 0%, #070b14 100%);
+    background-attachment:fixed;
+  }
+  a{color:var(--cyan);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+  /* NAV */
+  nav{
+    position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:#070b14cc;border-bottom:1px solid var(--line-soft);
+  }
+  nav .wrap{display:flex;align-items:center;gap:20px;height:62px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.18em;font-size:13px}
+  .brand svg{width:26px;height:26px}
+  .navlinks{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap}
+  .navlinks a{color:var(--muted);font-size:12.5px;font-weight:600;letter-spacing:.02em}
+  .navlinks a:hover{color:var(--text);text-decoration:none}
+  .navlinks a .n{color:var(--dim);font-family:var(--mono);font-size:10.5px;margin-right:4px}
+
+  /* HERO */
+  header{padding:84px 0 64px;position:relative;overflow:hidden}
+  .kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.16em;color:var(--cyan);border:1px solid #4cc9f033;background:#4cc9f00d;
+    padding:6px 12px;border-radius:999px;text-transform:uppercase}
+  .kicker .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+  h1{font-size:clamp(34px,5.2vw,62px);line-height:1.12;margin:22px 0 18px;letter-spacing:-.02em;font-weight:800}
+  h1 .grad{background:linear-gradient(100deg,var(--cyan),var(--violet) 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(16px,2vw,19px);color:var(--muted);max-width:760px}
+  .lede b{color:var(--text);font-weight:600}
+  .tldr{
+    margin-top:38px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+  }
+  .tldr .cell{
+    border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;background:linear-gradient(180deg,#0e1524,#0b1220);
+  }
+  .tldr .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+  .tldr .v{font-size:22px;font-weight:750;margin-top:6px}
+  .tldr .s{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  /* SECTIONS */
+  section{padding:72px 0;border-top:1px solid var(--line-soft)}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:36px;flex-wrap:wrap}
+  .sec-num{font-family:var(--mono);font-size:12px;color:var(--cyan);letter-spacing:.18em;border:1px solid #4cc9f02e;border-radius:8px;padding:4px 9px}
+  h2{font-size:clamp(24px,3.4vw,36px);margin:0;letter-spacing:-.015em;font-weight:780}
+  .sec-sub{color:var(--muted);font-size:15px;max-width:820px;margin:-20px 0 34px}
+
+  .grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{
+    border:1px solid var(--line);border-radius:var(--radius);
+    background:linear-gradient(180deg,var(--surface),#0a1120);
+    padding:24px;position:relative;overflow:hidden;
+  }
+  .card h3{margin:0 0 8px;font-size:16.5px;font-weight:700;letter-spacing:-.01em}
+  .card p{margin:0;color:var(--muted);font-size:14.5px}
+  .card.bad{border-color:#f8717133}
+  .card.good{border-color:#34d39933}
+  .tag{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    padding:3px 8px;border-radius:6px;margin-bottom:12px}
+  .tag.red{color:var(--coral);background:#f871711a;border:1px solid #f8717133}
+  .tag.green{color:var(--mint);background:#34d3991a;border:1px solid #34d39933}
+  .tag.cyan{color:var(--cyan);background:#4cc9f01a;border:1px solid #4cc9f033}
+
+  /* lists */
+  ul.clean{list-style:none;padding:0;margin:0;display:grid;gap:11px}
+  ul.clean li{display:flex;gap:11px;color:var(--muted);font-size:14.5px}
+  ul.clean li b{color:var(--text);font-weight:650}
+  .bullet{flex:0 0 auto;width:18px;height:18px;border-radius:50%;margin-top:4px;
+    display:grid;place-items:center;border:1px solid #4cc9f044;color:var(--cyan);font-size:10px;font-family:var(--mono)}
+
+  /* comparison table */
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  th,td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  td:first-child{color:var(--muted);width:30%}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:650;padding:3px 9px;border-radius:999px}
+  .pill.ok{color:var(--mint);background:#34d39918}
+  .pill.warn{color:var(--amber);background:#ffb02018}
+  .pill.bad{color:var(--coral);background:#f8717118}
+  .pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+  /* architecture */
+  .arch{display:grid;gap:26px;margin-top:8px}
+  .arch-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .node{
+    border:1px solid var(--line);border-radius:12px;padding:14px 15px;background:#0b1220;
+    font-size:13px;
+  }
+  .node .nh{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;margin-bottom:4px}
+  .node .nh svg{width:15px;height:15px;flex:0 0 auto}
+  .node .nd{color:var(--muted);font-size:12px;line-height:1.55}
+  .node .lat{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:6px}
+  .core{
+    border:1px solid #4cc9f040;border-radius:16px;padding:22px;text-align:center;
+    background:
+      radial-gradient(400px 120px at 50% 0%, #4cc9f014, transparent 70%),
+      linear-gradient(180deg,#101a2c,#0b1220);
+    position:relative;
+  }
+  .core:before,.core:after{
+    content:"";position:absolute;left:50%;width:1px;height:20px;background:linear-gradient(var(--cyan),transparent);opacity:.5
+  }
+  .core:before{top:-20px}
+  .core:after{bottom:-20px;transform:rotate(180deg)}
+  .core .ct{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--cyan);text-transform:uppercase}
+  .core .cn{font-size:19px;font-weight:800;margin-top:6px}
+  .core .cd{color:var(--muted);font-size:13px;margin-top:6px}
+  .arrow{display:grid;place-items:center;color:var(--dim);font-family:var(--mono);font-size:11px;gap:4px}
+  .consumers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .chip{display:flex;align-items:center;gap:8px;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;color:var(--muted);font-size:12.5px}
+  .chip b{color:var(--text)}
+
+  /* code block */
+  pre{
+    margin:0;background:#080e19;border:1px solid var(--line);border-radius:14px;
+    padding:20px 22px;overflow:auto;font-family:var(--mono);font-size:12.5px;line-height:1.7;
+    color:#c9d6ea;
+  }
+  .k{color:#7B61FF}
+  .s{color:#34D399}
+  .n{color:#FFB020}
+  .b{color:#4CC9F0}
+  .c{color:#5A6B85;font-style:italic}
+  .code-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .code-head .d{width:9px;height:9px;border-radius:50%}
+  .code-head .lbl{font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:6px;letter-spacing:.08em}
+
+  /* dashboard mock */
+  .dash{
+    border:1px solid var(--line);border-radius:20px;overflow:hidden;
+    background:linear-gradient(180deg,#0d1526,#080e19);
+    box-shadow:0 40px 80px -40px #000000cc;
+  }
+  .dash-top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line-soft);background:#0a111f}
+  .dash-top .dots{display:flex;gap:6px}
+  .dash-top .dots i{width:9px;height:9px;border-radius:50%;background:#243349;display:block}
+  .dash-top .url{font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:8px}
+  .dash-body{padding:22px}
+  .dash-hero{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:center;margin-bottom:20px}
+  .ring{
+    width:180px;height:180px;margin:0 auto;border-radius:50%;
+    background:conic-gradient(var(--mint) 0 96%, #1b2740 96% 100%);
+    display:grid;place-items:center;position:relative;
+    box-shadow:0 0 50px -12px #34d39955;
+  }
+  .ring:before{content:"";position:absolute;inset:14px;border-radius:50%;background:#0a111f;border:1px solid #1e2a3f}
+  .ring .inner{position:relative;text-align:center}
+  .ring .val{font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .ring .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--mint);text-transform:uppercase;margin-top:6px}
+  .dash h4{margin:0 0 4px;font-size:15px}
+  .dash .subt{color:var(--muted);font-size:12.5px;margin:0 0 14px}
+  .mini{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .mini div{border:1px solid var(--line-soft);border-radius:9px;padding:8px 10px;font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+  .mini b{color:var(--text);font-weight:650}
+  .mini .g{color:var(--mint)}
+  .mini .a{color:var(--amber)}
+  .dept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .dept{border:1px solid var(--line-soft);border-radius:11px;padding:12px;background:#0b1220;display:grid;gap:8px}
+  .dept .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .dept .name{font-size:12.5px;font-weight:650}
+  .dept .state{font-size:10.5px;font-family:var(--mono);letter-spacing:.06em;padding:2px 7px;border-radius:999px}
+  .dept .bar{height:4px;border-radius:99px;background:#162033;overflow:hidden}
+  .dept .bar i{display:block;height:100%;border-radius:99px}
+  .dept .meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--dim)}
+  .state.ok{color:var(--mint);background:#34d39915}
+  .state.warn{color:var(--amber);background:#ffb02015}
+  .state.down{color:var(--coral);background:#f8717115}
+
+  /* palette */
+  .swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .sw{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .sw .chipc{height:64px}
+  .sw .info{padding:10px 12px;background:#0b1220}
+  .sw .nm{font-size:12px;font-weight:650}
+  .sw .hx{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:2px}
+  .logo-lock{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .logo-mark{width:104px;height:104px;flex:0 0 auto}
+  .wordmark{font-size:34px;font-weight:800;letter-spacing:.28em}
+  .wordmark small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--dim);font-weight:500;margin-top:2px}
+
+  /* roadmap */
+  .road{display:grid;gap:0;border-left:1px solid var(--line);margin-left:9px}
+  .step{position:relative;padding:0 0 30px 30px}
+  .step:last-child{padding-bottom:0}
+  .step:before{content:"";position:absolute;left:-6px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--void);border:2px solid var(--cyan);box-shadow:0 0 0 4px #4cc9f014}
+  .step.done:before{background:var(--cyan)}
+  .step .st{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--cyan);text-transform:uppercase}
+  .step h4{margin:4px 0 6px;font-size:16px}
+  .step p{margin:0;color:var(--muted);font-size:14px;max-width:760px}
+
+  .callout{
+    border-left:2px solid var(--cyan);background:linear-gradient(90deg,#4cc9f00c,transparent);
+    padding:14px 18px;border-radius:0 10px 10px 0;color:var(--muted);font-size:14.5px;margin-top:18px;
+  }
+  .callout b{color:var(--text)}
+
+  footer{padding:54px 0 70px;border-top:1px solid var(--line-soft);color:var(--dim);font-size:12.5px}
+  footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+
+  .two-col-json{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+  .kv{display:grid;gap:9px}
+  .kv .row{display:grid;grid-template-columns:130px 1fr;gap:12px;font-size:13px;border-bottom:1px dashed var(--line-soft);padding-bottom:8px}
+  .kv .k2{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.08em;padding-top:2px}
+
+  @media (max-width:940px){
+    .tldr{grid-template-columns:repeat(2,1fr)}
+    .grid2,.two-col-json{grid-template-columns:1fr}
+    .grid3{grid-template-columns:1fr}
+    .arch-row{grid-template-columns:repeat(2,1fr)}
+    .consumers{grid-template-columns:repeat(2,1fr)}
+    .dash-hero{grid-template-columns:1fr}
+    .dept-grid{grid-template-columns:repeat(2,1fr)}
+    .swatches{grid-template-columns:repeat(3,1fr)}
+  }
+  @media (max-width:560px){
+    .navlinks{display:none}
+    .tldr{grid-template-columns:1fr}
+    .arch-row{grid-template-columns:1fr}
+    .dept-grid{grid-template-columns:1fr}
+    .swatches{grid-template-columns:repeat(2,1fr)}
+    .mini{grid-template-columns:1fr}
+    section{padding:56px 0}
+  }
+
+  @media print{
+    body{background:#fff;color:#111}
+    nav{display:none}
+    section,header{page-break-inside:avoid}
+    .card,.node,.dash,.core,pre{background:#f7f9fc;color:#111;border-color:#dde5f0}
+    .lede,.card p,.sec-sub,td,ul.clean li,.step p{color:#333}
+    pre{color:#222}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <circle cx="20" cy="20" r="17" stroke="#4CC9F0" stroke-width="1.4" opacity=".55"/>
+        <circle cx="20" cy="20" r="9.5" stroke="#7B61FF" stroke-width="1.4" opacity=".8"/>
+        <path d="M20 1v10M20 29v10M1 20h10M29 20h10" stroke="#4CC9F0" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="20" cy="20" r="2.6" fill="#4CC9F0"/>
+      </svg>
+      AXIS STATUS
+    </div>
+    <div class="navlinks">
+      <a href="#context"><span class="n">01</span>บริบท</a>
+      <a href="#what"><span class="n">02</span>ข้อ C</a>
+      <a href="#arch"><span class="n">03</span>สถาปัตยกรรม</a>
+      <a href="#output"><span class="n">04</span>Output</a>
+      <a href="#result"><span class="n">05</span>ผลลัพธ์</a>
+      <a href="#brand"><span class="n">06</span>แบรนด์</a>
+      <a href="#roadmap"><span class="n">07</span>Roadmap</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <span class="kicker"><span class="dot"></span>Option C · Unified Status Layer</span>
+    <h1>ทุกแผนกอยู่บน<span class="grad">แกนเดียวกัน</span><br>สถานะทั้งองค์กรใน call เดียว</h1>
+    <p class="lede">
+      ข้อ C คือการสร้าง <b>ชั้นสรุปสถานะกลาง (status aggregator)</b> ที่อ่านสัญญาณจากทุก MCP,
+      bus daemon, กระบวนการทำงาน และ git แล้วตอบเป็น schema เดียว —
+      <b>read-only, มีหลักฐาน, และไม่โกหกด้วยสถานะเขียวปลอม</b>
+    </p>
+
+    <div class="tldr">
+      <div class="cell"><div class="k">Calls → 1</div><div class="v">5 → 1</div><div class="s">เลิกถามทีละ MCP</div></div>
+      <div class="cell"><div class="k">Latency</div><div class="v">&lt; 2s</div><div class="s">fan-out ขนาน + cache 10s</div></div>
+      <div class="cell"><div class="k">Sources</div><div class="v">7</div><div class="s">busd · CTO · Content · Modules · Codegraph · Browse · Git</div></div>
+      <div class="cell"><div class="k">Truth rule</div><div class="v">Partial &gt; Fail</div><div class="s">unknown ≠ ok — แสดง warning เสมอ</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- 01 CONTEXT -->
+<section id="context">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>บริบท: ทำไมต้องมี C</h2></div>
+    <p class="sec-sub">วันนี้เรามี 3 department MCP + busd + codegraph + browser relay แยกกัน — แต่ไม่มีที่เดียวที่ตอบว่า “ทั้งองค์กรเป็นยังไง”</p>
+
+    <div class="grid2">
+      <div class="card bad">
+        <span class="tag red">Before C — Fragmented</span>
+        <h3>ตอบคำถามเดียว ต้องยิงหลายที่</h3>
+        <ul class="clean">
+          <li><span class="bullet">✕</span><div><b>Health แยกส่วน:</b> CTO ดูได้แค่ CTO, Content ดูได้แค่ Content</div></li>
+          <li><span class="bullet">✕</span><div><b>ไม่มี freshness:</b> process ที่รันอยู่อาจเก่ากว่าซอร์สโค้ด (“connected ≠ current”)</div></li>
+          <li><span class="bullet">✕</span><div><b>สถานะเขียวหลอก:</b> relay ขึ้นแต่ extension offline = ใช้งานไม่ได้จริง</div></li>
+          <li><span class="bullet">✕</span><div><b>Core MCP ไม่ได้ต่อ:</b> tool ภาพรวมองค์กรแบบเดิมหายไป</div></li>
+        </ul>
+      </div>
+      <div class="card good">
+        <span class="tag green">After C — One Axis</span>
+        <h3>คำถามเดียว · คำตอบเดียว · มีหลักฐาน</h3>
+        <ul class="clean">
+          <li><span class="bullet">✓</span><div><b>Single pane of glass:</b> overall score + สถานะทุกแหล่งในผลเดียว</div></li>
+          <li><span class="bullet">✓</span><div><b>Freshness-aware:</b> เทียบ process start กับ source mtime ทุกครั้ง</div></li>
+          <li><span class="bullet">✓</span><div><b>Degraded ต้องเห็น:</b> อะไรพัง อะไรช้า อะไรเก่า ระบุสาเหตุ</div></li>
+          <li><span class="bullet">✓</span><div><b>ใช้ซ้ำได้:</b> CEO session, App dashboard, CLI, CI ใช้ schema เดียว</div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>หลักคิด:</b> C ไม่ใช่ “dashboard สวยๆ” — มันคือ <b>contract</b> ของคำว่า “healthy”
+      ที่ทุกแผนกและทุกเครื่องมือต้องตอบตรงกัน ถ้า contract นี้ไม่มี แบรนด์ AXIS ก็เป็นได้แค่โลโก้
+    </div>
+  </div>
+</section>
+
+<!-- 02 WHAT -->
+<section id="what">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>ข้อ C คืออะไร (ขยายความ)</h2></div>
+    <p class="sec-sub">Read-only aggregation facade — MCP server ใหม่ชื่อ <code style="color:var(--cyan)">axis-status</code> เปิด tool เดียว <code style="color:var(--cyan)">axis_status</code> ทำหน้าที่ fan-out ไปยังแหล่งข้อมูลทั้งหมด แล้ว normalize เป็น schema เดียว</p>
+
+    <div class="grid3">
+      <div class="card">
+        <span class="tag cyan">C1 · Boundary</span>
+        <h3>อ่านอย่างเดียว</h3>
+        <p>ไม่เขียน ไม่ approve ไม่ publish ไม่แตะ DB ธุรกิจ — เป็น “มาตรวัด” ไม่ใช่ “ผู้ควบคุม”</p>
+      </div>
+      <div class="card">
+        <span class="tag cyan">C2 · Fan-out</span>
+        <h3>ขนาน + มีเพดานเวลา</h3>
+        <p>ทุก source ทำงานพร้อมกัน · budget รวม 2s · source ละ 1.2s · ช้าตัวเดียวไม่ทำให้ทั้งระบบค้าง</p>
+      </div>
+      <div class="card">
+        <span class="tag cyan">C3 · Normalize</span>
+        <h3>คำศัพท์เดียว</h3>
+        <p><b style="color:var(--mint)">ok</b> · <b style="color:var(--amber)">degraded</b> · <b style="color:var(--coral)">down</b> · <b style="color:var(--dim)">unknown</b> — และ unknown ห้ามถูกนับเป็น ok</p>
+      </div>
+      <div class="card">
+        <span class="tag cyan">C4 · Freshness</span>
+        <h3>อายุของคำตอบ</h3>
+        <p>ทุก source แนบ <code>fresh</code>, <code>age_s</code>, <code>process_started_at</code> — กันรายงานจากโค้ดที่ตายแล้ว</p>
+      </div>
+      <div class="card">
+        <span class="tag cyan">C5 · Redaction</span>
+        <h3>ไม่รั่วความลับ</h3>
+        <p>ไม่ log API key · bus secret ถูกตัดก่อนแสดง · รายละเอียดภายในถูกย่อเหลือสิ่งที่ตัดสินใจได้</p>
+      </div>
+      <div class="card">
+        <span class="tag cyan">C6 · Evidence</span>
+        <h3>ตรวจซ้ำได้</h3>
+        <p>แนบ timestamp, latency, source id, tool version — ทุกครั้งที่ตอบ คือหลักฐานหนึ่งชิ้น</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>ทำไมต้องเป็น MCP server แยก:</b> Core MCP เดิมไม่ได้ถูกต่อใน config ปัจจุบัน และการเปิด core กลับมาจะลาก tool เก่าทั้งชุดมาด้วย
+      แยกเป็น <b>axis-status</b> ทำให้ surface เล็ก ปลอดภัย และ “ติดตั้งได้เฉพาะคนที่ต้องการดูสถานะ”
+    </div>
+  </div>
+</section>
+
+<!-- 03 ARCH -->
+<section id="arch">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>สถาปัตยกรรม</h2></div>
+    <p class="sec-sub">7 แหล่งข้อมูล → aggregator 1 ตัว → ผู้บริโภค 4 แบบ · ทุก probe เป็นอิสระจากกัน (HTTP / filesystem / process) ไม่ใช่ server-to-server MCP call</p>
+
+    <div class="arch">
+      <div class="arch-row">
+        <div class="node"><div class="nh"><svg viewBox="0 0 24 24" fill="none" stroke="#4CC9F0"><path d="M4 7h16M4 12h16M4 17h16" stroke-width="1.6"/></svg>busd /v1/health</div><div class="nd">queue, rules sync, uptime, version</div><div class="lat">HTTP · ~40ms</div></div>
+        <div class="node"><div class="nh"><svg viewBox="0 0 24 24" fill="none" stroke="#7B61FF"><rect x="4" y="4" width="16" height="16" rx="3" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke-width="1.6"/></svg>CTO modules</div><div class="nd">architect / engineering / qa + db/cache</div><div class="lat">HTTP หรือ DB probe</div></div>
+        <div class="node"><div class="nh"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399"><path d="M5 19V9M12 19V5M19 19v-7" stroke-width="1.7" stroke-linecap="round"/></svg>Content runtime</div><div class="nd">department info · module registry · artifacts</div><div class="lat">JSON artifact scan</div></div>
+        <div class="node"><div class="nh"><svg viewBox="0 0 24 24" fill="none" stroke="#FFB020"><circle cx="12" cy="12" r="8" stroke-width="1.6"/><path d="M12 8v4l3 2" stroke-width="1.6"/></svg>MCP freshness</div><div class="nd">process start vs source mtime</div><div class="lat">filesystem · ~2ms</div></div>
+      </div>
+
+      <div class="arrow">▾</div>
+
+      <div class="core">
+        <div class="ct">Aggregator</div>
+        <div class="cn">axis_status · schema axis.status/1</div>
+        <div class="cd">parallel fan-out · 2s budget · TTL cache 10s · partial result always</div>
+      </div>
+
+      <div class="arrow">▾</div>
+
+      <div class="consumers">
+        <div class="chip"><b>CEO session</b> · ถามครั้งเดียว</div>
+        <div class="chip"><b>App dashboard</b> · MVP reuse</div>
+        <div class="chip"><b>CLI</b> · axis status --json</div>
+        <div class="chip"><b>CI / cron</b> · drift detection</div>
+      </div>
+
+      <div class="arch-row">
+        <div class="node"><div class="nh">Codegraph</div><div class="nd">DDL/DB ของ index · 381 files</div><div class="lat">~5ms</div></div>
+        <div class="node"><div class="nh">Browser relay</div><div class="nd">relay up? extension paired?</div><div class="lat">~30ms</div></div>
+        <div class="node"><div class="nh">Git workspace</div><div class="nd">HEAD, dirty count, branch</div><div class="lat">~15ms</div></div>
+        <div class="node"><div class="nh">Bus queue</div><div class="nd">failed / dead / oldest routed</div><div class="lat">จาก busd</div></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>ข้อจำกัดที่ต้องพูดตรงๆ:</b> MCP แบบ stdio ไม่มี server-to-server call —
+      aggregator จึง “วัด” แหล่งอื่นจากภายนอก (HTTP, ไฟล์, process) ไม่ใช่เรียก tool ของ MCP อื่น
+      นี่คือเหตุผลที่ freshness และ process เป็น first-class citizen ไม่ใช่ของแถม
+    </div>
+  </div>
+</section>
+
+<!-- 04 OUTPUT -->
+<section id="output">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2>หน้าตาของคำตอบ</h2></div>
+    <p class="sec-sub">One call, one object — อ่านแล้วรู้ทันทีว่า “เขียวจริงหรือเขียวหลอก”</p>
+
+    <div class="two-col-json">
+      <div>
+        <div class="code-head"><span class="d" style="background:#F87171"></span><span class="d" style="background:#FFB020"></span><span class="d" style="background:#34D399"></span><span class="lbl">axis_status() → 2026-11-23T03:20:00Z</span></div>
+<pre>{
+  <span class="k">"schema"</span>: <span class="s">"axis.status/1"</span>,
+  <span class="k">"overall"</span>: {
+    <span class="k">"status"</span>: <span class="s">"healthy"</span>,
+    <span class="k">"score"</span>: <span class="n">96</span>,
+    <span class="k">"color"</span>: <span class="s">"green"</span>
+  },
+  <span class="k">"sources"</span>: [
+    { <span class="k">"id"</span>: <span class="s">"busd"</span>,       <span class="k">"status"</span>: <span class="s">"ok"</span>,       <span class="k">"latency_ms"</span>: <span class="n">41</span>, <span class="k">"fresh"</span>: <span class="b">true</span> },
+    { <span class="k">"id"</span>: <span class="s">"cto"</span>,        <span class="k">"status"</span>: <span class="s">"ok"</span>,       <span class="k">"latency_ms"</span>: <span class="n">88</span>, <span class="k">"fresh"</span>: <span class="b">true</span> },
+    { <span class="k">"id"</span>: <span class="s">"content"</span>,    <span class="k">"status"</span>: <span class="s">"ok"</span>,       <span class="k">"latency_ms"</span>: <span class="n">120</span>,<span class="k">"fresh"</span>: <span class="b">true</span> },
+    { <span class="k">"id"</span>: <span class="s">"mcp_freshness"</span>, <span class="k">"status"</span>: <span class="s">"ok"</span>,    <span class="k">"latency_ms"</span>: <span class="n">3</span>,  <span class="k">"fresh"</span>: <span class="b">true</span> },
+    { <span class="k">"id"</span>: <span class="s">"browse"</span>,     <span class="k">"status"</span>: <span class="s">"degraded"</span>,<span class="k">"latency_ms"</span>: <span class="n">33</span>, <span class="k">"fresh"</span>: <span class="b">true</span> }
+  ],
+  <span class="k">"warnings"</span>: [
+    <span class="s">"browse: relay up แต่ extension paired-offline → browser tools ใช้ไม่ได้"</span>
+  ],
+  <span class="k">"meta"</span>: {
+    <span class="k">"duration_ms"</span>: <span class="n">386</span>,
+    <span class="k">"cache"</span>: <span class="s">"fresh"</span>,
+    <span class="k">"tool_version"</span>: <span class="s">"1.0.0"</span>
+  }
+}</pre>
+      </div>
+
+      <div class="kv">
+        <div class="row"><div class="k2">overall.score</div><div>ถ่วงน้ำหนักตามความสำคัญของ source — ใช้ติดตาม trend ไม่ใช่เพื่อ “ความสวย”</div></div>
+        <div class="row"><div class="k2">source.status</div><div><b style="color:var(--mint)">ok</b> / <b style="color:var(--amber)">degraded</b> / <b style="color:var(--coral)">down</b> / <b style="color:var(--dim)">unknown</b></div></div>
+        <div class="row"><div class="k2">fresh</div><div>false = ข้อมูลมาจาก process ที่เก่ากว่าซอร์ส → ต้องรีสตาร์ทก่อนเชื่อ</div></div>
+        <div class="row"><div class="k2">warnings</div><div>มนุษย์อ่านได้ ไม่ใช่รหัสลับ — บอกว่าอะไรเสียและผลกระทบคืออะไร</div></div>
+        <div class="row"><div class="k2">meta.duration</div><div>ใช้เฝ้า performance ของตัว aggregator เอง (self-instrumented)</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 RESULT -->
+<section id="result">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2>ผลลัพธ์หลังจบ C</h2></div>
+    <p class="sec-sub">นี่คือหน้าตาของ “ภาพรวม” ที่ Owner จะเห็น — และสิ่งที่มันเปลี่ยนในวิธีตัดสินใจของทั้งองค์กร</p>
+
+    <div class="dash">
+      <div class="dash-top">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <span class="url">axis://status — local · schema axis.status/1</span>
+      </div>
+      <div class="dash-body">
+        <div class="dash-hero">
+          <div class="ring"><div class="inner"><div class="val">96</div><div class="lbl">healthy</div></div></div>
+          <div>
+            <h4>AXIS Organization — 23 Nov 2026 · 03:20 UTC</h4>
+            <p class="subt">7 แหล่ง · 6 ปกติ · 1 เตือน · 0 ล่ม · ใช้เวลา 386 ms</p>
+            <div class="mini">
+              <div><span>busd</span><b class="g">ok · 41ms</b></div>
+              <div><span>CTO</span><b class="g">ok · 88ms</b></div>
+              <div><span>Content</span><b class="g">ok · 120ms</b></div>
+              <div><span>Freshness</span><b class="g">current</b></div>
+              <div><span>Browse</span><b class="a">degraded</b></div>
+              <div><span>Git</span><b class="g">clean-ish</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dept-grid">
+          <div class="dept">
+            <div class="row"><span class="name">Central Bus</span><span class="state ok">OK</span></div>
+            <div class="bar"><i style="width:100%;background:var(--mint)"></i></div>
+            <div class="meta"><span>queue 0 pending</span><span>v0.6.2</span></div>
+          </div>
+          <div class="dept">
+            <div class="row"><span class="name">CTO</span><span class="state ok">OK</span></div>
+            <div class="bar"><i style="width:100%;background:var(--mint)"></i></div>
+            <div class="meta"><span>3/3 modules</span><span>db connected</span></div>
+          </div>
+          <div class="dept">
+            <div class="row"><span class="name">Content</span><span class="state ok">OK</span></div>
+            <div class="bar"><i style="width:100%;background:var(--mint)"></i></div>
+            <div class="meta"><span>5 specialists</span><span>restart=false</span></div>
+          </div>
+          <div class="dept">
+            <div class="row"><span class="name">MCP Runtime</span><span class="state ok">OK</span></div>
+            <div class="bar"><i style="width:100%;background:var(--mint)"></i></div>
+            <div class="meta"><span>1 generation</span><span>3 processes</span></div>
+          </div>
+          <div class="dept">
+            <div class="row"><span class="name">Browser</span><span class="state warn">DEGRADED</span></div>
+            <div class="bar"><i style="width:55%;background:var(--amber)"></i></div>
+            <div class="meta"><span>relay up</span><span>ext offline</span></div>
+          </div>
+          <div class="dept">
+            <div class="row"><span class="name">Codegraph</span><span class="state ok">OK</span></div>
+            <div class="bar"><i style="width:100%;background:var(--mint)"></i></div>
+            <div class="meta"><span>381 files</span><span>14,047 edges</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-top:22px">
+      <div class="card"><h3>Owner เห็นอะไร</h3><p>3–5 บรรทัด + สีสถานะ — ไม่ต้องอ่านรายงานยาว รู้ทันทีว่าต้องตัดสินใจอะไรวันนี้</p></div>
+      <div class="card"><h3>CEO ตอบอะไรได้</h3><p>“ระบบเขียว 96, มี 1 warning ที่ browse — งานอื่นไม่ติด” ภายใน 2 วินาที พร้อมหลักฐาน</p></div>
+      <div class="card"><h3>องค์กรได้อะไร</h3><p>เพิ่มแผนกใหม่ = เพิ่ม adapter 1 ตัว ไม่ต้องสร้าง dashboard ใหม่ และทุกเครื่องมือพูดภาษาเดียวกัน</p></div>
+    </div>
+
+    <div class="callout">
+      <b>ตัวชี้วัดความสำเร็จของ C:</b> (1) ถามสถานะทั้ง org จบใน 1 call &lt;2s (2) ไม่มี false green ใน 20-task eval
+      (3) ทุก degraded มี warning ที่มนุษย์อ่านรู้เรื่อง (4) App MVP ใช้ schema นี้ซ้ำได้โดยไม่ต้องแก้ contract
+    </div>
+  </div>
+</section>
+
+<!-- 06 BRAND -->
+<section id="brand">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">06</span><h2>แบรนด์ AXIS หลังจบ C</h2></div>
+    <p class="sec-sub">C ทำให้คำว่า AXIS มีหลักฐานรองรับ — “แกนกลาง” ไม่ใช่แค่คำโฆษณา แต่คือจุดที่ทุกสถานะมาบรรจบและถูกวัดด้วยมาตรฐานเดียว</p>
+
+    <div class="grid2">
+      <div class="card" style="display:grid;gap:18px">
+        <div class="logo-lock">
+          <svg class="logo-mark" viewBox="0 0 120 120" fill="none">
+            <circle cx="60" cy="60" r="52" stroke="#4CC9F0" stroke-width="1.5" opacity=".35"/>
+            <circle cx="60" cy="60" r="34" stroke="#7B61FF" stroke-width="1.5" opacity=".55"/>
+            <circle cx="60" cy="60" r="16" stroke="#4CC9F0" stroke-width="1.5" opacity=".9"/>
+            <path d="M60 4v34M60 82v34M4 60h34M82 60h34" stroke="#4CC9F0" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="4.5" fill="#4CC9F0"/>
+            <circle cx="60" cy="60" r="72" stroke="#1E2A3F" stroke-width="1" stroke-dasharray="2 6"/>
+          </svg>
+          <div>
+            <div class="wordmark">AXIS<small>THE CENTRAL AXIS</small></div>
+          </div>
+        </div>
+        <p style="color:var(--muted);margin:0;font-size:14.5px">
+          <b style="color:var(--text)">Essence:</b> “ทุกแผนกหมุนรอบแกนเดียว”
+          — สถาปัตยกรรมแบบ Two-Tier, การส่งงานผ่าน Central Bus และสถานะที่รวมศูนย์ ล้วนเป็นแกนเดียวกัน
+        </p>
+        <ul class="clean">
+          <li><span class="bullet">✓</span><div><b>Decisive:</b> ตัวเลขก่อนคำอธิบาย</div></li>
+          <li><span class="bullet">✓</span><div><b>Calm:</b> แดงคือแดง ไม่ต้อง dramatize</div></li>
+          <li><span class="bullet">✓</span><div><b>Exact:</b> ทุกสถานะมี source และ timestamp</div></li>
+        </ul>
+      </div>
+
+      <div class="card" style="padding:22px">
+        <h3 style="margin-bottom:14px">Palette — Void &amp; Signal</h3>
+        <div class="swatches">
+          <div class="sw"><div class="chipc" style="background:#070B14"></div><div class="info"><div class="nm">Void</div><div class="hx">#070B14</div></div></div>
+          <div class="sw"><div class="chipc" style="background:#0E1524"></div><div class="info"><div class="nm">Surface</div><div class="hx">#0E1524</div></div></div>
+          <div class="sw"><div class="chipc" style="background:#4CC9F0"></div><div class="info"><div class="nm">Signal</div><div class="hx">#4CC9F0</div></div></div>
+          <div class="sw"><div class="chipc" style="background:#7B61FF"></div><div class="info"><div class="nm">Axis</div><div class="hx">#7B61FF</div></div></div>
+          <div class="sw"><div class="chipc" style="background:#34D399"></div><div class="info"><div class="nm">Mint</div><div class="hx">#34D399</div></div></div>
+          <div class="sw"><div class="chipc" style="background:#FFB020"></div><div class="info"><div class="nm">Amber</div><div class="hx">#FFB020</div></div></div>
+          <div class="sw"><div class="chipc" style="background:#F87171"></div><div class="info"><div class="nm">Coral</div><div class="hx">#F87171</div></div></div>
+          <div class="sw"><div class="chipc" style="background:#E6EDF7"></div><div class="info"><div class="nm">Text</div><div class="hx">#E6EDF7</div></div></div>
+          <div class="sw"><div class="chipc" style="background:#8DA0BC"></div><div class="info"><div class="nm">Muted</div><div class="hx">#8DA0BC</div></div></div>
+          <div class="sw"><div class="chipc" style="background:#1E2A3F"></div><div class="info"><div class="nm">Line</div><div class="hx">#1E2A3F</div></div></div>
+        </div>
+        <div style="margin-top:14px;font-size:12.5px;color:var(--dim)">
+          หลักการใช้สี: <b style="color:var(--mint)">เขียว</b> = ปกติ · <b style="color:var(--amber)">เหลือง</b> = ทำงานได้บางส่วน ·
+          <b style="color:var(--coral)">แดง</b> = หยุด · <b style="color:var(--dim)">เทา</b> = ไม่รู้ (ห้ามเดาว่าเขียว)
+        </div>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-top:18px">
+      <div class="card"><h3>หน้าจอ = คำมั่น</h3><p>ถ้า dashboard บอก 96 ทุกคนต้องได้ 96 จากการวัดเดียวกัน — ไม่มี “เขียวของใครเขียวของมัน”</p></div>
+      <div class="card"><h3>Motion</h3><p>120–200ms ease-out, ไม่เด้ง — ความนิ่งคือสัญญาณของระบบที่ควบคุมได้</p></div>
+      <div class="card"><h3>Data first</h3><p>ตัวเลขและสถานะมาก่อนภาพประดับ กราฟมีไว้เพื่อตัดสินใจ ไม่ใช่เพื่อทำให้ดูรก</p></div>
+    </div>
+
+    <div class="callout">
+      <b>ประโยคที่อยากให้ Owner พูดได้หลัง C:</b> “เปิด AXIS ดูสิ — เขียวไหม ถ้าเหลืองตรงไหน แปลว่าอะไร”
+      คำตอบควรจบในหน้าเดียว ไม่ต้องถามกลับว่า “หมายถึงระบบไหน”
+    </div>
+  </div>
+</section>
+
+<!-- 07 ROADMAP -->
+<section id="roadmap">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Roadmap &amp; เกณฑ์ผ่าน</h2></div>
+    <p class="sec-sub">ผูกกับบันได 4 ด่าน (D1–D4) ของ SoloCorp OS — ไม่มีด่านไหนข้ามได้ และผู้ทำ ≠ ผู้ตรวจทุกด่าน</p>
+
+    <div class="grid2">
+      <div class="road">
+        <div class="step done">
+          <div class="st">C0 · D1 — 1 หน้า</div>
+          <h4>นิยาม contract</h4>
+          <p>ระบุ sources, weights, status vocabulary, timeout budget, สิทธิ์อ่าน และเส้นชัย — Owner/CEO อนุมัติก่อนเขียนโค้ด</p>
+        </div>
+        <div class="step">
+          <div class="st">C1 · D2 — 50–150 บรรทัด</div>
+          <h4>Aggregator จริง</h4>
+          <p>server ใหม่ + tool เดียว เรียก tool ได้จริง มี run output + exit code ไม่ใช่พิมพ์ตอบ</p>
+        </div>
+        <div class="step">
+          <div class="st">C2 · D3 — ≥20 งาน</div>
+          <h4>Eval ไม่มี false green</h4>
+          <p>ตารางคาด/ได้จริง/root cause ครอบ: source ล่ม, timeout, process เก่า, relay offline, queue failed, git dirty</p>
+        </div>
+        <div class="step">
+          <div class="st">C3 · D4 — runbook</div>
+          <h4>คนอื่นรันต่อได้</h4>
+          <p>ติดตั้ง, config, ตัวอย่าง output, วิธีอ่าน warning — คนละคนกับผู้ทำต้องรันซ้ำได้ผลเดิม</p>
+        </div>
+        <div class="step">
+          <div class="st">C4 · หลังผ่าน</div>
+          <h4>ผูกเข้า config + App</h4>
+          <p>เพิ่ม MCP entry `axis-status`, ใช้ schema เดียวใน App MVP dashboard, เปิด CI drift check</p>
+        </div>
+      </div>
+
+      <div class="card" style="align-self:start">
+        <span class="tag green">Acceptance Criteria</span>
+        <ul class="clean">
+          <li><span class="bullet">1</span><div>1 call ตอบครบ 7 sources ภายใน 2s (p95 local)</div></li>
+          <li><span class="bullet">2</span><div>ทุก source มี status, latency, fresh, timestamp</div></li>
+          <li><span class="bullet">3</span><div>unknown ไม่ถูกนับเป็น ok — มี warning เสมอ</div></li>
+          <li><span class="bullet">4</span><div>process เก่ากว่าซอร์ส → fresh=false + แนะนำ restart</div></li>
+          <li><span class="bullet">5</span><div>ไม่มี secret ใน output/log (ตรวจด้วย redaction test)</div></li>
+          <li><span class="bullet">6</span><div>D3 20 งานผ่าน และ D4 คนอื่นรันซ้ำได้</div></li>
+        </ul>
+        <div style="margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)">
+          <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--dim);text-transform:uppercase;margin-bottom:8px">Guardrails</div>
+          <div style="font-size:13px;color:var(--muted)">
+            read-only · 2s budget · TTL 10s · partial &gt; fail · never gates approvals · never writes bus DB
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>AXIS STATUS — Option C · Unified Status Layer</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--dim)">schema axis.status/1 · prepared 2026-11-23 · AXIS CEO</div>
+  </div>
+</footer>
+
+<script>
+  // subtle reveal — degrades gracefully without JS
+  const els = document.querySelectorAll('.card, .node, .step, .dash, .tldr .cell, .sw');
+  els.forEach(el => {
+    el.style.opacity = 0;
+    el.style.transform = 'translateY(8px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = 1;
+        e.target.style.transform = 'none';
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: .08 });
+  els.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

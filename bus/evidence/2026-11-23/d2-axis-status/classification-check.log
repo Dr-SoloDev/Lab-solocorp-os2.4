@@ -1,0 +1,20 @@
+content process absent: probe=down fresh=False warning='content MCP process is not running — restart_required cannot be read; start it from the client to verify'
+  overall={"status": "degraded", "score": 85, "color": "amber"}
+cto db unreadable: probe=down fresh=False warning='CTO database could not be read read-only — measurement failed'
+  overall={"status": "degraded", "score": 80, "color": "amber"}
+cto schema drift + process running: probe=down fresh=False warning='CTO database is missing required table(s): build_artifacts, qa_evidence, tool_calls — measurement failed'
+  overall={"status": "degraded", "score": 80, "color": "amber"}
+critical unknown (busd missing probe): probe=unknown fresh=False warning='no probe registered for this source'
+  overall={"status": "down", "score": 100, "color": "red"}
+  warnings=["busd: no probe registered for this source", "critical source(s) busd could not be measured \u2014 overall forced down"]
+busd partial payload (M1): probe=degraded fresh=True warning='busd health payload has invalid field(s): rules_in_sync (None), version (None), uptime_seconds (None)'
+  overall={"status": "degraded", "score": 88, "color": "amber"}
+  warnings=["busd: busd health payload has invalid field(s): rules_in_sync (None), version (None), uptime_seconds (None)"]
+score_sources partial (git+cto) (N1): {"status": "down", "score": 100, "color": "red", "missing_critical": ["busd", "mcp_freshness"], "warning": "critical source(s) missing from the score: busd, mcp_freshness \u2014 overall forced down"}
+cto missing required column (L1): probe=down fresh=False warning='CTO database is missing required column(s): tool_calls: status — measurement failed'
+  overall={"status": "degraded", "score": 80, "color": "amber"}
+codegraph empty (O1): probe=degraded fresh=True warning='codegraph index is empty — rebuild the index'
+  overall={"status": "healthy", "score": 98, "color": "green"}
+busd null field (M2): probe=degraded fresh=True warning='busd health payload has invalid field(s): version (None)'
+  overall={"status": "degraded", "score": 88, "color": "amber"}
+_build_payload row without warning (N2): overall={"status": "healthy", "score": 100, "color": "green"} warnings=[] warning_keys=0

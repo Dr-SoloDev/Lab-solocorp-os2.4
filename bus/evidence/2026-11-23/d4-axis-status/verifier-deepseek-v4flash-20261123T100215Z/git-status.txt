@@ -1,0 +1,55 @@
+# git-status.txt — D4 final re-check (V7: full porcelain BEFORE + AFTER)
+
+## BEFORE — full `git status --porcelain` (pre-run)
+```
+ M brain/learnt.md
+?? config/.module-registry.json.lock
+?? docs/runbooks/AXIS-STATUS.md
+```
+
+## AFTER — full `git status --porcelain` (post-restore, final)
+```
+ M brain/learnt.md
+?? config/.module-registry.json.lock
+?? docs/runbooks/AXIS-STATUS.md
+```
+
+## Intermediate — after the four §3 commands, before restore (documented tracked-evidence rewrites)
+```
+ M brain/learnt.md
+ M bus/evidence/2026-11-23/d2-axis-status/harness.log
+ M bus/evidence/2026-11-23/d2-axis-status/tool-calls.jsonl
+ M bus/evidence/2026-11-23/d3-axis-status/env.txt
+ M bus/evidence/2026-11-23/d3-axis-status/eval.json
+ M bus/evidence/2026-11-23/d3-axis-status/eval.log
+ M bus/evidence/2026-11-23/d3-axis-status/table.md
+ M docs/certification/D3-axis-status-2026-11-23.md
+?? config/.module-registry.json.lock
+?? docs/runbooks/AXIS-STATUS.md
+```
+
+## Product code diff (must be empty)
+```
+$ git diff --name-only -- axis_mcp tests
+(empty before restore)
+
+(empty after restore)
+```
+
+## Restore proof — every tracked evidence file equals its HEAD blob
+```
+MATCH_HEAD  bus/evidence/2026-11-23/d2-axis-status/harness.log  sha256=b510904d220357046fdbea0913d7756e2b8e05c8bc79e32bd1d03240eb7f4a0c
+MATCH_HEAD  bus/evidence/2026-11-23/d2-axis-status/tool-calls.jsonl  sha256=3e9c2960b7f983c9b45514067f110a8dbf62221fd1d4c1d4acc943adf1eee6f8
+MATCH_HEAD  bus/evidence/2026-11-23/d3-axis-status/env.txt  sha256=47c00690a4a1d06cee377db6bcc4c6787b86486605822cc34b003553a2204dda
+MATCH_HEAD  bus/evidence/2026-11-23/d3-axis-status/eval.json  sha256=7410ae8943492192167ef615b95fe4c36d52cc16acbb3379547d5b22566278c3
+MATCH_HEAD  bus/evidence/2026-11-23/d3-axis-status/eval.log  sha256=cbfb7510d8d01ead53bd4883d91655bb616380cecebd4c26ec6bf104161e62f3
+MATCH_HEAD  bus/evidence/2026-11-23/d3-axis-status/table.md  sha256=0eab67a9f96d2d2d2c0abc0b1919a3746ff091fabf1c7092ef322ae38ad83ea2
+MATCH_HEAD  docs/certification/D3-axis-status-2026-11-23.md  sha256=0eab67a9f96d2d2d2c0abc0b1919a3746ff091fabf1c7092ef322ae38ad83ea2
+```
+
+## Runbook SHA-256 after all runs (unchanged)
+```
+5bf6c664356b3ee94b5d6d9d28c96e0c578e514b771a8543de19c443eee820b1  docs/runbooks/AXIS-STATUS.md
+```
+
+Note: bus/evidence/ is gitignored (.gitignore:164); verifier files are local-only per §9 lines 193-195.

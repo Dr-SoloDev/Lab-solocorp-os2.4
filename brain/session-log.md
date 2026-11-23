@@ -1290,3 +1290,56 @@ State tracking files: 0
 - ก่อน split ใน Phase 3: Owner ยืนยันว่า department MCP code รุ่นปัจจุบันเคยถูก push ตอน repo public หรือไม่ ตาม ADR-030
 
 ---
+
+---
+
+## Session Log — 2026-11-23 03:03 UTC — MCP Health Check + Stale Generation Cleanup
+
+### Git
+```
+32fba06 Merge pull request #45 from Dr-SoloDev/feat/wave2-ssot-config
+244eb55 Merge branch 'main' into feat/wave2-ssot-config
+be7fd71 Merge pull request #43 from Dr-SoloDev/feat/wave3-visibility
+512502a Merge pull request #44 from Dr-SoloDev/feat/wave1-routing-ssot
+ee0788c docs(adr): แก้ overclaim เรื่อง mirror precedence ตาม checker รอบ 2 (docs only)
+```
+Uncommitted: 1 (`brain/learnt.md` — automation, non-blocking)
+
+### State — MCP Health (ตรวจครบทุกตัว)
+- central-bus: 🟢 OK (list_department_bus content → 571 manifests)
+- cto: 🟢 healthy (architect/engineering/qa healthy · DB connected · cache active)
+- content-creator: 🟢 OK (5 specialists · runtime.status=current · restart_required=false)
+- codegraph: 🟢 OK (381 files · 7,607 nodes · 14,047 edges · 18.5 MB)
+- browse: 🟡 relay up (v0.1.5, pid 99820) แต่ extension paired-offline → browser tools ใช้ไม่ได้จนกว่า Chrome reconnect
+- stealth-browser: ⚪ disabled ตาม Owner 2026-11-08 (ถูกต้อง)
+- busd HTTP 8099: 🟢 /v1/health ok · v0.6.2 · rules_in_sync true (22/22) · pid 84796 · cwd symlink → repo เดียวกัน · HEAD 32fba06
+
+### Queue Failed — วินิจฉัย
+- failed 1 รายการ จาก 3,223 (completed 3,222 · dead 0 · DLQ ว่าง)
+- task `watchdog-model-health-1793325601` (created 2026-10-30, failed 2026-11-13, `routed stale >7d, no worker pickup`)
+- payload: watchdog alert — fallback chain มี `opencode/nemotron-3-ultra-free` ที่ไม่มีจริง
+- root cause แก้แล้วในโค้ด 2026-11-13 (W1b): ตัดออกจาก MODEL_FALLBACKS + เข้า DEAD_MODELS
+- verify วันนี้: `check-model-health.py` → chain 5/5 ✅ ไม่มีโมเดลหาย
+- ข้อสรุป: ไม่ retry (payload ล้าสมัย/แก้แล้ว) · เก็บแถวเป็น audit evidence · ไม่ลบ history
+
+### Action — Restart MCP
+- dry run: 9 processes = 3 generations × (bus_mcp, cto.server, content_mcp) ทุกตัว current ตาม source mtime แต่ซ้ำซ้อน
+- `bash scripts/restart-mcp.sh --yes` → SIGTERM 92429-31, 95585-87, 95893-95 → "All targeted generations are gone"
+- หลังรัน: `axis_mcp.*` = 0 process · busd ไม่ถูกแตะ
+
+### Side Effect
+- catalog ของ session นี้ prune `central-bus`, `cto`, `content-creator` ออกหลัง kill; ยังไม่ respawn (pgrep=0)
+- งานที่ต้องใช้ MCP 3 ตัวใน session นี้ทำไม่ได้จนกว่า handshake ใหม่ (เปิด session ใหม่/reload)
+- busd HTTP ยังใช้ได้ · codegraph/browse ไม่กระทบ
+
+### Next Session Checklist
+1. `pgrep -af "axis_mcp\."` → ต้องเห็น 3 process (bus_mcp, cto.server, content_mcp)
+2. `content_department_info()` → `runtime.restart_required == false`
+3. `unified_technical_health()` → healthy
+
+### Pending (non-blocking)
+- jsonc parity patch รอที่ `bus/evidence/misty-cabin-wip/` — เปิด issue ใหม่ถ้าจะต่อ
+- browse extension ต้อง reconnect (เปิด Chrome + extension)
+- งานใหม่: ดู `brain/NEXT.md`
+
+---

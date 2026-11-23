@@ -1,0 +1,54 @@
+D3 — AXIS STATUS evaluation
+commit: 172740e · date: 2026-11-23T09:33:00.576462+00:00
+
+01 A1  PASS all 7 sources ok                             | 100/healthy/green; warnings=0; rows=7
+02 B1  PASS busd down                                    | 75/down/red; busd=down fresh=false warning='source did not respond'
+03 B2  PASS cto down                                     | 80/degraded/amber; cto=down fresh=false warning='source did not respond'
+04 B3  PASS content down                                 | 85/degraded/amber; content=down fresh=false warning='source did not respond'
+05 B4  PASS mcp_freshness down                           | 85/down/red; mcp_freshness=down fresh=false warning='source did not respond'
+06 B5  PASS git down                                     | 90/healthy/green; git=down fresh=false warning='source did not respond'
+07 B6  PASS browse down                                  | 90/healthy/green; browse=down fresh=false warning='source did not respond'
+08 B7  PASS codegraph down                               | 95/healthy/green; codegraph=down fresh=false warning='source did not respond'
+09 C1  PASS busd queue_failed>0                          | 88/degraded/amber; busd=degraded fresh=true warning='1 failed queue item(s) awaiting retry'
+10 D1  PASS non-critical codegraph unknown               | 100/healthy/green; codegraph=unknown fresh=false warning='source could not be measured'; warning
+11 D2  PASS critical busd unknown                        | 100/down/red; busd=unknown fresh=false warning='source could not be measured'; critical_warning=
+12 D3  PASS critical mcp_freshness unknown               | 100/down/red; mcp_freshness=unknown fresh=false warning='source could not be measured'; critical
+13 E1  PASS busd reports ok with a warning               | 88/degraded/amber; busd=degraded fresh=true warning='odd but true'
+14 F1  PASS fresh="false" (string)                       | 90/healthy/green; git=down fresh=false warning='probe returned a non-boolean fresh value — measu
+15 F2  PASS fresh=1 (int)                                | 90/healthy/green; git=down fresh=false warning='probe returned a non-boolean fresh value — measu
+16 F3  PASS fresh=None                                   | 90/healthy/green; git=down fresh=false warning='probe returned a non-boolean fresh value — measu
+17 G1  PASS browse probe sleeps 3 s                      | elapsed=1202ms; browse=down fresh=false warning='timed out after 1200 ms (per-source limit 1200 
+18 H1  PASS mtime = start + 0.5 s                        | sources.is_fresh=True; runtime.restart_required=False; runtime.status=current; tolerance=1.0
+19 H2  PASS mtime = start + 1.5 s                        | sources.is_fresh=False; runtime.restart_required=True; runtime.status=stale; tolerance=1.0
+20 I1  PASS TTL hit then force                           | first=fresh; second=cached; same_generated_at=True; third=fresh; new_generated_at=True; probe_ca
+21 J1  PASS canary in env + probe payload                | canary_occurrences=0; redacted=True; warnings=1
+22 K1  PASS 0-byte cto.db + fake running process         | probe=down; missing=['build_artifacts', 'qa_evidence', 'tool_calls']; overall=80/degraded/amber
+23 L1  PASS valid SQLite, required table names, only id  | probe=down; missing_columns={'tool_calls': ['module', 'tool_name', 'status'], 'build_artifacts':
+24 L2  PASS valid SQLite, all required columns, 0 rows   | probe=ok; tables={'tool_calls': 0, 'build_artifacts': 0, 'qa_evidence': 0}; overall=100/healthy/
+25 M1  PASS payload missing rules_in_sync/version/uptime | probe=degraded; warning='busd health payload has invalid field(s): rules_in_sync (None), version
+26 M2  PASS version=None                                 | probe=degraded; warning='busd health payload has invalid field(s): version (None)'; overall=88/d
+27 M3  PASS db key absent                                | probe=degraded; warning='busd health payload has invalid field(s): db (None)'; overall=88/degrad
+28 N1  PASS public score_sources() rows missing busd+mcp | 100/down/red; missing=['busd', 'mcp_freshness']; warning='critical source(s) missing from the sc
+29 N2  PASS row without the 'warning' key                | overall=100/healthy/green; warnings=0; warning_keys=0
+30 O1  PASS valid DB, 0 nodes/edges/files                | probe=degraded; warning='codegraph index is empty — rebuild the index'; nodes=0; edges=0; files=
+31 O2  PASS nodes>0, edges>0, files==0                   | probe=degraded; files=0; warning='codegraph index is empty — rebuild the index'; overall=98/heal
+32 O3  PASS nodes>0, edges==0                            | probe=degraded; edges=0; warning='codegraph index has no edges — rebuild the index'; overall=98/
+33 P1  PASS python -m axis_mcp.status.server --smoke     | exit=0; wall=1191ms; schema=axis.status/1; sources=7; meta.duration_ms=166; overall={'status': '
+34 Q1  PASS same mocked scenario twice                   | overall=50/down/red; same_fingerprint=True; generated_at_differs=True
+35 R1  PASS MCP client -> axis_status(force=True)        | tools=['axis_status']; isError=False; schema=axis.status/1; sources=7
+36 S1  PASS static scan of axis_mcp/status/*.py          | findings=0; files=4; calls=334
+37 T1  PASS busd returns 401/403 (with key) and 401 (no  | 401='busd rejected the API key (HTTP 401)' leaked=False; 403='busd rejected the API key (HTTP 40
+38 U1  PASS relay up, extension not paired               | 95/healthy/green; browse=degraded fresh=true warning='browse relay is up but no browser extensio
+39 V1  PASS detached HEAD                                | 95/healthy/green; git=degraded fresh=true warning='git HEAD is detached'
+40 W1  PASS real probe_busd with queue_dead>0 + rules_in | probe=degraded; warning='busd routing rules are out of sync with routing.json; 2 dead queue item
+41 X1  PASS all 7 probes unknown                         | 0/down/red; warnings=9; not_healthy=True
+42 Y1  PASS cto probe raises RuntimeError                | 80/degraded/amber; cto=down fresh=false warning='probe raised RuntimeError'; traceback=False
+43 Z1  PASS git probe returns status='bogus'             | 90/healthy/green; git=down fresh=false warning='probe returned no valid status — measurement fai
+
+DETAIL — FAIL / SKIP
+
+
+CASES: 43 · PASS 43 · FAIL 0 · SKIP 0
+PYTEST: 40 passed in 6.47s (exit 0)
+EXIT: 0
+

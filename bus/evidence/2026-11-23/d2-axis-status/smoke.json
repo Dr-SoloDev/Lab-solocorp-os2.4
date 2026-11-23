@@ -1,0 +1,183 @@
+{
+  "schema": "axis.status/1",
+  "generated_at": "2026-11-23T09:29:56.599247+00:00",
+  "overall": {
+    "status": "down",
+    "score": 63,
+    "color": "red"
+  },
+  "sources": [
+    {
+      "id": "busd",
+      "status": "degraded",
+      "latency_ms": 61,
+      "fresh": true,
+      "detail": {
+        "status": "ok",
+        "queue_pending": 0,
+        "queue_failed": 1,
+        "queue_dead": 0,
+        "rules_in_sync": true,
+        "uptime_seconds": 10806,
+        "version": "0.6.2"
+      },
+      "warning": "1 failed queue item(s) awaiting retry"
+    },
+    {
+      "id": "cto",
+      "status": "ok",
+      "latency_ms": 116,
+      "fresh": true,
+      "detail": {
+        "process_running": true,
+        "process_count": 1,
+        "db": "central_bus/cto.db",
+        "integrity": "ok",
+        "tables": {
+          "tool_calls": 0,
+          "build_artifacts": 0,
+          "qa_evidence": 0
+        },
+        "columns": {
+          "tool_calls": [
+            "id",
+            "module",
+            "tool_name",
+            "trace_id",
+            "status",
+            "input_summary",
+            "output_summary",
+            "error",
+            "created_at",
+            "completed_at"
+          ],
+          "build_artifacts": [
+            "id",
+            "project_id",
+            "module",
+            "artifact_path",
+            "sha256",
+            "created_at"
+          ],
+          "qa_evidence": [
+            "id",
+            "task_id",
+            "suite_id",
+            "status",
+            "note",
+            "evidence_file",
+            "sha256",
+            "recorded_at"
+          ]
+        }
+      },
+      "warning": null
+    },
+    {
+      "id": "content",
+      "status": "degraded",
+      "latency_ms": 163,
+      "fresh": false,
+      "detail": {
+        "process_running": true,
+        "process_count": 1,
+        "content_dir": "central_bus/content",
+        "artifact_count": 1504,
+        "newest_artifact": "campaign-campaign_synth_gate72_20261123-visual-การเง-นส-งเคราะห_20261122T222058506022Z.md",
+        "newest_artifact_age_hours": 7.1,
+        "restart_required": true,
+        "newest_source": "axis_mcp/status/aggregator.py",
+        "freshness_method": "stale iff newest axis_mcp/**/*.py mtime > process start + 1s (same predicate as runtime_freshness)"
+      },
+      "warning": "content MCP process is older than the newest axis_mcp source — restart before trusting its answers"
+    },
+    {
+      "id": "mcp_freshness",
+      "status": "degraded",
+      "latency_ms": 126,
+      "fresh": false,
+      "detail": {
+        "generations": 3,
+        "stale_count": 3,
+        "newest_source": "axis_mcp/status/aggregator.py",
+        "newest_source_at": "2026-11-23T09:24:19.958637+00:00",
+        "processes": [
+          {
+            "pid": 4352,
+            "module": "axis_mcp.bus_mcp",
+            "started_at": "2026-11-23T06:30:54.530000+00:00",
+            "fresh": false
+          },
+          {
+            "pid": 4353,
+            "module": "axis_mcp.cto.server",
+            "started_at": "2026-11-23T06:30:54.530000+00:00",
+            "fresh": false
+          },
+          {
+            "pid": 4354,
+            "module": "axis_mcp.departments.content_mcp",
+            "started_at": "2026-11-23T06:30:54.540000+00:00",
+            "fresh": false
+          }
+        ]
+      },
+      "warning": "3 MCP process(es) older than axis_mcp/status/aggregator.py — restart before trusting results (axis_mcp.bus_mcp, axis_mcp.cto.server, axis_mcp.departments.content_mcp)"
+    },
+    {
+      "id": "git",
+      "status": "ok",
+      "latency_ms": 47,
+      "fresh": true,
+      "detail": {
+        "head": "172740e",
+        "branch": "feat/axis-status-c1",
+        "dirty_count": 16,
+        "detached": false
+      },
+      "warning": null
+    },
+    {
+      "id": "browse",
+      "status": "down",
+      "latency_ms": 19,
+      "fresh": false,
+      "detail": {
+        "relay_endpoint": "http://127.0.0.1:19988",
+        "cli": "/home/drsolodev/.local/bin/browse",
+        "relay_running": false,
+        "endpoint": "http://127.0.0.1:19988",
+        "version": "0.1.5",
+        "extension_paired": null
+      },
+      "warning": "browse relay is not running at http://127.0.0.1:19988 (it starts when an agent uses browse)"
+    },
+    {
+      "id": "codegraph",
+      "status": "ok",
+      "latency_ms": 12,
+      "fresh": true,
+      "detail": {
+        "db": ".codegraph/codegraph.db",
+        "size_mb": 18.5,
+        "db_mtime": "2026-11-23T09:29:00.427187+00:00",
+        "daemon_running": true,
+        "nodes": 7903,
+        "edges": 14813,
+        "files": 388
+      },
+      "warning": null
+    }
+  ],
+  "warnings": [
+    "busd: 1 failed queue item(s) awaiting retry",
+    "content: content MCP process is older than the newest axis_mcp source — restart before trusting its answers",
+    "mcp_freshness: 3 MCP process(es) older than axis_mcp/status/aggregator.py — restart before trusting results (axis_mcp.bus_mcp, axis_mcp.cto.server, axis_mcp.departments.content_mcp)",
+    "browse: browse relay is not running at http://127.0.0.1:19988 (it starts when an agent uses browse)"
+  ],
+  "meta": {
+    "duration_ms": 166,
+    "cache": "fresh",
+    "tool_version": "1.0.0"
+  }
+}

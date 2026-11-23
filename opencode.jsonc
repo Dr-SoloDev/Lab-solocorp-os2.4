@@ -471,6 +471,18 @@
           "execution": 1800000
         },
         "description": "AXIS Content Creator MCP — Content production, video, audio, campaign artifacts (includes Concat + Earshot)"
+      },
+      "axis-status": {
+        "type": "local",
+        "command": ["/data/projects/Lab-solocorp-os2.4/.venv/bin/python3", "-m", "axis_mcp.status.server"],
+        "cwd": ".",
+        "disabled": false,
+        "timeout": {
+          "startup": 60000,
+          "catalog": 60000,
+          "execution": 60000
+        },
+        "description": "AXIS Status MCP — read-only unified 7-source status (schema axis.status/1); D1–D4 certified; never approves or publishes"
       }
     }
   },
