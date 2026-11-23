@@ -8,7 +8,7 @@ Owner อนุมัติ **Option B** · งานเฉพาะส่วน
 |:-:|:----|:----|
 | 1 | `scripts/mcp-diagnose.py` | **9 processes = 2 groups (ppid 5496 × 2 cwd), 0 duplicates** ตอนเริ่มงาน → หลังสร้าง worktree ของ Wave 3 เอง เครื่องมี **12 = 3 groups, 0 duplicates** (delta = MCP 3 ตัวของ worktree นี้) |
 | 2 | Watchdog auto-triage | `check_orphaned_messages` **wire อยู่แล้วแต่ inert** (รายงานเฉย ๆ ไม่ตัดสินใจ) → เพิ่ม policy >24h alert / >7d fail, default report-only |
-| 3 | Tests | 23 เทสต์ใหม่ผ่าน (17 triage + 6 diagnose) · full suite 1403 passed, 1 pre-existing failure (พิสูจน์บน origin/main) |
+| 3 | Tests | 24 เทสต์ใหม่ผ่าน (17 triage + 7 diagnose) · full suite 1403 passed, 1 pre-existing failure (พิสูจน์บน origin/main) |
 | 4 | Dry-run live DB | **0 routed ค้าง · 0 alert · 0 fail** (ตรงกับที่คาด) |
 
 > **ทำไมมีสองตัวเลข (9 กับ 12):** ตัวเลข "11 ตัว" เดิมมาจาก `pgrep` ที่นับ shell ตัวเอง

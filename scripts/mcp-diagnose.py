@@ -97,8 +97,8 @@ def _module_of(argv: list[str]) -> str | None:
                 return candidate
         if arg.endswith(".py") and MATCH in arg:
             # แสดงเป็น dotted path ให้เทียบกันได้: axis_mcp/server.py → axis_mcp.server
-            rel = arg.split(MATCH, 1)[0] + arg.split(MATCH, 1)[1]
-            return rel.lstrip("/").removesuffix(".py").replace("/", ".")
+            rel = arg[arg.index(MATCH) :]
+            return rel.removesuffix(".py").replace("/", ".")
     # fallback: argument ไหนก็ตามที่มี axis_mcp แล้วไม่ใช่ path ของ interpreter
     for arg in argv:
         if MATCH in arg and not arg.startswith("-") and "/python" not in arg:

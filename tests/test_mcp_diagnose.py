@@ -106,6 +106,26 @@ def test_format_human_reports_groups_not_duplicates(diagnose):
     assert "RESULT: OK" in text
 
 
+def test_module_of_handles_path_and_dash_m(diagnose):
+    """รองรับทั้ง `-m axis_mcp.x` และการรันไฟล์ตรง (`/venv/bin/python scripts/axis_mcp/server.py`)"""
+    assert diagnose._module_of(["python", "-m", "axis_mcp.server"]) == "axis_mcp.server"
+    assert (
+        diagnose._module_of(["python", "--module", "axis_mcp.bus_mcp"])
+        == "axis_mcp.bus_mcp"
+    )
+    assert (
+        diagnose._module_of(["/venv/bin/python3", "scripts/axis_mcp/server.py"])
+        == "axis_mcp.server"
+    )
+    assert (
+        diagnose._module_of(
+            ["/venv/bin/python3", "/abs/path/axis_mcp/departments/qa_mcp.py"]
+        )
+        == "axis_mcp.departments.qa_mcp"
+    )
+    assert diagnose._module_of(["python", "unrelated.py"]) is None
+
+
 def test_cli_json_exits_zero(diagnose, capsys):
     """สแกน /proc จริง (read-only) — ต้อง exit 0 และ JSON ต้อง parse ได้"""
     code = diagnose.main(["--json"])
