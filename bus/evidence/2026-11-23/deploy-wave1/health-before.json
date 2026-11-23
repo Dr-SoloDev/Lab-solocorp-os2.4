@@ -1,0 +1,13 @@
+{
+    "status": "ok",
+    "db": {
+        "queue_pending": 0,
+        "queue_failed": 1,
+        "queue_dead": 0
+    },
+    "facts_count": 167,
+    "routing_rules": 22,
+    "loops_active": 0,
+    "uptime_seconds": 7495,
+    "version": "0.6.0"
+}
