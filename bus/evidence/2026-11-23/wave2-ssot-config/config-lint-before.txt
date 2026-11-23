@@ -1,0 +1,18 @@
+opencode config validation — root=/tmp/opencode/wave2-wt
+[FAIL] skills-paths: 11 configured paths, 18 skills reachable, 14 SKILL.md on disk, 1 path-exempt
+       - path missing on disk: skills/@axis/design (skills.paths[9])
+       - path missing on disk: skills/@axis/marketing (skills.paths[10])
+[FAIL] skill-manifest: 12 manifests valid, 5 exempt, 5 declared exemptions
+       - missing skill.toml: skills/@axis/cross-dept/dept-workspace (id=dept-workspace)
+[FAIL] agents-coverage: 12 head profiles wired, 1 exempt, 19 agents declared
+       - head profile 19-rd-lab → agent 'rd-lab' missing from opencode.jsonc agents{}
+       - head profile 06-product → agent 'product-produck' missing from opencode.jsonc agents{}
+       - head profile 10-qa → agent 'qa-team' has no runtime file .opencode/agents/qa-team.md
+       - head profile 11-sales → agent 'sales-team' has no runtime file .opencode/agents/sales-team.md
+       - head profile 12-support → agent 'support-team' has no runtime file .opencode/agents/support-team.md
+       - head profile 16-neteng → agent 'neteng-neet' missing from opencode.jsonc agents{}
+       - head profile 17-cybersec → agent 'cybersec-sai' missing from opencode.jsonc agents{}
+       - head profile 18-psychology → agent 'psych-jit' missing from opencode.jsonc agents{}
+       - head profile cto → agent 'cto' missing from opencode.jsonc agents{}
+[PASS] permission-lint: 11 broad read grants reviewed, 9 allowlisted nodes
+result: 12 finding(s)

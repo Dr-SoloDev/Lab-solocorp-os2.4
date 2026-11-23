@@ -1,0 +1,37 @@
+# Skill inventory — configured paths → loadable skill dirs (tree d84c149)
+
+## skills.paths (order matters: last source wins by skill id)
+ [0] .opencode/skills
+ [1] skills/@axis
+ [2] skills/@axis/cto
+ [3] skills/@axis/cross-dept
+ [4] skills/@axis/ceo
+ [5] skills/@axis/coo
+ [6] skills/@axis/engineering
+ [7] skills/@axis/cfo
+ [8] skills/@axis/qa
+ [9] skills/@axis/governance
+ [10] skills/@axis/content-creator
+
+## loadable skills (19 ids, 21 dirs)
+ - budget-check           skills/@axis/cfo/budget-check
+ - creator-kit            skills/@axis/cross-dept/creator-kit
+ - daily-ops              skills/@axis/coo/daily-ops
+ - deploy                 skills/@axis/engineering/deploy   (also: skills/@axis/cto/deploy)
+ - dept-workspace         skills/@axis/cross-dept/dept-workspace
+ - earshot                .opencode/skills/earshot
+ - handoff-protocol       skills/@axis/handoff-protocol
+ - meta-ai                skills/@axis/content-creator/meta-ai
+ - meta-parallel-video    .opencode/skills/meta-parallel-video
+ - mirror-check           skills/@axis/cross-dept/mirror-check
+ - news-feed              skills/@axis/engineering/news-feed
+ - pipeline-bridge        skills/@axis/cross-dept/pipeline-bridge
+ - real-sound             .opencode/skills/real-sound
+ - rfc                    skills/@axis/governance/rfc
+ - smoke-test             skills/@axis/qa/smoke-test   (also: skills/@axis/cto/smoke-test)
+ - sprint-plan            skills/@axis/ceo/sprint-plan
+ - ui-animation-review    .opencode/skills/ui-animation-review
+ - voice-clone            .opencode/skills/voice-clone
+ - web-read               skills/@axis/engineering/web-read
+
+missing paths: none
