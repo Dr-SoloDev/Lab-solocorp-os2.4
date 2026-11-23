@@ -1,0 +1,13 @@
+# Version SSoT AFTER — live import assertions (tree: d84c149)
+$ PYTHONPATH=. python -c 'import central_bus; from central_bus import health, main; ...'
+central_bus.__version__ = 0.6.2
+health.VERSION         = 0.6.2
+main.app.version       = 0.6.2
+main.app.title         = Central Bus v0.6.2
+ASSERT OK: all three agree
+exit=0
+
+# every import order (package / health-first / main-first)
+health-first: 0.6.2
+main-first: 0.6.2
+pkg-first: 0.6.2

@@ -1,0 +1,13 @@
+opencode config validation — root=/tmp/opencode/wave2-wt
+[PASS] skills-paths: 11 configured paths, 21 skill dirs reachable, 14 SKILL.md on disk, 0 path-exempt
+[PASS] skill-id-collisions: 2 duplicate skill id(s), 2 declared override(s)
+       · note: skill id 'deploy' override allowed: skills/@axis/engineering/deploy wins — CTO shadow shim skills/@axis/cto/deploy forwards to this skill — canonical must win; rename the cto shim dir before it can be loaded (Wave 4 / CTO)
+       · note: skill id 'smoke-test' override allowed: skills/@axis/qa/smoke-test wins — CTO shadow shim skills/@axis/cto/smoke-test forwards to this skill — canonical must win; rename the cto shim dir before it can be loaded (Wave 4 / CTO)
+[PASS] skill-manifest: 16 manifests valid, 5 exempt, 5 declared exemptions
+[PASS] agents-coverage: 20 head profiles wired, 2 exempt, 24 agents declared
+       · note: agent id 'qa-team' (opencode.jsonc) ≠ runtime file 'qa.md' — id/permission alignment deferred to Wave 4
+       · note: agent id 'sales-team' (opencode.jsonc) ≠ runtime file 'sales.md' — id/permission alignment deferred to Wave 4
+       · note: agent id 'support-team' (opencode.jsonc) ≠ runtime file 'support.md' — id/permission alignment deferred to Wave 4
+[PASS] permission-lint: 11 broad read grants reviewed, 9 allowlisted nodes
+result: OK
+warn-only exit=0

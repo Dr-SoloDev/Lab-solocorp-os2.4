@@ -1,0 +1,29 @@
+[skill]
+name = "@axis/handoff-protocol"
+version = "0.1.0"
+description = "Cross-Department Handoff Protocol — ส่งต่อ context, artifacts และ acceptance criteria ระหว่างแผนกโดยไม่สูญหาย"
+category = "cross-dept"
+
+[dept]
+owner = "orchestrator"
+consumers = ["ceo", "coo", "orchestrator", "architect", "product", "engineering", "design", "qa", "content-creator"]
+
+[bus]
+# Workflow/SOP skill — คู่มือการส่งมอบงาน ไม่มี route ใน
+# bus/system/skill_routes_config.json (dispatch record จริงเกิดที่ /handoff command)
+registered = false
+reason = "SOP skill: กำหนดรูปแบบ handoff JSON + acceptance criteria ไม่ได้ถูก invoke ผ่าน Central Bus queue"
+
+[mirror]
+minimum_level = "L1"
+check_on_invoke = false
+description = "การส่งมอบงานเองไม่ใช่ decision — แต่ทุก handoff ต้องมี context pack + receiver confirmation (rules/01-receive.md §4)"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/handoff"
+description = "ส่งต่องานจากแผนก $1 ไป $2 พร้อม artifacts และ deadline"
+platforms = ["opencode"]

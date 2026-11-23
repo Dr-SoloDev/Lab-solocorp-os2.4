@@ -1,0 +1,16 @@
+# Version drift BEFORE (source of truth: origin/main @ b6e509f)
+
+## central_bus/health.py
+17:VERSION = "0.6.0"
+
+## central_bus/main.py
+1:"""Central Bus v0.6 — FastAPI Daemon (busd).
+69:    log.info("Central Bus v0.6.2 starting up (pid=%d)", os.getpid())
+71:    log.info("Central Bus v0.6.2 shutting down")
+79:    title="Central Bus v0.6",
+80:    version="0.6.2",
+
+## test that baked the stale literal in (central_bus/tests/test_integration.py)
+49:        assert data["version"] == "0.6.0"
+
+=> health served 0.6.0 while the app reported 0.6.2 for months. Not a stale process: a second literal.

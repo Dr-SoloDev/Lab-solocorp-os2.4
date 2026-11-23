@@ -1,0 +1,116 @@
+# Full CI suite (tree: d84c149)
+$ python -m pytest tests/ central_bus/tests/ --tb=short --cov-report=json:.coverage.json --no-header -q
+........................................................................ [  4%]
+........................................................................ [  9%]
+........................................................................ [ 14%]
+...........................s............................................ [ 19%]
+........................................................................ [ 24%]
+........................................................................ [ 29%]
+........................................................................ [ 34%]
+........................................................................ [ 39%]
+........................................................................ [ 44%]
+........................................................................ [ 49%]
+........................................................................ [ 54%]
+........................................................................ [ 59%]
+........................................................................ [ 64%]
+.............................F.......................................... [ 69%]
+........................................................................ [ 74%]
+........................................................................ [ 79%]
+........................................................................ [ 84%]
+........................................................................ [ 89%]
+........................................................................ [ 94%]
+........................................................................ [ 99%]
+......                                                                   [100%]
+=================================== FAILURES ===================================
+_______________________ test_live_payload_has_no_secrets _______________________
+tests/test_solocorp_app_live.py:216: in test_live_payload_has_no_secrets
+    assert "brief" not in json.dumps(payload)
+E   assert 'brief' not in '{"sessions"...2:49+00:00"}'
+E     
+E     'brief' is contained here:
+E     ?           ^^
+E       dIn draft brief", "agent": null, "model": null, "tokens": null, "outcome": null, "time": null}, {"id": "ses_llm8f76c034cde04fab92e6", "title": "\u0e23\u0e48\u0e32\u0e07\u0e42\u0e1e\u0e2a\u0e15\u0e4c LinkedIn \u0e20\u0e32\u0e29\u0e32\u0e44\u0e17\u0e22", "agent": null, "model": null, "tokens": null, "outcome": null, "time": null}, {"id": "ses_llmce5d9f3382af445a87e6", "title": "\u0e42\u0e1e\u0e2a\u0e15\u0e4c X \u0e40\u0e23\u0e37\u0e48\u0e2d\u0e07 AI CEO", "agent": null, "model": null, "tokens": null, "outcome": null, "time": null}, {"id": "ses_llm7bed...
+E     
+E     ...Full output truncated (2 lines hidden), use '-vv' to show
+=============================== warnings summary ===============================
+../../../home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_ab_test_api.py::TestSplitDistribution::test_100_requests_split_near_50_50
+tests/test_ab_test_api.py::TestReportEndpoint::test_report_has_legacy_and_experiment_sections
+tests/test_ab_test_api.py::TestReportEndpoint::test_report_counts_reflect_hits
+  /tmp/opencode/wave2-wt/central_bus/router.py:648: RuntimeWarning: coroutine 'DbManager.fetch_all' was never awaited
+    report["audit_error"] = str(e)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_api_compliance.py::test_health_check
+  /tmp/opencode/wave2-wt/central_bus/api_compliance.py:287: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+
+tests/test_api_compliance.py: 31 warnings
+tests/test_compliance_validator.py: 28 warnings
+  /tmp/opencode/wave2-wt/skills/compliance_validator.py:131: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    tx_id = transaction_data.get("id", f"TX-{datetime.utcnow().timestamp()}")
+
+tests/test_api_compliance.py: 31 warnings
+tests/test_compliance_validator.py: 27 warnings
+  /tmp/opencode/wave2-wt/skills/compliance_validator.py:256: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow().isoformat() + "Z",
+
+tests/test_compliance_validator.py::TestComplianceValidator::test_missing_required_fields
+  /tmp/opencode/wave2-wt/skills/compliance_validator.py:359: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow().isoformat() + "Z",
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                                            Stmts   Miss  Cover
+-------------------------------------------------------------------
+central_bus/__init__.py                            14      0   100%
+central_bus/aar.py                                 31      2    94%
+central_bus/ab_test.py                            109     14    87%
+central_bus/api_compliance.py                     126     21    83%
+central_bus/api_keys.py                            72     51    29%
+central_bus/audit.py                               35      3    91%
+central_bus/behavior_classifier.py                198      6    97%
+central_bus/behavior_migration.py                 124    124     0%
+central_bus/bus_tags.py                            65      4    94%
+central_bus/config.py                              10      0   100%
+central_bus/dashboard.py                          241     65    73%
+central_bus/db.py                                  79      9    89%
+central_bus/exceptions.py                          43      6    86%
+central_bus/facts.py                               57      4    93%
+central_bus/guard_runner.py                        82      7    91%
+central_bus/health.py                              24      3    88%
+central_bus/main.py                               284     81    71%
+central_bus/migrate.py                            131    131     0%
+central_bus/mirror_check.py                       111     37    67%
+central_bus/models.py                              22      0   100%
+central_bus/monitor_watchdog.py                   117     95    19%
+central_bus/open_design.py                         27     14    48%
+central_bus/qa_gate.py                             18      0   100%
+central_bus/queue.py                              187     45    76%
+central_bus/router.py                             296     69    77%
+central_bus/run_check.py                           12     12     0%
+central_bus/semantic.py                            93     12    87%
+central_bus/skills_router.py                      136    103    24%
+central_bus/state.py                              238     29    88%
+central_bus/tests/__init__.py                       0      0   100%
+central_bus/tests/conftest.py                       0      0   100%
+central_bus/tests/test_ab_test.py                  80      0   100%
+central_bus/tests/test_behavior_classifier.py     278      0   100%
+central_bus/tests/test_bus_tags.py                 50      0   100%
+central_bus/tests/test_facts.py                    83      0   100%
+central_bus/tests/test_integration.py             186      0   100%
+central_bus/tests/test_queue.py                   146      0   100%
+central_bus/tests/test_router.py                  222      0   100%
+central_bus/webhook_receiver.py                    83     64    23%
+-------------------------------------------------------------------
+TOTAL                                            4110   1011    75%
+Coverage JSON written to file .coverage.json
+=========================== short test summary info ============================
+FAILED tests/test_solocorp_app_live.py::test_live_payload_has_no_secrets - as...
+1 failed, 1444 passed, 1 skipped, 3 deselected, 123 warnings in 72.78s (0:01:12)

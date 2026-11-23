@@ -40,6 +40,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from central_bus import __version__ as BUS_VERSION
 from central_bus.aar import AARGenerator
 from central_bus.api_compliance import router as compliance_router
 from central_bus.api_keys import validate_key, hash_key, extract_agent_from_key
@@ -66,9 +67,9 @@ _STARTED_AT: float = time.time()
 
 @asynccontextmanager
 async def _lifespan(app):
-    log.info("Central Bus v0.6.2 starting up (pid=%d)", os.getpid())
+    log.info("Central Bus v%s starting up (pid=%d)", BUS_VERSION, os.getpid())
     yield
-    log.info("Central Bus v0.6.2 shutting down")
+    log.info("Central Bus v%s shutting down", BUS_VERSION)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -76,8 +77,8 @@ async def _lifespan(app):
 # ═══════════════════════════════════════════════════════════════════════
 
 app = FastAPI(
-    title="Central Bus v0.6",
-    version="0.6.2",
+    title=f"Central Bus v{BUS_VERSION}",
+    version=BUS_VERSION,
     lifespan=_lifespan,
 )
 

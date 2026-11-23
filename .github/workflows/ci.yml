@@ -15,6 +15,32 @@ on:
     branches: [main]
 
 jobs:
+  # ────────────────────────────────────────────────────────────────────────
+  # Config Lint — opencode.jsonc vs. what is on disk (Wave 2, 2026-11-23)
+  #
+  # Phase 1 = WARN-ONLY. Findings are printed in the job log but never block.
+  # FLIP DATE: 2026-11-30 → remove `--warn-only` AND `continue-on-error: true`
+  # to make this a blocking gate. Do not flip earlier: the repo has known
+  # pre-existing drift that Wave 4 (permission precedence proof) still owns.
+  # ────────────────────────────────────────────────────────────────────────
+  config-lint:
+    name: "Config Lint (skills / agents / permissions)"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      # Stdlib only — no pip install needed.
+      - name: Validate opencode config (warn-only until 2026-11-30)
+        continue-on-error: true
+        run: python3 scripts/validate-opencode-config.py --warn-only
+
   test-and-coverage:
     name: "Tests + Coverage Gate"
     runs-on: ubuntu-latest

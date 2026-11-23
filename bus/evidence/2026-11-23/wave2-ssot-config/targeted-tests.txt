@@ -1,0 +1,5 @@
+# Targeted tests (tree: d84c149)
+$ python -m pytest tests/test_version_single_source.py tests/test_validate_opencode_config.py central_bus/tests/test_integration.py -q
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+85 passed, 1 warning in 1.71s

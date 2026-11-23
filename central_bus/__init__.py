@@ -1,3 +1,17 @@
+"""Central Bus package.
+
+``__version__`` is the SINGLE source of truth for the Central Bus service
+version. Every other module imports it from here — never re-declare a version
+literal in ``main.py`` or ``health.py`` (drift gate:
+``tests/test_version_single_source.py``).
+
+It must be assigned before the submodule imports below so that
+``from central_bus import __version__`` works even during a partial package
+initialisation (e.g. ``import central_bus.health``).
+"""
+
+__version__ = "0.6.2"
+
 from .models import BusMessage
 from . import open_design
 from .config import settings
@@ -12,6 +26,7 @@ from .webhook_receiver import receive_webhook, poll_all_watched
 from .monitor_watchdog import watchdog_loop, process_queue
 
 __all__ = [
+    "__version__",
     "BusMessage", "settings",
     "enqueue", "dequeue", "drain", "requeue", "list_dead_letters", "SQLiteQueueManager",
     "route", "priority_for", "RoutingEngine",

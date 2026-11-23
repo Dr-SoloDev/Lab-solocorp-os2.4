@@ -68,6 +68,18 @@
     },
 
     // ---------- Department Heads (L2) ----------
+    "product-produck": {
+      "description": "Head of Product — Feature roadmap, PRD, ผลิตภัณฑ์",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#1ABC9C",
+      "permissions": [
+        { "action": "read", "resource": "docs/**", "effect": "allow" },
+        { "action": "edit", "resource": "docs/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" }
+      ]
+    },
     "cfo-meetoo": {
       "description": "CFO (Metoo) — Finance, Budget, Investment, FP&A",
       "mode": "subagent",
@@ -196,25 +208,113 @@
         { "action": "read", "resource": "legal_vault/**", "effect": "deny" }
       ]
     },
+    "neteng-neet": {
+      "description": "Head of Network Engineering — Network Architecture, Cloud Infrastructure, Monitoring, Incident Response",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#148F77",
+      "permissions": [
+        { "action": "read", "resource": "config/**", "effect": "allow" },
+        { "action": "read", "resource": "scripts/**", "effect": "allow" },
+        { "action": "read", "resource": "docs/runbooks/**", "effect": "allow" },
+        { "action": "edit", "resource": "config/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" }
+      ]
+    },
+    "cybersec-sai": {
+      "description": "Head of Cyber Security — Threat Detection, Vulnerability Management, Incident Response, Security Architecture",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#A93226",
+      "permissions": [
+        { "action": "read", "resource": "bus/evidence/**", "effect": "allow" },
+        { "action": "read", "resource": "config/**", "effect": "allow" },
+        { "action": "read", "resource": "docs/**", "effect": "allow" },
+        { "action": "edit", "resource": "bus/evidence/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" }
+      ]
+    },
+    "psych-jit": {
+      "description": "Head of Psychology — User Behavior Analysis, Behavioral Economics, UX Psychology, Org Psychology",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#A569BD",
+      "permissions": [
+        { "action": "read", "resource": "docs/**", "effect": "allow" },
+        { "action": "read", "resource": "design/**", "effect": "allow" },
+        { "action": "read", "resource": "bus/evidence/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" }
+      ]
+    },
+    "rd-lab": {
+      "description": "R&D Lab — Lead Researcher, speculative research & experimental prototypes (รายงานตรง Owner)",
+      "mode": "subagent",
+      "level": 2,
+      "color": "#D4AC0D",
+      "permissions": [
+        { "action": "read", "resource": "tools/**", "effect": "allow" },
+        { "action": "read", "resource": "docs/**", "effect": "allow" },
+        { "action": "read", "resource": "bus/evidence/**", "effect": "allow" },
+        { "action": "edit", "resource": "tools/**", "effect": "allow" },
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" }
+      ]
+    },
 
     // ---------- Loop Runner / Specialists (L1 - Auto) ----------
+    // Permission rationale (2026-11-23, Wave 2) — declared here because these
+    // three had NO block and therefore inherited the global model unchanged.
+    // The rules below only NARROW the global model (never widen it) so they
+    // stay correct under either precedence rule (agent-block-wins or
+    // global-wins) — Wave 4 still owns proving precedence.
+    //   • explore — read-only per ADR-017 (`@explore` is the only child session
+    //     that survives the free-tier gate; it must not be able to write).
+    //   • plan    — planning only: decompose/design, no writes, no shell.
+    //   • build   — full implementation access, but protected paths and the
+    //     destructive git/shell commands stay denied.
     "build": {
       "description": "Coding agent — implement code, features, fixes (delegate from Engineering Head)",
       "mode": "subagent",
       "level": 1,
-      "color": "#228B22"
+      "color": "#228B22",
+      "permissions": [
+        { "action": "read", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "read", "resource": "finance/**", "effect": "deny" },
+        { "action": "edit", "resource": "legal_vault/**", "effect": "deny" },
+        { "action": "edit", "resource": "finance/**", "effect": "deny" },
+        { "action": "bash", "resource": "rm -rf *", "effect": "deny" },
+        { "action": "bash", "resource": "sudo *", "effect": "deny" },
+        { "action": "bash", "resource": "chown *", "effect": "deny" },
+        { "action": "bash", "resource": "git push *", "effect": "deny" },
+        { "action": "bash", "resource": "git rebase *", "effect": "deny" },
+        { "action": "bash", "resource": "git reset *", "effect": "deny" },
+        { "action": "bash", "resource": "git branch -D *", "effect": "deny" }
+      ]
     },
     "plan": {
       "description": "Planning agent — decompose tasks, architecture design (delegate from Product/Architect)",
       "mode": "subagent",
       "level": 1,
-      "color": "#6B8E23"
+      "color": "#6B8E23",
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "bash", "resource": "*", "effect": "deny" },
+        { "action": "subagent", "resource": "*", "effect": "deny" }
+      ]
     },
     "explore": {
       "description": "Codebase exploration agent — read-only (passes free-tier limit per ADR-017)",
       "mode": "subagent",
       "level": 1,
-      "color": "#708090"
+      "color": "#708090",
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "bash", "resource": "*", "effect": "deny" },
+        { "action": "subagent", "resource": "*", "effect": "deny" }
+      ]
     }
   },
 
@@ -477,10 +577,27 @@
 
   // ------------------------------------------------------------
   // 8. Skills — SoloCorp OS department skills
+  //    Source roots only (OpenCode: a dir with SKILL.md is one skill;
+  //    grouping dirs nest up to 6 levels below a source root).
+  //    NOTE 2026-11-23 (Wave 2):
+  //      • removed `skills/@axis/design` + `skills/@axis/marketing` — dirs
+  //        ไม่มีบนดิสก์ (path ตาย = skill โหลดไม่ได้โดยไม่มีใครรู้)
+  //      • added `skills/@axis/cto` — มีจริง แต่ไม่อยู่ใน paths
+  //      • added `skills/@axis` — source root เดียวที่ครอบ handoff-protocol
+  //        (SKILL.md อยู่ที่ root ของโฟลเดอร์เอง) และกัน drift ชั้นนี้ในอนาคต;
+  //        granular paths ด้านล่างคงไว้เพื่อความเข้ากันได้กับ loader รุ่นเก่า
+  //    Gate: scripts/validate-opencode-config.py (CI job `config-lint`)
   // ------------------------------------------------------------
+  //    ORDER MATTERS: OpenCode selects skills by ID and the LAST source wins.
+  //    `skills/@axis/cto` must stay BEFORE engineering/qa — its shadow shims
+  //    (cto/deploy, cto/smoke-test) forward to the canonical skills, so the
+  //    canonical ones must win. Loading the shims requires renaming their
+  //    directories first (Wave 4 / CTO). Gate: `skill-id-collisions`.
   "skills": {
     "paths": [
       ".opencode/skills",
+      "skills/@axis",
+      "skills/@axis/cto",
       "skills/@axis/cross-dept",
       "skills/@axis/ceo",
       "skills/@axis/coo",
@@ -488,9 +605,7 @@
       "skills/@axis/cfo",
       "skills/@axis/qa",
       "skills/@axis/governance",
-      "skills/@axis/content-creator",
-      "skills/@axis/design",
-      "skills/@axis/marketing"
+      "skills/@axis/content-creator"
     ]
   },
 
