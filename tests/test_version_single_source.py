@@ -92,11 +92,18 @@ class TestHealthEndpointReportsPackageVersion:
 
         class _FakeDb:
             async def fetch_one(self, _query: str):
-                return {"ok": 1}
+                # "ok" satisfies the connectivity ping; "cnt" satisfies the
+                # routing drift query added by ADR-040 Wave 1 (PR #44).
+                return {"ok": 1, "cnt": 0}
 
         class _FakeQueue:
             async def count_pending(self) -> int:
                 return 0
+
+            async def oldest_routed_age_seconds(self):
+                # PR #44 health.py reads this counter; the fake must stay
+                # substitutable or get_health() falls into its 503 path.
+                return None
 
             async def count_failed(self) -> int:
                 return 0
