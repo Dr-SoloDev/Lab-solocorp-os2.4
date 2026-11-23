@@ -1,6 +1,7 @@
 # Wave 1 — Routing SSoT (ADR-040) · Evidence — 2026-11-23
 
 > **Branch:** `feat/wave1-routing-ssot` (from `origin/main` @ `b6e509f`)
+> **PR:** [#44](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/pull/44) — open, not merged
 > **Scope:** routing SSoT sync + keyword adapter + drift health + live seed
 > **Status:** implemented + tested + seeded; **PR open, not merged**; maker ≠ checker (`@pipeline-auditor`)
 
@@ -71,6 +72,8 @@ r_mirror_coo, r_mirror_ceo, r_mirror_architect, r_mirror_cfo, r_mirror_eng
 ```
 
 Run `rollback.sql` against the live DB to return to `routing_rules = 0` and remove the `002-routing-rules` record. No other rows are touched. (`schema_migrations` on the live DB uses the legacy `version` column — the rollback file targets that shape.)
+
+**Rehearsed on a consistent copy** of the live DB (`sqlite3.backup`, 2026-11-23): after `rollback.sql` → rules `0`, migrations `['001-behavior-taxonomy']`. Live DB was not touched by the rehearsal.
 
 ## 6. Tests
 
