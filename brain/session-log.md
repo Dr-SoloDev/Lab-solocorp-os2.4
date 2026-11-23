@@ -1343,3 +1343,87 @@ Uncommitted: 1 (`brain/learnt.md` — automation, non-blocking)
 - งานใหม่: ดู `brain/NEXT.md`
 
 ---
+
+## Session Auto-Summary — 2026-11-23 10:17 UTC
+
+### Git
+```
+69876af feat(config): register axis-status MCP (D1–D4 certified, read-only)
+67047a8 docs(axis-status): D4 runbook + independent sign-off (PASS)
+e5b9d74 docs(certification): update axis-status to D3 43/43 (contract v1.1)
+140da7d feat(axis-status): contract v1.1 — close L1/O1/null false-green (D3 43/43)
+172740e docs(certification): record axis-status D1–D3 (D3 35 PASS / 2 SKIP-NA)
+53d1f35 feat(axis-status): close D3 false-green paths + add 37-case D3 eval
+fbb5dc3 feat(axis-status): unified 7-sourc
+```
+Uncommitted: 2 files
+
+### State
+Active dispatch files: 29
+State tracking files: 0
+
+### Pending
+- Repo clean @ a949834: CI เขียว, validator 20/20, CTO healthy — ไม่มีงานค้าง blocking
+- ถ้าจะต่อ: jsonc parity (patch ใน bus/evidence/misty-cabin-wip/) — เปิด issue ใหม่ ไม่ apply ตรง
+- เริ่มงาน: git log + bootstrap + manifest --check (ดู brain/NEXT.md)
+
+---
+
+---
+
+## Session Log — 2026-11-23 — AXIS STATUS: Option C → D1–D4 complete
+
+### Objective
+แก้ปัญหา "MCP ไม่มีแสดงสถานะองค์กร" ด้วย Option C — Unified Status Layer (`axis-status`) ที่รวม 7 sources เป็น schema เดียว แบบ read-only
+
+### Delivered
+- `axis_mcp/status/` — sources (busd, cto, content, mcp_freshness, git, browse, codegraph) + parallel aggregator + FastMCP server (`axis_status(force=False)`)
+- Contract v1.0 (`3938d2c`) → v1.1 (`140da7d`): CTO required columns, codegraph thresholds, busd null/type/db rules, `_build_payload` robustness
+- Tests: 40 passed · D2 harness 11/11 · D3 **43 cases, 43 PASS / 0 FAIL / 0 SKIP**
+- D4 runbook `docs/runbooks/AXIS-STATUS.md` (207 lines, SHA `5bf6c66…e820b1`)
+- Evidence: `bus/evidence/2026-11-23/{d2,d3,d4}-axis-status/` (D4 sign-off tracked)
+- MCP registration: `opencode.jsonc` → `axis-status` enabled (C4)
+
+### Certification trail
+- D1 ✅ 3938d2c (Owner + CEO อนุมัติ)
+- D2 ✅ fbb5dc3 (29 tests) → 53d1f35 (31) → 140da7d (40, v1.1)
+- D3 ✅ 43/43/0/0; doc ↔ eval.json byte-identical; checker PASS
+- D4 ✅ independent fresh-agent replay 2 รอบ; sign-off `verdict=PASS` 2026-11-23T10:14Z
+- Registry: `profiles/CERTIFICATION-REGISTRY.md` → axis-status MCP D1–D4 ✅
+
+### Key decisions
+- เลือก Option C (status aggregator) แทนการเปิด Core MCP กลับ
+- Plan B (Quality Track) + timebox 1 รอบ + stop rule — ปิด L1/O1/null ก่อน D4
+- Maker ≠ Checker ทุกด่าน: D2 3 รอบ, D3 2 รอบ, D4 2 รอบ — เจอ false-green จริง 5 จุด (unknown ลบน้ำหนัก, CTO schema drift, evidence provenance, M1 busd partial, N1 score_sources partial) และปิดครบ
+- Merge ผ่าน PR (local `main` ถูก checkout ใน worktree อื่น + มี staged renames)
+
+### Commits / PR
+- 3938d2c docs(axis-status): D1 + Option C explainer
+- fbb5dc3 feat(axis-status): D2
+- 53d1f35 feat(axis-status): D3 fixes + eval
+- 172740e docs(certification): D1–D3
+- 140da7d feat(axis-status): contract v1.1 (43/43)
+- e5b9d74 docs(certification): D3 43/43
+- 67047a8 docs(axis-status): D4 runbook + sign-off
+- 69876af feat(config): register axis-status MCP
+- PR #47 merged → `422a7ec` (2026-11-23T10:15:46Z)
+
+### Live verification
+`axis_status(force=True)` ผ่าน MCP: schema `axis.status/1` · 7 sources · 170 ms · overall `down/63/red`
+เหตุ: busd queue_failed=1 (12.5) + content 7.5 + mcp_freshness 7.5 + browse 10 = 37.5 → 62.5 → 63 (contract arithmetic ไม่ใช่ crash)
+
+### Lessons
+- `unknown` ต้องไม่ถูกตัดน้ำหนักเงียบๆ — measurement failure ต้องเป็น `down`
+- Audit ทุกรอบมีโอกาสเจอ finding ใหม่: 3 รอบ D2 เจอ 3 คลาส, D3 เจอ 2, D4 เจอ runbook defects 8+7 จุด
+- Runbook ต้องมี stdio handshake ครบ (initialize → initialized → tools/call) — bare tools/call ได้ -32602
+- Evidence provenance สำคัญ: harness ต้องเขียน log ชุดเดียวกันใน invocation เดียว
+- Contract ต้องกำหนด threshold/columns ไม่งั้น "ok" จะกลายเป็นเขียวหลอกได้
+
+### Pending (non-blocking)
+- Restart MCP 2 generations (6 processes) เพื่อล้าง staleness → score คาดว่าจะขึ้น ~78
+- Local `main` worktree (`curious-nebula`) อยู่หลัง remote และมี staged renames — ต้องจัดการก่อน pull
+- Full suite 2 known failures: duplicate MCP process + live session title มีคำ "brief"
+- `brain/learnt.md` dirty + `config/.module-registry.json.lock` — ของเดิม
+- Runbook info notes A1–A7; NITs: CTO column types, codegraph index age, `_build_payload` still requires `id`
+
+---
