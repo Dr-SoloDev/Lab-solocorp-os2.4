@@ -13,7 +13,7 @@
 | 2 | worker หยิบงานแบบไหน? | `workers/agent_worker_service.py` poll เฉพาะ `status='routed'` → `pending`/`routed` ที่ไม่มีใครหยิบจะค้างตลอดกาล |
 | 3 | cron ที่เกี่ยวข้องมีจริงไหม? | มี: `*/5` `scripts/_watchdog_run.py`, `*/5` `agent_worker_service --once`, `*/30` `loop_runner` (ดู `cron-baseline.txt`) |
 | 4 | queue ค้างอยู่กี่ตัว? | `pending` = 0, `routed` = 0, `failed` = 1 (ซาก `watchdog-model-health-1793325601`, สร้าง 2026-10-30, mark failed 2026-11-13 ด้วย `W1-20261113:`) |
-| 5 | MCP process กี่ตัวจริง? | **9 ตัว = 2 groups (ppid 5496 × 2 cwd), 0 duplicates** — "11 ตัว" เดิมมาจาก `pgrep` นับ shell ตัวเอง |
+| 5 | MCP process กี่ตัวจริง? | **9 ตัว = 2 groups (ppid 5496 × 2 cwd), 0 duplicates** ตอนเริ่มงาน — "11 ตัว" เดิมมาจาก `pgrep` นับ shell ตัวเอง · หลังสร้าง worktree ของงานนี้เอง: **12 = 3 groups, 0 duplicates** (delta = MCP 3 ตัวของ worktree) |
 
 > หมายเหตุสำคัญ: `/v1/observe` มี guard `action=report_back` ที่ปิดสถานะเป็น `completed` แล้ว
 > (central_bus/main.py) — แถวที่ค้างเป็นของก่อน guard นั้นมีผล ดังนั้นช่องโหว่ที่เหลือคือ
