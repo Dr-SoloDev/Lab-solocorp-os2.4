@@ -1,0 +1,29 @@
+[skill]
+name = "@axis/cross-dept/dept-workspace"
+version = "0.1.0"
+description = "Dept Workspace — เปิดห้องทำงานแยกต่อแผนก พร้อม context bundle (manual /workspace + autonomous CLI)"
+category = "cross-dept"
+
+[dept]
+owner = "orchestrator"
+consumers = ["ceo", "coo", "orchestrator", "architect", "engineering", "product", "design", "content-creator"]
+
+[bus]
+# Workflow skill — ทำงานใน OpenCode session โดยตรง ไม่มี route ใน
+# bus/system/skill_routes_config.json (จึงไม่ประกาศ endpoint/queue_topic ปลอม)
+registered = false
+reason = "OpenCode workflow skill: เปิด session/workspace ไม่ได้ถูก invoke ผ่าน Central Bus queue"
+
+[mirror]
+minimum_level = "L1"
+check_on_invoke = false
+description = "การเปิดห้องทำงานไม่ใช่ decision — Mirror Check เกิดที่งานในห้องนั้นตามระดับของงาน"
+
+[dependencies]
+skills = []
+bus_version = ">=0.6.0"
+
+[[triggers]]
+keyword = "/workspace"
+description = "เปิด workspace ของแผนก $1 พร้อมงาน $2"
+platforms = ["opencode"]

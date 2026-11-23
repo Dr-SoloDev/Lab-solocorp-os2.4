@@ -477,10 +477,27 @@
 
   // ------------------------------------------------------------
   // 8. Skills — SoloCorp OS department skills
+  //    Source roots only (OpenCode: a dir with SKILL.md is one skill;
+  //    grouping dirs nest up to 6 levels below a source root).
+  //    NOTE 2026-11-23 (Wave 2):
+  //      • removed `skills/@axis/design` + `skills/@axis/marketing` — dirs
+  //        ไม่มีบนดิสก์ (path ตาย = skill โหลดไม่ได้โดยไม่มีใครรู้)
+  //      • added `skills/@axis/cto` — มีจริง แต่ไม่อยู่ใน paths
+  //      • added `skills/@axis` — source root เดียวที่ครอบ handoff-protocol
+  //        (SKILL.md อยู่ที่ root ของโฟลเดอร์เอง) และกัน drift ชั้นนี้ในอนาคต;
+  //        granular paths ด้านล่างคงไว้เพื่อความเข้ากันได้กับ loader รุ่นเก่า
+  //    Gate: scripts/validate-opencode-config.py (CI job `config-lint`)
   // ------------------------------------------------------------
+  //    ORDER MATTERS: OpenCode selects skills by ID and the LAST source wins.
+  //    `skills/@axis/cto` must stay BEFORE engineering/qa — its shadow shims
+  //    (cto/deploy, cto/smoke-test) forward to the canonical skills, so the
+  //    canonical ones must win. Loading the shims requires renaming their
+  //    directories first (Wave 4 / CTO). Gate: `skill-id-collisions`.
   "skills": {
     "paths": [
       ".opencode/skills",
+      "skills/@axis",
+      "skills/@axis/cto",
       "skills/@axis/cross-dept",
       "skills/@axis/ceo",
       "skills/@axis/coo",
@@ -488,9 +505,7 @@
       "skills/@axis/cfo",
       "skills/@axis/qa",
       "skills/@axis/governance",
-      "skills/@axis/content-creator",
-      "skills/@axis/design",
-      "skills/@axis/marketing"
+      "skills/@axis/content-creator"
     ]
   },
 
