@@ -54,6 +54,13 @@ PROBE_METHODS = {
     "codegraph": "read .codegraph/codegraph.db mode=ro",
 }
 
+# Contract v1.1 §1: these columns are required; other columns are optional.
+CTO_REQUIRED_COLUMNS = {
+    "tool_calls": ("id", "module", "tool_name", "status"),
+    "build_artifacts": ("id", "project_id", "artifact_path"),
+    "qa_evidence": ("id", "task_id", "status"),
+}
+
 
 def _result(
     status: str,
@@ -185,6 +192,12 @@ def _port_open(host: str, port: int, timeout: float = 0.4) -> bool:
         return False
 
 
+def _is_nonneg_int(value: Any) -> bool:
+    """True for a real int >= 0 (bool is not an int for this contract)."""
+
+    return isinstance(value, int) and not isinstance(value, bool) and value >= 0
+
+
 def probe_busd() -> dict[str, Any]:
     key = (os.environ.get("SOLOCORP_API_KEY") or "").strip()
     headers = {"X-API-Key": key} if key else {}
@@ -226,7 +239,8 @@ def probe_busd() -> dict[str, Any]:
     if not isinstance(data, dict):
         return _result("down", False, {}, "busd health returned an unexpected payload")
 
-    db = data.get("db") if isinstance(data.get("db"), dict) else {}
+    db_value = data.get("db")
+    db = db_value if isinstance(db_value, dict) else {}
     detail = {
         "status": data.get("status"),
         "queue_pending": db.get("queue_pending"),
@@ -237,36 +251,49 @@ def probe_busd() -> dict[str, Any]:
         "version": data.get("version"),
     }
 
+    # Contract v1.1 §3: required fields must be present, non-null and the
+    # correct type. A partial or wrong-typed payload is degraded, not ok; the
+    # warning names every bad field so the producer can be fixed.
+    invalid_fields: list[str] = []
+
+    status_value = data.get("status")
+    if not isinstance(status_value, str):
+        invalid_fields.append(f"status ({status_value!r})")
+
+    if not isinstance(db_value, dict):
+        invalid_fields.append(f"db ({db_value!r})")
+    else:
+        for field in ("queue_pending", "queue_failed", "queue_dead"):
+            value = db_value.get(field)
+            if not _is_nonneg_int(value):
+                invalid_fields.append(f"db.{field} ({value!r})")
+
+    rules_value = data.get("rules_in_sync")
+    if not isinstance(rules_value, bool):
+        invalid_fields.append(f"rules_in_sync ({rules_value!r})")
+
+    version_value = data.get("version")
+    if not (isinstance(version_value, str) and version_value.strip()):
+        invalid_fields.append(f"version ({version_value!r})")
+
+    uptime_value = data.get("uptime_seconds")
+    if not _is_nonneg_int(uptime_value):
+        invalid_fields.append(f"uptime_seconds ({uptime_value!r})")
+
     warnings: list[str] = []
-    if "status" not in data and "db" not in data:
-        return _result(
-            "down", False, detail, "busd health payload is missing status and db"
-        )
-
-    # Contract §3 lists these as primary busd data. A payload without them is a
-    # partial measurement, not a healthy busd: do not let an absent field read
-    # as "no problem". Present-but-bad values keep their existing warnings.
-    missing_fields = [
-        field
-        for field in ("rules_in_sync", "version", "uptime_seconds")
-        if field not in data
-    ]
-    if missing_fields:
+    if invalid_fields:
         warnings.append(
-            "busd health payload is missing required field(s): "
-            f"{', '.join(missing_fields)} — partial measurement"
+            "busd health payload has invalid field(s): " + ", ".join(invalid_fields)
         )
 
-    if not db:
-        warnings.append("busd health payload has no db block")
-    if data.get("status") != "ok":
-        warnings.append(f"busd reports status {data.get('status')!r}")
-    if data.get("rules_in_sync") is False:
+    if isinstance(status_value, str) and status_value != "ok":
+        warnings.append(f"busd reports status {status_value!r}")
+    if rules_value is False:
         warnings.append("busd routing rules are out of sync with routing.json")
-    if int(db.get("queue_dead") or 0) > 0:
-        warnings.append(f"{db.get('queue_dead')} dead queue item(s) need triage")
-    if int(db.get("queue_failed") or 0) > 0:
-        warnings.append(f"{db.get('queue_failed')} failed queue item(s) awaiting retry")
+    if _is_nonneg_int(db.get("queue_dead")) and db["queue_dead"] > 0:
+        warnings.append(f"{db['queue_dead']} dead queue item(s) need triage")
+    if _is_nonneg_int(db.get("queue_failed")) and db["queue_failed"] > 0:
+        warnings.append(f"{db['queue_failed']} failed queue item(s) awaiting retry")
 
     return _result(
         "degraded" if warnings else "ok", True, detail, "; ".join(warnings) or None
@@ -296,13 +323,21 @@ def probe_cto() -> dict[str, Any]:
         try:
             integrity = connection.execute("PRAGMA quick_check").fetchone()[0]
             tables: dict[str, int | None] = {}
+            columns: dict[str, list[str] | None] = {}
             for table in ("tool_calls", "build_artifacts", "qa_evidence"):
                 try:
                     tables[table] = connection.execute(
                         f"SELECT COUNT(*) FROM {table}"
                     ).fetchone()[0]
+                    columns[table] = [
+                        row[1]
+                        for row in connection.execute(
+                            f"PRAGMA table_info({table})"
+                        ).fetchall()
+                    ]
                 except sqlite3.Error:
                     tables[table] = None
+                    columns[table] = None
         finally:
             connection.close()
     except sqlite3.Error as exc:
@@ -313,7 +348,7 @@ def probe_cto() -> dict[str, Any]:
             "CTO database could not be read read-only — measurement failed",
         )
 
-    detail.update({"integrity": integrity, "tables": tables})
+    detail.update({"integrity": integrity, "tables": tables, "columns": columns})
     missing = sorted(table for table, count in tables.items() if count is None)
     if missing:
         return _result(
@@ -322,6 +357,30 @@ def probe_cto() -> dict[str, Any]:
             {**detail, "missing_tables": missing},
             "CTO database is missing required table(s): "
             f"{', '.join(missing)} — measurement failed",
+        )
+    missing_columns = {
+        table: [
+            column for column in required if column not in set(columns.get(table) or [])
+        ]
+        for table, required in CTO_REQUIRED_COLUMNS.items()
+        if tables.get(table) is not None
+    }
+    missing_columns = {
+        table: missing_names
+        for table, missing_names in missing_columns.items()
+        if missing_names
+    }
+    if missing_columns:
+        return _result(
+            "down",
+            False,
+            {**detail, "missing_columns": missing_columns},
+            "CTO database is missing required column(s): "
+            + "; ".join(
+                f"{table}: {', '.join(missing_names)}"
+                for table, missing_names in sorted(missing_columns.items())
+            )
+            + " — measurement failed",
         )
     if integrity != "ok":
         return _result(
@@ -661,6 +720,20 @@ def probe_codegraph() -> dict[str, Any]:
             **counts,
         }
     )
+    if counts["files"] == 0 or counts["nodes"] == 0:
+        return _result(
+            "degraded",
+            True,
+            detail,
+            "codegraph index is empty — rebuild the index",
+        )
+    if counts["nodes"] > 0 and counts["edges"] == 0:
+        return _result(
+            "degraded",
+            True,
+            detail,
+            "codegraph index has no edges — rebuild the index",
+        )
     return _result("ok", True, detail, None)
 
 

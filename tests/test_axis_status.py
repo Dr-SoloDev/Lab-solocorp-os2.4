@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import sqlite3
 import subprocess
 import time
 from datetime import datetime
@@ -61,6 +62,22 @@ class _FakeResponse:
 
     def __exit__(self, *_exc):
         return False
+
+
+def _make_codegraph_db(root: Path, *, nodes: int, edges: int, files: int) -> Path:
+    db_path = root / ".codegraph" / "codegraph.db"
+    db_path.parent.mkdir()
+    connection = sqlite3.connect(db_path)
+    try:
+        for table in ("nodes", "edges", "files"):
+            connection.execute(f"CREATE TABLE {table} (id INTEGER)")
+        for table, count in (("nodes", nodes), ("edges", edges), ("files", files)):
+            for index in range(count):
+                connection.execute(f"INSERT INTO {table} (id) VALUES (?)", (index,))
+        connection.commit()
+    finally:
+        connection.close()
+    return db_path
 
 
 def row(payload, source_id):
@@ -173,6 +190,30 @@ def test_score_sources_missing_critical_is_down():
         "busd" in warning and "mcp_freshness" in warning
         for warning in payload["warnings"]
     )
+
+
+def test_build_payload_row_without_warning_key_is_safe():
+    rows = [
+        {
+            "id": source_id,
+            "status": "ok",
+            "latency_ms": 0,
+            "fresh": True,
+            "detail": {},
+        }
+        for source_id in aggregator.SOURCE_IDS
+    ]
+
+    payload = aggregator._build_payload(rows, 1.0)
+
+    assert payload["overall"] == {
+        "status": "healthy",
+        "score": 100,
+        "color": "green",
+    }
+    assert payload["warnings"] == []
+    assert all("warning" not in row for row in payload["sources"])
+    assert all(row.get("warning") is None for row in payload["sources"])
 
 
 def test_slow_probe_is_cut_and_partial_result_returned():
@@ -289,7 +330,7 @@ def test_busd_partial_payload_is_degraded(monkeypatch):
 
     assert result["status"] == "degraded"
     assert result["fresh"] is True
-    assert "partial measurement" in result["warning"]
+    assert "invalid field" in result["warning"]
     for field in ("rules_in_sync", "version", "uptime_seconds"):
         assert field in result["warning"]
         assert result["detail"][field] is None
@@ -304,6 +345,79 @@ def test_busd_partial_payload_is_degraded(monkeypatch):
         "score": 88,
         "color": "amber",
     }
+
+
+def test_busd_null_field_is_degraded(monkeypatch):
+    body = json.dumps(
+        {
+            "status": "ok",
+            "db": {
+                "queue_pending": 0,
+                "queue_failed": 0,
+                "queue_dead": 0,
+            },
+            "rules_in_sync": True,
+            "version": None,
+            "uptime_seconds": 10,
+        }
+    ).encode("utf-8")
+    monkeypatch.setattr(
+        sources.urllib.request,
+        "urlopen",
+        lambda *args, **kwargs: _FakeResponse(body),
+    )
+
+    result = sources.probe_busd()
+
+    assert result["status"] == "degraded"
+    assert result["fresh"] is True
+    assert "invalid field" in result["warning"]
+    assert "version (None)" in result["warning"]
+
+    payload = aggregator.aggregate(force=True, probes=probes_with(busd=lambda: result))
+    assert payload["overall"] == {
+        "status": "degraded",
+        "score": 88,
+        "color": "amber",
+    }
+
+
+def test_busd_invalid_db_block_is_degraded(monkeypatch):
+    base = {
+        "status": "ok",
+        "rules_in_sync": True,
+        "version": "0.6.2",
+        "uptime_seconds": 10,
+    }
+    cases = [
+        {**base},  # db key missing
+        {**base, "db": None},  # null
+        {**base, "db": []},  # wrong type
+        {**base, "db": {"queue_pending": 0, "queue_failed": "1", "queue_dead": 0}},
+    ]
+    for payload_data in cases:
+        body = json.dumps(payload_data).encode("utf-8")
+        monkeypatch.setattr(
+            sources.urllib.request,
+            "urlopen",
+            lambda *args, _body=body, **kwargs: _FakeResponse(_body),
+        )
+
+        result = sources.probe_busd()
+
+        assert result["status"] == "degraded"
+        assert result["fresh"] is True
+        assert "invalid field" in result["warning"]
+        assert "db" in result["warning"]
+
+        payload = aggregator.aggregate(
+            force=True, probes=probes_with(busd=lambda: result)
+        )
+        assert payload["overall"] == {
+            "status": "degraded",
+            "score": 88,
+            "color": "amber",
+        }
 
 
 def test_secret_never_appears_in_output(monkeypatch):
@@ -453,6 +567,86 @@ def test_cto_schema_drift_is_down(tmp_path, monkeypatch):
     assert payload["overall"] == {"status": "degraded", "score": 80, "color": "amber"}
 
 
+def test_cto_missing_required_column_is_down(tmp_path, monkeypatch):
+    db_dir = tmp_path / "central_bus"
+    db_dir.mkdir()
+    connection = sqlite3.connect(db_dir / "cto.db")
+    try:
+        connection.execute(
+            "CREATE TABLE tool_calls (id INTEGER, module TEXT, tool_name TEXT)"
+        )
+        connection.execute(
+            "CREATE TABLE build_artifacts "
+            "(id INTEGER, project_id TEXT, artifact_path TEXT)"
+        )
+        connection.execute(
+            "CREATE TABLE qa_evidence (id INTEGER, task_id TEXT, status TEXT)"
+        )
+        connection.commit()
+    finally:
+        connection.close()
+    monkeypatch.setattr(sources, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(
+        sources,
+        "_mcp_processes",
+        lambda: [{"pid": 1, "module": "axis_mcp.cto.server", "started_at": 1.0}],
+    )
+
+    result = sources.probe_cto()
+
+    assert result["status"] == "down"
+    assert result["fresh"] is False
+    assert result["detail"]["missing_columns"] == {"tool_calls": ["status"]}
+    assert "missing required column" in result["warning"]
+    assert "tool_calls: status" in result["warning"]
+
+    payload = aggregator.aggregate(force=True, probes=probes_with(cto=lambda: result))
+    assert payload["overall"] == {
+        "status": "degraded",
+        "score": 80,
+        "color": "amber",
+    }
+
+
+def test_cto_full_columns_zero_rows_is_ok(tmp_path, monkeypatch):
+    db_dir = tmp_path / "central_bus"
+    db_dir.mkdir()
+    connection = sqlite3.connect(db_dir / "cto.db")
+    try:
+        connection.execute(
+            "CREATE TABLE tool_calls "
+            "(id INTEGER, module TEXT, tool_name TEXT, status TEXT)"
+        )
+        connection.execute(
+            "CREATE TABLE build_artifacts "
+            "(id INTEGER, project_id TEXT, artifact_path TEXT)"
+        )
+        connection.execute(
+            "CREATE TABLE qa_evidence (id INTEGER, task_id TEXT, status TEXT)"
+        )
+        connection.commit()
+    finally:
+        connection.close()
+    monkeypatch.setattr(sources, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(
+        sources,
+        "_mcp_processes",
+        lambda: [{"pid": 1, "module": "axis_mcp.cto.server", "started_at": 1.0}],
+    )
+
+    result = sources.probe_cto()
+
+    assert result["status"] == "ok"
+    assert result["fresh"] is True
+    assert result["warning"] is None
+    assert result["detail"]["tables"] == {
+        "tool_calls": 0,
+        "build_artifacts": 0,
+        "qa_evidence": 0,
+    }
+    assert "missing_columns" not in result["detail"]
+
+
 def test_missing_probe_is_unknown_and_excluded():
     probes = probes_with()
     probes.pop("codegraph")
@@ -533,6 +727,60 @@ def test_codegraph_db_error_is_down(tmp_path, monkeypatch):
     assert result["status"] == "down"
     assert result["fresh"] is False
     assert result["detail"]["error"] in ("DatabaseError", "OperationalError")
+
+
+def test_codegraph_zero_files_is_degraded(tmp_path, monkeypatch):
+    _make_codegraph_db(tmp_path, nodes=5, edges=5, files=0)
+    monkeypatch.setattr(sources, "PROJECT_ROOT", tmp_path)
+
+    result = sources.probe_codegraph()
+
+    assert result["status"] == "degraded"
+    assert result["fresh"] is True
+    assert "index is empty" in result["warning"]
+
+    payload = aggregator.aggregate(
+        force=True, probes=probes_with(codegraph=lambda: result)
+    )
+    # codegraph carries 5 of 100 weight at half value -> 97.5 -> 98, green.
+    assert payload["overall"] == {
+        "status": "healthy",
+        "score": 98,
+        "color": "green",
+    }
+
+
+def test_codegraph_zero_nodes_is_degraded(tmp_path, monkeypatch):
+    _make_codegraph_db(tmp_path, nodes=0, edges=0, files=5)
+    monkeypatch.setattr(sources, "PROJECT_ROOT", tmp_path)
+
+    result = sources.probe_codegraph()
+
+    assert result["status"] == "degraded"
+    assert result["fresh"] is True
+    assert "index is empty" in result["warning"]
+
+
+def test_codegraph_nodes_without_edges_is_degraded(tmp_path, monkeypatch):
+    _make_codegraph_db(tmp_path, nodes=5, edges=0, files=1)
+    monkeypatch.setattr(sources, "PROJECT_ROOT", tmp_path)
+
+    result = sources.probe_codegraph()
+
+    assert result["status"] == "degraded"
+    assert result["fresh"] is True
+    assert "index has no edges" in result["warning"]
+
+
+def test_codegraph_positive_counts_is_ok(tmp_path, monkeypatch):
+    _make_codegraph_db(tmp_path, nodes=5, edges=7, files=3)
+    monkeypatch.setattr(sources, "PROJECT_ROOT", tmp_path)
+
+    result = sources.probe_codegraph()
+
+    assert result["status"] == "ok"
+    assert result["fresh"] is True
+    assert result["warning"] is None
 
 
 def test_server_exposes_exactly_one_tool():

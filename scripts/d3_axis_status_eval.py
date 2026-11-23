@@ -76,6 +76,7 @@ EVALUATED_FILES = (
     "axis_mcp/runtime_freshness.py",
     "tests/test_axis_status.py",
     "docs/plans/AXIS-STATUS-CONTRACT-v1.0.md",
+    "docs/plans/AXIS-STATUS-CONTRACT-v1.1.md",
     "scripts/d3_axis_status_eval.py",
 )
 
@@ -249,6 +250,37 @@ class FakeResponse:
 
     def __exit__(self, *_exc: Any) -> bool:
         return False
+
+
+def make_cto_db(root: Path, tables: dict[str, tuple[str, ...]]) -> None:
+    """Create a throwaway ``central_bus/cto.db`` with the given table DDL."""
+
+    db_dir = root / "central_bus"
+    db_dir.mkdir()
+    connection = sqlite3.connect(db_dir / "cto.db")
+    try:
+        for table, columns in tables.items():
+            connection.execute(f"CREATE TABLE {table} ({', '.join(columns)})")
+        connection.commit()
+    finally:
+        connection.close()
+
+
+def make_codegraph_db(root: Path, *, nodes: int, edges: int, files: int) -> None:
+    """Create a throwaway ``.codegraph/codegraph.db`` with exact counts."""
+
+    db_dir = root / ".codegraph"
+    db_dir.mkdir()
+    connection = sqlite3.connect(db_dir / "codegraph.db")
+    try:
+        for table in ("nodes", "edges", "files"):
+            connection.execute(f"CREATE TABLE {table} (id INTEGER)")
+        for table, count in (("nodes", nodes), ("edges", edges), ("files", files)):
+            for index in range(count):
+                connection.execute(f"INSERT INTO {table} (id) VALUES (?)", (index,))
+        connection.commit()
+    finally:
+        connection.close()
 
 
 def fake_http_error(code: int, message: str) -> urllib.error.HTTPError:
@@ -814,20 +846,20 @@ def k1() -> Outcome:
 @case(
     "L1",
     "L. CTO column drift",
-    "valid SQLite, required table names, wrong columns",
-    "SKIP-NA: contract §3 defines table names, not columns; actual must be documented",
+    "valid SQLite, required table names, only id columns",
+    "down + missing_columns for all three tables; 80/degraded/amber",
 )
 def l1() -> Outcome:
     with tempfile.TemporaryDirectory() as temp_dir:
         root = Path(temp_dir)
-        (root / "central_bus").mkdir()
-        connection = sqlite3.connect(root / "central_bus/cto.db")
-        try:
-            for table in ("tool_calls", "build_artifacts", "qa_evidence"):
-                connection.execute(f"CREATE TABLE {table} (id INTEGER)")
-            connection.commit()
-        finally:
-            connection.close()
+        make_cto_db(
+            root,
+            {
+                "tool_calls": ("id INTEGER",),
+                "build_artifacts": ("id INTEGER",),
+                "qa_evidence": ("id INTEGER",),
+            },
+        )
         with (
             mock.patch.object(sources, "PROJECT_ROOT", root),
             mock.patch.object(
@@ -844,25 +876,102 @@ def l1() -> Outcome:
         ):
             probe_result = sources.probe_cto()
 
-    actual = (
-        f"probe={probe_result['status']}; fresh={probe_result['fresh']}; "
-        f"tables={probe_result['detail'].get('tables')}; "
-        f"warning={probe_result['warning']!r}"
+    payload = run_aggregate(cto=lambda: probe_result)
+    missing = probe_result["detail"].get("missing_columns")
+    warning = probe_result["warning"] or ""
+    expected_missing = {
+        "tool_calls": ["module", "tool_name", "status"],
+        "build_artifacts": ["project_id", "artifact_path"],
+        "qa_evidence": ["task_id", "status"],
+    }
+    ok = (
+        probe_result["status"] == "down"
+        and probe_result["fresh"] is False
+        and missing == expected_missing
+        and "missing required column" in warning
+        and matches(payload, 80, "degraded", "amber")
     )
-    return skip(
-        actual,
-        note=(
-            "Contract §3 defines CTO measurement as 'health probe / DB ที่ประกาศ' "
-            "and does not define table columns. The probe counts rows, so a DB "
-            "with only an id column is reported ok. There is no contract "
-            "threshold to call this PASS or FAIL; recorded as SKIP-NA so it is "
-            "not silently green."
+    return outcome(
+        ok,
+        f"probe={probe_result['status']}; missing_columns={missing}; "
+        f"warning={warning!r}; overall={overall_text(payload)}",
+        root_cause=(
+            "the contract v1.1 CTO column guard regressed: a table with wrong "
+            "columns was reported ok/green"
         ),
         proposed_fix=(
-            "Add a contract-level required-column map per table and validate "
-            "PRAGMA table_info in probe_cto (needs CTO owner + contract update). "
-            "Until then, list this as a known limitation."
+            "validate PRAGMA table_info against CTO_REQUIRED_COLUMNS in "
+            "probe_cto (sources.py)"
         ),
+        evidence={
+            "probe": probe_result,
+            "missing_columns": missing,
+            "overall": payload["overall"],
+        },
+    )
+
+
+@case(
+    "L2",
+    "L. CTO full columns",
+    "valid SQLite, all required columns, 0 rows",
+    "ok; 100/healthy/green",
+)
+def l2() -> Outcome:
+    with tempfile.TemporaryDirectory() as temp_dir:
+        root = Path(temp_dir)
+        make_cto_db(
+            root,
+            {
+                "tool_calls": (
+                    "id INTEGER",
+                    "module TEXT",
+                    "tool_name TEXT",
+                    "status TEXT",
+                ),
+                "build_artifacts": (
+                    "id INTEGER",
+                    "project_id TEXT",
+                    "artifact_path TEXT",
+                ),
+                "qa_evidence": (
+                    "id INTEGER",
+                    "task_id TEXT",
+                    "status TEXT",
+                ),
+            },
+        )
+        with (
+            mock.patch.object(sources, "PROJECT_ROOT", root),
+            mock.patch.object(
+                sources,
+                "_mcp_processes",
+                lambda: [
+                    {
+                        "pid": 1,
+                        "module": "axis_mcp.cto.server",
+                        "started_at": 1.0,
+                    }
+                ],
+            ),
+        ):
+            probe_result = sources.probe_cto()
+
+    payload = run_aggregate(cto=lambda: probe_result)
+    ok = (
+        probe_result["status"] == "ok"
+        and probe_result["fresh"] is True
+        and probe_result["warning"] is None
+        and matches(payload, 100, "healthy", "green")
+    )
+    return outcome(
+        ok,
+        f"probe={probe_result['status']}; "
+        f"tables={probe_result['detail'].get('tables')}; "
+        f"overall={overall_text(payload)}",
+        root_cause="a valid empty CTO DB with all required columns was not ok",
+        proposed_fix="keep the column check separate from the row count",
+        evidence={"probe": probe_result, "overall": payload["overall"]},
     )
 
 
@@ -875,7 +984,7 @@ def l1() -> Outcome:
     "M1",
     "M. busd partial payload",
     "payload missing rules_in_sync/version/uptime_seconds",
-    '88/degraded/amber; warning contains "partial measurement" and the missing field names',
+    '88/degraded/amber; warning contains "invalid field(s)" and the missing field names',
 )
 def m1() -> Outcome:
     body = json.dumps(
@@ -904,7 +1013,7 @@ def m1() -> Outcome:
     ]
     ok = (
         probe_result["status"] == "degraded"
-        and "partial measurement" in warning
+        and "invalid field" in warning
         and all(field in warning for field in missing)
         and matches(payload, 88, "degraded", "amber")
     )
@@ -913,19 +1022,103 @@ def m1() -> Outcome:
         f"probe={probe_result['status']}; warning={warning!r}; "
         f"missing={missing}; overall={overall_text(payload)}",
         root_cause=(
-            "the M1 guard regressed: a busd payload missing required fields "
-            "was reported ok instead of degraded"
+            "the contract v1.1 busd field guard regressed: a payload missing "
+            "required fields was reported ok instead of degraded"
         ),
         proposed_fix=(
-            "keep the missing-field guard in probe_busd (sources.py): absent "
-            "rules_in_sync/version/uptime_seconds -> partial-measurement "
-            "warning + degraded"
+            "keep the invalid-field guard in probe_busd (sources.py): absent "
+            "or wrong-typed fields -> degraded + warning"
         ),
         evidence={
             "probe": probe_result,
             "missing_fields": missing,
             "overall": payload["overall"],
         },
+    )
+
+
+@case(
+    "M2",
+    "M. busd null field",
+    "version=None",
+    "88/degraded/amber; warning names version (None)",
+)
+def m2() -> Outcome:
+    body = json.dumps(
+        {
+            "status": "ok",
+            "db": {
+                "queue_pending": 0,
+                "queue_failed": 0,
+                "queue_dead": 0,
+            },
+            "rules_in_sync": True,
+            "version": None,
+            "uptime_seconds": 10,
+        }
+    ).encode("utf-8")
+    with mock.patch.object(
+        sources.urllib.request,
+        "urlopen",
+        return_value=FakeResponse(body),
+    ):
+        probe_result = sources.probe_busd()
+
+    payload = run_aggregate(busd=lambda: probe_result)
+    warning = probe_result["warning"] or ""
+    ok = (
+        probe_result["status"] == "degraded"
+        and "invalid field" in warning
+        and "version (None)" in warning
+        and matches(payload, 88, "degraded", "amber")
+    )
+    return outcome(
+        ok,
+        f"probe={probe_result['status']}; warning={warning!r}; "
+        f"overall={overall_text(payload)}",
+        root_cause="a null busd version was accepted instead of degraded",
+        proposed_fix="require a non-empty string for version in probe_busd",
+        evidence={"probe": probe_result, "overall": payload["overall"]},
+    )
+
+
+@case(
+    "M3",
+    "M. busd db missing",
+    "db key absent",
+    "88/degraded/amber; warning names db (None)",
+)
+def m3() -> Outcome:
+    body = json.dumps(
+        {
+            "status": "ok",
+            "rules_in_sync": True,
+            "version": "0.6.2",
+            "uptime_seconds": 10,
+        }
+    ).encode("utf-8")
+    with mock.patch.object(
+        sources.urllib.request,
+        "urlopen",
+        return_value=FakeResponse(body),
+    ):
+        probe_result = sources.probe_busd()
+
+    payload = run_aggregate(busd=lambda: probe_result)
+    warning = probe_result["warning"] or ""
+    ok = (
+        probe_result["status"] == "degraded"
+        and "invalid field" in warning
+        and "db (None)" in warning
+        and matches(payload, 88, "degraded", "amber")
+    )
+    return outcome(
+        ok,
+        f"probe={probe_result['status']}; warning={warning!r}; "
+        f"overall={overall_text(payload)}",
+        root_cause="a missing busd db block was accepted instead of degraded",
+        proposed_fix="require a dict db block with non-negative int queue counts",
+        evidence={"probe": probe_result, "overall": payload["overall"]},
     )
 
 
@@ -973,6 +1166,39 @@ def n1() -> Outcome:
     )
 
 
+@case(
+    "N2",
+    "N. partial _build_payload",
+    "row without the 'warning' key",
+    "no raise; overall 100/healthy/green; warnings=[]",
+)
+def n2() -> Outcome:
+    rows = [
+        {
+            "id": source_id,
+            "status": "ok",
+            "latency_ms": 0,
+            "fresh": True,
+            "detail": {},
+        }
+        for source_id in aggregator.SOURCE_IDS
+    ]
+    payload = aggregator._build_payload(rows, 1.0)
+    ok = (
+        payload["overall"] == {"status": "healthy", "score": 100, "color": "green"}
+        and payload["warnings"] == []
+        and all("warning" not in row for row in payload["sources"])
+    )
+    return outcome(
+        ok,
+        f"overall={overall_text(payload)}; warnings={len(payload['warnings'])}; "
+        f"warning_keys={sum('warning' in row for row in payload['sources'])}",
+        root_cause="a row without a warning key raised KeyError in _build_payload",
+        proposed_fix="use row.get('warning') in _build_payload (aggregator.py)",
+        evidence={"overall": payload["overall"], "warnings": payload["warnings"]},
+    )
+
+
 # ---------------------------------------------------------------------------
 # O. codegraph valid DB with zero content
 # ---------------------------------------------------------------------------
@@ -982,41 +1208,95 @@ def n1() -> Outcome:
     "O1",
     "O. empty codegraph",
     "valid DB, 0 nodes/edges/files",
-    "SKIP-NA: contract has no threshold; actual must be documented",
+    "degraded + 'index is empty'; 98/healthy/green (5*0.5 loss)",
 )
 def o1() -> Outcome:
     with tempfile.TemporaryDirectory() as temp_dir:
         root = Path(temp_dir)
-        (root / ".codegraph").mkdir()
-        connection = sqlite3.connect(root / ".codegraph/codegraph.db")
-        try:
-            for table in ("nodes", "edges", "files"):
-                connection.execute(f"CREATE TABLE {table} (id INTEGER)")
-            connection.commit()
-        finally:
-            connection.close()
+        make_codegraph_db(root, nodes=0, edges=0, files=0)
         with mock.patch.object(sources, "PROJECT_ROOT", root):
             probe_result = sources.probe_codegraph()
 
-    detail = probe_result["detail"]
-    actual = (
-        f"probe={probe_result['status']}; nodes={detail.get('nodes')}; "
-        f"edges={detail.get('edges')}; files={detail.get('files')}; "
-        f"warning={probe_result['warning']!r}"
+    payload = run_aggregate(codegraph=lambda: probe_result)
+    warning = probe_result["warning"] or ""
+    ok = (
+        probe_result["status"] == "degraded"
+        and probe_result["fresh"] is True
+        and "index is empty" in warning
+        and matches(payload, 98, "healthy", "green")
     )
-    return skip(
-        actual,
-        note=(
-            "Contract §3 lists files/nodes/edges/size as codegraph data but "
-            "defines no minimum. The probe reports ok for a readable but empty "
-            "index; there is no contract threshold to call this PASS or FAIL. "
-            "Recorded as SKIP-NA, not silently green."
-        ),
-        proposed_fix=(
-            "Define a contract threshold (for example nodes == 0 -> degraded) "
-            "or compare against a known baseline; needs a contract update and "
-            "codegraph owner input."
-        ),
+    return outcome(
+        ok,
+        f"probe={probe_result['status']}; warning={warning!r}; "
+        f"nodes={probe_result['detail'].get('nodes')}; "
+        f"edges={probe_result['detail'].get('edges')}; "
+        f"files={probe_result['detail'].get('files')}; "
+        f"overall={overall_text(payload)}",
+        root_cause="the contract v1.1 empty-index threshold regressed",
+        proposed_fix="files==0 or nodes==0 -> degraded in probe_codegraph",
+        evidence={"probe": probe_result, "overall": payload["overall"]},
+    )
+
+
+@case(
+    "O2",
+    "O. codegraph zero files",
+    "nodes>0, edges>0, files==0",
+    "degraded + 'index is empty'; 98/healthy/green",
+)
+def o2() -> Outcome:
+    with tempfile.TemporaryDirectory() as temp_dir:
+        root = Path(temp_dir)
+        make_codegraph_db(root, nodes=5, edges=5, files=0)
+        with mock.patch.object(sources, "PROJECT_ROOT", root):
+            probe_result = sources.probe_codegraph()
+
+    payload = run_aggregate(codegraph=lambda: probe_result)
+    warning = probe_result["warning"] or ""
+    ok = (
+        probe_result["status"] == "degraded"
+        and "index is empty" in warning
+        and matches(payload, 98, "healthy", "green")
+    )
+    return outcome(
+        ok,
+        f"probe={probe_result['status']}; "
+        f"files={probe_result['detail'].get('files')}; "
+        f"warning={warning!r}; overall={overall_text(payload)}",
+        root_cause="files==0 did not degrade the codegraph source",
+        proposed_fix="keep the files==0 threshold in probe_codegraph",
+        evidence={"probe": probe_result, "overall": payload["overall"]},
+    )
+
+
+@case(
+    "O3",
+    "O. codegraph no edges",
+    "nodes>0, edges==0",
+    "degraded + 'index has no edges'; 98/healthy/green",
+)
+def o3() -> Outcome:
+    with tempfile.TemporaryDirectory() as temp_dir:
+        root = Path(temp_dir)
+        make_codegraph_db(root, nodes=5, edges=0, files=1)
+        with mock.patch.object(sources, "PROJECT_ROOT", root):
+            probe_result = sources.probe_codegraph()
+
+    payload = run_aggregate(codegraph=lambda: probe_result)
+    warning = probe_result["warning"] or ""
+    ok = (
+        probe_result["status"] == "degraded"
+        and "index has no edges" in warning
+        and matches(payload, 98, "healthy", "green")
+    )
+    return outcome(
+        ok,
+        f"probe={probe_result['status']}; "
+        f"edges={probe_result['detail'].get('edges')}; "
+        f"warning={warning!r}; overall={overall_text(payload)}",
+        root_cause="nodes>0 with edges==0 did not degrade the codegraph source",
+        proposed_fix="keep the no-edges threshold in probe_codegraph",
+        evidence={"probe": probe_result, "overall": payload["overall"]},
     )
 
 
@@ -1838,7 +2118,7 @@ def render_markdown(
 ) -> str:
     lines: list[str] = []
     product_modified = git_status.get("product_modified") or []
-    tree_note = " + uncommitted M1/N1 hardening" if product_modified else ""
+    tree_note = " + uncommitted contract v1.1 hardening" if product_modified else ""
     lines.append("# D3 — AXIS STATUS (`axis.status/1`) evaluation")
     lines.append("")
     lines.append(
@@ -1850,12 +2130,13 @@ def render_markdown(
     lines.append(">")
     if product_modified:
         lines.append(
-            "> This D3 run evaluates the working tree on the branch: D2 commit "
+            "> This D3 run evaluates the working tree on the branch: HEAD "
             f"`{env.get('git_head_short') or 'HEAD'}` plus the uncommitted "
-            "D3-driven M1/N1 hardening. The only product changes are the two "
-            "fixes; no other product behavior was changed. FAIL rows would "
-            "still be recorded with a root cause and a proposed minimal fix; "
-            "SKIP rows are recorded as SKIP-NA."
+            "contract v1.1 hardening (CTO required columns, codegraph "
+            "thresholds, busd null/type rules, `_build_payload` robustness). "
+            "Those are the only product changes; no other product behavior was "
+            "changed. FAIL rows would still be recorded with a root cause and "
+            "a proposed minimal fix; SKIP rows would be recorded as SKIP-NA."
         )
     else:
         lines.append(
@@ -1868,8 +2149,7 @@ def render_markdown(
     lines.append(
         "> **Status: maker evidence, not an approval.** An independent checker "
         "must rerun `scripts/d3_axis_status_eval.py`, compare the evidence and "
-        "confirm the M1/N1 PASS rows and the L1/O1 SKIP-NA decisions before "
-        "D3 is considered passed."
+        "confirm the contract v1.1 PASS rows before D3 is considered passed."
     )
     lines.append(">")
     lines.append(
@@ -1894,7 +2174,7 @@ def render_markdown(
     )
     if product_modified:
         lines.append(
-            "- **Product code changed:** **YES — M1/N1 only** ("
+            "- **Product code changed:** **YES — contract v1.1 only** ("
             + ", ".join(f"`{path}`" for path in product_modified)
             + ")"
         )
@@ -1936,9 +2216,9 @@ def render_markdown(
     )
     lines.append(
         "- The eval itself did not modify product code, config or a product "
-        "database; the working tree already contains the M1/N1 fixes under "
-        "evaluation. No existing process was killed or restarted; all network "
-        "calls are loopback."
+        "database; the working tree already contains the contract v1.1 fixes "
+        "under evaluation. No existing process was killed or restarted; all "
+        "network calls are loopback."
     )
     lines.append("")
     lines.append("## 4. Results")
@@ -2033,25 +2313,34 @@ def render_markdown(
     lines.append("## 8. Known limitations and proposed fixes")
     lines.append("")
     lines.append(
-        "- **M1 (fixed in this run):** a busd payload missing `rules_in_sync`, "
-        "`version` or `uptime_seconds` now returns `degraded` with a "
-        "'partial measurement' warning. Covered by D3 case M1 and D2 test "
+        "- **M1 (fixed in this run):** a busd payload with missing, null or "
+        "wrong-typed required fields now returns `degraded` with an "
+        "'invalid field(s)' warning. Covered by D3 cases M1/M2/M3 and D2 test "
         "`test_busd_partial_payload_is_degraded`."
     )
     lines.append(
         "- **N1 (fixed in this run):** `score_sources()` with rows missing a "
         "critical source now forces `down/red` and names the missing source(s) "
         "in a warning; the payload's `overall` keeps its fixed "
-        "`{status, score, color}` shape. Covered by D3 case N1 and D2 test "
+        "`{status, score, color}` shape. Covered by D3 cases N1/N2 and D2 test "
         "`test_score_sources_missing_critical_is_down`."
     )
     lines.append(
-        "- **L1 (SKIP-NA):** CTO column drift is invisible; contract §3 does "
-        "not define columns. Needs a contract/CTO-owner decision."
+        "- **L1 (closed by contract v1.1):** CTO required columns are validated "
+        "with `PRAGMA table_info`; a wrong-column DB is `down` + "
+        "`missing_columns` + 80/degraded. Covered by D3 case L1 and D2 test "
+        "`test_cto_missing_required_column_is_down`."
     )
     lines.append(
-        "- **O1 (SKIP-NA):** an empty but valid codegraph index is reported "
-        "`ok`; contract §3 has no minimum threshold."
+        "- **O1 (closed by contract v1.1):** an empty codegraph index is "
+        "`degraded` + 'index is empty' (98/healthy/green); nodes>0 with no "
+        "edges is `degraded` + 'index has no edges'. Covered by D3 cases "
+        "O1/O2/O3 and the D2 codegraph threshold tests."
+    )
+    lines.append(
+        "- **NIT-4 remains:** `codegraph.fresh` reflects DB readability, not "
+        "index age; the v1.1 thresholds catch empty/no-edge indexes, not an "
+        "old but populated index."
     )
     lines.append(
         "- **P1:** wall-clock includes interpreter startup; the contract "
@@ -2062,10 +2351,10 @@ def render_markdown(
         "cases do not. The secret canary is synthetic; no real secret is used."
     )
     lines.append(
-        "- The M1/N1 fixes were applied before this D3 run; the eval itself "
-        "did not modify product code. The changes are limited to "
+        "- The contract v1.1 fixes were applied before this D3 run; the eval "
+        "itself did not modify product code. The changes are limited to "
         "`axis_mcp/status/sources.py`, `axis_mcp/status/aggregator.py` and the "
-        "two new tests; no other product behavior changed."
+        "tests; no other product behavior changed."
     )
     lines.append("")
     lines.append("## 9. Workspace state")
@@ -2085,11 +2374,13 @@ def render_markdown(
     )
     lines.append("")
     lines.append(
-        "New paths from this D3 work: `scripts/d3_axis_status_eval.py`, "
-        "`docs/certification/D3-axis-status-2026-11-23.md` and the gitignored "
+        "D3 deliverables in this working tree: `scripts/d3_axis_status_eval.py` "
+        "and `docs/certification/D3-axis-status-2026-11-23.md` (both tracked; "
+        "modified for contract v1.1), plus the gitignored "
         "`bus/evidence/2026-11-23/d3-axis-status/` directory. "
-        "`brain/learnt.md` and `config/.module-registry.json.lock` were "
-        "already present before this run and were not touched."
+        "`brain/learnt.md`, `config/.module-registry.json.lock` and "
+        "`docs/plans/AXIS-STATUS-C0-D1-v1.0.md` were already present/modified "
+        "before this run and were not touched by this eval."
     )
     lines.append("")
     lines.append(
@@ -2215,14 +2506,15 @@ def main() -> int:
             "git_status": "git status --porcelain",
         },
         "known_limitations": [
-            "M1 fixed in this run: busd partial payload -> degraded + partial-measurement warning (test: test_busd_partial_payload_is_degraded).",
+            "M1 fixed in this run: busd missing/null/wrong-typed fields -> degraded + invalid-field warning (test: test_busd_partial_payload_is_degraded).",
             "N1 fixed in this run: score_sources missing critical -> down/red + warning (test: test_score_sources_missing_critical_is_down).",
-            "L1: CTO column drift has no contract threshold (SKIP-NA).",
-            "O1: empty codegraph index has no contract threshold (SKIP-NA).",
+            "L1 closed by contract v1.1: CTO required columns validated; wrong columns -> down/80 + missing_columns.",
+            "O1 closed by contract v1.1: empty codegraph -> degraded/98; nodes>0 with no edges -> degraded/98.",
+            "NIT-4 remains: codegraph.fresh reflects DB readability, not index age.",
             "P1 wall time includes interpreter startup; contract budget is meta.duration_ms.",
             "Live cases P1/R1 depend on the local runtime; deterministic cases do not.",
             "The canary is synthetic; no real secret is used.",
-            "Product changes are limited to M1/N1 (sources.py, aggregator.py) and the two new tests; no other product behavior changed.",
+            "Product changes are limited to contract v1.1 (sources.py, aggregator.py) and the tests; no other product behavior changed.",
         ],
     }
 

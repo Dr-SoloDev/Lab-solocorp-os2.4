@@ -275,7 +275,9 @@ def _build_payload(rows: list[dict[str, Any]], duration_ms: float) -> dict[str, 
     # {status, score, color} shape; the warning moves to the top-level list.
     overall_warning = overall.pop("warning", None)
     overall.pop("missing_critical", None)
-    warnings = [f"{row['id']}: {row['warning']}" for row in rows if row["warning"]]
+    warnings = [
+        f"{row['id']}: {row.get('warning')}" for row in rows if row.get("warning")
+    ]
     if overall_warning:
         warnings.append(overall_warning)
     unverified = [

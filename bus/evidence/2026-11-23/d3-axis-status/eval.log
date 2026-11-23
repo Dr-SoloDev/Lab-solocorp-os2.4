@@ -1,5 +1,5 @@
 D3 — AXIS STATUS evaluation
-commit: fbb5dc3 · date: 2026-11-23T08:37:52.498333+00:00
+commit: 172740e · date: 2026-11-23T09:33:00.576462+00:00
 
 01 A1  PASS all 7 sources ok                             | 100/healthy/green; warnings=0; rows=7
 02 B1  PASS busd down                                    | 75/down/red; busd=down fresh=false warning='source did not respond'
@@ -23,38 +23,32 @@ commit: fbb5dc3 · date: 2026-11-23T08:37:52.498333+00:00
 20 I1  PASS TTL hit then force                           | first=fresh; second=cached; same_generated_at=True; third=fresh; new_generated_at=True; probe_ca
 21 J1  PASS canary in env + probe payload                | canary_occurrences=0; redacted=True; warnings=1
 22 K1  PASS 0-byte cto.db + fake running process         | probe=down; missing=['build_artifacts', 'qa_evidence', 'tool_calls']; overall=80/degraded/amber
-23 L1  SKIP valid SQLite, required table names, wrong co | probe=ok; fresh=True; tables={'tool_calls': 0, 'build_artifacts': 0, 'qa_evidence': 0}; warning=
-24 M1  PASS payload missing rules_in_sync/version/uptime | probe=degraded; warning='busd health payload is missing required field(s): rules_in_sync, versio
-25 N1  PASS public score_sources() rows missing busd+mcp | 100/down/red; missing=['busd', 'mcp_freshness']; warning='critical source(s) missing from the sc
-26 O1  SKIP valid DB, 0 nodes/edges/files                | probe=ok; nodes=0; edges=0; files=0; warning=None
-27 P1  PASS python -m axis_mcp.status.server --smoke     | exit=0; wall=1157ms; schema=axis.status/1; sources=7; meta.duration_ms=157; overall={'status': '
-28 Q1  PASS same mocked scenario twice                   | overall=50/down/red; same_fingerprint=True; generated_at_differs=True
-29 R1  PASS MCP client -> axis_status(force=True)        | tools=['axis_status']; isError=False; schema=axis.status/1; sources=7
-30 S1  PASS static scan of axis_mcp/status/*.py          | findings=0; files=4; calls=305
-31 T1  PASS busd returns 401/403 (with key) and 401 (no  | 401='busd rejected the API key (HTTP 401)' leaked=False; 403='busd rejected the API key (HTTP 40
-32 U1  PASS relay up, extension not paired               | 95/healthy/green; browse=degraded fresh=true warning='browse relay is up but no browser extensio
-33 V1  PASS detached HEAD                                | 95/healthy/green; git=degraded fresh=true warning='git HEAD is detached'
-34 W1  PASS real probe_busd with queue_dead>0 + rules_in | probe=degraded; warning='busd routing rules are out of sync with routing.json; 2 dead queue item
-35 X1  PASS all 7 probes unknown                         | 0/down/red; warnings=9; not_healthy=True
-36 Y1  PASS cto probe raises RuntimeError                | 80/degraded/amber; cto=down fresh=false warning='probe raised RuntimeError'; traceback=False
-37 Z1  PASS git probe returns status='bogus'             | 90/healthy/green; git=down fresh=false warning='probe returned no valid status — measurement fai
+23 L1  PASS valid SQLite, required table names, only id  | probe=down; missing_columns={'tool_calls': ['module', 'tool_name', 'status'], 'build_artifacts':
+24 L2  PASS valid SQLite, all required columns, 0 rows   | probe=ok; tables={'tool_calls': 0, 'build_artifacts': 0, 'qa_evidence': 0}; overall=100/healthy/
+25 M1  PASS payload missing rules_in_sync/version/uptime | probe=degraded; warning='busd health payload has invalid field(s): rules_in_sync (None), version
+26 M2  PASS version=None                                 | probe=degraded; warning='busd health payload has invalid field(s): version (None)'; overall=88/d
+27 M3  PASS db key absent                                | probe=degraded; warning='busd health payload has invalid field(s): db (None)'; overall=88/degrad
+28 N1  PASS public score_sources() rows missing busd+mcp | 100/down/red; missing=['busd', 'mcp_freshness']; warning='critical source(s) missing from the sc
+29 N2  PASS row without the 'warning' key                | overall=100/healthy/green; warnings=0; warning_keys=0
+30 O1  PASS valid DB, 0 nodes/edges/files                | probe=degraded; warning='codegraph index is empty — rebuild the index'; nodes=0; edges=0; files=
+31 O2  PASS nodes>0, edges>0, files==0                   | probe=degraded; files=0; warning='codegraph index is empty — rebuild the index'; overall=98/heal
+32 O3  PASS nodes>0, edges==0                            | probe=degraded; edges=0; warning='codegraph index has no edges — rebuild the index'; overall=98/
+33 P1  PASS python -m axis_mcp.status.server --smoke     | exit=0; wall=1191ms; schema=axis.status/1; sources=7; meta.duration_ms=166; overall={'status': '
+34 Q1  PASS same mocked scenario twice                   | overall=50/down/red; same_fingerprint=True; generated_at_differs=True
+35 R1  PASS MCP client -> axis_status(force=True)        | tools=['axis_status']; isError=False; schema=axis.status/1; sources=7
+36 S1  PASS static scan of axis_mcp/status/*.py          | findings=0; files=4; calls=334
+37 T1  PASS busd returns 401/403 (with key) and 401 (no  | 401='busd rejected the API key (HTTP 401)' leaked=False; 403='busd rejected the API key (HTTP 40
+38 U1  PASS relay up, extension not paired               | 95/healthy/green; browse=degraded fresh=true warning='browse relay is up but no browser extensio
+39 V1  PASS detached HEAD                                | 95/healthy/green; git=degraded fresh=true warning='git HEAD is detached'
+40 W1  PASS real probe_busd with queue_dead>0 + rules_in | probe=degraded; warning='busd routing rules are out of sync with routing.json; 2 dead queue item
+41 X1  PASS all 7 probes unknown                         | 0/down/red; warnings=9; not_healthy=True
+42 Y1  PASS cto probe raises RuntimeError                | 80/degraded/amber; cto=down fresh=false warning='probe raised RuntimeError'; traceback=False
+43 Z1  PASS git probe returns status='bogus'             | 90/healthy/green; git=down fresh=false warning='probe returned no valid status — measurement fai
 
 DETAIL — FAIL / SKIP
 
-[SKIP] L1 — valid SQLite, required table names, wrong columns
-  expected: SKIP-NA: contract §3 defines table names, not columns; actual must be documented
-  actual:   probe=ok; fresh=True; tables={'tool_calls': 0, 'build_artifacts': 0, 'qa_evidence': 0}; warning=None
-  note:     Contract §3 defines CTO measurement as 'health probe / DB ที่ประกาศ' and does not define table columns. The probe counts rows, so a DB with only an id column is reported ok. There is no contract threshold to call this PASS or FAIL; recorded as SKIP-NA so it is not silently green.
-  fix:      Add a contract-level required-column map per table and validate PRAGMA table_info in probe_cto (needs CTO owner + contract update). Until then, list this as a known limitation.
 
-[SKIP] O1 — valid DB, 0 nodes/edges/files
-  expected: SKIP-NA: contract has no threshold; actual must be documented
-  actual:   probe=ok; nodes=0; edges=0; files=0; warning=None
-  note:     Contract §3 lists files/nodes/edges/size as codegraph data but defines no minimum. The probe reports ok for a readable but empty index; there is no contract threshold to call this PASS or FAIL. Recorded as SKIP-NA, not silently green.
-  fix:      Define a contract threshold (for example nodes == 0 -> degraded) or compare against a known baseline; needs a contract update and codegraph owner input.
-
-
-CASES: 37 · PASS 35 · FAIL 0 · SKIP 2
-PYTEST: 31 passed in 5.82s (exit 0)
+CASES: 43 · PASS 43 · FAIL 0 · SKIP 0
+PYTEST: 40 passed in 6.47s (exit 0)
 EXIT: 0
 

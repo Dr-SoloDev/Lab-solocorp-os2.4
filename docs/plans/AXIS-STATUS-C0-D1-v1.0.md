@@ -2,7 +2,7 @@
 
 > **สถานะ:** ✅ อนุมัติแล้ว (2026-11-23) · **เจ้าของ:** AXIS CEO (เทอโบ)
 > **ด่าน:** D1 ตาม `rules/06-certification.md` — เอกสารนี้ **ห้ามมีการเขียนโค้ด**
-> **ภาพประกอบ:** [axis-status-option-c.html](../explainers/axis-status-option-c.html) · **Contract เต็ม:** [AXIS-STATUS-CONTRACT-v1.0.md](AXIS-STATUS-CONTRACT-v1.0.md)
+> **ภาพประกอบ:** [axis-status-option-c.html](../explainers/axis-status-option-c.html) · **Contract ปัจจุบัน:** [v1.1](AXIS-STATUS-CONTRACT-v1.1.md) (แก้ไข 2026-11-23 — ดู [v1.0](AXIS-STATUS-CONTRACT-v1.0.md) เป็นประวัติ)
 
 ---
 

@@ -10,5 +10,5 @@ PASS no API key or headers
 PASS cache hit keeps generated_at, force bypasses
 PASS tool-calls.jsonl has one complete line per source
 
-11/11 checks passed · 157 ms
+11/11 checks passed · 171 ms
 SMOKE: busd=degraded · cto=ok · content=degraded · mcp_freshness=degraded · git=ok · browse=down · codegraph=ok
