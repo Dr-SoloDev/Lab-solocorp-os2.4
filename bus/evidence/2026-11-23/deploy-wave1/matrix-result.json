@@ -1,0 +1,102 @@
+{
+  "snapshot_meta": {
+    "live_db": "/data/projects/Lab-solocorp-os2.4/central_bus/bus.db",
+    "live_db_bytes": 11182080,
+    "snapshot": "/tmp/routing-matrix-t_o3ia2e/bus-snapshot.db",
+    "snapshot_bytes": 12201984,
+    "opened_read_only_uri": "file:/data/projects/Lab-solocorp-os2.4/central_bus/bus.db?mode=ro",
+    "queue_rows_in_snapshot": 3223,
+    "routing_rules_in_snapshot": 22
+  },
+  "engine_level_not_http": true,
+  "count_rules": 22,
+  "parity": {
+    "ssot_json_rules": 22,
+    "db_enabled_rules": 22,
+    "missing_in_db": [],
+    "extra_in_db": [],
+    "parity_ok": true
+  },
+  "results": [
+    {
+      "n": 1,
+      "payload": "review the quarterly budget and cost report",
+      "expected": "cfo",
+      "actual": "cfo",
+      "pass": true
+    },
+    {
+      "n": 2,
+      "payload": "deploy the backend api hotfix",
+      "expected": "engineering",
+      "actual": "engineering",
+      "pass": true
+    },
+    {
+      "n": 3,
+      "payload": "run regression test suite for quality",
+      "expected": "qa",
+      "actual": "qa",
+      "pass": true
+    },
+    {
+      "n": 4,
+      "payload": "our solana smart contract needs an audit",
+      "expected": "web3",
+      "actual": "web3",
+      "pass": true
+    },
+    {
+      "n": 5,
+      "payload": "customer support ticket escalation",
+      "expected": "support",
+      "actual": "support",
+      "pass": true
+    },
+    {
+      "n": 6,
+      "payload": "GDPR compliance review for the contract",
+      "expected": "legal",
+      "actual": "legal",
+      "pass": true
+    },
+    {
+      "n": 7,
+      "payload": "marketing content plan for the brand",
+      "expected": "cmo",
+      "actual": "cmo",
+      "pass": true
+    },
+    {
+      "n": 8,
+      "payload": "fix a bug in the server",
+      "expected": "engineering",
+      "actual": "engineering",
+      "pass": true
+    },
+    {
+      "n": 9,
+      "payload": "daily ops routine admin",
+      "expected": "coo",
+      "actual": "coo",
+      "pass": true
+    },
+    {
+      "n": 10,
+      "payload": "ช่วยดูเรื่องการเงินกับงบประมาณให้หน่อย",
+      "expected": "cfo",
+      "actual": "cfo",
+      "pass": true
+    },
+    {
+      "n": 11,
+      "payload": "hello there, nice weather",
+      "expected": "coo",
+      "actual": "coo",
+      "pass": true
+    }
+  ],
+  "passed": 11,
+  "total": 11,
+  "all_pass": true
+}
