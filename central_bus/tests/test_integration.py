@@ -10,6 +10,7 @@ import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
 
+from central_bus import __version__
 from central_bus.db import DbManager, ensure_db, reset_db_for_testing
 from central_bus.config import settings
 from central_bus.main import app
@@ -46,7 +47,7 @@ class TestHealth:
         data = resp.json()
         assert "status" in data
         assert "version" in data
-        assert data["version"] == "0.6.0"
+        assert data["version"] == __version__
 
     def test_health_returns_metrics(self) -> None:
         resp = client.get("/v1/health")

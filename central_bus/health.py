@@ -8,13 +8,12 @@ from typing import Any
 
 from fastapi.responses import JSONResponse
 
+from central_bus import __version__ as VERSION
 from central_bus.facts import FactsService
 from central_bus.queue import SQLiteQueueManager
 from central_bus.router import RoutingEngine
 
 log = logging.getLogger(__name__)
-
-VERSION = "0.6.0"
 
 
 async def get_health(
