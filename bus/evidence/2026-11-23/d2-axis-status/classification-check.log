@@ -1,0 +1,9 @@
+content process absent: probe=down fresh=False warning='content MCP process is not running — restart_required cannot be read; start it from the client to verify'
+  overall={"status": "degraded", "score": 85, "color": "amber"}
+cto db unreadable: probe=down fresh=False warning='CTO database could not be read read-only — measurement failed'
+  overall={"status": "degraded", "score": 80, "color": "amber"}
+cto schema drift + process running: probe=down fresh=False warning='CTO database is missing required table(s): build_artifacts, qa_evidence, tool_calls — measurement failed'
+  overall={"status": "degraded", "score": 80, "color": "amber"}
+critical unknown (busd missing probe): probe=unknown fresh=False warning='no probe registered for this source'
+  overall={"status": "down", "score": 100, "color": "red"}
+  warnings=["busd: no probe registered for this source", "critical source(s) busd could not be measured \u2014 overall forced down"]

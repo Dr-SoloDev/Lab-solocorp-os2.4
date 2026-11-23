@@ -1,0 +1,56 @@
+$ PYTHONPATH=. .venv/bin/python3 -m pytest tests/test_axis_status.py -q
+............................./data/projects/Lab-solocorp-os2.4/.venv/lib/python3.12/site-packages/coverage/control.py:956: CoverageWarning: No data was collected. (no-data-collected); see https://coverage.readthedocs.io/en/7.15.0/messages.html#warning-no-data-collected
+  self._warn("No data was collected.", slug="no-data-collected")
+                                            [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                                            Stmts   Miss  Cover
+-------------------------------------------------------------------
+central_bus/__init__.py                            14     14     0%
+central_bus/aar.py                                 31     31     0%
+central_bus/ab_test.py                            109    109     0%
+central_bus/api_compliance.py                     126    126     0%
+central_bus/api_keys.py                            72     72     0%
+central_bus/audit.py                               35     35     0%
+central_bus/behavior_classifier.py                198    198     0%
+central_bus/behavior_migration.py                 124    124     0%
+central_bus/bus_tags.py                            65     65     0%
+central_bus/config.py                              10     10     0%
+central_bus/dashboard.py                          241    241     0%
+central_bus/db.py                                  80     80     0%
+central_bus/exceptions.py                          43     43     0%
+central_bus/facts.py                               57     57     0%
+central_bus/guard_runner.py                        82     82     0%
+central_bus/health.py                              28     28     0%
+central_bus/main.py                               284    284     0%
+central_bus/migrate.py                            125    125     0%
+central_bus/mirror_check.py                       111    111     0%
+central_bus/models.py                              22     22     0%
+central_bus/monitor_watchdog.py                   117    117     0%
+central_bus/open_design.py                         27     27     0%
+central_bus/qa_gate.py                             18     18     0%
+central_bus/queue.py                              213    213     0%
+central_bus/router.py                             342    342     0%
+central_bus/routing_sync.py                       256    256     0%
+central_bus/run_check.py                           12     12     0%
+central_bus/semantic.py                            93     93     0%
+central_bus/skills_router.py                      136    136     0%
+central_bus/state.py                              238    238     0%
+central_bus/tests/__init__.py                       0      0   100%
+central_bus/tests/conftest.py                       0      0   100%
+central_bus/tests/test_ab_test.py                  80     80     0%
+central_bus/tests/test_behavior_classifier.py     278    278     0%
+central_bus/tests/test_bus_tags.py                 50     50     0%
+central_bus/tests/test_facts.py                    83     83     0%
+central_bus/tests/test_integration.py             186    186     0%
+central_bus/tests/test_queue.py                   146    146     0%
+central_bus/tests/test_router.py                  222    222     0%
+central_bus/tests/test_routing_ssot.py            166    166     0%
+central_bus/watchdog_triage.py                    204    204     0%
+central_bus/webhook_receiver.py                    83     83     0%
+-------------------------------------------------------------------
+TOTAL                                            4807   4807     0%
+Coverage JSON written to file .coverage.json
+29 passed in 5.95s
+EXIT_CODE=0

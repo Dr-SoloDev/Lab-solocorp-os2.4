@@ -1,0 +1,9 @@
+[11/23/26 14:42:53] INFO     Processing request of type            server.py:733
+                             ListToolsRequest                                   
+                    INFO     Processing request of type            server.py:733
+                             CallToolRequest                                    
+TOOLS: ['axis_status']
+SCHEMA: axis.status/1 SOURCES: 7
+OVERALL: {'status': 'down', 'score': 63, 'color': 'red'}
+IDS: ['busd', 'cto', 'content', 'mcp_freshness', 'git', 'browse', 'codegraph']
+IS_ERROR: False
