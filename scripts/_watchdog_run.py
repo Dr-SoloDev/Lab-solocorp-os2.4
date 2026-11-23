@@ -1,11 +1,13 @@
 """Watchdog cron — ตรวจสุขภาพระบบทุก 5 นาที
 
-ตรวจ 4 อย่าง:
+ตรวจ 5 อย่าง:
   1. ประมวลผลข้อความในคิว (watchdog_loop)
   2. dead letters (ข้อความตายจริง)
   3. orphaned messages — ข้อความที่ค้างและไม่มีใครจะมารับ (กันตายเงียบ)
   4. LLM model health — โมเดลใน fallback chain ยังมีอยู่จริงไหม
      (ถ้าหาย → agent 19 ตัวจะ "ตาบอด" โดยไม่มี error ชัดเจน)
+  5. auto-triage — routed ค้าง >24h = alert / >7d = mark failed
+     (default = report-only; เปิดเขียนจริงด้วย SOLOCORP_WATCHDOG_TRIAGE_APPLY=1)
 """
 import json
 import os
@@ -19,9 +21,15 @@ from central_bus.monitor_watchdog import (
     check_orphaned_messages,
     check_model_health,
 )
+from central_bus.watchdog_triage import format_report, run_triage
 
 BUS_URL = os.environ.get("SOLOCORP_BUS_URL", "http://127.0.0.1:8099")
 API_KEY = os.environ.get("SOLOCORP_API_KEY", "sk-solocorp-admin-local-dev-001")
+
+# ── Auto-triage mode (Wave 3) ─────────────────────────────────────────
+# Owner rollout plan: ดู report ก่อน 1 สัปดาห์ → รอบนี้ default = report-only
+# ห้ามแก้ crontab เพื่อเปิด apply; ใช้ env ตอนสั่งรันเท่านั้น
+TRIAGE_APPLY = os.environ.get("SOLOCORP_WATCHDOG_TRIAGE_APPLY", "0") == "1"
 
 
 def _report_to_ceo(summary: str, details: dict, status: str = "failed") -> bool:
@@ -54,6 +62,7 @@ processed = watchdog_loop(max_iterations=5)
 stuck = check_dead_letters()
 orphans = check_orphaned_messages()
 models = check_model_health()
+triage = run_triage(apply=TRIAGE_APPLY)
 
 if processed > 0:
     print(f"[OK] Watchdog processed {processed} messages")
@@ -75,6 +84,18 @@ if orphans:
     print("[WARN] แก้: ตั้ง target_agent ให้เป็น agent_id ที่ลงทะเบียน "
           "(ดู workers/agent_worker_service.py AGENT_IDS) หรือล้างด้วย "
           "scripts/purge-stale-queue.py")
+
+# ── Auto-triage: routed stale >24h → alert / >7d → failed (Wave 3) ────
+if triage.error:
+    failed = True
+    print(f"[WARN] auto-triage ตรวจไม่ได้: {triage.error}")
+elif triage.has_candidates:
+    failed = True  # ให้ cron log เห็นเป็น error → เห็นง่ายขึ้น
+    print(format_report(triage))
+    if not TRIAGE_APPLY:
+        print("[INFO] auto-triage = report-only — ยังไม่เขียนอะไร "
+              "(เปิดเขียนจริงด้วย SOLOCORP_WATCHDOG_TRIAGE_APPLY=1 "
+              "หลัง Owner ดู report ครบ 1 สัปดาห์)")
 
 # ── LLM model health ──────────────────────────────────────────────────
 if models.get("skipped"):
