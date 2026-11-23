@@ -4,7 +4,7 @@
 > **PR:** [#44](https://github.com/Dr-SoloDev/Lab-solocorp-os2.4/pull/44) — open, not merged
 > **Scope:** routing SSoT sync + keyword adapter + drift health + live seed
 > **Status:** implemented + tested + seeded; **PR open, not merged**; maker ≠ checker (`@pipeline-auditor`)
-> **Revised 2026-11-23 per checker audit:** ADR-040 §Audit revision — corrected matrix count (11/11), mirror precedence (all `mirror …` → `ceo`), Wave-2 scope (`behavior_migration` → Wave 4), version wording. Measured tables below are unchanged; §7 items 3 and 5 were rewritten.
+> **Revised 2026-11-23 per checker audit:** ADR-040 §Audit revision — corrected matrix count (11/11), mirror precedence (single-phrase `mirror …` → `ceo`; ≥2 phrases of one rule still win), Wave-2 scope (`behavior_migration` → Wave 4), version wording. Measured tables below are unchanged; §7 items 3 and 5 were rewritten. **Checker round 2:** §7 item 5 re-corrected (the "at most 1 hit in every case" wording was false in general).
 
 ---
 
@@ -94,10 +94,11 @@ New tests (`central_bus/tests/test_routing_ssot.py`): transform 22, dry-run no-w
 2. `rules_in_sync` / `oldest_routed_age_seconds` are proven by tests on the new code; they are not yet present on the live endpoint because (1) applies.
 3. `schema_migrations` has two shapes on this host (`name` in repo schema, `version` in live DB). The sync supports both; `behavior_migration` still queries `name` and would fail on the legacy DB — **deferred to Wave 4** by CEO decision (2026-11-23); latent, no code caller.
 4. SSoT keyword hygiene gaps found but intentionally not changed: `"orchestrat"` cannot match `"orchestrate"` under word-boundary matching; `"pipeline deal"` is an unlikely phrase. Requires a Wave 1.1 SSoT edit + matrix update.
-5. **Mirror precedence (corrected after audit — measured, not assumed).** Every `mirror …` payload routes to **`ceo`**, not to the specific mirror department. `r_mirror_ceo` carries the bare keyword `"mirror"` + `critical` priority (100); each specific mirror rule (`r_mirror_coo` / `r_mirror_architect` / `r_mirror_cfo` / `r_mirror_eng`) uses disjoint phrases and can score at most 1 hit, so every case ties at 1 and `ceo` wins the tie.
-   - **Pre-existing:** legacy `route()` never selected the specific mirror rules either — its tie-break was *file order*, so the earlier broad `r_to_*` rule won instead. The limitation is not introduced by this PR.
-   - **Changed by Wave 1:** the tie-break is now priority DESC, so the destination moved to `ceo`. Measured on a consistent DB copy (8 payloads): `mirror budget`, `mirror budget review`, `mirror code refactor`, `mirror architecture pipeline`, `mirror finance risk`, `mirror ops daily`, `mirror design review`, `mirror quality check` → `ceo` ×8; legacy `route()` → `cfo, cfo, engineering, architect, cfo, coo, design, qa`.
-   - **Fix = Wave 1.1 ticket** (precedence/keyword): adding more specific keywords is not enough while the bare `"mirror"` + `critical` tie-break swallows them.
+5. **Mirror precedence (corrected 2026-11-23, checker round 2 — measured, not assumed).** Single-phrase `mirror …` payloads (1 hit) tie and **`ceo`** wins: `r_mirror_ceo` carries the bare keyword `"mirror"` + `critical` priority (100), while each specific mirror rule (`r_mirror_coo` / `r_mirror_architect` / `r_mirror_cfo` / `r_mirror_eng`) uses disjoint phrases, so a payload containing one phrase scores 1 hit and ties — every single-phrase case goes to `ceo`.
+   - **Not "dead" in general:** a payload with **≥2 phrases of the same specific rule** still wins — measured on the DB copy: `mirror finance and mirror risk` → **`cfo`** (r_mirror_cfo 2 hits), `mirror ops and mirror daily` → **`coo`** (r_mirror_coo 2 hits), `mirror code and mirror quality` → **`engineering`** (r_mirror_eng 2 hits); legacy `route()` gives the same three (`cfo, coo, engineering`).
+   - **Pre-existing:** legacy `route()` tie in the single-phrase case was *file order*, so the earlier broad `r_to_*` rule won instead of the specific mirror rule (8/8 payloads). The limitation is not introduced by this PR.
+   - **Changed by Wave 1:** the tie-break is now priority DESC, so single-phrase cases moved to `ceo`. Measured on a consistent DB copy (8 payloads): `mirror budget`, `mirror budget review`, `mirror code refactor`, `mirror architecture pipeline`, `mirror finance risk`, `mirror ops daily`, `mirror design review`, `mirror quality check` → `ceo` ×8; legacy `route()` → `cfo, cfo, engineering, architect, cfo, coo, design, qa`.
+   - **Fix = Wave 1.1 ticket** (precedence/keyword): adding more specific keywords is not enough while the bare `"mirror"` + `critical` tie-break swallows 1-hit ties.
 
 ## 8. Files
 

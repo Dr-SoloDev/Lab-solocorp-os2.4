@@ -1,7 +1,7 @@
 # ADR-040: Single Source of Truth + Drift Gates (routing · version · config · runtime)
 
 **วันที่:** 2026-11-23
-**สถานะ:** Accepted (Owner อนุมัติ Option B, 2026-11-23) — Wave 1 implemented on `feat/wave1-routing-ssot`; checker (`@pipeline-auditor`) **PASS (conditional)** 2026-11-23 — ADR ฉบับนี้ถูกแก้ตาม audit 4 จุด (matrix count, mirror precedence, Wave-2 scope, version-literal wording) ดู §Audit revision
+**สถานะ:** Accepted (Owner อนุมัติ Option B, 2026-11-23) — Wave 1 implemented on `feat/wave1-routing-ssot`; checker (`@pipeline-auditor`) **PASS (conditional)** 2026-11-23 — ADR ฉบับนี้ถูกแก้ตาม audit 4 จุด (matrix count, mirror precedence, Wave-2 scope, version-literal wording) ดู §Audit revision; ถ้อยคำ mirror ถูกแก้ซ้ำใน checker รอบ 2 (follow-up ท้าย §Audit revision)
 **เกี่ยวกับ:** ADR-002 (Two-Tier) · ADR-016 (Behavior routing) · ADR-017 (route_v2 signal gate) · ADR-021 (model health) · Incident pattern: "connected ≠ current", "migration never ran"
 
 > **เลข ADR:** ใบงานขอ `ADR-033` แต่ `ADR-033-axis-concerns-acceptance.md` ถูกใช้แล้ว (และลำดับปัจจุบันถึง ADR-039) — จึงออกเลขถัดไป **ADR-040** และไม่แตะ ADR เดิม
@@ -98,10 +98,11 @@ Routing มี "สองที่ที่อ้างว่าเป็นค�
 **ความเสี่ยงที่บันทึกไว้ (ยังไม่แก้)**
 - **Live process ใช้โค้ดเก่า**: seed แล้ว health เห็น 22 แต่ keyword routing ใน busd ยังเป็นพฤติกรรมเดิมจนกว่าจะ deploy + restart — ห้ามรายงานว่า "live routing ใช้งานได้แล้ว" ก่อนมีหลักฐานหลัง restart
 - **SSoT keyword บางตัวตายตั้งแต่ต้น**: เช่น `"orchestrat"` (prefix) ไม่ match `"orchestrate"` ภายใต้ word boundary, `"pipeline deal"` เป็น phrase ที่ไม่เกิดจริง → ต้องมี Wave 1.1 keyword hygiene (แก้ที่ SSoT + semantic matrix)
-- **`mirror` rules เฉพาะทางใช้งานไม่ได้จริง (pre-existing) และ Wave 1 เปลี่ยนปลายทางเป็น `ceo`** — ตัวอย่างที่ถูกต้อง: `"mirror budget"` → **`ceo`** (ไม่ใช่ `cfo`) เพราะ `r_mirror_ceo` มี keyword เดี่ยว `"mirror"` + priority `critical` (100) ขณะที่ keyword ของ `r_mirror_coo` / `r_mirror_architect` / `r_mirror_cfo` / `r_mirror_eng` เป็น phrase ที่แยกจากกัน (ได้มากสุด 1 hit ต่อ payload) → **เสมอกันที่ 1 hit ทุกกรณี**
-  - **Pre-existing (ไม่ใช่ regression ของ PR นี้):** legacy `route()` ก็ไม่เคยเลือก rule mirror เฉพาะทางเลย — tie ของ legacy คือ "ลำดับในไฟล์" → rule แผนกกว้างที่อยู่ก่อน (`r_to_cfo` ฯลฯ) ชนะ ไม่ใช่ `r_mirror_cfo`
-  - **สิ่งที่เปลี่ยนใน Wave 1:** tie-break เป็น priority DESC → `r_mirror_ceo` (critical) ชนะทุก tie → `mirror …` ทุก payload ไป `ceo` (วัดจริงบน DB copy 2026-11-23: `mirror budget`, `mirror budget review`, `mirror code refactor`, `mirror architecture pipeline`, `mirror finance risk`, `mirror ops daily`, `mirror design review`, `mirror quality check` → `ceo` **ทั้ง 8**; legacy `route()` เดิมให้ `cfo, cfo, engineering, architect, cfo, coo, design, qa`)
-  - **Wave 1.1 ticket ต้องแก้ precedence/keyword** — ไม่ใช่แค่เพิ่ม keyword เฉพาะทาง เพราะ keyword เดี่ยว `"mirror"` + `critical` จะกลืนทุก rule ที่เสมอกัน; ทางเลือกคือถอด `"mirror"` เดี่ยวออกจาก `r_mirror_ceo` หรือทำ mirror precedence เป็นชั้นแยก (ตัดสินเป็น ADR)
+- **`r_mirror_*` แพ้ tie เมื่อได้ 1 hit (pre-existing) และ Wave 1 เปลี่ยนปลายทางของเคส single-phrase เป็น `ceo`** — ตัวอย่าง: `"mirror budget"` → **`ceo`** (ไม่ใช่ `cfo`) เพราะ `r_mirror_ceo` มี keyword เดี่ยว `"mirror"` + priority `critical` (100) ขณะที่ keyword ของ `r_mirror_coo` / `r_mirror_architect` / `r_mirror_cfo` / `r_mirror_eng` เป็น phrase ที่แยกจากกัน → payload ที่มี phrase เดียวได้ 1 hit → เสมอ → `ceo` ชนะ tie
+  - **ไม่ใช่ "ตายทั้งหมด":** payload ที่มี **≥2 phrase ของ rule เดียวกัน** ยังชนะจริง — วัดบน DB copy 2026-11-23: `"mirror finance and mirror risk"` → **`cfo`** (r_mirror_cfo 2 hits), `"mirror ops and mirror daily"` → **`coo`** (r_mirror_coo 2 hits), `"mirror code and mirror quality"` → **`engineering`** (r_mirror_eng 2 hits); legacy `route()` ให้ผลเดียวกัน (`cfo, coo, engineering`)
+  - **Pre-existing (ไม่ใช่ regression ของ PR นี้):** legacy tie ของเคส single-phrase = "ลำดับในไฟล์" → rule แผนกกว้างที่อยู่ก่อน (`r_to_cfo` ฯลฯ) ชนะ ไม่ใช่ `r_mirror_cfo` (วัด 8/8 payloads ด้านล่าง)
+  - **สิ่งที่เปลี่ยนใน Wave 1:** tie-break เป็น priority DESC → `r_mirror_ceo` (critical) ชนะ tie ในเคส single-phrase → payload 8 ตัวด้านล่างไป `ceo` ทั้งหมด (วัดจริงบน DB copy 2026-11-23: `mirror budget`, `mirror budget review`, `mirror code refactor`, `mirror architecture pipeline`, `mirror finance risk`, `mirror ops daily`, `mirror design review`, `mirror quality check` → `ceo` **ทั้ง 8**; legacy `route()` เดิมให้ `cfo, cfo, engineering, architect, cfo, coo, design, qa`)
+  - **Wave 1.1 ticket ต้องแก้ precedence/keyword** — ไม่ใช่แค่เพิ่ม keyword เฉพาะทาง เพราะ keyword เดี่ยว `"mirror"` + `critical` จะกลืน rule ที่เสมอที่ 1 hit; ทางเลือกคือถอด `"mirror"` เดี่ยวออกจาก `r_mirror_ceo` หรือทำ mirror precedence เป็นชั้นแยก (ตัดสินเป็น ADR)
 - **`behavior_migration` กับ `schema_migrations` legacy**: query `WHERE name = ?` (และ `INSERT … (id, name, …)`) จะพังบน live DB ที่ใช้คอลัมน์ `version` (`no such column: name`) — **latent: ไม่มี caller ในโค้ด** (มีแต่ docs ที่สั่งรันมือ) และไม่อยู่ในเส้นทาง routing; CEO ตัดสิน 2026-11-23: **defer → Wave 4** (ไม่ใช่ Wave 2)
 
 ## Rollout
@@ -122,7 +123,7 @@ Routing มี "สองที่ที่อ้างว่าเป็นค�
 - ไม่แตะ `opencode.jsonc`, campaigns, frozen v5, ไม่ kill process ใด ๆ
 - ไม่ลบ rule/แถวใด ๆ (seed เท่านั้น) — rollback ระบุเป็น id list
 - ไม่ wire `BehaviorRouter` (แยกการตัดสิน; ADR-017 ยัง governs signal gate)
-- ไม่แก้ keyword ของ SSoT (Wave 1.1 — รวม mirror precedence ที่ทำให้ `r_mirror_*` เฉพาะทางใช้งานไม่ได้)
+- ไม่แก้ keyword ของ SSoT (Wave 1.1 — รวม mirror precedence ที่ทำให้ `r_mirror_*` เฉพาะทางแพ้ tie เมื่อได้ 1 hit)
 - ไม่ merge เอง — maker ≠ checker
 
 ## Audit revision (2026-11-23)
@@ -132,11 +133,13 @@ Checker (`@pipeline-auditor`) **PASS (conditional)** — แก้เอกส�
 | # | จุดที่แก้ | ก่อน | หลัง | หลักฐาน |
 |:-:|:---------|:-----|:-----|:--------|
 | 1 | matrix count | `10/10` | **`11/11`** (10 payloads + fallback) | `bus/evidence/2026-11-23/wave1-routing-ssot/matrix-live.json` → `passed: 11, total: 11` |
-| 2 | mirror ตัวอย่าง | `"mirror budget"` → cfo 2 hits ชนะ `mirror_cfo` 1 hit | `"mirror budget"` → **`ceo`**; `r_mirror_coo/architect/cfo/eng` ใช้งานไม่ได้จริง; limitation มีมาก่อน + ยกไป Wave 1.1 | รัน engine บน DB copy: mirror 8/8 payloads → `ceo`; legacy `route()` → `cfo, cfo, engineering, architect, cfo, coo, design, qa` |
+| 2 | mirror ตัวอย่าง | `"mirror budget"` → cfo 2 hits ชนะ `mirror_cfo` 1 hit | `"mirror budget"` → **`ceo`**; `r_mirror_*` แพ้ tie เมื่อได้ 1 hit; **ยังชนะได้เมื่อได้ ≥2 hits** (วัด: `cfo`/`coo`/`engineering`, legacy ผลเดียวกัน); limitation มีมาก่อน + ยกไป Wave 1.1 | รัน engine บน DB copy: single-phrase 8/8 → `ceo`; 2-phrase payloads → `cfo, coo, engineering` (legacy เท่ากัน); legacy single-phrase → `cfo, cfo, engineering, architect, cfo, coo, design, qa` |
 | 3 | Wave-2 scope | `schema_migrations` shape รวมใน Wave 2 | Wave 2 = version SSoT เท่านั้น; `routing_sync` รองรับ shape แล้วใน #44; `behavior_migration` compat → **Wave 4** (latent, ไม่มี caller) | `central_bus/behavior_migration.py` (`WHERE name`, `INSERT (id,name,…)`); live DB columns = `version, description, checksum, applied_at`; branch `feat/wave2-ssot-config` ไม่แตะไฟล์นี้ |
 | 4 | version wording | "version ต้องมาจากที่เดียว" (กว้างเกิน) | "**service-version literal เดียวในโค้ด**"; `bus_version = ">=0.6.0"` ใน `skill.toml` = dependency constraint ไม่นับ | `skills/@axis/**/skill.toml` |
 
 Revision นี้แก้ **เอกสารเท่านั้น** — ไม่แตะโค้ด/tests/`health.py`
+
+> **Follow-up (2026-11-23, checker รอบ 2):** ข้อ 2 ฉบับแรก overclaim — "ได้มากสุด 1 hit ต่อ payload / เสมอกันที่ 1 hit ทุกกรณี" และ "legacy ไม่เคยเลือก rule mirror เฉพาะทางเลย" **ไม่จริงในกรณีทั่วไป**. วัดซ้ำบน DB copy: `"mirror finance and mirror risk"` → `cfo` (2 hits), `"mirror ops and mirror daily"` → `coo` (2 hits), `"mirror code and mirror quality"` → `engineering` (2 hits) — legacy `route()` ให้ผลเดียวกัน. แก้ถ้อยคำใน §ความเสี่ยง, §Non-goals และแถว 2 ของตารางนี้แล้ว; **ไม่แตะโค้ด/tests**
 
 ## References
 
