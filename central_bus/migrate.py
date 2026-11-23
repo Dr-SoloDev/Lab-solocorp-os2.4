@@ -39,6 +39,7 @@ from pathlib import Path
 from typing import Any
 
 from central_bus.db import DbManager, new_id, now_iso
+from central_bus.routing_sync import sync_rules
 
 log = logging.getLogger(__name__)
 
@@ -123,28 +124,6 @@ def _transform_dead_letter_entry(
         "failed_at": entry.get("moved_at", now_iso()),
         "resolved": 0,
     }
-
-
-def _transform_routing_rule(
-    rule_id: str, rule: dict
-) -> dict[str, Any]:
-    """Transform a routing_rules.json entry to SQLite routing_rules row."""
-    return {
-        "id": new_id(),
-        "name": rule.get("name", rule_id),
-        "description": rule.get("description", ""),
-        "source_agent": ".*",  # default: match all
-        "target_department": rule.get("route_to", "ceo"),
-        "condition": json.dumps(rule.get("trigger", {}), ensure_ascii=False),
-        "priority": _priority_to_int(rule.get("priority", "normal")),
-        "enabled": 1,
-        "created_at": now_iso(),
-        "updated_at": now_iso(),
-    }
-
-
-def _priority_to_int(priority: str) -> int:
-    return {"critical": 100, "high": 50, "normal": 10, "low": 0}.get(priority, 10)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -234,23 +213,15 @@ class MigrationEngine:
         rules = _read_json(RULES_PATH)
         rule_list = rules.get("rules", [])
         log.info("Routing rules: %d rules", len(rule_list))
-        for i, rule in enumerate(rule_list):
-            row = _transform_routing_rule(f"rule_{i}", rule)
-            if not self.dry_run:
-                await self._db.execute(
-                    """
-                    INSERT INTO routing_rules
-                        (id, name, description, source_agent, target_department,
-                         condition, priority, enabled, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    tuple(row[k] for k in [
-                        "id", "name", "description", "source_agent",
-                        "target_department", "condition", "priority", "enabled",
-                        "created_at", "updated_at",
-                    ]),
-                )
-            self.stats["rules"] += 1
+        # ADR-040 Wave 1: delegate to the SSoT sync — stable ids (rule_id),
+        # idempotent upsert, migration record. Re-running this legacy script
+        # must never duplicate rules with fresh random ids.
+        result = await sync_rules(
+            self._db,
+            rules_path=RULES_PATH,
+            dry_run=self.dry_run,
+        )
+        self.stats["rules"] = result.json_count
 
     # ── Verification ─────────────────────────────────────────────
 
@@ -362,7 +333,7 @@ async def _main() -> None:
     )
 
     db = DbManager()
-    await db.initialize()
+    await db.init()
 
     engine = MigrationEngine(db, dry_run=args.dry_run)
     success = await engine.run()

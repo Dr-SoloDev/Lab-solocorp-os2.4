@@ -1,0 +1,1 @@
+1252 /home/drsolodev/projects/Lab-solocorp-os2.4/.venv/bin/python -m uvicorn central_bus.main:app --host 127.0.0.1 --port 8099

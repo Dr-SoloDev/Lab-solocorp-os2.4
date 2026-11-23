@@ -1,0 +1,2 @@
+    PID                  STARTED ELAPSED CMD
+   1252 Mon Nov 23 07:18:22 2026    2726 /home/drsolodev/projects/Lab-solocorp-os2.4/.venv/bin/python -m uvicorn central_bus.main:app --host 127.0.0.1 --port 8099

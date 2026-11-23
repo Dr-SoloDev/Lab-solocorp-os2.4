@@ -1,0 +1,14 @@
+{
+  "db_path": "/data/projects/Lab-solocorp-os2.4/central_bus/bus.db",
+  "routing_rules_total": 0,
+  "routing_rules_enabled": 0,
+  "ids": [],
+  "schema_migrations": [
+    {
+      "version": "001-behavior-taxonomy",
+      "description": "Seed 26 behaviors + route mappings (ADR-016)",
+      "checksum": "1e6cf0d76bcf808f",
+      "applied_at": "2026-07-19 23:57:34"
+    }
+  ]
+}

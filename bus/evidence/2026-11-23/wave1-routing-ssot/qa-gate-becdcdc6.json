@@ -1,0 +1,15 @@
+{
+  "event_id": "qa-gate-becdcdc6",
+  "event_type": "QA_GATE",
+  "project_id": "auto-qa-pipeline",
+  "timestamp": "2026-11-23T01:03:16.929171+00:00",
+  "gate_version": "v1.0",
+  "threshold": 9,
+  "coverage_percent": 76.02173913043478,
+  "passed": false,
+  "tests_returncode": 1,
+  "tests_passed": "FAILED",
+  "evidence_type": "auto_qa_gate",
+  "trace_id": "becdcdc6543c",
+  "test_summary": "central_bus/semantic.py                            93     12    87%\ncentral_bus/skills_router.py                      136    103    24%\ncentral_bus/state.py                              238     29    88%\ncentral_bus/tests/__init__.py                       0      0   100%\ncentral_bus/tests/conftest.py                       0      0   100%\ncentral_bus/tests/test_ab_test.py                  80      0   100%\ncentral_bus/tests/test_behavior_classifier.py     278      0   100%\ncentral_bus/tests/test_bus_tags.py                 50      0   100%\ncentral_bus/tests/test_facts.py                    83      0   100%\ncentral_bus/tests/test_integration.py             185      0   100%\ncentral_bus/tests/test_queue.py                   146      0   100%\ncentral_bus/tests/test_router.py                  222      0   100%\ncentral_bus/tests/test_routing_ssot.py            166      0   100%\ncentral_bus/webhook_receiver.py                    83     64    23%\n-------------------------------------------------------------------\nTOTAL                                            4600   1103    76%\nCoverage JSON written to file .coverage.json\n=========================== short test summary info ============================\nFAILED tests/test_solocorp_app_live.py::test_live_payload_has_no_secrets - as...\n= 1 failed, 1409 passed, 1 skipped, 3 deselected, 123 warnings in 83.28s (0:01:23) ="
+}

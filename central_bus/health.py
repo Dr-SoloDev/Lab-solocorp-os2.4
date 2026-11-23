@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from central_bus.facts import FactsService
 from central_bus.queue import SQLiteQueueManager
 from central_bus.router import RoutingEngine
+from central_bus.routing_sync import routing_sync_status
 
 log = logging.getLogger(__name__)
 
@@ -42,6 +43,11 @@ async def get_health(
         dead_count = await qm.count_dead_letters()
         facts_count = await facts_service.count_facts()
         rules_count = await engine.count_rules()
+        # ADR-040 Wave 1 — drift visibility. Direct DB count (not the engine's
+        # 60s cache) so a freshly seeded DB is visible without a restart.
+        routing_status = await routing_sync_status(db)
+        db_rules_count = routing_status["db_rules"]
+        oldest_routed = await qm.oldest_routed_age_seconds()
         uptime = int(time.time() - started_at)
 
         # Degraded status if dead letters exist
@@ -55,7 +61,11 @@ async def get_health(
                 "queue_dead": dead_count,
             },
             "facts_count": facts_count,
-            "routing_rules": rules_count,
+            "routing_rules": db_rules_count if db_rules_count is not None else rules_count,
+            "routing_rules_cached": rules_count,
+            "rules_in_sync": routing_status["rules_in_sync"],
+            "routing_json_rules": routing_status["json_rules"],
+            "oldest_routed_age_seconds": oldest_routed,
             "loops_active": 0,  # placeholder — injected by orchestrator
             "uptime_seconds": uptime,
             "version": VERSION,

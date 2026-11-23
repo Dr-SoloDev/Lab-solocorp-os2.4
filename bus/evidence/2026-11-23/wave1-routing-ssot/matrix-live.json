@@ -1,0 +1,74 @@
+{
+  "db_path": "/data/projects/Lab-solocorp-os2.4/central_bus/bus.db",
+  "rules_cached": 22,
+  "cases": [
+    {
+      "payload": "review the quarterly budget and cost report",
+      "expected": "cfo",
+      "actual": "cfo",
+      "pass": true
+    },
+    {
+      "payload": "deploy the backend api hotfix",
+      "expected": "engineering",
+      "actual": "engineering",
+      "pass": true
+    },
+    {
+      "payload": "run regression test suite for quality",
+      "expected": "qa",
+      "actual": "qa",
+      "pass": true
+    },
+    {
+      "payload": "our solana smart contract needs an audit",
+      "expected": "web3",
+      "actual": "web3",
+      "pass": true
+    },
+    {
+      "payload": "customer support ticket escalation",
+      "expected": "support",
+      "actual": "support",
+      "pass": true
+    },
+    {
+      "payload": "GDPR compliance review for the contract",
+      "expected": "legal",
+      "actual": "legal",
+      "pass": true
+    },
+    {
+      "payload": "marketing content plan for the brand",
+      "expected": "cmo",
+      "actual": "cmo",
+      "pass": true
+    },
+    {
+      "payload": "fix a bug in the server",
+      "expected": "engineering",
+      "actual": "engineering",
+      "pass": true
+    },
+    {
+      "payload": "daily ops routine admin",
+      "expected": "coo",
+      "actual": "coo",
+      "pass": true
+    },
+    {
+      "payload": "ช่วยดูเรื่องการเงินกับงบประมาณให้หน่อย",
+      "expected": "cfo",
+      "actual": "cfo",
+      "pass": true
+    },
+    {
+      "payload": "hello there, nice weather today",
+      "expected": "coo",
+      "actual": "coo",
+      "pass": true
+    }
+  ],
+  "passed": 11,
+  "total": 11
+}
