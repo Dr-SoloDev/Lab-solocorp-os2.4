@@ -283,8 +283,12 @@ class DbManager:
         self._conn: aiosqlite.Connection | None = None
 
     # ── Lifecycle ──────────────────────────────────────────────────
-    async def init(self) -> None:
-        """Open the connection, enable WAL / foreign_keys, create schema."""
+    async def init(self, *, init_schema: bool = True) -> None:
+        """Open the connection, enable WAL / foreign_keys, create schema.
+
+        ``init_schema=False`` is for tooling that must touch an existing DB
+        without running ``SCHEMA_SQL`` (e.g. seeding a live daemon DB).
+        """
         if self._conn is not None:
             return  # already initialised
 
@@ -297,10 +301,10 @@ class DbManager:
         await self._conn.execute("PRAGMA foreign_keys=ON;")
         await self._conn.execute("PRAGMA busy_timeout=5000;")
 
-        await self._conn.executescript(SCHEMA_SQL)
-        await self._conn.commit()
-
-        log.info("SQLite schema ready — WAL mode active")
+        if init_schema:
+            await self._conn.executescript(SCHEMA_SQL)
+            await self._conn.commit()
+            log.info("SQLite schema ready — WAL mode active")
 
     async def close(self) -> None:
         if self._conn is not None:

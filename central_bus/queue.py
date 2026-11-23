@@ -41,6 +41,25 @@ COMPACT_THRESHOLD = 100
 USE_SQLITE = settings.use_sqlite
 
 
+def _parse_sqlite_timestamp(raw: str) -> Optional[datetime]:
+    """Parse an ISO-8601 or SQLite ``datetime('now')`` timestamp as UTC."""
+    value = (raw or "").strip()
+    if not value:
+        return None
+    if value.endswith("Z"):
+        value = value[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError:
+        try:
+            parsed = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # Existing JSONL functions — preserved for backward compat
 # ═══════════════════════════════════════════════════════════════════════
@@ -298,6 +317,25 @@ class SQLiteQueueManager:
             "SELECT COUNT(*) AS cnt FROM queue WHERE status = 'failed'"
         )
         return row["cnt"] if row else 0
+
+    async def oldest_routed_age_seconds(self) -> Optional[float]:
+        """Age in seconds of the oldest message still in status='routed'.
+
+        ``routed`` means "assigned to a department but not picked up yet", so
+        this is the backlog-age signal used by ``/v1/health`` (ADR-040).
+        Returns ``None`` when no message is waiting in ``routed``.
+        """
+        row = await self._db.fetch_one(
+            "SELECT MIN(updated_at) AS oldest FROM queue WHERE status = 'routed'"
+        )
+        oldest = row["oldest"] if row else None
+        if not oldest:
+            return None
+        parsed = _parse_sqlite_timestamp(str(oldest))
+        if parsed is None:
+            return None
+        age = (datetime.now(timezone.utc) - parsed).total_seconds()
+        return round(max(0.0, age), 3)
 
     # ── Update status / retry ────────────────────────────────────────
 
