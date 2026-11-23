@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-11-23T00:59:36.078438+00:00",
+  "db_path": "/data/projects/Lab-solocorp-os2.4/central_bus/bus.db",
+  "mode": "dry-run",
+  "policy": {
+    "alert_after_hours": 24,
+    "fail_after_hours": 168,
+    "statuses": [
+      "routed"
+    ]
+  },
+  "checked": 0,
+  "alert_count": 0,
+  "fail_count": 0,
+  "changed": 0,
+  "alerts_written": 0,
+  "items": [],
+  "error": null
+}

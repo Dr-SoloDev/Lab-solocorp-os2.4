@@ -71,6 +71,22 @@ def _matches(keyword: str, text: str) -> bool:
     return bool(re.search(r"\b" + re.escape(keyword) + r"\b", text))
 
 
+def _keyword_matches(keyword: str, text: str) -> bool:
+    """Match one SSoT keyword against lower-cased text.
+
+    ASCII keywords use word boundaries (same behaviour as the JSONL path).
+    Thai keywords use plain substring matching: ``\\b`` is meaningful only
+    for ASCII word characters, so boundary matching would make every Thai
+    keyword in the SSoT silently dead.
+    """
+    kw = keyword.strip().lower()
+    if not kw:
+        return False
+    if _has_thai(kw):
+        return kw in text
+    return bool(re.search(r"\b" + re.escape(kw) + r"\b", text))
+
+
 # ── Governance event routing ────────────────────────────────────────
 
 
@@ -195,14 +211,51 @@ class RoutingEngine:
         if self._cache and (now - self._last_refresh) < self._ttl:
             return self._cache
         rows = await self._db.fetch_all(
-            "SELECT * FROM routing_rules WHERE enabled = 1 ORDER BY priority DESC"
+            "SELECT *, rowid AS _rowid FROM routing_rules WHERE enabled = 1"
         )
-        self._cache = [dict(r) for r in rows]
+        rules: list[dict[str, Any]] = []
+        for row in rows:
+            rule = dict(row)
+            rule["_condition"] = self._parse_condition(
+                rule.get("condition"), rule.get("id")
+            )
+            rules.append(rule)
+        rules.sort(key=self._rule_order)
+        self._cache = rules
         self._last_refresh = now
         return self._cache
 
     async def invalidate_cache(self) -> None:
         self._last_refresh = 0.0
+
+    @staticmethod
+    def _parse_condition(raw: Any, rule_id: Any = None) -> Optional[dict[str, Any]]:
+        """Parse a rule's condition; ``None`` means an unconditional legacy rule."""
+        if not raw:
+            return None
+        try:
+            parsed = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            log.warning("Invalid condition JSON for rule %s", rule_id)
+            return None
+        return parsed if isinstance(parsed, dict) else None
+
+    @staticmethod
+    def _rule_order(rule: dict[str, Any]) -> tuple[int, int, int]:
+        """Deterministic order: priority DESC, SSoT file order, then rowid."""
+        condition = rule.get("_condition") or {}
+        seq = condition.get("_seq") if isinstance(condition, dict) else None
+        return (
+            -int(rule.get("priority") or 0),
+            seq if isinstance(seq, int) else 1_000_000,
+            int(rule.get("_rowid") or 0),
+        )
+
+    @staticmethod
+    def _payload_text(payload: dict[str, Any]) -> str:
+        """Lower-cased searchable text from payload values (JSONL parity)."""
+        parts = [str(value) for value in payload.values() if value is not None]
+        return " ".join(parts).lower()
 
     async def match(
         self,
@@ -211,20 +264,50 @@ class RoutingEngine:
         *,
         fallback_department: str = "ceo",
     ) -> str:
+        """Match a payload to a department.
+
+        Two rule shapes are supported:
+
+        * **keyword rules** (the SSoT shape, ``{"keywords": [...]}``):
+          the rule with the most keyword hits wins; ties fall back to
+          priority DESC then SSoT file order. A rule with
+          ``keywords: []`` and ``is_fallback: true`` is used only when no
+          keyword matches. This mirrors ``route()``'s "specific beats broad"
+          behaviour and makes Thai keywords work.
+        * **legacy field rules** (``field``/``equals``/``contains``/``exists``/
+          ``and``/``or``): first match in priority order wins, unchanged.
+        """
         rules = await self._load_rules()
+        text = self._payload_text(payload)
+        best_rule: Optional[dict[str, Any]] = None
+        best_hits = 0
+        fallback_rule: Optional[dict[str, Any]] = None
+
         for rule in rules:
-            agent_pattern = rule.get("source_agent", "")
-            if agent_pattern and not re.search(agent_pattern, source_agent):
+            agent_pattern = rule.get("source_agent") or ""
+            if agent_pattern and not re.search(agent_pattern, source_agent or ""):
                 continue
-            condition_str = rule.get("condition")
-            if condition_str:
-                try:
-                    condition = json.loads(condition_str)
-                    if not self._evaluate_condition(condition, payload):
-                        continue
-                except (json.JSONDecodeError, TypeError):
-                    log.warning("Invalid condition JSON for rule %s", rule.get("id"))
-            return rule.get("target_department", fallback_department)
+            condition = rule.get("_condition")
+            if condition is None:
+                # Legacy unconditional rule — preserved behaviour: first wins.
+                return rule.get("target_department", fallback_department)
+            if "keywords" in condition:
+                keywords = condition.get("keywords") or []
+                if not keywords:
+                    if condition.get("is_fallback"):
+                        fallback_rule = rule
+                    continue
+                hits = sum(1 for kw in keywords if _keyword_matches(str(kw), text))
+                if hits > best_hits:
+                    best_rule, best_hits = rule, hits
+                continue
+            if self._evaluate_condition(condition, payload):
+                return rule.get("target_department", fallback_department)
+
+        if best_rule is not None:
+            return best_rule.get("target_department", fallback_department)
+        if fallback_rule is not None:
+            return fallback_rule.get("target_department", fallback_department)
         return fallback_department
 
     async def count_rules(self) -> int:

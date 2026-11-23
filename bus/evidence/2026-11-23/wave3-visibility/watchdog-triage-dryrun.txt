@@ -1,0 +1,5 @@
+watchdog-triage [DRY-RUN (report only)] — 2026-11-23T00:59:35.553229+00:00
+DB: /data/projects/Lab-solocorp-os2.4/central_bus/bus.db
+Policy: routed > 24h → alert · > 7d → fail · statuses=routed
+ตรวจ 0 แถว · alert 0 · fail 0 · เปลี่ยนสถานะ 0 · เขียน alert 0
+  ✅ ไม่มีข้อความ routed ค้างเกินเกณฑ์
