@@ -1,0 +1,21 @@
+axis_mcp process diagnosis — 2026-11-23T07:51:51+07:00 (solocorp-main)
+Total processes: 9 · Groups (ppid, cwd): 2 · Duplicates: 0
+
+Group 1 — ppid 5496 · cwd /data/projects/Lab-solocorp-os2.4 (6 processes)
+      PID     PPID  START                MODULE
+     5662     5496  2026-11-23 07:23:47  axis_mcp.bus_mcp
+     5663     5496  2026-11-23 07:23:47  axis_mcp.cto.server
+     5669     5496  2026-11-23 07:23:47  axis_mcp.departments.content_mcp
+     5670     5496  2026-11-23 07:23:47  axis_mcp.departments.engineering_mcp
+     5671     5496  2026-11-23 07:23:47  axis_mcp.departments.qa_mcp
+     5661     5496  2026-11-23 07:23:47  axis_mcp.server
+
+Group 2 — ppid 5496 · cwd /home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin (3 processes)
+      PID     PPID  START                MODULE
+     5618     5496  2026-11-23 07:23:44  axis_mcp.bus_mcp
+     5619     5496  2026-11-23 07:23:44  axis_mcp.cto.server
+     5620     5496  2026-11-23 07:23:44  axis_mcp.departments.content_mcp
+
+Duplicates (module เดียวกัน ซ้ำใน cwd เดียวกัน): 0
+Same module across project roots (ไม่ใช่ duplicate): axis_mcp.bus_mcp, axis_mcp.cto.server, axis_mcp.departments.content_mcp
+RESULT: OK — 9 processes = 2 groups, 0 duplicates

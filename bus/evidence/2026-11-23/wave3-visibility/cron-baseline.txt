@@ -1,0 +1,15 @@
+# SoloCorp API Key Monitor — ตรวจสอบทุก 6 ชม.
+# DISABLED 2026-06-18 — zen-proxy handles key rotation internally
+# 0 */6 * * * /home/drsolodev/.hermes/solo-corp/bin/monitor-key.sh > /dev/null 2>&1
+# REMOVED 2026-06-30 — duplicate with Hermes cron
+# SoloCorp OS Loop Runner — every 30 min
+# Central Bus — every 5m
+*/5 * * * * cd /data/projects/Lab-solocorp-os2.4 && /data/projects/Lab-solocorp-os2.4/.venv/bin/python scripts/_watchdog_run.py >> /data/projects/Lab-solocorp-os2.4/logs/watchdog_cron.log 2>&1
+# SoloCorp OS Loop Runner — every 30 min (added 2026-09-27, single-flight via fcntl in main.py)
+*/30 * * * * cd /data/projects/Lab-solocorp-os2.4 && /data/projects/Lab-solocorp-os2.4/.venv/bin/python -m loop_runner.main >> /data/projects/Lab-solocorp-os2.4/logs/loop_runner_cron.log 2>&1
+*/5 * * * * cd /data/projects/Lab-solocorp-os2.4 && /data/projects/Lab-solocorp-os2.4/.venv/bin/python -m workers.agent_worker_service --once >> /data/projects/Lab-solocorp-os2.4/logs/agent_worker_cron.log 2>&1
+# W3 48h watch P1-P4 — Orchestrator พี่วุฒิ auto (Owner อนุมัติ 2026-11-13, quiet unless FAIL/P4). Do not edit.
+37 6 14 11 * cd /data/projects/Lab-solocorp-os2.4 && /data/projects/Lab-solocorp-os2.4/.venv/bin/python scripts/w3-48h-probe.py --probe P1 >> /data/projects/Lab-solocorp-os2.4/logs/w3-48h-probe-P1.log 2>&1
+37 18 14 11 * cd /data/projects/Lab-solocorp-os2.4 && /data/projects/Lab-solocorp-os2.4/.venv/bin/python scripts/w3-48h-probe.py --probe P2 >> /data/projects/Lab-solocorp-os2.4/logs/w3-48h-probe-P2.log 2>&1
+37 6 15 11 * cd /data/projects/Lab-solocorp-os2.4 && /data/projects/Lab-solocorp-os2.4/.venv/bin/python scripts/w3-48h-probe.py --probe P3 >> /data/projects/Lab-solocorp-os2.4/logs/w3-48h-probe-P3.log 2>&1
+37 18 15 11 * cd /data/projects/Lab-solocorp-os2.4 && /data/projects/Lab-solocorp-os2.4/.venv/bin/python scripts/w3-48h-probe.py --probe P4 >> /data/projects/Lab-solocorp-os2.4/logs/w3-48h-probe-P4.log 2>&1

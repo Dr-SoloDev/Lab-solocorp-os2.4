@@ -1,0 +1,138 @@
+{
+  "generated_at": "2026-11-23T07:59:35+07:00",
+  "host": "solocorp-main",
+  "match": "axis_mcp",
+  "total_processes": 12,
+  "group_count": 3,
+  "duplicate_count": 0,
+  "duplicates": [],
+  "cross_root_modules": [
+    "axis_mcp.bus_mcp",
+    "axis_mcp.cto.server",
+    "axis_mcp.departments.content_mcp"
+  ],
+  "groups": [
+    {
+      "ppid": 5496,
+      "cwd": "/data/projects/Lab-solocorp-os2.4",
+      "count": 6,
+      "processes": [
+        {
+          "pid": 5662,
+          "ppid": 5496,
+          "start": "2026-11-23 07:23:47",
+          "module": "axis_mcp.bus_mcp",
+          "cwd": "/data/projects/Lab-solocorp-os2.4",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        },
+        {
+          "pid": 5663,
+          "ppid": 5496,
+          "start": "2026-11-23 07:23:47",
+          "module": "axis_mcp.cto.server",
+          "cwd": "/data/projects/Lab-solocorp-os2.4",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        },
+        {
+          "pid": 5669,
+          "ppid": 5496,
+          "start": "2026-11-23 07:23:47",
+          "module": "axis_mcp.departments.content_mcp",
+          "cwd": "/data/projects/Lab-solocorp-os2.4",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        },
+        {
+          "pid": 5670,
+          "ppid": 5496,
+          "start": "2026-11-23 07:23:47",
+          "module": "axis_mcp.departments.engineering_mcp",
+          "cwd": "/data/projects/Lab-solocorp-os2.4",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        },
+        {
+          "pid": 5671,
+          "ppid": 5496,
+          "start": "2026-11-23 07:23:47",
+          "module": "axis_mcp.departments.qa_mcp",
+          "cwd": "/data/projects/Lab-solocorp-os2.4",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        },
+        {
+          "pid": 5661,
+          "ppid": 5496,
+          "start": "2026-11-23 07:23:47",
+          "module": "axis_mcp.server",
+          "cwd": "/data/projects/Lab-solocorp-os2.4",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        }
+      ],
+      "duplicates": []
+    },
+    {
+      "ppid": 5496,
+      "cwd": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin",
+      "count": 3,
+      "processes": [
+        {
+          "pid": 5618,
+          "ppid": 5496,
+          "start": "2026-11-23 07:23:44",
+          "module": "axis_mcp.bus_mcp",
+          "cwd": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        },
+        {
+          "pid": 5619,
+          "ppid": 5496,
+          "start": "2026-11-23 07:23:44",
+          "module": "axis_mcp.cto.server",
+          "cwd": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        },
+        {
+          "pid": 5620,
+          "ppid": 5496,
+          "start": "2026-11-23 07:23:44",
+          "module": "axis_mcp.departments.content_mcp",
+          "cwd": "/home/drsolodev/.local/share/opencode/worktree/27bed3/glowing-cabin",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        }
+      ],
+      "duplicates": []
+    },
+    {
+      "ppid": 5496,
+      "cwd": "/tmp/opencode/wave3-visibility",
+      "count": 3,
+      "processes": [
+        {
+          "pid": 25926,
+          "ppid": 5496,
+          "start": "2026-11-23 07:56:26",
+          "module": "axis_mcp.bus_mcp",
+          "cwd": "/tmp/opencode/wave3-visibility",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        },
+        {
+          "pid": 25929,
+          "ppid": 5496,
+          "start": "2026-11-23 07:56:26",
+          "module": "axis_mcp.cto.server",
+          "cwd": "/tmp/opencode/wave3-visibility",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        },
+        {
+          "pid": 25935,
+          "ppid": 5496,
+          "start": "2026-11-23 07:56:26",
+          "module": "axis_mcp.departments.content_mcp",
+          "cwd": "/tmp/opencode/wave3-visibility",
+          "executable": "/data/projects/Lab-solocorp-os2.4/.venv/bin/python3"
+        }
+      ],
+      "duplicates": []
+    }
+  ],
+  "verdict": "OK",
+  "error": null
+}

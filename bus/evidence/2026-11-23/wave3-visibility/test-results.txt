@@ -1,0 +1,19 @@
+# Test evidence — Wave 3 (2026-11-23)
+
+## Full CI suite (CI's invocation, worktree at feat/wave3-visibility = origin/main + Wave 3)
+cmd: python -m pytest tests/ central_bus/tests/ --tb=short --no-header -q
+
+-------------------------------------------------------------------
+TOTAL                                            4310   1060    75%
+Coverage JSON written to file .coverage.json
+=========================== short test summary info ============================
+FAILED tests/test_solocorp_app_live.py::test_live_payload_has_no_secrets - as...
+1 failed, 1403 passed, 1 skipped, 3 deselected, 124 warnings in 107.28s (0:01:47)
+
+## Pre-existing failure — NOT caused by Wave 3 (baseline proof)
+test: tests/test_solocorp_app_live.py::test_live_payload_has_no_secrets
+origin/main (pristine worktree /tmp/opencode/wave3-baseline, no Wave 3 code):
+  FAILED (1 failed, 1 warning)  <- fails identically without any Wave 3 change
+cause: test asserts the literal word 'brief' is absent from the live /live payload,
+       but list_sessions() reads REAL opencode session titles and one title contains 'brief'.
+action: left untouched (out of scope; not a Wave 3 regression).
