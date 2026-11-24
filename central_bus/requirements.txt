@@ -4,7 +4,7 @@
 fastapi==0.139.0
 uvicorn[standard]>=0.31.1
 pydantic>=2.11.0
-starlette>=0.46.0               # Fix #9 follow-up: fastapi 0.139 requires starlette>=0.46 (was <0.39 → ResolutionImpossible). Code uses modern lifespan (no on_startup) — verified compatible.
+starlette>=1.10.0               # Fix #9 follow-up: fastapi 0.139 requires starlette>=0.46 (was <0.39 → ResolutionImpossible). Code uses modern lifespan (no on_startup) — verified compatible.
 pydantic_settings>=2.0.0        # For central_bus.config.BaseSettings
 aiosqlite>=0.21.0,<0.23.0       # Pinned: 0.20 vs 0.21+ ต่างกันตรงโครงสร้าง Thread
                              #   (0.21+ ห่อ _thread / 0.20 สืบทอด Thread ตรง)
