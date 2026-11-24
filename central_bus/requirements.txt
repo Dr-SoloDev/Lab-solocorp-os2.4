@@ -1,7 +1,7 @@
 # Central Bus v0.6 — Dependencies
 # PRD Section 9: All versions pinned for reproducibility
 
-fastapi==0.139.0
+fastapi==0.165.0
 uvicorn[standard]>=0.31.1
 pydantic>=2.11.0
 starlette>=0.46.0               # Fix #9 follow-up: fastapi 0.139 requires starlette>=0.46 (was <0.39 → ResolutionImpossible). Code uses modern lifespan (no on_startup) — verified compatible.
